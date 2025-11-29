@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\semver\__init__.py
+# hypothesis_version: 6.148.3
+
+['SEMVER_SPEC_VERSION', 'Version', 'VersionInfo', '__author__', '__author_email__', '__description__', '__maintainer__', '__maintainer_email__', '__version__', 'bump_build', 'bump_major', 'bump_minor', 'bump_patch', 'bump_prerelease', 'cmd_bump', 'cmd_check', 'cmd_compare', 'cmd_nextver', 'compare', 'createparser', 'finalize_version', 'format_version', 'main', 'match', 'max_ver', 'min_ver', 'parse', 'parse_version_info', 'process', 'replace']

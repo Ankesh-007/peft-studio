@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\mixed_model.py
+# hypothesis_version: 6.148.3
+
+['Params4bit', 'base_model', 'cache_dir', 'config', 'cpu', 'default', 'disk', 'ds_numel', 'get_input_embeddings', 'hf_device_map', 'is_loaded_in_4bit', 'is_loaded_in_8bit', 'is_quantized', 'modules_to_save', 'pretraining_tp', 'revision', 'subfolder', 'token', 'use_auth_token']

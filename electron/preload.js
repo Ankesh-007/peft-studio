@@ -37,4 +37,9 @@ contextBridge.exposeInMainWorld('api', {
   onTrainingError: (callback) => {
     ipcRenderer.on('training:error', (event, data) => callback(data));
   },
+  
+  // Notification operations
+  showNotification: (options) => ipcRenderer.invoke('show-notification', options),
+  setProgress: (progress) => ipcRenderer.invoke('set-progress', progress),
+  checkDND: () => ipcRenderer.invoke('check-dnd'),
 });

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\setuptools\__init__.py
+# hypothesis_version: 6.148.3
+
+[',\\s*|\\s+', 'Command', 'Distribution', 'Extension', 'InvalidVersion', 'Require', 'add_note', 'dependency_links', 'find_packages', 'setup', 'setup_requires']

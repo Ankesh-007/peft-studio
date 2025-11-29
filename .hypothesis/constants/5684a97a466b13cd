@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\data_types.py
+# hypothesis_version: 6.148.3
+
+['Audio', 'BatchableMedia', 'Bokeh', 'BoundingBoxes2D', 'Classes', 'Graph', 'Histogram', 'Html', 'Image', 'ImageMask', 'JoinedTable', 'Media', 'Molecule', 'Node', 'Object3D', 'PartitionedTable', 'Plotly', 'Table', 'Video', 'WBTraceTree', 'WBValue', '_SavedModel', 'box3d']

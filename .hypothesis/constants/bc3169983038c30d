@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\boto3\resources\params.py
+# hypothesis_version: 6.148.3
+
+['*', '.', '[]', '\\[(.*)\\]$', 'boolean', 'data', 'identifier', 'input', 'integer', 'load', 'string']

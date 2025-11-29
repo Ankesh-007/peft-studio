@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\export_service.py
+# hypothesis_version: 6.148.3
+
+['\n```\n\n', '*', '-', './exports', '.bin', '.pt', '.pth', '.safetensors', 'Export incomplete', 'INSTALL.md', 'LMSTUDIO_SETUP.md', 'Modelfile', 'README.md', '_', '```json\n', 'config', 'config.json', 'conversion_info.json', 'found_files', 'gguf', 'has_instructions', 'has_metadata', 'has_model_directory', 'has_model_weights', 'huggingface', 'lmstudio', 'lmstudio_config.json', 'message', 'metadata', 'metrics', 'model', 'model_name', 'model_type', 'none', 'note', 'ollama', 'passed', 'quantization', 'source_model', 'timestamp', 'tokenizer.json', 'transformers', 'vocab.json', 'w', '},\n  year = {']

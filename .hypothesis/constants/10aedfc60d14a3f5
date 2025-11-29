@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\torch\futures\__init__.py
+# hypothesis_version: 6.148.3
+
+['Future', 'S', 'T', 'collect_all', 'wait_all']

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\miss\model.py
+# hypothesis_version: 6.148.3
+
+['bias', 'init_weights', 'mini_r', 'miss_', 'miss_dropout', 'r']

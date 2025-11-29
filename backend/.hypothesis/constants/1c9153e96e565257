@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\lokr\layer.py
+# hypothesis_version: 6.148.3
+
+[0.0, 1.0, 'default', 'lokr.', 'lokr_t2', 'lokr_w1', 'lokr_w1_a', 'lokr_w1_b', 'lokr_w2', 'lokr_w2_a', 'lokr_w2_b', 'lycoris', 'rank_dropout_scale']

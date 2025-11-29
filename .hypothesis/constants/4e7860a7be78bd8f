@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\trainable_tokens\model.py
+# hypothesis_version: 6.148.3
+
+['embed_tokens', 'init_weights', 'tie_word_embeddings', 'tied_adapter', 'token_indices', 'trainable_tokens_']

@@ -94,6 +94,7 @@ const TopBar: React.FC<TopBarProps> = ({ onToggleRightPanel }) => {
           ?
         </button>
       </div>
+    </div>
     </>
   );
 };

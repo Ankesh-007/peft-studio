@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\utils\save_and_load.py
+# hypothesis_version: 6.148.3
+
+['$', '-inf', '.', '.oft_r.', '.weight', 'Windows', '_', '_orig_mod', '_topk_indices', '_topk_weights', 'adaption_', 'all', 'auto', 'base_layer', 'base_model.', 'base_model.model.', 'base_model.vera_A', 'base_model.vera_A.', 'base_model.vera_B.', 'bias', 'boft_', 'boft_only', 'config', 'config.json', 'cpu', 'default', 'get_base_model', 'get_input_embeddings', 'local_files_only', 'lora_', 'lora_only', 'mps', 'none', 'prefix_task_cols', 'prefix_task_rows', 'prompt_embeddings', 'repo_type', 'revision', 'shira_indices', 'subfolder', 'target_modules', 'token', 'use_auth_token', 'user_agent', 'vblora_logits', 'vocab_size', 'weight']

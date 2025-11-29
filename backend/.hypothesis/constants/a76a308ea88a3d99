@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\fsspec\compression.py
+# hypothesis_version: 6.148.3
+
+[999999999, 'b', 'bz2', 'file', 'gz', 'gzip', 'lz4', 'lzma', 'r', 'rb', 'snappy', 'w', 'xz', 'zip', 'zst', 'zstd']

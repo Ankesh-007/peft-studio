@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\monitoring_service.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.1, 1.0, 2.0, 100, 1024, 'cpu_utilization', 'gpu_memory_used', 'gpu_temperature', 'gpu_utilization', 'green', 'ram_used', 'red', 'yellow']

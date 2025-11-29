@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\oft\config.py
+# hypothesis_version: 6.148.3
+
+[0.0, 6e-05, '0.0.0', '0.18.0', '@', 'all', 'help', 'none', 'note', 'oft_block_size', 'oft_only', 'peft_version', 'use_cayley_neumann']

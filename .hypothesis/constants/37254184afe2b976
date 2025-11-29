@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\accelerate\commands\config\update.py
+# hypothesis_version: 6.148.3
+
+['--config_file', '.json', 'update']

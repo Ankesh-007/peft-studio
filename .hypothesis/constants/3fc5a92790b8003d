@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\inference_service.py
+# hypothesis_version: 6.148.3
+
+[0.7, 0.9, 512, 'example_prompts', 'loaded', 'loaded_at', 'model_id', 'model_version_id', 'ready', 'status', 'use_case']

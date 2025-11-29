@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\adalora\layer.py
+# hypothesis_version: 6.148.3
+
+[0.0, 1e-05, 0.02, '%s', '4.33.0', 'adalora.', 'lora_', 'lora_A', 'lora_B', 'lora_E', 'lora_alpha', 'lora_dropout', 'lora_embedding_A', 'lora_embedding_B', 'r', 'ranknum', 'scaling']

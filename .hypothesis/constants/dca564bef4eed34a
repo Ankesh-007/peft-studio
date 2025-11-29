@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\lora\config.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.99, 1.0, 2.0, -100, 'CAUSAL_LM', 'Enable GenKnowSub.', 'Lora alpha', 'Lora dropout', '`rho` must be >= 1.0', 'all', 'corda', 'eva', 'gaussian', 'help', 'ipm', 'kpm', 'loftq', 'lora_only', 'megatron.core', 'none', 'olora', 'orthogonal', 'pissa', 'runtime_config', 'scipy']

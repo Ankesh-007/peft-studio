@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\huggingface_hub\utils\_validators.py
+# hypothesis_version: 6.148.3
+
+['--', '..', '.git', '/', 'from_id', 'repo_id', 'to_id', 'token', 'use_auth_token']

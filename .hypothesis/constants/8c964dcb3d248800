@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\torch\distributed\_shard\sharded_tensor\utils.py
+# hypothesis_version: 6.148.3
+
+['dtype', 'global_size', 'pin_memory', 'requires_grad', 'size']

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\lib\filenames.py
+# hypothesis_version: 6.148.3
+
+['.wandb', 'config.yaml', 'diff.patch', 'output.log', 'requirements.txt', 'wandb', 'wandb-events.jsonl', 'wandb-history.jsonl', 'wandb-jobspec.json', 'wandb-metadata.json', 'wandb-summary.json']

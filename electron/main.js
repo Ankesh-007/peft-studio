@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Notification, ipcMain } = require('electron');
 const path = require('path');
 
 let mainWindow;
@@ -71,5 +71,76 @@ app.on('window-all-closed', () => {
 app.on('quit', () => {
   if (pythonProcess) {
     pythonProcess.kill();
+  }
+});
+
+// Desktop notification support
+ipcMain.handle('show-notification', async (event, options) => {
+  try {
+    const notification = new Notification({
+      title: options.title || 'PEFT Studio',
+      body: options.message || '',
+      silent: !options.sound,
+      urgency: options.urgency || 'normal', // low, normal, critical
+      timeoutType: options.urgency === 'critical' ? 'never' : 'default'
+    });
+    
+    // Handle notification click
+    if (options.actions && options.actions.length > 0) {
+      notification.on('click', () => {
+        if (mainWindow) {
+          mainWindow.show();
+          mainWindow.focus();
+        }
+      });
+    }
+    
+    notification.show();
+    return { success: true };
+  } catch (error) {
+    console.error('Error showing notification:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Taskbar progress support
+ipcMain.handle('set-progress', async (event, progress) => {
+  try {
+    if (mainWindow) {
+      // progress should be between 0 and 1
+      if (progress < 0 || progress > 1) {
+        progress = Math.max(0, Math.min(1, progress));
+      }
+      
+      if (progress >= 1) {
+        // Training complete - flash the taskbar
+        mainWindow.setProgressBar(1, { mode: 'none' });
+        mainWindow.flashFrame(true);
+        setTimeout(() => {
+          mainWindow.flashFrame(false);
+          mainWindow.setProgressBar(-1); // Remove progress bar
+        }, 3000);
+      } else if (progress > 0) {
+        mainWindow.setProgressBar(progress);
+      } else {
+        mainWindow.setProgressBar(-1); // Remove progress bar
+      }
+    }
+    return { success: true };
+  } catch (error) {
+    console.error('Error setting progress:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Check Do Not Disturb status
+ipcMain.handle('check-dnd', async () => {
+  try {
+    // Electron doesn't have direct DND detection, but we can check system preferences
+    // This is a placeholder - actual implementation would need native modules
+    return { enabled: false };
+  } catch (error) {
+    console.error('Error checking DND:', error);
+    return { enabled: false };
   }
 });

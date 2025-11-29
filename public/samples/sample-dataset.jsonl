@@ -1,0 +1,10 @@
+{"instruction": "What is the capital of France?", "input": "", "output": "The capital of France is Paris."}
+{"instruction": "Explain what machine learning is", "input": "", "output": "Machine learning is a subset of artificial intelligence that enables systems to learn and improve from experience without being explicitly programmed."}
+{"instruction": "Write a Python function to calculate factorial", "input": "", "output": "Here's a Python function to calculate factorial:\n\ndef factorial(n):\n    if n == 0 or n == 1:\n        return 1\n    return n * factorial(n - 1)"}
+{"instruction": "What are the benefits of exercise?", "input": "", "output": "Regular exercise provides numerous benefits including improved cardiovascular health, stronger muscles and bones, better mental health, weight management, and increased energy levels."}
+{"instruction": "Translate 'Hello, how are you?' to Spanish", "input": "", "output": "The translation is: 'Hola, ¿cómo estás?'"}
+{"instruction": "What is photosynthesis?", "input": "", "output": "Photosynthesis is the process by which plants use sunlight, water, and carbon dioxide to produce oxygen and energy in the form of sugar."}
+{"instruction": "Explain the water cycle", "input": "", "output": "The water cycle is the continuous movement of water on, above, and below Earth's surface through evaporation, condensation, precipitation, and collection."}
+{"instruction": "What is the speed of light?", "input": "", "output": "The speed of light in a vacuum is approximately 299,792,458 meters per second (about 186,282 miles per second)."}
+{"instruction": "How do you make a simple salad?", "input": "", "output": "To make a simple salad: 1) Wash and chop lettuce, 2) Add tomatoes, cucumbers, and other vegetables, 3) Add dressing of your choice, 4) Toss and serve."}
+{"instruction": "What is the largest planet in our solar system?", "input": "", "output": "Jupiter is the largest planet in our solar system, with a diameter of about 143,000 kilometers."}

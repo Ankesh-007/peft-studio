@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\setuptools\extern\__init__.py
+# hypothesis_version: 6.148.3
+
+['.', '_vendor', 'backports', 'extern', 'importlib_metadata', 'importlib_resources', 'jaraco', 'more_itertools', 'ordered_set', 'packaging', 'setuptools._vendor', 'tomli', 'wheel', 'zipp']

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\adaption_prompt\utils.py
+# hypothesis_version: 6.148.3
+
+['.', 'adaption_', 'hidden_states', 'num_heads', 'past_key_value', 'position_embeddings', 'position_ids', 'q_attn', 'seq_len']

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\vendor\graphql-core-1.1\wandb_graphql\validation\rules\__init__.py
+# hypothesis_version: 6.148.3
+
+['FieldsOnCorrectType', 'KnownArgumentNames', 'KnownDirectives', 'KnownFragmentNames', 'KnownTypeNames', 'NoFragmentCycles', 'NoUndefinedVariables', 'NoUnusedFragments', 'NoUnusedVariables', 'ScalarLeafs', 'UniqueArgumentNames', 'UniqueFragmentNames', 'UniqueOperationNames', 'UniqueVariableNames', 'specified_rules']

@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\training_orchestration_service.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.0002, 0.01, 0.1, 0.5, 1.0, 1.5, 2.0, 10.0, 40.0, -100, 100, 500, 1000, '-', './checkpoints', 'CheckpointData', 'Training Complete! 🎉', 'adamw', 'checkpoint-', 'checkpoint_path', 'checkpoint_reason', 'completed', 'completed_at', 'config', 'created', 'created_at', 'current_metrics', 'epoch', 'error_message', 'failed', 'fp16', 'initializing', 'job_id', 'learning_rate', 'linear', 'lora', 'loss', 'manual', 'metrics_history', 'model_checkpoint.pt', 'model_state_dict', 'normal', 'optimizer_state_dict', 'pause', 'paused', 'paused_at', 'r', 'running', 'scheduled', 'scheduler_state_dict', 'started_at', 'state', 'step', 'steps', 'stopped', 'timestamp', 'w']

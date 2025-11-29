@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\lora\hqq.py
+# hypothesis_version: 6.148.3
+
+[0.0, '__base__', 'adapter_names', 'lora.', 'offload_meta']

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\vendor\promise-2.3.0\wandb_promise\pyutils\version.py
+# hypothesis_version: 6.148.3
+
+['%Y%m%d%H%M%S', '%d.%d', '.', '.dev', '.dev%s', 'a', 'alpha', 'b', 'beta', 'dev', 'final', 'rc']

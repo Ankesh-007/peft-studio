@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\data_types\_dtypes.py
+# hypothesis_version: 6.148.3
+
+["\n{}Key '{}':\n{}", '\n{}and', ' or ', '(', ')', ',', ', ', '.', ':', 'AnyType', 'Artifact', 'BooleanType', 'ConstType', 'InvalidType', 'ListType', 'NDArrayType', 'NoneType', 'NumberType', 'OptionalType', 'PythonObjectType', 'StringType', 'TimestampType', 'Type', 'TypeRegistry', 'TypedDictType', 'UnionType', 'UnknownType', '__iter__', '_params', 'allowed_types', 'any', 'artifactVersion', 'boolean', 'class_name', 'const', 'dictionary', 'element_type', 'invalid', 'is_set', 'key', 'length', 'list', 'ndarray', 'none', 'number', 'numpy', 'object', 'params', 'path', 'pythonObject', 'serialization_path', 'shape', 'string', 'timestamp', 'tolist', 'type_map', 'typedDict', 'union', 'unknown', 'val', 'wb_type', '{}', '{}[]']

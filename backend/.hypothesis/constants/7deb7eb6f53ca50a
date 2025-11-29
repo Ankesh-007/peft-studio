@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\model_versioning_service.py
+# hypothesis_version: 6.148.3
+
+[100, 1024, '*', './models', 'archive', 'checkpoint', 'final_loss', 'inf', 'new', 'old', 'r', 'v', 'v1.0.0', 'versions.json', 'w']

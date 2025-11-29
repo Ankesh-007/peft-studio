@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\hardware_service.py
+# hypothesis_version: 6.148.3
+
+[0.0, 0.1, 0.5, 512, 1000, 1024, 4096, 7000, 13000, 'Unknown', 'cuda:0', 'cuda_available', 'cuda_version', 'cudnn_available', 'cudnn_version', 'errors', 'gpu_count', 'large', 'medium', 'small', 'torch_version', 'unknown']

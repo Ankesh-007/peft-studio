@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\adalora\model.py
+# hypothesis_version: 6.148.3
+
+['.', 'compress_statistics', 'compute_dtype', 'fan_in_fan_out', 'fro', 'gptq', 'has_fp16_weights', 'hf_device_map', 'index', 'init_lora_weights', 'is_loaded_in_4bit', 'is_loaded_in_8bit', 'loaded_in_4bit', 'loaded_in_8bit', 'lora_A', 'lora_B', 'lora_E', 'lora_alpha', 'lora_dropout', 'loss', 'quant_type', 'r', 'threshold']

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\utils\loftq_utils.py
+# hypothesis_version: 6.148.3
+
+[0.5, 0.9677083, 2.5, '.weight', 'L', 'R', 'S', 'U', 'Vh', 'base_model.model.', 'base_model_prefix', 'cpu', 'cuda', 'default', 'model.safetensors', 'nf4', 'normal', 'pt', 'reduced_rank', 'uniform', 'weight_map', 'xpu']

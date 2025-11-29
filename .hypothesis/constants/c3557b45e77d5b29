@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\wandb_integration_service.py
+# hypothesis_version: 6.148.3
+
+[',', 'WANDB_API_KEY', 'WANDB_SILENT', 'allow', 'dataset_name', 'job_id', 'model', 'model_name', 'peft-studio', 'true', 'use_case']

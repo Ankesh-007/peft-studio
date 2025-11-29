@@ -101,6 +101,42 @@ class APIClient {
   async getSystemInfo() {
     return this.request('/api/system/info');
   }
+
+  // Profile operations
+  async listProfiles() {
+    return this.request('/api/profiles');
+  }
+
+  async getProfile(profileId: string) {
+    return this.request(`/api/profiles/${profileId}`);
+  }
+
+  async getProfileByUseCase(useCase: string) {
+    return this.request(`/api/profiles/use-case/${useCase}`);
+  }
+
+  async applyProfileConfig(profileId: string, overrides?: any) {
+    return this.request('/api/profiles/apply', {
+      method: 'POST',
+      body: JSON.stringify({ profile_id: profileId, overrides }),
+    });
+  }
+
+  async validateProfileCompatibility(profileId: string, gpuMemoryGb: number, datasetSize: number) {
+    return this.request('/api/profiles/validate-compatibility', {
+      method: 'POST',
+      body: JSON.stringify({
+        profile_id: profileId,
+        gpu_memory_gb: gpuMemoryGb,
+        dataset_size: datasetSize,
+      }),
+    });
+  }
+
+  // Hardware operations
+  async getHardwareProfile() {
+    return this.request('/api/hardware/profile');
+  }
 }
 
 export const apiClient = new APIClient();

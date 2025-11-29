@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\auto.py
+# hypothesis_version: 6.148.3
+
+['CAUSAL_LM', 'FEATURE_EXTRACTION', 'QUESTION_ANS', 'SEQ_2_SEQ_LM', 'SEQ_CLS', 'TOKEN_CLS', 'auto_mapping', 'base_model_class', 'default', 'get_input_embeddings', 'parent_library', 'repo_type', 'task_type', 'token', 'trust_remote_code', 'use_auth_token']

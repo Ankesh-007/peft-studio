@@ -57,10 +57,24 @@
 }
 
 @layer utilities {
+  /* Animation utilities */
   .animate-scale-in {
     animation: scaleIn 0.3s ease-out;
   }
   
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  .animate-slide-down {
+    animation: slideDown 0.3s ease-out;
+  }
+  
+  /* Keyframe animations */
   @keyframes scaleIn {
     from {
       transform: scale(0.8);
@@ -72,7 +86,96 @@
     }
   }
   
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideDown {
+    from {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Gradient utilities */
   .bg-gradient-radial {
     background: radial-gradient(circle at center, var(--tw-gradient-stops));
+  }
+  
+  /* Focus visible for keyboard navigation */
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-dark-bg-primary;
+  }
+  
+  /* Screen reader only */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  
+  /* Skip to main content link */
+  .skip-to-main {
+    @apply sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent-primary focus:text-white focus:rounded-lg;
+  }
+  
+  /* Tour highlight */
+  .tour-highlight {
+    position: relative;
+    z-index: 45;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.5), 0 0 0 9999px rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+  
+  /* Button size variants */
+  .btn-sm {
+    @apply px-12 py-6 text-small;
+  }
+  
+  .btn-lg {
+    @apply px-24 py-12 text-body;
+  }
+  
+  .btn {
+    @apply inline-flex items-center justify-center font-medium rounded-lg transition-all duration-150 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

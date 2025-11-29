@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\GPUtil\GPUtil.py
+# hypothesis_version: 6.148.3
+
+[0.5, 100, 900, ' ID  GPU  MEM', ' attempts with ', ' located!', ' seconds interval.', '%', "'", ") for attribute '", ', ', '-', '--------------', '-inf', '.', '/', '1.4.0', 'Attempting (', 'C', 'Display active', 'Display mode', 'GPU', 'GPU ', 'GPU temp.', 'GPU util.', 'ID', 'MB', 'MEM', 'Memory free', 'Memory total', 'Memory used', 'Memory util.', 'Name', 'Serial', 'UTF-8', 'UUID', 'Windows', 'ascii', 'attr', 'display_active', 'display_mode', 'd}', 'first', 'f}', 'id', 'ignore', 'inf', 'last', 'load', 'memory', 'memoryFree', 'memoryTotal', 'memoryUsed', 'memoryUtil', 'name', 'nan', 'nvidia-smi', 'precision', 'random', 'serial', 'suffix', 'systemdrive', 's}', 'temperature', 'transform', 'uuid', '{0:', '{0:d}', '|', '| ']

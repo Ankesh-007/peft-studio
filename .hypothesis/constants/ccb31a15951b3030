@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\lora\tp_layer.py
+# hypothesis_version: 6.148.3
+
+[0.0, 'adapter_names', 'corda', 'cpu', 'fan_in_fan_out', 'init_method', 'loftq', 'lora.', 'megatron_config', 'olora', 'pissa', 'self']

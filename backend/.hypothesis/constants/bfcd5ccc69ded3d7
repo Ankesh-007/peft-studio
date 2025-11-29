@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\miss\layer.py
+# hypothesis_version: 6.148.3
+
+[0.0, 'bat', 'cpu', 'mini', 'miss.', 'miss_block', 'miss_dropout', 'miss_mini_r', 'miss_r']

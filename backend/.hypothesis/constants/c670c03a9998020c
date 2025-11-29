@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\lokr\config.py
+# hypothesis_version: 6.148.3
+
+[0.0, 'LoKr alpha', 'LoKr rank', 'Rank dropout scale', 'help', 'lycoris']

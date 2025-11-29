@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\vblora\model.py
+# hypothesis_version: 6.148.3
+
+[0.25, 0.5, 'bias', 'default', 'fan_in_fan_out', 'vblora_', 'vblora_logits', 'vblora_vector_bank']

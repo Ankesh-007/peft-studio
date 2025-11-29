@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\launch\sweeps\scheduler.py
+# hypothesis_version: 6.148.3
+
+[5.0, '${', '${program}', ':', 'Api', 'CANCELED', 'CANCELLED', 'CRASHED', 'FINISHED', 'PAUSED', 'RunState', 'STOPPED', 'WANDB_ENTITY', 'WANDB_PROJECT', 'WANDB_SWEEP_ID', '_step', 'alive', 'allow', 'args', 'args_dict', 'author', 'cancelled', 'command', 'completed', 'config', 'crashed', 'dead', 'empty-sweep-id', 'entity', 'failed', 'finished', 'id', 'image_uri', 'job', 'killed', 'launch', 'metric', 'name', 'num_workers', 'overrides', 'paused', 'pending', 'preempted', 'preempting', 'priority', 'program', 'project', 'public.QueuedRun', 'queue', 'resource', 'resource_args', 'run_cap', 'run_config', 'running', 'runs', 'scheduler', 'settings', 'state', 'summaryMetrics', 'sweep-controller', 'template_variables', 'unknown', 'utf-8', 'wandb', 'wandb.Run', '{}']

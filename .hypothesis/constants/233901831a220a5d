@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\apis\public\query_generator.py
+# hypothesis_version: 6.148.3
+
+['!=', '$and', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$or', '$regex', '+', '-', '.', '<', '<=', '=', '>', '>=', 'AND', 'IN', 'Invalid key: {}', 'NIN', 'OR', 'REGEX', 'ascending', 'config', 'config.', 'createdAt', 'disabled', 'filters', 'key', 'keys', 'keys_info', 'keys_info.keys.', 'name', 'op', 'run', 'section', 'summary', 'summary_metrics', 'summary_metrics.', 'sweep', 'tags', 'tags.', 'updatedAt', 'value']

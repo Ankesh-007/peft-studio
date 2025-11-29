@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\integration\weave\weave.py
+# hypothesis_version: 6.148.3
+
+['Initializing weave.', 'WANDB_DISABLE_WEAVE', 'agents', 'anthropic', 'autogen', 'cohere', 'crewai', 'dspy', 'google.genai', 'groq', 'instructor', 'langchain', 'litellm', 'llama_index', 'mcp', 'mistral', 'notdiamond', 'openai', 'smolagents', 'verdict', 'verifiers', 'vertexai', 'weave']

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\lib\proto_util.py
+# hypothesis_version: 6.148.3
+
+['Message', '_', 'pb.MetricRecord', 'pb.Record', 'pb.Result', 'tpb.TelemetryRecord']

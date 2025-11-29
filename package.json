@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "test": "vitest --run",
+    "test:watch": "vitest",
     "electron:dev": "electron .",
     "electron:build": "electron-builder"
   },
@@ -29,14 +31,22 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
+    "@axe-core/react": "^4.11.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.1",
     "@types/node": "^22.10.1",
     "@types/react": "^18.3.12",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "fast-check": "^3.15.0",
+    "jest-axe": "^10.0.0",
+    "jsdom": "^23.2.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
     "typescript": "^5.7.2",
-    "vite": "^6.0.1"
+    "vite": "^6.0.1",
+    "vitest": "^1.0.4"
   },
   "build": {
     "appId": "com.peftstudio.app",
@@ -51,16 +61,25 @@
       "package.json"
     ],
     "win": {
-      "target": ["nsis", "portable"],
+      "target": [
+        "nsis",
+        "portable"
+      ],
       "icon": "build/icon.ico"
     },
     "mac": {
-      "target": ["dmg", "zip"],
+      "target": [
+        "dmg",
+        "zip"
+      ],
       "icon": "build/icon.icns",
       "category": "public.app-category.developer-tools"
     },
     "linux": {
-      "target": ["AppImage", "deb"],
+      "target": [
+        "AppImage",
+        "deb"
+      ],
       "icon": "build/icon.png",
       "category": "Development"
     }

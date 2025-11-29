@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\trainable_tokens\layer.py
+# hypothesis_version: 6.148.3
+
+['cuda', 'embedding_dim', 'init_weights', 'tied_adapter', 'token_indices']

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\oft\hqq.py
+# hypothesis_version: 6.148.3
+
+[0.0, 6e-05, 'adapter_names', 'offload_meta', 'oft.']

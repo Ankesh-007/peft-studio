@@ -1,9 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Brain, Zap, Database, Clock, TrendingUp, Upload, Play, MessageSquare, Search } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { cn, formatNumber, getTimeGreeting } from '../lib/utils';
+import { SkeletonCard, SkeletonTable } from './LoadingStates';
+import { useIsMobile } from '../hooks/useMediaQuery';
 
 const Dashboard: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const isMobile = useIsMobile();
+
+  // Simulate data loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
   // Mock data
   const stats = [
     { label: 'Models Trained', value: 24, trend: '+12%', icon: Brain, color: 'accent-primary' },
@@ -44,45 +56,83 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="space-y-24" role="status" aria-label="Loading dashboard">
+        <div className="bg-gradient-to-br from-[#1a1a2e] to-[#16162a] rounded-2xl p-32 border border-dark-border">
+          <div className="h-12 bg-dark-bg-tertiary rounded w-1/4 mb-8 animate-pulse" />
+          <div className="h-6 bg-dark-bg-tertiary rounded w-1/3 mb-24 animate-pulse" />
+          <div className="grid grid-cols-4 gap-16">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-24">
+          <div className="col-span-2">
+            <SkeletonCard />
+          </div>
+          <SkeletonCard />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-24">
+    <div className="space-y-24" data-tour="dashboard">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-[#1a1a2e] to-[#16162a] rounded-2xl p-32 border border-dark-border">
+      <section 
+        className="bg-gradient-to-br from-[#1a1a2e] to-[#16162a] rounded-2xl p-32 border border-dark-border animate-fade-in"
+        aria-label="Dashboard overview"
+      >
         <h1 className="text-display mb-8">{getTimeGreeting()}</h1>
         <p className="text-body text-dark-text-secondary mb-24">
-          {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          <time dateTime={new Date().toISOString()}>
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          </time>
         </p>
         
         {/* Stats Grid */}
-        <div className="grid grid-cols-4 gap-16">
+        <div className={cn(
+          "grid gap-16",
+          isMobile ? "grid-cols-1" : "grid-cols-2 md:grid-cols-4"
+        )}>
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <div key={index} className="card card-hover">
+              <article 
+                key={index} 
+                className="card card-hover"
+                role="article"
+                aria-label={`${stat.label}: ${stat.value}`}
+              >
                 <div className="flex items-start justify-between mb-12">
                   <div className={cn(
                     "w-40 h-40 rounded-full flex items-center justify-center",
                     `bg-${stat.color}/10`
-                  )}>
-                    <Icon size={20} className={`text-${stat.color}`} />
+                  )}
+                  role="img"
+                  aria-label={stat.label}
+                  >
+                    <Icon size={20} className={`text-${stat.color}`} aria-hidden="true" />
                   </div>
-                  <div className="flex items-center gap-4 text-tiny text-accent-success">
-                    <TrendingUp size={12} />
-                    <span>{stat.trend}</span>
+                  <div className="flex items-center gap-4 text-tiny text-accent-success" role="status">
+                    <TrendingUp size={12} aria-hidden="true" />
+                    <span aria-label={`Trend: ${stat.trend}`}>{stat.trend}</span>
                   </div>
                 </div>
                 <div className="text-display mb-4">{formatNumber(stat.value)}</div>
                 <div className="text-small text-dark-text-tertiary">{stat.label}</div>
-              </div>
+              </article>
             );
           })}
         </div>
-      </div>
+      </section>
 
       {/* Main Grid */}
       <div className="grid grid-cols-3 gap-24">
         {/* Recent Training Runs */}
-        <div className="col-span-2 card">
+        <div className="col-span-2 card" data-tour="training-runs">
           <div className="flex items-center justify-between mb-20">
             <h2 className="text-h2">Recent Training Runs</h2>
             <button className="text-small text-accent-primary hover:text-accent-primary/80">
@@ -134,7 +184,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="card">
+        <div className="card" data-tour="quick-actions">
           <h2 className="text-h2 mb-20">Quick Actions</h2>
           
           <div className="grid grid-cols-2 gap-12">
@@ -196,7 +246,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* System Resources */}
-        <div className="card">
+        <div className="card" data-tour="system-resources">
           <h2 className="text-h2 mb-20">System Resources</h2>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={gpuData} layout="vertical">

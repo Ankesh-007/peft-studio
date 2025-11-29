@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\plot\utils.py
+# hypothesis_version: 6.148.3
+
+['X', 'X_test', '_estimator_type', 'binary_clf', 'children_', 'clf', 'clusterer', 'coef_', 'components_', 'estimator_', 'explained_variance_', 'float', 'float32', 'float64', 'int', 'int32', 'int64', 'labels_', 'matrix_values', 'mean_', 'model', 'n_batch_iter_', 'n_clusters_', 'n_components_', 'n_iter_', 'numpy', 'pandas', 'regressor', 'scipy', 'singular_values_', 'sklearn.base', 'sklearn.exceptions', 'sklearn.utils', 'x_labels', 'y', 'y_labels', 'y_probas', 'y_test', 'y_true']

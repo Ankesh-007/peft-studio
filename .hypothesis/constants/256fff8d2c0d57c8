@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\multitask_prompt_tuning\config.py
+# hypothesis_version: 6.148.3
+
+['AVERAGE_SOURCE_TASKS', 'EXACT_SOURCE_TASK', 'ONLY_SOURCE_SHARED', 'RANDOM', 'TEXT', 'help', 'number of tasks', 'ranks']

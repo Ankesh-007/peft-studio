@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\apis\public\files.py
+# hypothesis_version: 6.148.3
+
+[', $projectId: Int', '.', '/', '<File {} ({}) {}>', '<Files {} ({})>', 'File', 'cursor', 'directUrl', 'edges', 'entity', 'fileCount', 'fileCursor', 'fileLimit', 'fileNames', 'files', 'hasNextPage', 'inputFields', 'name', 'node', 'pageInfo', 'pattern', 'project', 'projectId', 'run', 'sizeBytes', 'upload', 'url']

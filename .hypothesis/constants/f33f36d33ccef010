@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\_pydantic\v1_compat.py
+# hypothesis_version: 6.148.3
+
+['Config', 'after', 'alias', 'anystr_lower', 'anystr_upper', 'before', 'by_alias', 'from_attributes', 'ignored_types', 'json_schema_extra', 'keep_untouched', 'max_anystr_length', 'min_anystr_length', 'model_config', 'name', 'orm_mode', 'plain', 'populate_by_name', 'round_trip', 'schema_extra', 'str_max_length', 'str_min_length', 'str_strip_whitespace', 'str_to_lower', 'str_to_upper', 'validate_all', 'validate_default', 'wrap']

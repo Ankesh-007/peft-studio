@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\lokr\model.py
+# hypothesis_version: 6.148.3
+
+['alpha', 'lokr_', 'r', 'rank_dropout_scale']

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\semver\_deprecated.py
+# hypothesis_version: 6.148.3
+
+['2.10.0', '2.10.2', '3.0.0', 'Use {r!r} instead.', 'build', 'max', 'min', 'rc', 'semver.cli.cmd_bump', 'semver.cli.cmd_check', 'semver.cli.main', 'semver.cli.process', 'str(versionobject)']
