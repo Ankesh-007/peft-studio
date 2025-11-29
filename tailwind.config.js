@@ -1,29 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        // Dark theme colors
         dark: {
-          bg: {
-            primary: '#0a0a0a',
-            secondary: '#111111',
-            tertiary: '#1a1a1a',
-          },
+          bg: { primary: '#0a0a0a', secondary: '#111111', tertiary: '#1a1a1a' },
           border: '#2a2a2a',
-          text: {
-            primary: '#ffffff',
-            secondary: '#a1a1aa',
-            tertiary: '#71717a',
-            disabled: '#52525b',
-          },
+          text: { primary: '#ffffff', secondary: '#a1a1aa', tertiary: '#71717a', disabled: '#52525b' },
         },
-        // Accent colors
         accent: {
           primary: '#6366f1',
           success: '#10b981',
@@ -44,26 +30,6 @@ export default {
         body: ['14px', { lineHeight: '1.5', fontWeight: '400' }],
         small: ['12px', { lineHeight: '1.5', fontWeight: '400' }],
         tiny: ['11px', { lineHeight: '1.5', fontWeight: '400' }],
-      },
-      spacing: {
-        '4': '4px',
-        '8': '8px',
-        '12': '12px',
-        '16': '16px',
-        '20': '20px',
-        '24': '24px',
-        '32': '32px',
-        '40': '40px',
-        '48': '48px',
-        '64': '64px',
-        '80': '80px',
-      },
-      borderRadius: {
-        'xl': '12px',
-        '2xl': '16px',
-      },
-      backdropBlur: {
-        xs: '2px',
       },
     },
   },

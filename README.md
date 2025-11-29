@@ -1,83 +1,49 @@
 # PEFT Studio
 
-A professional desktop application for Parameter-Efficient Fine-Tuning (PEFT) of Large Language Models with full customization, platform integration, and local execution capabilities.
+Professional desktop application for Parameter-Efficient Fine-Tuning (PEFT) of Large Language Models.
 
 ## ✨ Features
 
-- **🎨 Modern UI**: Professional design with dark theme, inspired by Linear, Vercel, and modern SaaS dashboards
-- **📊 Dashboard**: Real-time monitoring of training runs, system resources, and statistics
-- **📁 Dataset Management**: Upload, format, validate, and analyze training datasets
-- **🤖 Model Browser**: Search and download models from HuggingFace Hub
-- **⚡ PEFT Methods**: Support for LoRA, QLoRA, Prefix Tuning, and more
-- **📈 Training Monitor**: Real-time training progress with interactive charts
-- **🧪 Inference Playground**: Test your fine-tuned models
-- **🚀 Platform Integration**: Export to HuggingFace, Ollama, LM Studio
-
-## 🎯 Design Philosophy
-
-PEFT Studio follows a professional, modern design system:
-- **Color Palette**: Deep blacks (#0a0a0a) with indigo accents (#6366f1)
-- **Typography**: Inter for UI, JetBrains Mono for code
-- **Spacing**: 4px base unit system
-- **Components**: Card-based layouts with smooth transitions
+- **Modern UI**: Dark theme with smooth animations and real-time updates
+- **Dashboard**: Monitor training runs, system resources, and statistics
+- **Dataset Management**: Upload, validate, and analyze training data
+- **Model Browser**: Search and download models from HuggingFace
+- **PEFT Methods**: LoRA, QLoRA, Prefix Tuning, and more
+- **Training Monitor**: Real-time progress with interactive charts
+- **Inference Playground**: Test fine-tuned models
+- **Platform Integration**: Export to HuggingFace, Ollama, LM Studio
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-
 - Node.js 18+
 - Python 3.10+
-- CUDA-capable GPU (recommended)
+- CUDA GPU (recommended)
 
 ### Installation
 
-1. **Install Node.js dependencies:**
 ```bash
+# Install dependencies
 npm install
-```
 
-2. **Create Python virtual environment:**
-```bash
+# Create Python environment
 python -m venv peft_env
-```
-
-3. **Activate virtual environment:**
-- Windows: `peft_env\Scripts\activate`
-- Linux/Mac: `source peft_env/bin/activate`
-
-4. **Install Python dependencies:**
-```bash
+peft_env\Scripts\activate  # Windows
 pip install -r backend/requirements.txt
 ```
 
 ### Development
 
-**Option 1: Run both servers together (recommended):**
 ```bash
-npm start
-```
-
-**Option 2: Run separately:**
-
-Terminal 1 - Frontend:
-```bash
+# Terminal 1: Frontend
 npm run dev
-```
 
-Terminal 2 - Electron:
-```bash
+# Terminal 2: Electron
 npm run electron:dev
-```
-
-Terminal 3 - Backend (optional, if not auto-started):
-```bash
-cd backend
-python main.py
 ```
 
 ### Build
 
-Build for production:
 ```bash
 npm run build
 npm run electron:build
