@@ -428,7 +428,7 @@ Includes all videos in 1080p MP4 format with subtitles.
 
 Want to create a tutorial? We welcome community contributions!
 
-**Guidelines**: [Read here](../developer-guide/contributing.md#video-tutorials)
+**Guidelines**: [Read here](../CONTRIBUTING.md)
 
 ## Transcript Access
 

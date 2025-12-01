@@ -304,7 +304,7 @@ We welcome contributions!
 3. Make your changes
 4. Submit a pull request
 
-See [contributing guide](../developer-guide/contributing.md).
+See [contributing guide](../CONTRIBUTING.md).
 
 ## Billing and Costs
 

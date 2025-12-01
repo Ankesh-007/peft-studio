@@ -198,4 +198,4 @@ Potential improvements for future versions:
 
 - [RunPod API Documentation](https://docs.runpod.io/)
 - [RunPod GraphQL API](https://graphql-spec.runpod.io/)
-- [Connector Architecture](../../../connectors/README.md)
+- [Connector Architecture](../../../backend/connectors/README.md)

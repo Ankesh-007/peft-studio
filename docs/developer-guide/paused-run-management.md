@@ -1,4 +1,4 @@
-# Paused Run Management Implementation
+# Paused Run Management
 
 ## Overview
 
@@ -194,7 +194,7 @@ const pausedRun = await response.json();
 - ✅ `src/test/PausedRunDisplay.test.tsx` (new)
 
 ### Documentation
-- ✅ `PAUSED_RUN_MANAGEMENT.md` (this file)
+- ✅ `docs/developer-guide/paused-run-management.md` (this file)
 
 ## Conclusion
 

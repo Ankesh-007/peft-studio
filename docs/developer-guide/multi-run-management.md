@@ -362,6 +362,6 @@ The property tests use Hypothesis to generate random test cases:
 
 ## Related Documentation
 
-- [Training Orchestration Service](./TRAINING_ORCHESTRATOR_IMPLEMENTATION.md)
-- [Database Schema](../database.py)
-- [API Documentation](./TRAINING_ORCHESTRATOR_API.md)
+- [Training Orchestration Service](./training-orchestrator.md)
+- [Database Schema](../../backend/database.py)
+- [API Documentation](./api-documentation.md)

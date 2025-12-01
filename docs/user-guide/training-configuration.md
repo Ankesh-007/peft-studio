@@ -456,7 +456,6 @@ text
 
 ## Next Steps
 
-- [Monitor training progress](../user-guide/monitoring.md)
-- [Evaluate your model](model-evaluation.md)
-- [Deploy your adapter](deployment-management.md)
+- [Deploy your adapter](deployment.md)
 - [Share your configuration](configuration-management.md)
+- [Explore the model browser](model-browser.md)

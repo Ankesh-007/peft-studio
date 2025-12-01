@@ -209,10 +209,7 @@ See `build/README.md` for icon generation instructions.
 
 ## Documentation
 
-- **Quick Start:** `../BUILD_QUICK_START.md`
-- **Full Guide:** `../INSTALLER_GUIDE.md`
-- **Implementation:** `../INSTALLER_PACKAGES_IMPLEMENTATION.md`
-- **Summary:** `../INSTALLER_PACKAGES_SUMMARY.md`
+- **Build and Installer Guide:** `../docs/developer-guide/build-and-installers.md` - Comprehensive guide covering all aspects of building and distributing installers
 
 ## Support
 

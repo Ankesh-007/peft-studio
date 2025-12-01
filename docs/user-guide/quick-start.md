@@ -64,7 +64,7 @@ On first launch, PEFT Studio will:
 - [Connect more platforms](platform-connections.md)
 - [Explore the model browser](model-browser.md)
 - [Learn about PEFT algorithms](training-configuration.md)
-- [Deploy your first adapter](deployment-management.md)
+- [Deploy your first adapter](deployment.md)
 
 ## Getting Help
 

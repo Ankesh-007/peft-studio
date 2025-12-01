@@ -22,9 +22,7 @@ Use this checklist to verify the CI/CD pipeline is properly configured.
 
 ## ✅ Documentation
 
-- [x] `CI_CD_SETUP.md` - Complete setup guide
-- [x] `CI_CD_QUICK_START.md` - Quick start guide
-- [x] `CI_CD_IMPLEMENTATION_SUMMARY.md` - Implementation summary
+- [x] `docs/developer-guide/ci-cd-setup.md` - Complete setup guide (consolidated)
 - [x] `.github/workflows/README.md` - Workflow documentation
 - [x] `.github/CI_CD_CHECKLIST.md` - This checklist
 
