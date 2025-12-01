@@ -14,6 +14,128 @@ Common issues and solutions for PEFT Studio.
 
 ## Installation Issues
 
+### Fresh Installation Problems
+
+#### Dependencies Not Installing
+
+**Symptoms:**
+- `npm install` fails with errors
+- Python packages fail to install
+- Missing dependencies errors
+
+**Solutions:**
+
+1. **Verify Prerequisites**
+   ```bash
+   # Check Node.js version (18+ required)
+   node --version
+   
+   # Check Python version (3.10+ required)
+   python --version
+   
+   # Check npm version
+   npm --version
+   ```
+
+2. **Clear npm Cache**
+   ```bash
+   npm cache clean --force
+   rm -rf node_modules package-lock.json
+   npm install
+   ```
+
+3. **Update pip and setuptools**
+   ```bash
+   python -m pip install --upgrade pip setuptools wheel
+   ```
+
+4. **Install Build Tools**
+   
+   **Windows:**
+   ```bash
+   npm install --global windows-build-tools
+   ```
+   
+   **macOS:**
+   ```bash
+   xcode-select --install
+   ```
+   
+   **Linux:**
+   ```bash
+   sudo apt-get install build-essential python3-dev
+   ```
+
+#### Virtual Environment Issues
+
+**Symptoms:**
+- Cannot create Python virtual environment
+- Virtual environment activation fails
+- Wrong Python version in venv
+
+**Solutions:**
+
+1. **Install venv Module**
+   ```bash
+   # Ubuntu/Debian
+   sudo apt-get install python3-venv
+   
+   # Fedora
+   sudo dnf install python3-virtualenv
+   ```
+
+2. **Use Specific Python Version**
+   ```bash
+   python3.10 -m venv peft_env
+   ```
+
+3. **Activation Issues**
+   
+   **Windows PowerShell:**
+   ```powershell
+   # If execution policy blocks activation
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   .\peft_env\Scripts\Activate.ps1
+   ```
+   
+   **Windows CMD:**
+   ```cmd
+   peft_env\Scripts\activate.bat
+   ```
+
+#### Build Fails
+
+**Symptoms:**
+- `npm run build` fails
+- TypeScript compilation errors
+- Vite build errors
+
+**Solutions:**
+
+1. **Clear Build Cache**
+   ```bash
+   rm -rf dist .vite node_modules/.vite
+   npm run build
+   ```
+
+2. **Check TypeScript Errors**
+   ```bash
+   npm run type-check
+   ```
+
+3. **Increase Node Memory**
+   ```bash
+   # If build runs out of memory
+   export NODE_OPTIONS="--max-old-space-size=4096"
+   npm run build
+   ```
+
+4. **Check for Conflicting Dependencies**
+   ```bash
+   npm ls
+   npm dedupe
+   ```
+
 ### Application Won't Start
 
 **Symptoms:**
@@ -29,6 +151,8 @@ Common issues and solutions for PEFT Studio.
    - OS: Windows 10+, macOS 10.15+, Ubuntu 20.04+
    - RAM: 8GB (16GB recommended)
    - Disk: 10GB free space
+   - Node.js: 18+
+   - Python: 3.10+
    ```
 
 2. **Clear Application Data**
@@ -55,6 +179,14 @@ Common issues and solutions for PEFT Studio.
    
    # macOS/Linux
    cat ~/.config/peft-studio/logs/main.log
+   ```
+
+5. **Run in Development Mode**
+   ```bash
+   # For debugging
+   npm run dev
+   # In another terminal
+   npm run electron:dev
    ```
 
 ### Database Initialization Failed
@@ -530,6 +662,210 @@ Common issues and solutions for PEFT Studio.
    - Check job status
 
 ## Platform-Specific Issues
+
+### Windows-Specific Issues
+
+#### Windows Defender SmartScreen Warning
+
+**Problem:** "Windows protected your PC" message when installing
+
+**Solutions:**
+1. Click "More info" → "Run anyway"
+2. Or add exception in Windows Defender:
+   - Settings → Update & Security → Windows Security
+   - Virus & threat protection → Manage settings
+   - Add exclusion for PEFT Studio installer
+
+#### Installation Requires Administrator
+
+**Problem:** Installation fails with permission error
+
+**Solutions:**
+1. Right-click installer → "Run as administrator"
+2. Or install to user directory instead of Program Files
+
+#### .NET Framework Missing
+
+**Problem:** Application won't start, missing .NET error
+
+**Solutions:**
+1. Install .NET Framework 4.5 or later
+2. Download from Microsoft website
+3. Restart computer after installation
+
+#### Python Not Found in PATH
+
+**Problem:** `python` command not recognized
+
+**Solutions:**
+1. Reinstall Python with "Add to PATH" checked
+2. Or manually add to PATH:
+   ```powershell
+   $env:Path += ";C:\Python310;C:\Python310\Scripts"
+   ```
+
+#### Long Path Issues
+
+**Problem:** Installation fails with path too long error
+
+**Solutions:**
+1. Enable long paths in Windows:
+   ```powershell
+   # Run as Administrator
+   New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" `
+     -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
+   ```
+2. Or install to shorter path (e.g., C:\PEFT)
+
+### macOS-Specific Issues
+
+#### Gatekeeper Blocks Application
+
+**Problem:** "App is from an unidentified developer" or "App is damaged"
+
+**Solutions:**
+1. Right-click app → Open → Open (first time only)
+2. Or remove quarantine attribute:
+   ```bash
+   xattr -cr "/Applications/PEFT Studio.app"
+   ```
+3. Or allow in System Preferences:
+   - System Preferences → Security & Privacy
+   - Click "Open Anyway" for PEFT Studio
+
+#### Code Signing Issues
+
+**Problem:** Application won't open, code signature invalid
+
+**Solutions:**
+1. Re-download installer (may be corrupted)
+2. Verify download integrity:
+   ```bash
+   shasum -a 256 PEFT-Studio-1.0.0.dmg
+   ```
+3. Check for macOS updates
+
+#### Rosetta 2 Required (Apple Silicon)
+
+**Problem:** Application won't run on M1/M2 Mac
+
+**Solutions:**
+1. Install Rosetta 2:
+   ```bash
+   softwareupdate --install-rosetta
+   ```
+2. Or wait for native Apple Silicon build
+
+#### Python Version Conflicts
+
+**Problem:** Multiple Python versions causing issues
+
+**Solutions:**
+1. Use pyenv to manage versions:
+   ```bash
+   brew install pyenv
+   pyenv install 3.10.0
+   pyenv global 3.10.0
+   ```
+2. Or specify Python version explicitly:
+   ```bash
+   python3.10 -m venv peft_env
+   ```
+
+#### Homebrew Permissions
+
+**Problem:** Cannot install dependencies via Homebrew
+
+**Solutions:**
+1. Fix Homebrew permissions:
+   ```bash
+   sudo chown -R $(whoami) /usr/local/Homebrew
+   ```
+2. Or reinstall Homebrew
+
+### Linux-Specific Issues
+
+#### AppImage Won't Execute
+
+**Problem:** Permission denied or FUSE error
+
+**Solutions:**
+1. Make executable:
+   ```bash
+   chmod +x PEFT-Studio-1.0.0.AppImage
+   ```
+2. Install FUSE:
+   ```bash
+   # Ubuntu/Debian
+   sudo apt-get install fuse libfuse2
+   
+   # Fedora
+   sudo dnf install fuse fuse-libs
+   
+   # Arch
+   sudo pacman -S fuse2
+   ```
+3. Or extract and run:
+   ```bash
+   ./PEFT-Studio-1.0.0.AppImage --appimage-extract
+   ./squashfs-root/AppRun
+   ```
+
+#### Missing System Libraries
+
+**Problem:** Application won't start, missing .so files
+
+**Solutions:**
+1. Install required libraries:
+   ```bash
+   # Ubuntu/Debian
+   sudo apt-get install libgtk-3-0 libnotify4 libnss3 libxss1 \
+     libxtst6 xdg-utils libatspi2.0-0 libdrm2 libgbm1 libasound2
+   
+   # Fedora
+   sudo dnf install gtk3 libnotify nss libXScrnSaver libXtst \
+     xdg-utils at-spi2-atk libdrm mesa-libgbm alsa-lib
+   
+   # Arch
+   sudo pacman -S gtk3 libnotify nss libxss libxtst xdg-utils \
+     at-spi2-atk libdrm mesa alsa-lib
+   ```
+
+#### Wayland vs X11 Issues
+
+**Problem:** Application doesn't display correctly on Wayland
+
+**Solutions:**
+1. Force X11 mode:
+   ```bash
+   GDK_BACKEND=x11 ./PEFT-Studio.AppImage
+   ```
+2. Or switch to X11 session at login
+
+#### Python Virtual Environment on Ubuntu
+
+**Problem:** `python3-venv` not installed by default
+
+**Solutions:**
+1. Install venv package:
+   ```bash
+   sudo apt-get install python3-venv python3-pip
+   ```
+
+#### Snap/Flatpak Sandboxing Issues
+
+**Problem:** Application can't access files or GPU
+
+**Solutions:**
+1. Grant necessary permissions:
+   ```bash
+   # For Snap
+   snap connect peft-studio:home
+   snap connect peft-studio:removable-media
+   ```
+2. Or use AppImage/deb instead
+
+### Cloud Platform Issues
 
 ### RunPod Issues
 

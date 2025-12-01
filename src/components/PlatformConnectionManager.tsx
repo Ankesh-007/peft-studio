@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PlatformConnectionCard } from './PlatformConnectionCard';
 import { PlatformCredentialForm } from './PlatformCredentialForm';
-import { LoadingStates } from './LoadingStates';
+import { Spinner } from './LoadingStates';
 
 interface Platform {
   name: string;
@@ -178,8 +178,9 @@ export const PlatformConnectionManager: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <LoadingStates type="spinner" message="Loading platforms..." />
+      <div className="flex flex-col items-center justify-center h-64 gap-4">
+        <Spinner size="lg" />
+        <p className="text-dark-text-secondary">Loading platforms...</p>
       </div>
     );
   }

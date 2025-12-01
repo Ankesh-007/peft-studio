@@ -101,13 +101,15 @@ describe('AnimationScheduler', () => {
     scheduler.clear();
   });
 
-  it('should schedule callbacks', (done) => {
-    let called = false;
-    
-    scheduler.schedule(() => {
-      called = true;
-      expect(called).toBe(true);
-      done();
+  it('should schedule callbacks', () => {
+    return new Promise<void>((resolve) => {
+      let called = false;
+      
+      scheduler.schedule(() => {
+        called = true;
+        expect(called).toBe(true);
+        resolve();
+      });
     });
   });
 
@@ -123,41 +125,45 @@ describe('AnimationScheduler', () => {
     }, 20);
   });
 
-  it('should handle multiple callbacks', (done) => {
-    let count = 0;
-    
-    scheduler.schedule(() => count++);
-    scheduler.schedule(() => count++);
-    scheduler.schedule(() => {
-      count++;
-      expect(count).toBe(3);
-      done();
+  it('should handle multiple callbacks', () => {
+    return new Promise<void>((resolve) => {
+      let count = 0;
+      
+      scheduler.schedule(() => count++);
+      scheduler.schedule(() => count++);
+      scheduler.schedule(() => {
+        count++;
+        expect(count).toBe(3);
+        resolve();
+      });
     });
   });
 });
 
 describe('throttleRAF', () => {
-  it('should throttle function calls', (done) => {
-    let callCount = 0;
-    const throttled = throttleRAF(() => {
-      callCount++;
+  it('should throttle function calls', () => {
+    return new Promise<void>((resolve) => {
+      let callCount = 0;
+      const throttled = throttleRAF(() => {
+        callCount++;
+      });
+
+      // Call multiple times rapidly
+      throttled();
+      throttled();
+      throttled();
+
+      // Should only execute once per frame
+      setTimeout(() => {
+        expect(callCount).toBeLessThanOrEqual(2);
+        resolve();
+      }, 50);
     });
-
-    // Call multiple times rapidly
-    throttled();
-    throttled();
-    throttled();
-
-    // Should only execute once per frame
-    setTimeout(() => {
-      expect(callCount).toBeLessThanOrEqual(2);
-      done();
-    }, 50);
   });
 });
 
 describe('debounceRAF', () => {
-  it('should debounce function calls', (done) => {
+  it('should debounce function calls', async () => {
     let callCount = 0;
     const debounced = debounceRAF(() => {
       callCount++;
@@ -169,10 +175,8 @@ describe('debounceRAF', () => {
     debounced();
 
     // Should only execute once after frames
-    setTimeout(() => {
-      expect(callCount).toBe(1);
-      done();
-    }, 100);
+    await new Promise(resolve => setTimeout(resolve, 100));
+    expect(callCount).toBe(1);
   });
 });
 
@@ -183,42 +187,36 @@ describe('DOMBatcher', () => {
     batcher = new DOMBatcher();
   });
 
-  it('should batch read operations', (done) => {
+  it('should batch read operations', async () => {
     let readExecuted = false;
     
     batcher.read(() => {
       readExecuted = true;
     });
 
-    setTimeout(() => {
-      expect(readExecuted).toBe(true);
-      done();
-    }, 20);
+    await new Promise(resolve => setTimeout(resolve, 20));
+    expect(readExecuted).toBe(true);
   });
 
-  it('should batch write operations', (done) => {
+  it('should batch write operations', async () => {
     let writeExecuted = false;
     
     batcher.write(() => {
       writeExecuted = true;
     });
 
-    setTimeout(() => {
-      expect(writeExecuted).toBe(true);
-      done();
-    }, 20);
+    await new Promise(resolve => setTimeout(resolve, 20));
+    expect(writeExecuted).toBe(true);
   });
 
-  it('should execute reads before writes', (done) => {
+  it('should execute reads before writes', async () => {
     const order: string[] = [];
     
     batcher.write(() => order.push('write'));
     batcher.read(() => order.push('read'));
 
-    setTimeout(() => {
-      expect(order).toEqual(['read', 'write']);
-      done();
-    }, 20);
+    await new Promise(resolve => setTimeout(resolve, 20));
+    expect(order).toEqual(['read', 'write']);
   });
 });
 
@@ -233,18 +231,16 @@ describe('FPSCounter', () => {
     counter.stop();
   });
 
-  it('should track FPS', (done) => {
+  it('should track FPS', async () => {
     let fps = 0;
     
     counter.start((currentFps) => {
       fps = currentFps;
     });
 
-    setTimeout(() => {
-      expect(fps).toBeGreaterThan(0);
-      expect(fps).toBeLessThanOrEqual(60);
-      done();
-    }, 1100); // Wait just over 1 second
+    await new Promise(resolve => setTimeout(resolve, 1100)); // Wait just over 1 second
+    expect(fps).toBeGreaterThan(0);
+    expect(fps).toBeLessThanOrEqual(60);
   });
 
   it('should stop tracking', () => {

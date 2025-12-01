@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 export interface TrainingMetrics {
   step: number;
   epoch: number;
-  loss: float;
+  loss: number;
   learning_rate: number;
   grad_norm?: number;
   throughput: number;

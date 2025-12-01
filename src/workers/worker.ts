@@ -205,7 +205,7 @@ async function compressData(payload: CompressDataPayload): Promise<ArrayBuffer> 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      chunks.push(value);
+      if (value instanceof Uint8Array) chunks.push(value);
     }
 
     // Combine chunks
@@ -253,7 +253,7 @@ async function decompressData(payload: CompressDataPayload): Promise<ArrayBuffer
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      chunks.push(value);
+      if (value instanceof Uint8Array) chunks.push(value);
     }
 
     // Combine chunks

@@ -186,20 +186,4 @@ export const NotificationHandler: React.FC<NotificationHandlerProps> = ({
   return null;
 };
 
-// Type declaration for window.api
-declare global {
-  interface Window {
-    api?: {
-      showNotification: (options: {
-        title: string;
-        message: string;
-        urgency?: string;
-        sound?: boolean;
-      }) => Promise<{ success: boolean }>;
-      setProgress: (progress: number) => Promise<{ success: boolean }>;
-      checkDND: () => Promise<{ enabled: boolean }>;
-    };
-  }
-}
-
 export default NotificationHandler;

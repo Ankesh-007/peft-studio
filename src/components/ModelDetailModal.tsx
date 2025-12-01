@@ -175,7 +175,10 @@ const ModelDetailModal: React.FC<ModelDetailModalProps> = ({
               Compatibility Check
             </h3>
             {loadingCompatibility ? (
-              <Spinner message="Checking compatibility..." />
+              <div className="flex items-center gap-2">
+                <Spinner size="sm" />
+                <span className="text-dark-text-secondary">Checking compatibility...</span>
+              </div>
             ) : compatibility ? (
               <div className="space-y-3">
                 <div

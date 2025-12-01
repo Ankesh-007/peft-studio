@@ -202,8 +202,9 @@ const ModelBrowser: React.FC<ModelBrowserProps> = ({ onModelSelect }) => {
         {/* Models Display */}
         <div className="flex-1 overflow-y-auto p-6">
           {loading && (
-            <div className="flex items-center justify-center h-64">
-              <Spinner message="Loading models..." />
+            <div className="flex flex-col items-center justify-center h-64 gap-4">
+              <Spinner size="lg" />
+              <p className="text-dark-text-secondary">Loading models...</p>
             </div>
           )}
 

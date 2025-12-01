@@ -1,0 +1,171 @@
+name: Verify Branch Protection
+
+# This workflow verifies that branch protection rules are properly configured
+# It runs on a schedule and can be triggered manually
+
+on:
+  schedule:
+    # Run weekly on Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/verify-branch-protection.yml'
+
+jobs:
+  verify-protection:
+    name: Verify Branch Protection Rules
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Check branch protection
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const branch = 'main';
+            
+            try {
+              // Get branch protection rules
+              const { data: protection } = await github.rest.repos.getBranchProtection({
+                owner,
+                repo,
+                branch
+              });
+              
+              console.log('✓ Branch protection is enabled for main branch');
+              
+              // Check required status checks
+              if (protection.required_status_checks) {
+                console.log('✓ Required status checks enabled');
+                console.log('  Strict:', protection.required_status_checks.strict);
+                console.log('  Contexts:', protection.required_status_checks.contexts);
+              } else {
+                console.log('⚠ Required status checks not configured');
+              }
+              
+              // Check required pull request reviews
+              if (protection.required_pull_request_reviews) {
+                console.log('✓ Required pull request reviews enabled');
+                console.log('  Required approvals:', protection.required_pull_request_reviews.required_approving_review_count);
+                console.log('  Dismiss stale reviews:', protection.required_pull_request_reviews.dismiss_stale_reviews);
+              } else {
+                console.log('⚠ Required pull request reviews not configured');
+              }
+              
+              // Check enforce admins
+              if (protection.enforce_admins && protection.enforce_admins.enabled) {
+                console.log('✓ Enforce admins enabled');
+              } else {
+                console.log('⚠ Enforce admins not enabled');
+              }
+              
+              // Check restrictions
+              if (protection.restrictions) {
+                console.log('✓ Push restrictions configured');
+              } else {
+                console.log('ℹ No push restrictions (open to all with write access)');
+              }
+              
+              // Summary
+              console.log('\n=== Branch Protection Summary ===');
+              console.log('Branch protection is configured for main branch');
+              console.log('Review the details above to ensure all required settings are enabled');
+              
+            } catch (error) {
+              if (error.status === 404) {
+                console.error('✗ Branch protection is NOT configured for main branch');
+                console.error('\nPlease configure branch protection:');
+                console.error('1. Go to Settings → Branches');
+                console.error('2. Add branch protection rule for "main"');
+                console.error('3. Enable required settings (see REPOSITORY_CONFIGURATION_GUIDE.md)');
+                core.setFailed('Branch protection not configured');
+              } else {
+                console.error('Error checking branch protection:', error.message);
+                core.setFailed(error.message);
+              }
+            }
+      
+      - name: Verify required workflows exist
+        run: |
+          echo "Checking for required workflow files..."
+          
+          REQUIRED_WORKFLOWS=(
+            ".github/workflows/ci.yml"
+            ".github/workflows/test.yml"
+            ".github/workflows/build.yml"
+            ".github/workflows/code-quality.yml"
+          )
+          
+          MISSING=0
+          for workflow in "${REQUIRED_WORKFLOWS[@]}"; do
+            if [ -f "$workflow" ]; then
+              echo "✓ Found: $workflow"
+            else
+              echo "✗ Missing: $workflow"
+              MISSING=$((MISSING + 1))
+            fi
+          done
+          
+          if [ $MISSING -gt 0 ]; then
+            echo ""
+            echo "⚠ $MISSING required workflow(s) missing"
+            echo "These workflows should be added as required status checks"
+            exit 1
+          else
+            echo ""
+            echo "✓ All required workflows present"
+          fi
+      
+      - name: Check community files
+        run: |
+          echo "Checking for required community files..."
+          
+          REQUIRED_FILES=(
+            "README.md"
+            "LICENSE"
+            "CONTRIBUTING.md"
+            "CODE_OF_CONDUCT.md"
+            "SECURITY.md"
+            ".github/ISSUE_TEMPLATE/bug_report.md"
+            ".github/ISSUE_TEMPLATE/feature_request.md"
+            ".github/pull_request_template.md"
+          )
+          
+          MISSING=0
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ -f "$file" ]; then
+              echo "✓ Found: $file"
+            else
+              echo "✗ Missing: $file"
+              MISSING=$((MISSING + 1))
+            fi
+          done
+          
+          if [ $MISSING -gt 0 ]; then
+            echo ""
+            echo "⚠ $MISSING required file(s) missing"
+            exit 1
+          else
+            echo ""
+            echo "✓ All required community files present"
+          fi
+      
+      - name: Summary
+        if: success()
+        run: |
+          echo ""
+          echo "========================================="
+          echo "Branch Protection Verification Complete"
+          echo "========================================="
+          echo ""
+          echo "✓ Branch protection configured"
+          echo "✓ Required workflows present"
+          echo "✓ Community files present"
+          echo ""
+          echo "Repository is properly configured for public release"

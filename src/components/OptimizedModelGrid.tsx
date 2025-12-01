@@ -11,7 +11,7 @@
  */
 
 import React, { memo, useMemo, useCallback, useState, useRef, useEffect } from 'react';
-import { FixedSizeGrid as Grid } from 'react-window';
+import { Grid } from 'react-window';
 import { ModelMetadata } from '../types/model';
 import { throttleRAF } from '../lib/performance';
 
@@ -62,9 +62,11 @@ const ModelCard = memo<{
       </p>
       
       <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-        <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded">
-          {model.registry}
-        </span>
+        {model.library_name && (
+          <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded">
+            {model.library_name}
+          </span>
+        )}
         {model.downloads && (
           <span>↓ {formatNumber(model.downloads)}</span>
         )}
@@ -115,9 +117,11 @@ const ModelListItem = memo<{
             <h3 className="font-semibold text-gray-900 dark:text-white truncate">
               {model.model_name}
             </h3>
-            <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded">
-              {model.registry}
-            </span>
+            {model.library_name && (
+              <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded">
+                {model.library_name}
+              </span>
+            )}
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
             by {model.author}
@@ -241,7 +245,7 @@ export const OptimizedModelGrid: React.FC<OptimizedModelGridProps> = memo(({
       : rowIndex;
     
     if (index >= models.length) {
-      return null;
+      return <div style={style} />;
     }
 
     const model = models[index];
@@ -280,15 +284,15 @@ export const OptimizedModelGrid: React.FC<OptimizedModelGridProps> = memo(({
     <div ref={containerRef} className="w-full h-full">
       {containerSize.width > 0 && containerSize.height > 0 && (
         <Grid
+          cellComponent={Cell}
+          cellProps={{}}
           columnCount={gridConfig.columnCount}
           columnWidth={gridConfig.columnWidth}
-          height={Math.min(containerSize.height, 800)}
+          defaultHeight={Math.min(containerSize.height, 800)}
           rowCount={gridConfig.rowCount}
           rowHeight={gridConfig.rowHeight}
-          width={containerSize.width}
-        >
-          {Cell}
-        </Grid>
+          defaultWidth={containerSize.width}
+        />
       )}
     </div>
   );

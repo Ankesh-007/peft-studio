@@ -44,10 +44,28 @@
     "peft",
     "llm",
     "fine-tuning",
-    "machine-learning"
+    "machine-learning",
+    "lora",
+    "qlora",
+    "transformers",
+    "huggingface",
+    "electron",
+    "react",
+    "pytorch",
+    "desktop-app",
+    "ai",
+    "deep-learning"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "PEFT Studio Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/peft-studio.git"
+  },
+  "homepage": "https://github.com/YOUR_USERNAME/peft-studio#readme",
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/peft-studio/issues"
+  },
   "dependencies": {
     "@types/react-window": "^1.8.8",
     "clsx": "^2.1.1",
@@ -63,17 +81,24 @@
   },
   "devDependencies": {
     "@axe-core/react": "^4.11.0",
+    "@eslint/js": "^9.39.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.1",
     "@types/node": "^22.10.1",
     "@types/react": "^18.3.12",
+    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/parser": "^8.48.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "fast-check": "^3.15.0",
     "jest-axe": "^10.0.0",
     "jsdom": "^23.2.0",
     "postcss": "^8.4.49",
+    "prettier": "^3.7.3",
     "rollup-plugin-visualizer": "^6.0.5",
     "tailwindcss": "^3.4.15",
     "terser": "^5.44.1",
@@ -95,7 +120,7 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "your-github-username",
+      "owner": "YOUR_USERNAME",
       "repo": "peft-studio"
     },
     "win": {

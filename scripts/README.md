@@ -217,3 +217,161 @@ For issues or questions:
 - Review documentation in project root
 - Check GitHub Actions logs for CI failures
 - Consult electron-builder documentation
+
+
+---
+
+## Repository Configuration Scripts
+
+### configure-repository.sh / configure-repository.ps1
+**Automates GitHub repository configuration for public release**
+
+```bash
+# Unix/Linux/macOS
+./scripts/configure-repository.sh
+
+# Windows
+./scripts/configure-repository.ps1
+```
+
+**Configures:**
+- Repository description and metadata
+- Topics and tags for discoverability
+- Issues, Projects, and Discussions
+- Basic repository settings
+
+**Requirements:**
+- GitHub CLI (gh) installed: https://cli.github.com/
+- GitHub authentication: `gh auth login`
+- Admin access to repository
+
+### verify-branch-protection.sh / verify-branch-protection.ps1
+**Verifies GitHub branch protection rules**
+
+```bash
+# Unix/Linux/macOS
+./scripts/verify-branch-protection.sh
+
+# Windows
+./scripts/verify-branch-protection.ps1
+```
+
+**Checks:**
+- Branch protection enabled for main
+- Required pull request reviews
+- Required status checks
+- Enforce admins setting
+- Required conversation resolution
+
+### verify-workflows.sh / verify-workflows.ps1
+**Validates GitHub Actions workflow files**
+
+```bash
+# Unix/Linux/macOS
+./scripts/verify-workflows.sh
+
+# Windows
+./scripts/verify-workflows.ps1
+```
+
+**Checks:**
+- All required workflow files present
+- YAML syntax validity
+- Workflow triggers configured
+- Required jobs present
+- GitHub Actions directory structure
+
+## Security Scripts
+
+### security-scan.sh / security-scan.ps1
+**Comprehensive security scanning**
+
+```bash
+# Unix/Linux/macOS
+./scripts/security-scan.sh
+
+# Windows
+./scripts/security-scan.ps1
+```
+
+**Scans:**
+- npm dependencies for vulnerabilities
+- Python dependencies for vulnerabilities
+- Git history for secrets
+- Environment files for credentials
+- Database files for sensitive data
+
+## Publishing Scripts
+
+### publish.ps1
+**Pre-publication verification and checklist**
+
+```powershell
+./scripts/publish.ps1
+```
+
+**Verifies:**
+- Security scans pass
+- All tests pass
+- Build succeeds
+- Documentation complete
+- Community standards met
+
+### quick-start.ps1
+**Quick start script for new developers**
+
+```powershell
+./scripts/quick-start.ps1
+```
+
+**Features:**
+- Checks prerequisites
+- Installs dependencies
+- Sets up development environment
+- Runs initial build
+
+---
+
+## Repository Configuration Workflow
+
+For preparing the repository for public release:
+
+1. **Run security scan** to ensure no sensitive data
+   ```bash
+   ./scripts/security-scan.sh  # or .ps1
+   ```
+
+2. **Configure repository** with automated script
+   ```bash
+   ./scripts/configure-repository.sh  # or .ps1
+   ```
+
+3. **Complete manual steps** from script output
+
+4. **Verify configuration**
+   ```bash
+   ./scripts/verify-branch-protection.sh  # or .ps1
+   ./scripts/verify-workflows.sh  # or .ps1
+   ```
+
+5. **Run pre-publication checks**
+   ```powershell
+   ./scripts/publish.ps1
+   ```
+
+See `.github/REPOSITORY_CONFIGURATION_GUIDE.md` for detailed instructions.
+
+---
+
+## Related Documentation
+
+- `.github/REPOSITORY_CONFIGURATION_GUIDE.md` - Comprehensive repository setup guide
+- `.github/REPOSITORY_CONFIGURATION_CHECKLIST.md` - Configuration checklist
+- `.github/REPOSITORY_CONFIGURATION_SUMMARY.md` - Configuration summary
+- `CONTRIBUTING.md` - Contribution guidelines
+- `SECURITY.md` - Security policy
+- `docs/developer-guide/build-and-installers.md` - Build and installer guide
+
+---
+
+**For public release preparation:** Follow the workflow in `.github/REPOSITORY_CONFIGURATION_GUIDE.md`

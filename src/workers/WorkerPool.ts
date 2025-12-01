@@ -83,7 +83,7 @@ export class WorkerPool {
   /**
    * Process the task queue
    */
-  private processQueue() {
+  private processQueue(): void {
     // Find idle workers
     const idleWorkers = Array.from(this.workers.values()).filter(
       (w) => w.status === WorkerStatus.IDLE
@@ -92,7 +92,8 @@ export class WorkerPool {
     // If no idle workers and we can create more, create one
     if (idleWorkers.length === 0 && this.workers.size < this.config.maxWorkers) {
       this.createWorker();
-      return this.processQueue();
+      this.processQueue();
+      return;
     }
 
     // Assign tasks to idle workers
