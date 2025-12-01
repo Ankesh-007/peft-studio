@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
-import { getTooltip, hasTooltip, getAllTooltipKeys } from '../config/tooltips';
+import { getTooltip, hasTooltip, getAllTooltipKeys } from '../../config/tooltips';
 
 // **Feature: simplified-llm-optimization, Property 2: Configuration tooltips completeness**
 

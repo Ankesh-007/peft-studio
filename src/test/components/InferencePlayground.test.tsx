@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import InferencePlayground from '../components/InferencePlayground';
+import InferencePlayground from '../../components/InferencePlayground';
 
 // Mock fetch
 global.fetch = vi.fn();

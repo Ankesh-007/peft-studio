@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import WelcomeScreen from '../components/onboarding/WelcomeScreen';
-import SetupWizard from '../components/onboarding/SetupWizard';
-import GuidedTour from '../components/onboarding/GuidedTour';
-import { useOnboarding } from '../hooks/useOnboarding';
+import WelcomeScreen from '../../components/onboarding/WelcomeScreen';
+import SetupWizard from '../../components/onboarding/SetupWizard';
+import GuidedTour from '../../components/onboarding/GuidedTour';
+import { useOnboarding } from '../../hooks/useOnboarding';
 import { renderHook, act } from '@testing-library/react';
 
 describe('Onboarding Flow', () => {

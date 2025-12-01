@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import TrainingWizard from '../components/TrainingWizard';
-import Layout from '../components/Layout';
-import Dashboard from '../components/Dashboard';
-import { AccessibleButton } from '../components/AccessibleButton';
-import { AccessibleInput } from '../components/AccessibleInput';
+import TrainingWizard from '../../components/TrainingWizard';
+import Layout from '../../components/Layout';
+import Dashboard from '../../components/Dashboard';
+import { AccessibleButton } from '../../components/AccessibleButton';
+import { AccessibleInput } from '../../components/AccessibleInput';
 
 // Mock window.matchMedia for responsive design tests
 beforeAll(() => {

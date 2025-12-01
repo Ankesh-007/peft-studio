@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { WorkerMessageType } from '../workers/types';
+import { WorkerMessageType } from '../../workers/types';
 
 // Mock Worker API for Node.js environment
 class MockWorker {
@@ -55,7 +55,7 @@ class MockWorker {
 };
 
 // Import after mocking
-import { WorkerPool } from '../workers/WorkerPool';
+import { WorkerPool } from '../../workers/WorkerPool';
 
 describe('WorkerPool', () => {
   let pool: WorkerPool;

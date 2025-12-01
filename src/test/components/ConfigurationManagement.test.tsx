@@ -6,7 +6,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import ConfigurationManagement from '../components/ConfigurationManagement';
+import ConfigurationManagement from '../../components/ConfigurationManagement';
 
 // Mock fetch
 global.fetch = vi.fn();

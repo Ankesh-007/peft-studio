@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import GradioDemoGenerator from '../components/GradioDemoGenerator';
+import GradioDemoGenerator from '../../components/GradioDemoGenerator';
 
 // Mock fetch
 global.fetch = vi.fn();

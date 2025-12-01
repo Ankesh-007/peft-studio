@@ -14,7 +14,7 @@ import {
   debounceRAF,
   DOMBatcher,
   FPSCounter
-} from '../lib/performance';
+} from '../../lib/performance';
 
 describe('PerformanceMonitor', () => {
   let monitor: PerformanceMonitor;
