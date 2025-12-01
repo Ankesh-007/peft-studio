@@ -1,6 +1,9 @@
 """
 Training Orchestration Service for managing training lifecycle.
-Handles job queue, state machine, checkpointing, and pause/resume functionality.
+Handles job queue, state machine, checkpointing, pause/resume functionality,
+multi-provider job submission, and artifact management.
+
+Requirements: 5.1, 5.2, 5.3, 5.4, 5.5
 """
 
 from typing import Dict, List, Optional, Any, Callable
@@ -11,17 +14,32 @@ import json
 import logging
 import threading
 import queue
-import torch
 from pathlib import Path
 import shutil
+import hashlib
+import asyncio
 
-from services.quality_analysis_service import (
+# Lazy import torch to reduce startup memory usage
+_torch = None
+
+def _get_torch():
+    """Lazy load torch module"""
+    global _torch
+    if _torch is None:
+        import torch as _torch_module
+        _torch = _torch_module
+    return _torch
+
+from backend.connectors.base import PlatformConnector, JobStatus as ConnectorJobStatus
+from backend.connectors.connector_manager import get_connector_manager
+
+from backend.services.quality_analysis_service import (
     analyze_training_quality,
     TrainingResult,
     QualityAnalysis,
     generate_quality_report
 )
-from services.notification_service import (
+from backend.services.notification_service import (
     check_progress_milestone,
     create_error_notification,
     NotificationManager,
@@ -108,7 +126,7 @@ class CheckpointData:
         path.parent.mkdir(parents=True, exist_ok=True)
         
         # Save model and optimizer states separately (they're large)
-        torch.save({
+        _get_torch().save({
             'model_state_dict': self.model_state_dict,
             'optimizer_state_dict': self.optimizer_state_dict,
             'scheduler_state_dict': self.scheduler_state_dict,
@@ -135,7 +153,7 @@ class CheckpointData:
     def load(cls, path: Path) -> 'CheckpointData':
         """Load checkpoint from disk"""
         # Load model and optimizer states
-        checkpoint = torch.load(path / "model_checkpoint.pt")
+        checkpoint = _get_torch().load(path / "model_checkpoint.pt")
         
         # Load metadata
         with open(path / "checkpoint_metadata.json", 'r') as f:
@@ -203,6 +221,30 @@ class TrainingConfig:
 
 
 @dataclass
+class ArtifactInfo:
+    """Information about a training artifact"""
+    artifact_id: str
+    job_id: str
+    path: Path
+    size_bytes: int
+    hash_sha256: str
+    created_at: datetime = field(default_factory=datetime.now)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    
+    def to_dict(self) -> Dict:
+        """Convert to dictionary"""
+        return {
+            'artifact_id': self.artifact_id,
+            'job_id': self.job_id,
+            'path': str(self.path),
+            'size_bytes': self.size_bytes,
+            'hash_sha256': self.hash_sha256,
+            'created_at': self.created_at.isoformat(),
+            'metadata': self.metadata
+        }
+
+
+@dataclass
 class TrainingJob:
     """Training job with state and metadata"""
     job_id: str
@@ -219,6 +261,11 @@ class TrainingJob:
     quality_analysis: Optional[QualityAnalysis] = None
     notifications: List[NotificationEvent] = field(default_factory=list)
     
+    # Multi-provider support
+    provider: Optional[str] = None  # Provider name (runpod, lambda, vastai, local)
+    provider_job_id: Optional[str] = None  # Job ID from the provider
+    artifact_info: Optional[ArtifactInfo] = None  # Downloaded artifact information
+    
     def to_dict(self) -> Dict:
         """Convert to dictionary for API responses"""
         return {
@@ -231,20 +278,37 @@ class TrainingJob:
             'started_at': self.started_at.isoformat() if self.started_at else None,
             'completed_at': self.completed_at.isoformat() if self.completed_at else None,
             'paused_at': self.paused_at.isoformat() if self.paused_at else None,
-            'checkpoint_path': str(self.checkpoint_path) if self.checkpoint_path else None
+            'checkpoint_path': str(self.checkpoint_path) if self.checkpoint_path else None,
+            'provider': self.provider,
+            'provider_job_id': self.provider_job_id,
+            'artifact_info': self.artifact_info.to_dict() if self.artifact_info else None
         }
 
 
 class TrainingOrchestrator:
     """
-    Orchestrates training jobs with state management, checkpointing, and pause/resume.
+    Orchestrates training jobs with state management, checkpointing, pause/resume,
+    multi-provider job submission, and artifact management.
+    
+    Requirements: 5.1, 5.2, 5.3, 5.4, 5.5
     """
     
-    def __init__(self, checkpoint_base_dir: str = "./checkpoints"):
+    def __init__(
+        self,
+        checkpoint_base_dir: str = "./checkpoints",
+        artifacts_base_dir: str = "./artifacts"
+    ):
         self.jobs: Dict[str, TrainingJob] = {}
         self.job_queue: queue.Queue = queue.Queue()
         self.checkpoint_base_dir = Path(checkpoint_base_dir)
         self.checkpoint_base_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Artifacts storage
+        self.artifacts_base_dir = Path(artifacts_base_dir)
+        self.artifacts_base_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Connector manager for multi-provider support
+        self.connector_manager = get_connector_manager()
         
         # Training control
         self._training_threads: Dict[str, threading.Thread] = {}
@@ -260,7 +324,7 @@ class TrainingOrchestrator:
         # Callbacks for notifications
         self._notification_callbacks: Dict[str, List[Callable]] = {}
         
-        logger.info("TrainingOrchestrator initialized")
+        logger.info("TrainingOrchestrator initialized with multi-provider support")
     
     def create_job(self, config: TrainingConfig) -> TrainingJob:
         """
@@ -283,12 +347,94 @@ class TrainingOrchestrator:
         
         return job
     
-    def start_training(self, job_id: str) -> None:
+    async def submit_job_to_provider(self, job_id: str, provider: str) -> str:
         """
-        Start a training job.
+        Submit a training job to a specific provider.
         
         Args:
             job_id: Job identifier
+            provider: Provider name (runpod, lambda, vastai, local)
+            
+        Returns:
+            Provider job ID
+            
+        Raises:
+            ValueError: If job or provider not found
+            RuntimeError: If submission fails
+            
+        Requirements: 5.1, 5.2
+        """
+        if job_id not in self.jobs:
+            raise ValueError(f"Job not found: {job_id}")
+        
+        job = self.jobs[job_id]
+        
+        # Get connector for provider
+        connector = self.connector_manager.get(provider)
+        if not connector:
+            raise ValueError(f"Provider not found: {provider}")
+        
+        if not connector.supports_training:
+            raise ValueError(f"Provider {provider} does not support training")
+        
+        # Convert our config to connector config
+        from connectors.base import TrainingConfig as ConnectorConfig
+        connector_config = ConnectorConfig(
+            base_model=job.config.model_name,
+            model_source="huggingface",  # Default
+            algorithm=job.config.peft_method,
+            rank=job.config.lora_r,
+            alpha=job.config.lora_alpha,
+            dropout=job.config.lora_dropout,
+            target_modules=job.config.target_modules,
+            quantization=job.config.quantization,
+            learning_rate=job.config.learning_rate,
+            batch_size=job.config.batch_size,
+            gradient_accumulation_steps=job.config.gradient_accumulation_steps,
+            num_epochs=job.config.num_epochs,
+            warmup_steps=job.config.warmup_steps,
+            provider=provider,
+            dataset_path=job.config.dataset_path,
+            output_dir=job.config.output_dir,
+            project_name=job_id
+        )
+        
+        # Submit job to provider
+        try:
+            provider_job_id = await connector.submit_job(connector_config)
+            job.provider = provider
+            job.provider_job_id = provider_job_id
+            job.state = TrainingState.RUNNING
+            job.started_at = datetime.now()
+            
+            logger.info(f"Submitted job {job_id} to {provider} as {provider_job_id}")
+            
+            # Start monitoring thread
+            thread = threading.Thread(
+                target=self._monitor_provider_job,
+                args=(job_id,),
+                daemon=True
+            )
+            self._training_threads[job_id] = thread
+            thread.start()
+            
+            return provider_job_id
+            
+        except Exception as e:
+            logger.error(f"Failed to submit job {job_id} to {provider}: {e}")
+            job.state = TrainingState.FAILED
+            job.error_message = f"Submission failed: {str(e)}"
+            raise RuntimeError(f"Failed to submit job: {str(e)}")
+    
+    def start_training(self, job_id: str, provider: Optional[str] = None) -> None:
+        """
+        Start a training job (local or on a provider).
+        
+        Args:
+            job_id: Job identifier
+            provider: Optional provider name for cloud training
+            
+        Requirements: 5.1, 5.2
         """
         if job_id not in self.jobs:
             raise ValueError(f"Job not found: {job_id}")
@@ -298,7 +444,19 @@ class TrainingOrchestrator:
         if job.state not in [TrainingState.CREATED, TrainingState.PAUSED]:
             raise ValueError(f"Cannot start job in state: {job.state}")
         
-        # Update job state
+        # If provider specified, submit to provider
+        if provider and provider != "local":
+            # Run async submission in thread
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(self.submit_job_to_provider(job_id, provider))
+            finally:
+                loop.close()
+            return
+        
+        # Local training
+        job.provider = "local"
         job.state = TrainingState.INITIALIZING
         if job.started_at is None:
             job.started_at = datetime.now()
@@ -318,7 +476,7 @@ class TrainingOrchestrator:
         self._training_threads[job_id] = thread
         thread.start()
         
-        logger.info(f"Started training job: {job_id}")
+        logger.info(f"Started local training job: {job_id}")
     
     def pause_training(self, job_id: str) -> CheckpointData:
         """
@@ -391,12 +549,52 @@ class TrainingOrchestrator:
         # Restart training (this will create new flags and thread)
         self.start_training(job_id)
     
-    def stop_training(self, job_id: str) -> None:
+    async def cancel_provider_job(self, job_id: str) -> bool:
         """
-        Stop a training job permanently.
+        Cancel a job running on a provider.
         
         Args:
             job_id: Job identifier
+            
+        Returns:
+            True if cancellation successful
+            
+        Requirements: 5.4
+        """
+        if job_id not in self.jobs:
+            raise ValueError(f"Job not found: {job_id}")
+        
+        job = self.jobs[job_id]
+        
+        if not job.provider or job.provider == "local":
+            raise ValueError(f"Job {job_id} is not running on a provider")
+        
+        if not job.provider_job_id:
+            raise ValueError(f"Job {job_id} has no provider job ID")
+        
+        # Get connector
+        connector = self.connector_manager.get(job.provider)
+        if not connector:
+            raise ValueError(f"Provider not found: {job.provider}")
+        
+        # Cancel job on provider
+        try:
+            success = await connector.cancel_job(job.provider_job_id)
+            if success:
+                logger.info(f"Cancelled job {job_id} on {job.provider}")
+            return success
+        except Exception as e:
+            logger.error(f"Failed to cancel job {job_id} on {job.provider}: {e}")
+            raise
+    
+    def stop_training(self, job_id: str) -> None:
+        """
+        Stop a training job permanently (local or provider).
+        
+        Args:
+            job_id: Job identifier
+            
+        Requirements: 5.4
         """
         if job_id not in self.jobs:
             raise ValueError(f"Job not found: {job_id}")
@@ -408,7 +606,18 @@ class TrainingOrchestrator:
         
         logger.info(f"Stopping training job: {job_id}")
         
-        # Set stop flag if it exists
+        # If running on provider, cancel there
+        if job.provider and job.provider != "local" and job.provider_job_id:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(self.cancel_provider_job(job_id))
+            except Exception as e:
+                logger.error(f"Error cancelling provider job: {e}")
+            finally:
+                loop.close()
+        
+        # Set stop flag if it exists (for local jobs)
         if job_id in self._stop_flags:
             self._stop_flags[job_id].set()
         
@@ -478,6 +687,101 @@ class TrainingOrchestrator:
         
         self._notification_callbacks[job_id].append(callback)
     
+    def _calculate_file_hash(self, file_path: Path) -> str:
+        """
+        Calculate SHA256 hash of a file.
+        
+        Args:
+            file_path: Path to file
+            
+        Returns:
+            Hex digest of SHA256 hash
+        """
+        sha256_hash = hashlib.sha256()
+        with open(file_path, "rb") as f:
+            # Read in chunks to handle large files
+            for byte_block in iter(lambda: f.read(4096), b""):
+                sha256_hash.update(byte_block)
+        return sha256_hash.hexdigest()
+    
+    async def download_artifact(self, job_id: str) -> ArtifactInfo:
+        """
+        Download training artifact from provider and store locally.
+        
+        Args:
+            job_id: Job identifier
+            
+        Returns:
+            ArtifactInfo with download details
+            
+        Raises:
+            ValueError: If job not found or not on provider
+            RuntimeError: If download fails
+            
+        Requirements: 5.5
+        """
+        if job_id not in self.jobs:
+            raise ValueError(f"Job not found: {job_id}")
+        
+        job = self.jobs[job_id]
+        
+        if not job.provider or job.provider == "local":
+            raise ValueError(f"Job {job_id} is not running on a provider")
+        
+        if not job.provider_job_id:
+            raise ValueError(f"Job {job_id} has no provider job ID")
+        
+        # Get connector
+        connector = self.connector_manager.get(job.provider)
+        if not connector:
+            raise ValueError(f"Provider not found: {job.provider}")
+        
+        # Download artifact
+        try:
+            logger.info(f"Downloading artifact for job {job_id} from {job.provider}")
+            artifact_data = await connector.fetch_artifact(job.provider_job_id)
+            
+            # Create artifact directory
+            artifact_dir = self.artifacts_base_dir / job_id
+            artifact_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Save artifact
+            artifact_path = artifact_dir / "adapter_model.safetensors"
+            with open(artifact_path, 'wb') as f:
+                f.write(artifact_data)
+            
+            # Calculate hash for integrity verification
+            file_hash = self._calculate_file_hash(artifact_path)
+            
+            # Create artifact info
+            artifact_info = ArtifactInfo(
+                artifact_id=f"{job_id}_artifact",
+                job_id=job_id,
+                path=artifact_path,
+                size_bytes=len(artifact_data),
+                hash_sha256=file_hash,
+                created_at=datetime.now(),
+                metadata={
+                    'provider': job.provider,
+                    'provider_job_id': job.provider_job_id,
+                    'model_name': job.config.model_name,
+                    'peft_method': job.config.peft_method
+                }
+            )
+            
+            job.artifact_info = artifact_info
+            
+            logger.info(
+                f"Downloaded artifact for job {job_id}: "
+                f"{artifact_info.size_bytes} bytes, hash: {file_hash[:16]}..."
+            )
+            
+            return artifact_info
+            
+        except Exception as e:
+            logger.error(f"Failed to download artifact for job {job_id}: {e}")
+            raise RuntimeError(f"Failed to download artifact: {str(e)}")
+    
     def _send_notification(self, job_id: str, notification: NotificationEvent) -> None:
         """
         Send a notification for a job.
@@ -499,9 +803,117 @@ class TrainingOrchestrator:
         
         logger.info(f"Notification sent for job {job_id}: {notification.title}")
     
+    def _monitor_provider_job(self, job_id: str) -> None:
+        """
+        Monitor a job running on a provider (runs in separate thread).
+        
+        Args:
+            job_id: Job identifier
+            
+        Requirements: 5.3
+        """
+        job = self.jobs[job_id]
+        
+        if not job.provider or not job.provider_job_id:
+            logger.error(f"Cannot monitor job {job_id}: missing provider info")
+            return
+        
+        connector = self.connector_manager.get(job.provider)
+        if not connector:
+            logger.error(f"Cannot monitor job {job_id}: provider {job.provider} not found")
+            return
+        
+        logger.info(f"Monitoring job {job_id} on {job.provider}")
+        
+        try:
+            # Create event loop for async operations
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            
+            # Stream logs
+            async def stream_logs():
+                try:
+                    async for log_line in connector.stream_logs(job.provider_job_id):
+                        logger.debug(f"[{job_id}] {log_line}")
+                        # TODO: Parse logs for metrics
+                except Exception as e:
+                    logger.error(f"Error streaming logs for job {job_id}: {e}")
+            
+            # Monitor status
+            async def monitor_status():
+                while True:
+                    try:
+                        status = await connector.get_job_status(job.provider_job_id)
+                        
+                        if status == ConnectorJobStatus.COMPLETED:
+                            job.state = TrainingState.COMPLETED
+                            job.completed_at = datetime.now()
+                            
+                            # Download artifact
+                            try:
+                                artifact_info = await self.download_artifact(job_id)
+                                logger.info(f"Artifact downloaded for job {job_id}")
+                            except Exception as e:
+                                logger.error(f"Failed to download artifact: {e}")
+                            
+                            # Send completion notification
+                            from services.notification_service import NotificationEvent, NotificationType
+                            completion_notification = NotificationEvent(
+                                type=NotificationType.COMPLETION,
+                                title="Training Complete! 🎉",
+                                message=f"Your model training on {job.provider} has finished successfully.",
+                                milestone=100,
+                                sound=True,
+                                urgency="normal"
+                            )
+                            self._send_notification(job_id, completion_notification)
+                            
+                            break
+                            
+                        elif status == ConnectorJobStatus.FAILED:
+                            job.state = TrainingState.FAILED
+                            job.error_message = "Training failed on provider"
+                            job.completed_at = datetime.now()
+                            
+                            # Send error notification
+                            error_notification = create_error_notification(
+                                "Training failed on provider"
+                            )
+                            self._send_notification(job_id, error_notification)
+                            
+                            break
+                            
+                        elif status == ConnectorJobStatus.CANCELLED:
+                            job.state = TrainingState.STOPPED
+                            job.completed_at = datetime.now()
+                            break
+                        
+                        # Still running, check again in 10 seconds
+                        await asyncio.sleep(10)
+                        
+                    except Exception as e:
+                        logger.error(f"Error checking status for job {job_id}: {e}")
+                        await asyncio.sleep(10)
+            
+            # Run both tasks concurrently
+            loop.run_until_complete(asyncio.gather(
+                stream_logs(),
+                monitor_status()
+            ))
+            
+        except Exception as e:
+            logger.error(f"Error monitoring job {job_id}: {e}")
+            job.state = TrainingState.FAILED
+            job.error_message = f"Monitoring error: {str(e)}"
+            job.completed_at = datetime.now()
+        
+        finally:
+            loop.close()
+            self._cleanup_job(job_id)
+    
     def _training_loop(self, job_id: str) -> None:
         """
-        Main training loop (runs in separate thread).
+        Main training loop for local training (runs in separate thread).
         
         Args:
             job_id: Job identifier
@@ -759,8 +1171,8 @@ class TrainingOrchestrator:
             del self._notification_managers[job_id]
         
         # Clear GPU memory
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
+        if _get_torch().cuda.is_available():
+            _get_torch().cuda.empty_cache()
         
         logger.debug(f"Cleaned up resources for job {job_id}")
     

@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\oft\layer.py
-# hypothesis_version: 6.148.3
-
-[0.0, 1e-05, 6e-05, 0.1, 2.0, '...rk,rkc->...rc', 'EetqLinear', 'HQQLinear', 'QuantizedLinear', 'WQLinear_GEMM', 'W_q', 'codebooks', 'cols', 'fan_in_fan_out', 'in_features', 'infeatures', 'input_size', 'oft.', 'oft_R', 'oft_block_size', 'oft_dropout', 'out_features', 'outfeatures', 'output_size', 'r', 'rows', 'w_bit']

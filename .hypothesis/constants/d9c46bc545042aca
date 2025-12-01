@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\data_types\base_types\media.py
-# hypothesis_version: 6.148.3
-
-['Artifact', 'BatchableMedia', 'Media', '^(gs|s3|https?)://', '_sha256', '_type', 'artifact_path', 'caption', 'file', 'np.ndarray', 'path', 'rb', 'sha256', 'size', 'wandb.Run']

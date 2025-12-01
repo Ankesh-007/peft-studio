@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\lora\torchao.py
-# hypothesis_version: 6.148.3
-
-['layout_tensor', 'lora.Linear', 'lora_bias', 'tensor_impl', 'weight']

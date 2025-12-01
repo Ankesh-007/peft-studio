@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\transformers\utils\backbone_utils.py
-# hypothesis_version: 6.148.3
-
-['PretrainedConfig', '_backbone', '_out_features', '_out_indices', 'backbone', 'backbone_config', 'backbone_kwargs', 'module', 'num_chs', 'out_features', 'out_indices', 'output_attentions', 'stage_names', 'timm', 'transformers', 'use_timm_backbone']

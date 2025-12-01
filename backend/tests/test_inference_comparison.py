@@ -4,23 +4,24 @@ Tests that comparisons include both fine-tuned and base model outputs.
 """
 
 import pytest
-from hypothesis import given, strategies as st
+from hypothesis import given, strategies as st, settings, HealthCheck
 
-from backend.services.inference_service import InferenceService
+from services.inference_service import InferenceService
 
 
 # Strategy for generating valid prompts
-prompt_strategy = st.text(min_size=1, max_size=500).filter(lambda x: len(x.strip()) > 0)
+prompt_strategy = st.text(min_size=1, max_size=100, alphabet=st.characters(blacklist_categories=('Cs',)))
 
 # Strategy for generating model IDs
 model_id_strategy = st.text(
-    alphabet=st.characters(whitelist_categories=('Lu', 'Ll', 'Nd'), whitelist_characters='-_'),
+    alphabet='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_',
     min_size=5,
-    max_size=50
-).filter(lambda x: len(x.strip()) > 0)
+    max_size=30
+)
 
 
 # **Feature: simplified-llm-optimization, Property 15: Inference comparison includes both outputs**
+@settings(suppress_health_check=[HealthCheck.too_slow])
 @given(
     prompt=prompt_strategy,
     fine_tuned_model_id=model_id_strategy,

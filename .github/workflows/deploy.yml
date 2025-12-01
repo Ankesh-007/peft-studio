@@ -1,0 +1,245 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      version:
+        description: 'Version to deploy'
+        required: true
+
+jobs:
+  prepare-release:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.VERSION }}
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Extract version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Deploying version: $VERSION"
+      
+      - name: Generate changelog
+        id: changelog
+        run: |
+          if [ -f "CHANGELOG.md" ]; then
+            CHANGELOG=$(cat CHANGELOG.md | head -n 50)
+          else
+            CHANGELOG="See commit history for changes"
+          fi
+          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
+          name: PEFT Studio v${{ steps.get_version.outputs.VERSION }}
+          body: |
+            ## PEFT Studio v${{ steps.get_version.outputs.VERSION }}
+            
+            ### What's New
+            
+            ${{ steps.changelog.outputs.CHANGELOG }}
+            
+            ### Downloads
+            
+            Choose the appropriate installer for your platform:
+            
+            - **Windows:** `PEFT-Studio-Setup-${{ steps.get_version.outputs.VERSION }}.exe`
+            - **macOS:** `PEFT-Studio-${{ steps.get_version.outputs.VERSION }}.dmg`
+            - **Linux:** `PEFT-Studio-${{ steps.get_version.outputs.VERSION }}.AppImage`
+            
+            ### Installation Instructions
+            
+            See [Installation Guide](https://github.com/${{ github.repository }}/blob/main/docs/user-guide/installation.md)
+            
+            ### System Requirements
+            
+            - **Windows:** Windows 10 or later (64-bit)
+            - **macOS:** macOS 10.13 or later
+            - **Linux:** Ubuntu 18.04 or later
+            
+            ### Support
+            
+            - [Documentation](https://github.com/${{ github.repository }}/docs)
+            - [Report Issues](https://github.com/${{ github.repository }}/issues)
+          draft: false
+          prerelease: ${{ contains(steps.get_version.outputs.VERSION, 'beta') || contains(steps.get_version.outputs.VERSION, 'alpha') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-deploy:
+    name: Build and Deploy - ${{ matrix.os }}
+    needs: prepare-release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            platform: linux
+          - os: windows-latest
+            platform: windows
+          - os: macos-latest
+            platform: mac
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd backend
+          pip install -r requirements.txt
+      
+      - name: Run tests
+        run: |
+          npm run test -- --run
+          cd backend
+          pytest tests/ -v --tb=short
+      
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+          VERSION: ${{ needs.prepare-release.outputs.version }}
+      
+      - name: Package application
+        run: npm run package
+        env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Generate checksums
+        run: |
+          cd release
+          if [ "${{ matrix.platform }}" == "windows" ]; then
+            certutil -hashfile *.exe SHA256 > checksums.txt
+          else
+            shasum -a 256 * > checksums.txt
+          fi
+        shell: bash
+      
+      - name: Upload to release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.prepare-release.outputs.version }}
+          files: |
+            release/*.exe
+            release/*.dmg
+            release/*.zip
+            release/*.AppImage
+            release/*.deb
+            release/checksums.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-${{ matrix.platform }}
+          path: release/
+          retention-days: 90
+
+  deploy-to-stores:
+    name: Deploy to App Stores
+    needs: [prepare-release, build-and-deploy]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+      
+      - name: Deploy to Microsoft Store
+        if: false  # Enable when ready
+        run: |
+          echo "Deploying to Microsoft Store..."
+          # Add Microsoft Store deployment logic
+        env:
+          MS_STORE_CLIENT_ID: ${{ secrets.MS_STORE_CLIENT_ID }}
+          MS_STORE_CLIENT_SECRET: ${{ secrets.MS_STORE_CLIENT_SECRET }}
+      
+      - name: Deploy to Mac App Store
+        if: false  # Enable when ready
+        run: |
+          echo "Deploying to Mac App Store..."
+          # Add Mac App Store deployment logic
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+      
+      - name: Deploy to Snap Store
+        if: false  # Enable when ready
+        run: |
+          echo "Deploying to Snap Store..."
+          # Add Snap Store deployment logic
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+
+  notify-deployment:
+    name: Notify Deployment
+    needs: [prepare-release, build-and-deploy, deploy-to-stores]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Send deployment notification
+        run: |
+          echo "Deployment completed for version ${{ needs.prepare-release.outputs.version }}"
+          echo "Status: ${{ needs.build-and-deploy.result }}"
+      
+      - name: Create deployment summary
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Version: ${{ needs.prepare-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Build Status: ${{ needs.build-and-deploy.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Store Deployment: ${{ needs.deploy-to-stores.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Release URL: https://github.com/${{ github.repository }}/releases/tag/v${{ needs.prepare-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY

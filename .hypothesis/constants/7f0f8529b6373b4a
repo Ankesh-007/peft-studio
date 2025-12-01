@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\uvicorn\supervisors\statreload.py
-# hypothesis_version: 6.148.3
-
-['*.py', 'StatReload', 'uvicorn.error']

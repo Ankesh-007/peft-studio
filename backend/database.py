@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
-from config import DATABASE_URL
+from backend.config import DATABASE_URL
 
 Base = declarative_base()
 
@@ -17,7 +17,7 @@ class Model(Base):
     size_mb = Column(Float)
     architecture = Column(String)
     quantization = Column(String)
-    metadata = Column(JSON)
+    model_metadata = Column(JSON)  # Renamed from 'metadata' to avoid SQLAlchemy reserved word
     
     training_runs = relationship("TrainingRun", back_populates="model")
 
@@ -32,7 +32,7 @@ class Dataset(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     size_mb = Column(Float)
     validation_status = Column(String)
-    metadata = Column(JSON)
+    dataset_metadata = Column(JSON)  # Renamed from 'metadata' to avoid SQLAlchemy reserved word
     
     training_runs = relationship("TrainingRun", back_populates="dataset")
 
@@ -40,16 +40,39 @@ class TrainingRun(Base):
     __tablename__ = 'training_runs'
     
     id = Column(Integer, primary_key=True)
+    job_id = Column(String, unique=True, nullable=False, index=True)  # Unique job identifier
     name = Column(String)
     model_id = Column(Integer, ForeignKey('models.id'))
     dataset_id = Column(Integer, ForeignKey('datasets.id'))
-    status = Column(String)  # running, paused, completed, failed
+    status = Column(String, index=True)  # running, paused, completed, failed, stopped
     config = Column(JSON)
-    started_at = Column(DateTime, default=datetime.utcnow)
+    started_at = Column(DateTime, default=datetime.utcnow, index=True)
     completed_at = Column(DateTime)
+    paused_at = Column(DateTime)
     final_loss = Column(Float)
     best_checkpoint = Column(String)
     logs = Column(Text)
+    
+    # Multi-provider support
+    provider = Column(String)  # runpod, lambda, vastai, local
+    provider_job_id = Column(String)  # Job ID from the provider
+    
+    # Metrics and monitoring
+    current_step = Column(Integer, default=0)
+    total_steps = Column(Integer)
+    current_epoch = Column(Integer, default=0)
+    current_loss = Column(Float)
+    
+    # Resource tracking
+    gpu_utilization = Column(Float)
+    memory_used = Column(Float)
+    
+    # Error tracking
+    error_message = Column(Text)
+    
+    # Artifact tracking
+    artifact_path = Column(String)
+    artifact_hash = Column(String)
     
     model = relationship("Model", back_populates="training_runs")
     dataset = relationship("Dataset", back_populates="training_runs")

@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\vendor\graphql-core-1.1\wandb_graphql\validation\validation.py
-# hypothesis_version: 6.148.3
-
-['Must provide schema', '_ast', '_errors', '_fragment_spreads', '_fragments', '_schema', '_type_info', '_variable_usages', 'node', 'type', 'type_info', 'usages']

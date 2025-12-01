@@ -1,8 +1,13 @@
-const { app, BrowserWindow, Notification, ipcMain } = require('electron');
+const { app, BrowserWindow, Notification, ipcMain, dialog } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 
 let mainWindow;
 let pythonProcess;
+
+// Configure auto-updater
+autoUpdater.autoDownload = false; // We'll download manually after user confirmation
+autoUpdater.autoInstallOnAppQuit = true;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -48,9 +53,89 @@ function startPythonBackend() {
   });
 }
 
+// Auto-updater functions
+function checkForUpdates() {
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Skipping update check in development mode');
+    return;
+  }
+  
+  autoUpdater.checkForUpdates().catch(err => {
+    console.error('Error checking for updates:', err);
+  });
+}
+
+// Auto-updater event handlers
+autoUpdater.on('checking-for-update', () => {
+  console.log('Checking for updates...');
+  sendUpdateStatus('checking');
+});
+
+autoUpdater.on('update-available', (info) => {
+  console.log('Update available:', info);
+  sendUpdateStatus('available', info);
+  
+  // Show notification to user
+  if (mainWindow) {
+    mainWindow.webContents.send('update-available', {
+      version: info.version,
+      releaseNotes: info.releaseNotes,
+      releaseDate: info.releaseDate
+    });
+  }
+});
+
+autoUpdater.on('update-not-available', (info) => {
+  console.log('Update not available:', info);
+  sendUpdateStatus('not-available', info);
+});
+
+autoUpdater.on('error', (err) => {
+  console.error('Update error:', err);
+  sendUpdateStatus('error', { message: err.message });
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+  console.log(`Download progress: ${progressObj.percent}%`);
+  sendUpdateStatus('downloading', {
+    percent: progressObj.percent,
+    bytesPerSecond: progressObj.bytesPerSecond,
+    transferred: progressObj.transferred,
+    total: progressObj.total
+  });
+  
+  if (mainWindow) {
+    mainWindow.webContents.send('update-download-progress', progressObj);
+  }
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+  console.log('Update downloaded:', info);
+  sendUpdateStatus('downloaded', info);
+  
+  // Show notification that update is ready to install
+  if (mainWindow) {
+    mainWindow.webContents.send('update-downloaded', {
+      version: info.version,
+      releaseNotes: info.releaseNotes
+    });
+  }
+});
+
+function sendUpdateStatus(status, data = {}) {
+  if (mainWindow && mainWindow.webContents) {
+    mainWindow.webContents.send('update-status', { status, ...data });
+  }
+}
+
 app.whenReady().then(() => {
   createWindow();
   startPythonBackend();
+  
+  // Check for updates after a short delay to let the app initialize
+  setTimeout(() => {
+    checkForUpdates();
+  }, 3000);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -143,4 +228,49 @@ ipcMain.handle('check-dnd', async () => {
     console.error('Error checking DND:', error);
     return { enabled: false };
   }
+});
+
+// Auto-update IPC handlers
+ipcMain.handle('check-for-updates', async () => {
+  try {
+    if (process.env.NODE_ENV === 'development') {
+      return { success: false, message: 'Updates disabled in development mode' };
+    }
+    const result = await autoUpdater.checkForUpdates();
+    return { success: true, updateInfo: result.updateInfo };
+  } catch (error) {
+    console.error('Error checking for updates:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('download-update', async () => {
+  try {
+    if (process.env.NODE_ENV === 'development') {
+      return { success: false, message: 'Updates disabled in development mode' };
+    }
+    await autoUpdater.downloadUpdate();
+    return { success: true };
+  } catch (error) {
+    console.error('Error downloading update:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('install-update', async () => {
+  try {
+    if (process.env.NODE_ENV === 'development') {
+      return { success: false, message: 'Updates disabled in development mode' };
+    }
+    // This will quit the app and install the update
+    autoUpdater.quitAndInstall(false, true);
+    return { success: true };
+  } catch (error) {
+    console.error('Error installing update:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('get-app-version', async () => {
+  return { version: app.getVersion() };
 });

@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\artifacts\artifact.py
-# hypothesis_version: 6.148.3
-
-[128, 1024, 3600, 5000, '.', '/', ':', 'AddAliasesInput', 'Done. %.1fs', '^[a-zA-Z0-9_\\-.]+$', 'alias', 'artifactID', 'artifactMembership', 'artifactVersion', 'artifacts', 'auto', 'collection', 'cursor', 'enableTracking', 'entity', 'entityName', 'files', 'id', 'immutable', 'includeAliases', 'input', 'media/tables', 'model', 'model-registry', 'mutable', 'name', 'organization', 'perPage', 'placeholder', 'project', 'projectName', 'tagName', 'tags', 'tagsToAdd', 'tagsToDelete', 'true', 'ttlDurationSeconds', 'ttlIsInherited', 'uncategorized', 'utf-8', 'w', 'wandb-artifacts', 'wandb-history', 'x']

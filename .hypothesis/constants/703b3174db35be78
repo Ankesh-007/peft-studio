@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\vendor\graphql-core-1.1\wandb_graphql\type\definition.py
-# hypothesis_version: 6.148.3
-
-['!', 'Type must be named.', '[', ']', 'args', 'default_value', 'deprecation_reason', 'description', 'name', 'of_type', 'out_name', 'parse_literal', 'parse_value', 'resolver', 'serialize', 'type', 'value']

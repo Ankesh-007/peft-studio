@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\notification_service.py
-# hypothesis_version: 6.148.3
-
-[0.0, 1.0, 100, '1', 'Darwin', 'Linux', 'Retry', 'Training Complete! 🎉', 'Training Error', 'Training Warning', 'View Details', 'Windows', 'completion', 'critical', 'cuda_error', 'data_error', 'defaults', 'error', 'false', 'get', 'gradient_explosion', 'gsettings', 'high', 'loss_divergence', 'low', 'normal', 'oom_error', 'progress', 'read', 'show-banners', 'system_crash', 'training_error', 'warning']

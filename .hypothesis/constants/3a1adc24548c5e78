@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\docker\__init__.py
-# hypothesis_version: 6.148.3
-
-[b'\r', 4096, ',', '--format', '--help', '--load', '--password', '--platform', '--username', '--version', '-cpu', '-f', '-t', '-u', '/', ':', '@', '@sha256:', 'all', 'build', 'buildx', 'default_image', 'docker', 'docker.io', 'enabled', 'get_image_uid', 'id', 'image_id', 'imagetools', 'index.docker.io', 'inspect', 'is_docker_installed', 'latest', 'login', 'parse', 'parse_repository_tag', 'push', 'run', 'shell', 'tag', 'utf8', 'wandb-entrypoint.sh']

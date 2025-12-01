@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\vendor\graphql-core-1.1\wandb_graphql\type\introspection.py
-# hypothesis_version: 6.148.3
-
-['ARGUMENT_DEFINITION', 'ENUM', 'ENUM_VALUE', 'FIELD', 'FIELD_DEFINITION', 'FRAGMENT_DEFINITION', 'FRAGMENT_SPREAD', 'Field', 'INLINE_FRAGMENT', 'INPUT_OBJECT', 'INTERFACE', 'InputField', 'LIST', 'MUTATION', 'NON_NULL', 'OBJECT', 'QUERY', 'SCALAR', 'SCHEMA', 'SUBSCRIPTION', 'UNION', 'Use `locations`.', '__Directive', '__DirectiveLocation', '__EnumValue', '__Field', '__InputValue', '__Schema', '__Type', '__TypeKind', 'args', 'defaultValue', 'default_value', 'deprecationReason', 'deprecation_reason', 'description', 'directives', 'enumValues', 'fields', 'includeDeprecated', 'inputFields', 'interfaces', 'isDeprecated', 'kind', 'locations', 'mutationType', 'name', 'ofType', 'of_type', 'onField', 'onFragment', 'onOperation', 'possibleTypes', 'queryType', 'subscriptionType', 'type', 'types']

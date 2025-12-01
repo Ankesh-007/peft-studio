@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\wandb_login.py
-# hypothesis_version: 6.148.3
-
-['/', 'allow', 'anonymous', 'api_key', 'base_url', 'disabled', 'force', 'https://api.wandb.ai', 'login_timeout', 'models', 'must', 'never', 'offline']

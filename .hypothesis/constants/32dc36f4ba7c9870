@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\analytics\sentry.py
-# hypothesis_version: 6.148.3
-
-['.git', '_P', '_T', '_colab', '_ipython', '_jupyter', '_platform', 'abnormal', 'base_url', 'colab', 'crashed', 'deployment', 'development', 'email', 'entity', 'errored', 'exception', 'exited', 'generic', 'handled', 'info', 'ipython', 'jupyter', 'launch', 'ok', 'process_context', 'production', 'project', 'python', 'python_runtime', 'run', 'run_id', 'run_url', 'sweep', 'sweep_id', 'sweep_url', 'type', 'with_traceback']

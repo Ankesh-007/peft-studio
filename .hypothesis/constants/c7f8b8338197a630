@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\c3a\config.py
-# hypothesis_version: 6.148.3
-
-[256, 'gaussian', 'help', 'kaiming_uniform', 'none', 'xavier_uniform']

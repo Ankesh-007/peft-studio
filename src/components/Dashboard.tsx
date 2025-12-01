@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { Brain, Zap, Database, Clock, TrendingUp, Upload, Play, MessageSquare, Search } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { cn, formatNumber, getTimeGreeting } from '../lib/utils';
-import { SkeletonCard, SkeletonTable } from './LoadingStates';
+import { SkeletonCard } from './LoadingStates';
 import { useIsMobile } from '../hooks/useMediaQuery';
 
 const Dashboard: React.FC = () => {
@@ -270,4 +270,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default memo(Dashboard);

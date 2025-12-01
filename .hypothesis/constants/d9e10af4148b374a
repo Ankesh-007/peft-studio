@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\notification_service.py
-# hypothesis_version: 6.148.3
-
-[100, 'Retry', 'Training Complete! 🎉', 'Training Error', 'Training Warning', 'View Details', 'completion', 'error', 'high', 'normal', 'progress', 'training_error', 'warning']

@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\cost_calculator_service.py
-# hypothesis_version: 6.148.3
-
-[0.14, 0.15, 0.25, 0.3, 0.7, 0.85, 120, 130, 150, 180, 200, 220, 233, 250, 270, 275, 280, 290, 300, 311, 320, 350, 386, 400, 450, 462, 500, 510, 555, 600, 632, 700, 1000, 'A10', 'A100', 'A100-80GB', 'AU', 'CA', 'CN', 'DE', 'EU', 'FR', 'H100', 'IN', 'JP', 'MI210', 'MI250', 'RTX 3070', 'RTX 3080', 'RTX 3090', 'RTX 4070', 'RTX 4080', 'RTX 4090', 'T4', 'UK', 'US', 'US-CA', 'US-TX', 'V100', 'carbon_footprint', 'carbon_intensity', 'confidence', 'default', 'electricity_cost', 'electricity_rate', 'energy_consumption', 'gpu_hours']

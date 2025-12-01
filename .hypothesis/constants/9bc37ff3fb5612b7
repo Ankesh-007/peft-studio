@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\data_types\helper_types\image_mask.py
-# hypothesis_version: 6.148.3
-
-[255, '.', '.png', 'Artifact', 'ImageMask', 'L', 'LocalRun', 'PIL.Image', '_type', '_val', '_wandb_delimeter_', 'class_', 'class_labels', 'images', 'mask', 'mask/class_labels', 'mask_data', 'media', 'numpy', 'path']

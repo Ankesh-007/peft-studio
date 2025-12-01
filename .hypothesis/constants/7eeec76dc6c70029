@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\vblora\layer.py
-# hypothesis_version: 6.148.3
-
-[0.0, 0.01, 'cpu', 'ds_shape', 'vblora_logits_A', 'vblora_logits_B', 'vblora_vector_bank']

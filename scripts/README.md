@@ -1,0 +1,222 @@
+# Build Scripts
+
+This directory contains scripts for building PEFT Studio installers.
+
+## Available Scripts
+
+### build.js
+**Cross-platform Node.js build script**
+
+```bash
+node scripts/build.js [windows|mac|linux|all]
+```
+
+**Features:**
+- Works on all platforms
+- Color-coded output
+- Prerequisite checking
+- Build output summary
+- Error handling
+
+**Examples:**
+```bash
+node scripts/build.js all        # Build all platforms
+node scripts/build.js windows    # Build Windows only
+node scripts/build.js mac        # Build macOS only
+node scripts/build.js linux      # Build Linux only
+```
+
+### build.sh
+**Unix/Linux/macOS shell script**
+
+```bash
+chmod +x scripts/build.sh
+./scripts/build.sh [windows|mac|linux|all]
+```
+
+**Features:**
+- Bash-based automation
+- Dependency verification
+- Build orchestration
+- Error handling
+
+**Examples:**
+```bash
+./scripts/build.sh all        # Build all platforms
+./scripts/build.sh windows    # Build Windows only
+./scripts/build.sh mac        # Build macOS only
+./scripts/build.sh linux      # Build Linux only
+```
+
+### build.ps1
+**Windows PowerShell script**
+
+```powershell
+.\scripts\build.ps1 [windows|mac|linux|all]
+```
+
+**Features:**
+- PowerShell-native
+- Windows-optimized
+- Color-coded output
+- Error handling
+
+**Examples:**
+```powershell
+.\scripts\build.ps1 all        # Build all platforms
+.\scripts\build.ps1 windows    # Build Windows only
+.\scripts\build.ps1 mac        # Build macOS only
+.\scripts\build.ps1 linux      # Build Linux only
+```
+
+### verify-build-config.js
+**Build configuration verification**
+
+```bash
+node scripts/verify-build-config.js
+# or
+npm run verify:build
+```
+
+**Checks:**
+- package.json build configuration
+- Build scripts presence
+- Build assets (icons, entitlements)
+- CI/CD workflows
+- Required dependencies
+
+**Output:**
+```
+✓ Build configuration found
+✓ All platform targets configured
+✓ All build scripts present
+✓ Build assets directory exists
+✓ macOS entitlements configured
+✓ CI/CD workflows configured
+✓ All dependencies installed
+```
+
+## NPM Scripts
+
+Alternatively, use npm scripts from the project root:
+
+```bash
+# Build all platforms
+npm run package:all
+
+# Build single platform
+npm run package:win
+npm run package:mac
+npm run package:linux
+
+# Using build scripts
+npm run dist           # All platforms
+npm run dist:win       # Windows only
+npm run dist:mac       # macOS only
+npm run dist:linux     # Linux only
+
+# Verify configuration
+npm run verify:build
+```
+
+## Build Process
+
+All scripts follow the same process:
+
+1. **Check Prerequisites**
+   - Verify Node.js and npm are installed
+   - Check if node_modules exists
+   - Verify build assets
+
+2. **Build Frontend**
+   - Run `npm run build`
+   - Compile TypeScript
+   - Bundle with Vite
+   - Optimize assets
+
+3. **Build Installer**
+   - Run electron-builder for target platform(s)
+   - Apply code signing if configured
+   - Generate installers
+
+4. **Show Output**
+   - List generated installers
+   - Display file sizes
+   - Show output location
+
+## Output Location
+
+All installers are created in the `release/` directory:
+
+```
+release/
+├── PEFT-Studio-Setup-1.0.0.exe          # Windows installer
+├── PEFT-Studio-1.0.0-portable.exe       # Windows portable
+├── PEFT-Studio-1.0.0.dmg                # macOS installer
+├── PEFT-Studio-1.0.0-mac.zip            # macOS archive
+├── PEFT-Studio-1.0.0.AppImage           # Linux universal
+└── peft-studio_1.0.0_amd64.deb          # Linux Debian/Ubuntu
+```
+
+## Code Signing
+
+To enable code signing, set environment variables before running build scripts:
+
+### Windows
+```bash
+# PowerShell
+$env:CSC_LINK = "C:\path\to\certificate.pfx"
+$env:CSC_KEY_PASSWORD = "your_password"
+
+# Command Prompt
+set CSC_LINK=C:\path\to\certificate.pfx
+set CSC_KEY_PASSWORD=your_password
+```
+
+### macOS
+```bash
+export CSC_LINK=/path/to/certificate.p12
+export CSC_KEY_PASSWORD=your_password
+export APPLE_ID=your@email.com
+export APPLE_ID_PASSWORD=app-specific-password
+```
+
+## Troubleshooting
+
+### Build fails with "Cannot find module"
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Permission denied (Unix/Linux/macOS)
+```bash
+chmod +x scripts/build.sh
+```
+
+### PowerShell execution policy error (Windows)
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+### Missing icons warning
+Add icon files to `build/` directory:
+- `icon.ico` (Windows)
+- `icon.icns` (macOS)
+- `icon.png` (Linux)
+
+See `build/README.md` for icon generation instructions.
+
+## Documentation
+
+- **Quick Start:** `../BUILD_QUICK_START.md`
+- **Full Guide:** `../INSTALLER_GUIDE.md`
+- **Implementation:** `../INSTALLER_PACKAGES_IMPLEMENTATION.md`
+- **Summary:** `../INSTALLER_PACKAGES_SUMMARY.md`
+
+## Support
+
+For issues or questions:
+- Review documentation in project root
+- Check GitHub Actions logs for CI failures
+- Consult electron-builder documentation

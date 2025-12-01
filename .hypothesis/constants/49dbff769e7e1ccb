@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\yaml\parser.py
-# hypothesis_version: 6.148.3
-
-['!', '!!', 'Parser', 'ParserError', 'TAG', 'YAML', 'block', 'flow', 'tag:yaml.org,2002:', 'while parsing a node']

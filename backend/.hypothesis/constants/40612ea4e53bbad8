@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\preset_service.py
-# hypothesis_version: 6.148.3
-
-[0.0, 1.0, 500, '*.json', '1.0', 'adamw', 'bf16', 'constant', 'cosine', 'created_at', 'epoch', 'eval_strategy', 'export_date', 'format_version', 'fp16', 'fp32', 'id', 'linear', 'lora', 'optimizer', 'peft_method', 'precision', 'prefix-tuning', 'preset', 'presets', 'qlora', 'r', 'scheduler', 'sgd', 'steps', 'updated_at', 'w']

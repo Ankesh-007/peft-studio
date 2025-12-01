@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\lora\layer.py
-# hypothesis_version: 6.148.3
-
-[0.0, 10.0, '(', '4bit', '8bit', '__base__', '_niter_', '_qkv_same_embed_dim', 'adapter_names', 'alora_offsets', 'bias', 'corda', 'cpu', 'eigens', 'eva', 'fan_in_fan_out', 'gaussian', 'in_proj_weight', 'loftq', 'loftq_bits', 'loftq_iter', 'lora.', 'lora_A', 'lora_B', 'lora_alpha', 'lora_arrow', 'lora_dropout', 'lora_embedding_A', 'lora_embedding_B', 'meta', 'num_bits', 'num_iter', 'olora', 'orthogonal', 'pissa', 'r', 'reduced_rank', 'scaling', 'self', 'use_alora', 'weight']

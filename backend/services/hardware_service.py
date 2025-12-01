@@ -4,13 +4,23 @@ Hardware Profiling Service for detecting and validating system capabilities.
 
 from typing import Dict, List, Optional
 from dataclasses import dataclass
-import torch
 import platform
 import psutil
 import logging
 from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
+
+# Lazy import torch to reduce startup memory usage
+_torch = None
+
+def _get_torch():
+    """Lazy load torch module"""
+    global _torch
+    if _torch is None:
+        import torch as _torch_module
+        _torch = _torch_module
+    return _torch
 
 
 @dataclass
@@ -89,30 +99,31 @@ class HardwareService:
         Returns:
             List of GPUInfo objects
         """
+        torch = _get_torch()
         gpus = []
         
-        if not torch.cuda.is_available():
+        if not _get_torch().cuda.is_available():
             logger.warning("CUDA not available - no GPUs detected")
             return gpus
         
         try:
-            num_gpus = torch.cuda.device_count()
+            num_gpus = _get_torch().cuda.device_count()
             logger.info(f"Detected {num_gpus} GPU(s)")
             
             for i in range(num_gpus):
-                props = torch.cuda.get_device_properties(i)
+                props = _get_torch().cuda.get_device_properties(i)
                 
                 # Get memory info
                 memory_total = props.total_memory
-                memory_reserved = torch.cuda.memory_reserved(i)
-                memory_allocated = torch.cuda.memory_allocated(i)
+                memory_reserved = _get_torch().cuda.memory_reserved(i)
+                memory_allocated = _get_torch().cuda.memory_allocated(i)
                 memory_available = memory_total - memory_reserved
                 
                 # Get compute capability
                 compute_capability = f"{props.major}.{props.minor}"
                 
                 # Get CUDA version
-                cuda_version = torch.version.cuda or "Unknown"
+                cuda_version = _get_torch().version.cuda or "Unknown"
                 
                 gpu_info = GPUInfo(
                     id=i,
@@ -215,12 +226,12 @@ class HardwareService:
             Dictionary with validation results
         """
         validation = {
-            "cuda_available": torch.cuda.is_available(),
-            "cuda_version": torch.version.cuda,
-            "cudnn_available": torch.backends.cudnn.is_available(),
-            "cudnn_version": torch.backends.cudnn.version() if torch.backends.cudnn.is_available() else None,
-            "gpu_count": torch.cuda.device_count() if torch.cuda.is_available() else 0,
-            "torch_version": torch.__version__,
+            "cuda_available": _get_torch().cuda.is_available(),
+            "cuda_version": _get_torch().version.cuda,
+            "cudnn_available": _get_torch().backends.cudnn.is_available(),
+            "cudnn_version": _get_torch().backends.cudnn.version() if _get_torch().backends.cudnn.is_available() else None,
+            "gpu_count": _get_torch().cuda.device_count() if _get_torch().cuda.is_available() else 0,
+            "torch_version": _get_torch().__version__,
             "errors": []
         }
         
@@ -263,7 +274,7 @@ class HardwareService:
             logger.debug(f"Returning cached throughput metrics for {cache_key}")
             return self._throughput_cache[cache_key]
         
-        if not torch.cuda.is_available():
+        if not _get_torch().cuda.is_available():
             logger.warning("CUDA not available - cannot benchmark throughput")
             # Return dummy metrics for CPU-only systems
             return ThroughputMetrics(
@@ -281,7 +292,7 @@ class HardwareService:
             
             # Create a simple model for benchmarking
             # We'll use a linear layer as a proxy for model computation
-            device = torch.device("cuda:0")
+            device = _get_torch().device("cuda:0")
             
             # Estimate parameter count from model size (assuming fp16)
             # model_size_mb * 1024 * 1024 bytes / 2 bytes per param
@@ -291,22 +302,22 @@ class HardwareService:
             hidden_size = min(4096, int((param_count / sequence_length) ** 0.5))
             
             # Simple linear layer for benchmarking
-            model = torch.nn.Linear(hidden_size, hidden_size).to(device).half()
+            model = _get_torch().nn.Linear(hidden_size, hidden_size).to(device).half()
             
             # Create dummy input
-            dummy_input = torch.randn(
+            dummy_input = _get_torch().randn(
                 batch_size, 
                 sequence_length, 
                 hidden_size, 
                 device=device, 
-                dtype=torch.float16
+                dtype=_get_torch().float16
             )
             
             # Warmup
             for _ in range(3):
                 _ = model(dummy_input)
             
-            torch.cuda.synchronize()
+            _get_torch().cuda.synchronize()
             
             # Benchmark
             import time
@@ -314,7 +325,7 @@ class HardwareService:
             
             for _ in range(num_iterations):
                 _ = model(dummy_input)
-                torch.cuda.synchronize()
+                _get_torch().cuda.synchronize()
             
             end_time = time.time()
             elapsed = end_time - start_time
@@ -325,7 +336,7 @@ class HardwareService:
             samples_per_second = (batch_size * num_iterations) / elapsed
             
             # Get memory usage
-            memory_used = torch.cuda.memory_allocated(0) / (1024 * 1024)  # MB
+            memory_used = _get_torch().cuda.memory_allocated(0) / (1024 * 1024)  # MB
             
             metrics = ThroughputMetrics(
                 model_size_mb=model_size_mb,
@@ -346,7 +357,7 @@ class HardwareService:
             # Cleanup
             del model
             del dummy_input
-            torch.cuda.empty_cache()
+            _get_torch().cuda.empty_cache()
             
             return metrics
             
@@ -385,7 +396,7 @@ class HardwareService:
         
         # Run basic throughput benchmarks for common model sizes
         throughput_benchmarks = {}
-        if torch.cuda.is_available():
+        if _get_torch().cuda.is_available():
             try:
                 # Benchmark small, medium, and large models
                 for size_name, size_mb in [("small", 1000), ("medium", 7000), ("large", 13000)]:
@@ -404,8 +415,8 @@ class HardwareService:
             ram=self.detect_ram(),
             platform=platform.system(),
             python_version=platform.python_version(),
-            torch_version=torch.__version__,
-            cuda_available=torch.cuda.is_available(),
+            torch_version=_get_torch().__version__,
+            cuda_available=_get_torch().cuda.is_available(),
             timestamp=datetime.now(),
             throughput_benchmarks=throughput_benchmarks if throughput_benchmarks else None
         )
@@ -426,13 +437,13 @@ class HardwareService:
         Returns:
             Available memory in bytes
         """
-        if not torch.cuda.is_available():
+        if not _get_torch().cuda.is_available():
             return 0
         
         try:
-            torch.cuda.set_device(device_id)
-            memory_total = torch.cuda.get_device_properties(device_id).total_memory
-            memory_reserved = torch.cuda.memory_reserved(device_id)
+            _get_torch().cuda.set_device(device_id)
+            memory_total = _get_torch().cuda.get_device_properties(device_id).total_memory
+            memory_reserved = _get_torch().cuda.memory_reserved(device_id)
             return memory_total - memory_reserved
         except Exception as e:
             logger.error(f"Error getting available memory: {str(e)}")

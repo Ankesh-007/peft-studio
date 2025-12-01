@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\apis\public\artifacts.py
-# hypothesis_version: 6.148.3
-
-['/', '0.12.11', '0.12.21', ':', 'Artifact', 'ArtifactCollection', 'ArtifactType', 'COMMITTED', 'TNode', 'alias', 'artifactCollection', 'artifactCollections', 'artifactSequence', 'artifactSequences', 'artifactType', 'artifactTypeName', 'artifacts', 'collection', 'cursor', 'entity', 'entityName', 'fileNames', 'filters', 'id', 'input', 'logged', 'name', 'order', 'project', 'projectName', 'public.File', 'run', 'runName', 'state', 'storagePath', 'tagName', 'totalCount', 'type', 'used']

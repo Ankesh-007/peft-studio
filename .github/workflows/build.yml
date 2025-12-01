@@ -1,0 +1,168 @@
+name: Build
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build'
+        required: false
+        default: 'dev'
+
+jobs:
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build frontend
+        run: npm run build
+        env:
+          NODE_ENV: production
+      
+      - name: Verify build
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "Build failed: dist directory not found"
+            exit 1
+          fi
+          echo "Build successful!"
+          ls -lah dist/
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build
+          path: dist/
+          retention-days: 7
+
+  build-backend:
+    name: Build Backend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+          pip install pyinstaller
+      
+      - name: Verify backend
+        run: |
+          cd backend
+          python -c "import main; print('Backend imports successful')"
+      
+      - name: Upload backend artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-build
+          path: backend/
+          retention-days: 7
+
+  build-electron:
+    name: Build Electron - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: [build-frontend, build-backend]
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            artifact_name: linux-build
+          - os: windows-latest
+            platform: windows
+            artifact_name: windows-build
+          - os: macos-latest
+            platform: mac
+            artifact_name: mac-build
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Download frontend build
+        uses: actions/download-artifact@v3
+        with:
+          name: frontend-build
+          path: dist/
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build Electron app
+        run: npm run build:electron --if-present
+        env:
+          PLATFORM: ${{ matrix.platform }}
+      
+      - name: List build outputs
+        run: |
+          echo "Build outputs:"
+          ls -lah build/ || echo "No build directory"
+          ls -lah release/ || echo "No release directory"
+        shell: bash
+      
+      - name: Upload Electron build
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: |
+            build/
+            release/
+          retention-days: 7
+
+  verify-builds:
+    name: Verify All Builds
+    needs: [build-frontend, build-backend, build-electron]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+      
+      - name: List all artifacts
+        run: |
+          echo "All build artifacts:"
+          find . -type f -ls
+      
+      - name: Verify artifacts exist
+        run: |
+          if [ ! -d "frontend-build" ]; then
+            echo "Frontend build missing"
+            exit 1
+          fi
+          if [ ! -d "backend-build" ]; then
+            echo "Backend build missing"
+            exit 1
+          fi
+          echo "All builds verified successfully!"

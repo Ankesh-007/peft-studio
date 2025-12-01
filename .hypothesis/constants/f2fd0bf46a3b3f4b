@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\proto\v6\wandb_settings_pb2.py
-# hypothesis_version: 6.148.3
-
-[b'8\x01', b'Z\x19core/pkg/service_go_proto', 116, 118, 147, 150, 244, 288, 291, 409, 494, 497, 651, 653, 708, 711, 10761, 'DESCRIPTOR', '_LISTINTVALUE', '_LISTSTRINGVALUE', '_OPENMETRICSFILTERS', '_RUNMOMENT', '_SETTINGS']

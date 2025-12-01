@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\setuptools\_vendor\more_itertools\recipes.py
-# hypothesis_version: 6.148.3
-
-['all_equal', 'consume', 'convolve', 'dotproduct', 'first_true', 'flatten', 'grouper', 'iter_except', 'ncycles', 'nth', 'nth_combination', 'pad_none', 'padnone', 'pairwise', 'partition', 'powerset', 'prepend', 'quantify', 'random_combination', 'random_permutation', 'random_product', 'repeatfunc', 'roundrobin', 'tabulate', 'tail', 'take', 'unique_everseen', 'unique_justseen']

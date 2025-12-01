@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\apis\public\jobs.py
-# hypothesis_version: 6.148.3
-
-['Cannot query field', 'DISABLED', 'V0', '_partial', 'access', 'args', 'artifact', 'associatedRunId', 'base_image', 'build_context', 'code', 'commit', 'config', 'deleteRunQueues', 'diff.patch', 'dockerfile', 'edges', 'entity', 'entityName', 'entrypoint', 'externalLinks', 'gcp-vertex', 'git', 'id', 'image', 'input_types', 'itemId', 'job', 'kubernetes', 'local-container', 'local-process', 'node', 'notebook', 'output_types', 'overrides', 'prioritizationMode', 'project', 'projectName', 'queueID', 'remote', 'repo', 'resource', 'runQueue', 'runQueueItem', 'runQueueItemId', 'runQueueItems', 'runQueueName', 'run_config', 'runtime', 'sagemaker', 'source', 'source_type', 'state', 'success', 'templateVariables', 'user', 'wandb-job.json']

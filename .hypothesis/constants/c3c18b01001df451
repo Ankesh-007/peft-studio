@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\road\model.py
-# hypothesis_version: 6.148.3
-
-['__base__', 'adapter_names', 'group_size', 'hf_device_map', 'init_weights', 'is_loaded_in_4bit', 'is_loaded_in_8bit', 'loaded_in_4bit', 'loaded_in_8bit', 'road_', 'variant']

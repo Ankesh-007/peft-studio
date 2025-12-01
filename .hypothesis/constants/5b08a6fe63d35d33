@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\artifacts\artifact_state.py
-# hypothesis_version: 6.148.3
-
-['COMMITTED', 'DELETED', 'GARBAGE_COLLECTED', 'PENDING', 'PENDING_DELETION']

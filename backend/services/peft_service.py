@@ -6,20 +6,53 @@ Uses Unsloth for 2x speed and 60-70% less VRAM.
 from typing import Dict, List, Optional, Literal
 from dataclasses import dataclass
 from enum import Enum
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from peft import LoraConfig, get_peft_model, PeftModel, TaskType
 import logging
 
-# Try to import unsloth, but make it optional for testing
-try:
-    from unsloth import FastLanguageModel
-    UNSLOTH_AVAILABLE = True
-except ImportError:
-    UNSLOTH_AVAILABLE = False
-    FastLanguageModel = None
-
 logger = logging.getLogger(__name__)
+
+# Lazy imports for heavy ML libraries to reduce startup memory usage
+_torch = None
+_transformers = None
+_peft = None
+_unsloth = None
+UNSLOTH_AVAILABLE = None
+
+def _get_torch():
+    """Lazy load torch module"""
+    global _torch
+    if _torch is None:
+        import torch as _torch_module
+        _torch = _torch_module
+    return _torch
+
+def _get_transformers():
+    """Lazy load transformers module"""
+    global _transformers
+    if _transformers is None:
+        import transformers as _transformers_module
+        _transformers = _transformers_module
+    return _transformers
+
+def _get_peft():
+    """Lazy load peft module"""
+    global _peft
+    if _peft is None:
+        import peft as _peft_module
+        _peft = _peft_module
+    return _peft
+
+def _get_unsloth():
+    """Lazy load unsloth module"""
+    global _unsloth, UNSLOTH_AVAILABLE
+    if _unsloth is None and UNSLOTH_AVAILABLE is None:
+        try:
+            import unsloth as _unsloth_module
+            _unsloth = _unsloth_module
+            UNSLOTH_AVAILABLE = True
+        except ImportError:
+            UNSLOTH_AVAILABLE = False
+            _unsloth = None
+    return _unsloth
 
 
 class PEFTAlgorithm(str, Enum):
@@ -78,6 +111,7 @@ class PEFTService:
     
     def __init__(self):
         self.loaded_models: Dict[str, ModelInfo] = {}
+        torch = _get_torch()
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         logger.info(f"PEFTService initialized on device: {self.device}")
     

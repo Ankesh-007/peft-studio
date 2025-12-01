@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\config.py
-# hypothesis_version: 6.148.3
-
-['Peft type', 'Task type', 'The type of task.', 'UNKNOWN', 'auto_mapping', 'auto_mapping_dict', 'commit_id', 'direct_url.json', 'help', 'peft', 'peft_type', 'runtime_config', 'subfolder', 'user_agent', 'vcs_info', 'w']

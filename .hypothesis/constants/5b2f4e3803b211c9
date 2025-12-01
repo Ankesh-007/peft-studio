@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\vendor\graphql-core-1.1\wandb_graphql\language\ast.py
-# hypothesis_version: 6.148.3
-
-['alias', 'arguments', 'default_value', 'definition', 'definitions', 'directives', 'fields', 'interfaces', 'loc', 'locations', 'name', 'operation', 'operation_types', 'selection_set', 'selections', 'type', 'type_condition', 'types', 'value', 'values', 'variable', 'variable_definitions']

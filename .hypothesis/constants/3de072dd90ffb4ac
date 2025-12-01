@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\vendor\graphql-core-1.1\wandb_graphql\utils\build_client_schema.py
-# hypothesis_version: 6.148.3
-
-['Boolean', 'Float', 'ID', 'Int', 'String', '__Directive', '__DirectiveLocation', '__EnumValue', '__Field', '__InputValue', '__Schema', '__Type', '__TypeKind', '__schema', 'args', 'defaultValue', 'deprecationReason', 'description', 'directives', 'enumValues', 'fields', 'inputFields', 'interfaces', 'kind', 'locations', 'mutationType', 'name', 'ofType', 'onField', 'onFragment', 'onOperation', 'possibleTypes', 'queryType', 'subscriptionType', 'type', 'types']

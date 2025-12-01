@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\vendor\graphql-core-1.1\wandb_graphql\utils\build_ast_schema.py
-# hypothesis_version: 6.148.3
-
-['Boolean', 'Float', 'ID', 'Int', 'String', '__Directive', '__DirectiveLocation', '__EnumValue', '__Field', '__InputValue', '__Schema', '__Type', '__TypeKind', 'def must be defined.', 'deprecated', 'directives', 'include', 'mutation', 'query', 'reason', 'skip', 'subscription', 'types']

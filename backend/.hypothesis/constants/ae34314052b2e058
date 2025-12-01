@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\model_registry_service.py
-# hypothesis_version: 6.148.3
-
-[1024, 1000000000, '/', 'b', 'created_at', 'downloads', 'falcon', 'gpt', 'last_modified', 'library_name', 'license', 'likes', 'llama', 'mistral', 'mpt', 'parameters', 'pipeline_tag', 'siblings', 'size', 'text-generation', 'transformers', 'unknown']

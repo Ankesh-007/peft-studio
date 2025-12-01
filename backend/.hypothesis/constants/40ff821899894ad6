@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\delora\layer.py
-# hypothesis_version: 6.148.3
-
-[0.0, 0.0001, 15.0, 'delora.', 'delora_A', 'delora_B', 'delora_dropout', 'delora_lambda', 'delora_w_norm', 'meta', 'r']

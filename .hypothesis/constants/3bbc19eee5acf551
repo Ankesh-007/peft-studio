@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\interface\interface.py
-# hypothesis_version: 6.148.3
-
-[1000000.0, 100000, '.', 'GlobStr', 'Invalid source type', '_partial', '_step', '_timestamp', '_version', 'artifact', 'artifact_manifests', 'build_context', 'commit', 'docker', 'dockerfile', 'end', 'entrypoint', 'files', 'git', 'image', 'live', 'notebook', 'now', 'remote', 'repo', 'runtime', 'source', 'source_type', 'stderr', 'stdout', 'summary', 'unknown type', 'wandb', 'wandb-job.json', 'wt']

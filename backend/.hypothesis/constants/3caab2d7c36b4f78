@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\huggingface_hub\hf_file_system.py
-# hypothesis_version: 6.148.3
-
-['/', '/resolve/', '/tree/', '@', 'GET', 'HfFileSystemFile', 'Range', 'a', 'blob_id', 'block_size', 'bytes=%d-', 'commit_description', 'commit_message', 'date', 'dircache', 'directory', 'expand_info', 'file', 'hf', 'hffs-', 'last_commit', 'lfs', 'mode', 'name', 'none', 'range', 'rb', 'recursively ', 'refresh', 'resolved_path', 'revision', 'security', 'size', 'tree_id', 'type', 'w', 'wb']

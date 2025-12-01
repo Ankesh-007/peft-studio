@@ -1,0 +1,172 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Extract version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: PEFT Studio v${{ steps.get_version.outputs.VERSION }}
+          draft: true
+          prerelease: false
+          body: |
+            ## PEFT Studio v${{ steps.get_version.outputs.VERSION }}
+            
+            ### Downloads
+            
+            - **Windows:** `PEFT-Studio-Setup-${{ steps.get_version.outputs.VERSION }}.exe` (Installer) or `PEFT-Studio-${{ steps.get_version.outputs.VERSION }}-portable.exe` (Portable)
+            - **macOS:** `PEFT-Studio-${{ steps.get_version.outputs.VERSION }}.dmg` (Installer) or `PEFT-Studio-${{ steps.get_version.outputs.VERSION }}-mac.zip` (Archive)
+            - **Linux:** `PEFT-Studio-${{ steps.get_version.outputs.VERSION }}.AppImage` (Universal) or `peft-studio_${{ steps.get_version.outputs.VERSION }}_amd64.deb` (Debian/Ubuntu)
+            
+            ### Installation
+            
+            #### Windows
+            1. Download `PEFT-Studio-Setup-${{ steps.get_version.outputs.VERSION }}.exe`
+            2. Run the installer
+            3. Follow the installation wizard
+            
+            #### macOS
+            1. Download `PEFT-Studio-${{ steps.get_version.outputs.VERSION }}.dmg`
+            2. Open the DMG file
+            3. Drag PEFT Studio to Applications folder
+            
+            #### Linux
+            1. Download `PEFT-Studio-${{ steps.get_version.outputs.VERSION }}.AppImage`
+            2. Make it executable: `chmod +x PEFT-Studio-${{ steps.get_version.outputs.VERSION }}.AppImage`
+            3. Run: `./PEFT-Studio-${{ steps.get_version.outputs.VERSION }}.AppImage`
+            
+            ### What's New
+            
+            <!-- Add release notes here -->
+            
+            ### Checksums
+            
+            See `SHA256SUMS.txt` for file checksums.
+            
+            ### System Requirements
+            
+            - **Windows:** Windows 10 or later (64-bit)
+            - **macOS:** macOS 10.13 or later
+            - **Linux:** Ubuntu 18.04 or later (or equivalent)
+            
+            ### Support
+            
+            - [Documentation](https://github.com/your-username/peft-studio/docs)
+            - [Report Issues](https://github.com/your-username/peft-studio/issues)
+            - [Discussions](https://github.com/your-username/peft-studio/discussions)
+
+  build-and-upload:
+    name: Build and Upload ${{ matrix.os }}
+    needs: create-release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build and package
+        run: npm run package
+        env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+      
+      - name: Upload Windows Installer
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./release/PEFT-Studio-Setup-1.0.0.exe
+          asset_name: PEFT-Studio-Setup-1.0.0.exe
+          asset_content_type: application/octet-stream
+      
+      - name: Upload Windows Portable
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./release/PEFT-Studio-1.0.0-portable.exe
+          asset_name: PEFT-Studio-1.0.0-portable.exe
+          asset_content_type: application/octet-stream
+      
+      - name: Upload macOS DMG
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./release/PEFT-Studio-1.0.0.dmg
+          asset_name: PEFT-Studio-1.0.0.dmg
+          asset_content_type: application/octet-stream
+      
+      - name: Upload macOS ZIP
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./release/PEFT-Studio-1.0.0-mac.zip
+          asset_name: PEFT-Studio-1.0.0-mac.zip
+          asset_content_type: application/zip
+      
+      - name: Upload Linux AppImage
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./release/PEFT-Studio-1.0.0.AppImage
+          asset_name: PEFT-Studio-1.0.0.AppImage
+          asset_content_type: application/octet-stream
+      
+      - name: Upload Linux DEB
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./release/peft-studio_1.0.0_amd64.deb
+          asset_name: peft-studio_1.0.0_amd64.deb
+          asset_content_type: application/vnd.debian.binary-package

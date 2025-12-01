@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\dataset_service.py
-# hypothesis_version: 6.148.3
-
-[0.0, 0.01, 0.1, 0.5, 60.0, 100.0, 100, 500, 1000, 1024, 4096, '.csv', '.json', '.jsonl', '.txt', '0-100', '100-500', '1000+', '500-1000', 'Check file encoding', 'JSON array is empty', 'JSONL file is empty', 'Text file is empty', 'answer', 'auto_fixable', 'avg_chars_per_sample', 'columns', 'content', 'csv', 'data', 'delimiter', 'duplicate_samples', 'empty_samples', 'encoding', 'error', 'field', 'format', 'info', 'input', 'instruction', 'issues', 'json', 'jsonl', 'level', 'line_number', 'max_tokens', 'message', 'min_tokens', 'num_samples', 'overall_score', 'prompt', 'question', 'r', 'recommendations', 'samples', 'size', 'structure', 'suggestion', 'text', 'total_count', 'total_tokens', 'txt', 'unique_samples', 'unknown', 'utf-8', 'warning']

@@ -14,12 +14,14 @@ numpy==1.26.2
 scikit-learn==1.3.2
 python-multipart==0.0.6
 aiofiles==23.2.1
+aiohttp==3.9.1
 sqlalchemy==2.0.23
 huggingface-hub==0.19.4
 psutil==5.9.6
 pynvml==11.5.0
 gputil==1.4.0
 pytest==7.4.3
+pytest-asyncio==0.21.1
 hypothesis==6.92.1
 unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git
 xformers
@@ -27,3 +29,7 @@ triton
 trl
 semver==3.0.2
 wandb==0.16.0
+keyring==24.3.0
+cryptography==41.0.7
+paramiko==3.4.0
+scp==0.14.5

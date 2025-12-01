@@ -1,10 +1,14 @@
 """
-Model Registry Service for HuggingFace Hub integration.
+Model Registry Service for multi-registry integration (HuggingFace, Civitai, Ollama).
 """
 
-from typing import Dict, List, Optional
-from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple
+from dataclasses import dataclass, asdict
+from datetime import datetime, timedelta
 import logging
+import json
+import sqlite3
+from pathlib import Path
 from huggingface_hub import HfApi, list_models
 try:
     from huggingface_hub import ModelFilter
@@ -18,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class ModelMetadata:
-    """Metadata for a model from HuggingFace Hub"""
+    """Metadata for a model from any registry"""
     model_id: str
     author: str
     model_name: str
@@ -33,15 +37,46 @@ class ModelMetadata:
     license: Optional[str]
     created_at: Optional[str]
     last_modified: Optional[str]
+    registry: str = "huggingface"  # huggingface, civitai, ollama
+
+
+@dataclass
+class CachedModel:
+    """Cached model metadata"""
+    model_id: str
+    registry: str
+    cached_at: str
+    expires_at: str
+    metadata: Dict
 
 
 class ModelRegistryService:
-    """Service for interacting with HuggingFace model registry"""
+    """Service for interacting with multiple model registries"""
     
-    def __init__(self):
+    def __init__(self, db_path: str = "~/.peft-studio/data/peft_studio.db"):
         self.api = HfApi()
         self._model_cache: Dict[str, ModelMetadata] = {}
-        logger.info("ModelRegistryService initialized")
+        self.db_path = Path(db_path).expanduser()
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        self._init_cache_db()
+        logger.info("ModelRegistryService initialized with multi-registry support")
+    
+    def _init_cache_db(self):
+        """Initialize the cache database"""
+        conn = sqlite3.connect(str(self.db_path))
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS model_cache (
+                id TEXT PRIMARY KEY,
+                source TEXT NOT NULL,
+                model_id TEXT NOT NULL,
+                metadata TEXT NOT NULL,
+                cached_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                expires_at TIMESTAMP NOT NULL
+            )
+        """)
+        conn.commit()
+        conn.close()
     
     def search_models(
         self,
@@ -280,10 +315,243 @@ class ModelRegistryService:
             last_modified=str(getattr(model_info, 'last_modified', None))
         )
     
+    def search_multi_registry(
+        self,
+        query: Optional[str] = None,
+        task: Optional[str] = None,
+        registries: Optional[List[str]] = None,
+        limit: int = 20
+    ) -> List[ModelMetadata]:
+        """
+        Search across multiple registries and aggregate results.
+        
+        Args:
+            query: Search query string
+            task: Filter by task
+            registries: List of registries to search (default: all)
+            limit: Maximum number of results per registry
+            
+        Returns:
+            Aggregated list of ModelMetadata objects from all registries
+        """
+        if registries is None:
+            registries = ["huggingface"]  # Add "civitai", "ollama" when implemented
+        
+        all_results = []
+        
+        # Search HuggingFace
+        if "huggingface" in registries:
+            try:
+                hf_results = self.search_models(query=query, task=task, limit=limit)
+                for model in hf_results:
+                    model.registry = "huggingface"
+                all_results.extend(hf_results)
+            except Exception as e:
+                logger.error(f"Error searching HuggingFace: {str(e)}")
+        
+        # TODO: Add Civitai search when connector is implemented
+        # TODO: Add Ollama search when connector is implemented
+        
+        # Sort by downloads (descending)
+        all_results.sort(key=lambda m: m.downloads, reverse=True)
+        
+        return all_results[:limit * len(registries)]
+    
+    def cache_model_metadata(
+        self,
+        model_id: str,
+        registry: str,
+        metadata: ModelMetadata,
+        ttl_hours: int = 24
+    ) -> None:
+        """
+        Cache model metadata to database.
+        
+        Args:
+            model_id: Model identifier
+            registry: Registry name
+            metadata: Model metadata to cache
+            ttl_hours: Time to live in hours
+        """
+        try:
+            conn = sqlite3.connect(str(self.db_path))
+            cursor = conn.cursor()
+            
+            cache_id = f"{registry}:{model_id}"
+            cached_at = datetime.now().isoformat()
+            expires_at = (datetime.now() + timedelta(hours=ttl_hours)).isoformat()
+            metadata_json = json.dumps(asdict(metadata))
+            
+            cursor.execute("""
+                INSERT OR REPLACE INTO model_cache 
+                (id, source, model_id, metadata, cached_at, expires_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (cache_id, registry, model_id, metadata_json, cached_at, expires_at))
+            
+            conn.commit()
+            conn.close()
+            logger.debug(f"Cached metadata for {cache_id}")
+        except Exception as e:
+            logger.error(f"Error caching model metadata: {str(e)}")
+    
+    def get_cached_metadata(
+        self,
+        model_id: str,
+        registry: str
+    ) -> Optional[ModelMetadata]:
+        """
+        Get cached model metadata if available and not expired.
+        
+        Args:
+            model_id: Model identifier
+            registry: Registry name
+            
+        Returns:
+            ModelMetadata if cached and valid, None otherwise
+        """
+        try:
+            conn = sqlite3.connect(str(self.db_path))
+            cursor = conn.cursor()
+            
+            cache_id = f"{registry}:{model_id}"
+            cursor.execute("""
+                SELECT metadata, expires_at FROM model_cache
+                WHERE id = ?
+            """, (cache_id,))
+            
+            row = cursor.fetchone()
+            conn.close()
+            
+            if row:
+                metadata_json, expires_at = row
+                expires_dt = datetime.fromisoformat(expires_at)
+                
+                if datetime.now() < expires_dt:
+                    metadata_dict = json.loads(metadata_json)
+                    return ModelMetadata(**metadata_dict)
+                else:
+                    # Expired, remove from cache
+                    self.remove_from_cache(model_id, registry)
+            
+            return None
+        except Exception as e:
+            logger.error(f"Error getting cached metadata: {str(e)}")
+            return None
+    
+    def list_cached_models(self) -> List[CachedModel]:
+        """
+        List all cached models.
+        
+        Returns:
+            List of CachedModel objects
+        """
+        try:
+            conn = sqlite3.connect(str(self.db_path))
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                SELECT model_id, source, cached_at, expires_at, metadata
+                FROM model_cache
+                WHERE expires_at > ?
+                ORDER BY cached_at DESC
+            """, (datetime.now().isoformat(),))
+            
+            rows = cursor.fetchall()
+            conn.close()
+            
+            cached_models = []
+            for row in rows:
+                model_id, registry, cached_at, expires_at, metadata_json = row
+                metadata = json.loads(metadata_json)
+                cached_models.append(CachedModel(
+                    model_id=model_id,
+                    registry=registry,
+                    cached_at=cached_at,
+                    expires_at=expires_at,
+                    metadata=metadata
+                ))
+            
+            return cached_models
+        except Exception as e:
+            logger.error(f"Error listing cached models: {str(e)}")
+            return []
+    
+    def remove_from_cache(
+        self,
+        model_id: str,
+        registry: str
+    ) -> bool:
+        """
+        Remove a model from cache.
+        
+        Args:
+            model_id: Model identifier
+            registry: Registry name
+            
+        Returns:
+            True if removed, False otherwise
+        """
+        try:
+            conn = sqlite3.connect(str(self.db_path))
+            cursor = conn.cursor()
+            
+            cache_id = f"{registry}:{model_id}"
+            cursor.execute("DELETE FROM model_cache WHERE id = ?", (cache_id,))
+            
+            conn.commit()
+            rows_deleted = cursor.rowcount
+            conn.close()
+            
+            if rows_deleted > 0:
+                logger.info(f"Removed {cache_id} from cache")
+                return True
+            return False
+        except Exception as e:
+            logger.error(f"Error removing from cache: {str(e)}")
+            return False
+    
     def clear_cache(self) -> None:
-        """Clear the model metadata cache"""
-        self._model_cache.clear()
-        logger.info("Model metadata cache cleared")
+        """Clear all model metadata cache"""
+        try:
+            # Clear in-memory cache
+            self._model_cache.clear()
+            
+            # Clear database cache
+            conn = sqlite3.connect(str(self.db_path))
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM model_cache")
+            conn.commit()
+            conn.close()
+            
+            logger.info("Model metadata cache cleared")
+        except Exception as e:
+            logger.error(f"Error clearing cache: {str(e)}")
+    
+    def clear_expired_cache(self) -> int:
+        """
+        Clear expired cache entries.
+        
+        Returns:
+            Number of entries removed
+        """
+        try:
+            conn = sqlite3.connect(str(self.db_path))
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                DELETE FROM model_cache
+                WHERE expires_at < ?
+            """, (datetime.now().isoformat(),))
+            
+            conn.commit()
+            rows_deleted = cursor.rowcount
+            conn.close()
+            
+            logger.info(f"Cleared {rows_deleted} expired cache entries")
+            return rows_deleted
+        except Exception as e:
+            logger.error(f"Error clearing expired cache: {str(e)}")
+            return 0
 
 
 # Singleton instance

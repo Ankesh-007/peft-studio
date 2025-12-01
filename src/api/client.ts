@@ -58,14 +58,50 @@ class APIClient {
     return this.request('/api/models/local');
   }
 
-  async searchModels(query: string) {
-    return this.request(`/api/models/search?query=${encodeURIComponent(query)}`);
+  async searchModels(query: string, task?: string, limit?: number) {
+    return this.request('/api/models/search', {
+      method: 'POST',
+      body: JSON.stringify({ query, task, limit: limit || 20 }),
+    });
+  }
+
+  async searchMultiRegistry(query?: string, task?: string, registries?: string[], limit?: number) {
+    return this.request('/api/models/search/multi-registry', {
+      method: 'POST',
+      body: JSON.stringify({ query, task, registries, limit: limit || 20 }),
+    });
+  }
+
+  async getModelInfo(modelId: string) {
+    return this.request(`/api/models/${encodeURIComponent(modelId)}`);
+  }
+
+  async getPopularModels(task: string = 'text-generation', limit: number = 10) {
+    return this.request(`/api/models/popular/${task}?limit=${limit}`);
   }
 
   async downloadModel(modelId: string) {
     return this.request('/api/models/download', {
       method: 'POST',
       body: JSON.stringify({ model_id: modelId }),
+    });
+  }
+
+  async getCachedModels() {
+    return this.request('/api/models/cache');
+  }
+
+  async clearModelCache(modelId?: string) {
+    const endpoint = modelId 
+      ? `/api/models/cache/${encodeURIComponent(modelId)}`
+      : '/api/models/cache';
+    return this.request(endpoint, { method: 'DELETE' });
+  }
+
+  async checkModelCompatibility(modelId: string, gpuMemoryGb: number) {
+    return this.request('/api/models/compatibility', {
+      method: 'POST',
+      body: JSON.stringify({ model_id: modelId, gpu_memory_gb: gpuMemoryGb }),
     });
   }
 

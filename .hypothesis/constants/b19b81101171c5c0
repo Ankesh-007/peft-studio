@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\launch\runner\local_container.py
-# hypothesis_version: 6.148.3
-
-[b'\r', 4096, '-', '--', '--entrypoint', '--rm', '-c', '-e', ':', 'Api', 'WANDB_BASE_URL', 'add-host', 'base_url', 'bash', 'darwin', 'docker', 'failed', 'finished', 'host', 'linux', 'linux2', 'local-container', 'net', 'network', 'run', 'running', 'stopped', 'volume', 'win32', 'workdir']

@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\vendor\graphql-core-1.1\wandb_graphql\type\directives.py
-# hypothesis_version: 6.148.3
-
-['ARGUMENT_DEFINITION', 'ENUM', 'ENUM_VALUE', 'FIELD', 'FIELD_DEFINITION', 'FRAGMENT_DEFINITION', 'FRAGMENT_SPREAD', 'INLINE_FRAGMENT', 'INPUT_OBJECT', 'INTERFACE', 'Included when true.', 'MUTATION', 'No longer supported', 'OBJECT', 'QUERY', 'SCALAR', 'SCHEMA', 'SUBSCRIPTION', 'Skipped when true.', 'UNION', 'args', 'deprecated', 'description', 'if', 'include', 'locations', 'name', 'reason', 'skip']

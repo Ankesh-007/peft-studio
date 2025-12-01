@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\ia3\__init__.py
-# hypothesis_version: 6.148.3
-
-['Conv2d', 'Conv3d', 'IA3Config', 'IA3Layer', 'IA3Model', 'Linear', 'Linear4bit', 'Linear8bitLt', 'ia3']

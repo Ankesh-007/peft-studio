@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\vendor\graphql-core-1.1\wandb_graphql\utils\schema_printer.py
-# hypothesis_version: 6.148.3
-
-['  mutation: {}', '  query: {}', '  subscription: {}', '  {}{}: {}{}', ' = ', ' @deprecated', ' implements {}', ' | ', '({})', ', ', 'Boolean', 'Float', 'ID', 'Int', 'String', '__', 'deprecated', 'enum {} {{\n{}\n}}', 'include', 'input {} {{\n{}\n}}', 'print_schema', 'scalar {}', 'schema {{\n{}\n}}', 'skip', 'type {}{} {{\n{}\n}}', 'union {} = {}', '{}: {}{}']

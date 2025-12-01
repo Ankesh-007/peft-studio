@@ -11,6 +11,9 @@ release/
 *.egg-info/
 out/
 
+# Bundle analyzer
+stats.html
+
 # Python
 __pycache__/
 *.py[cod]
@@ -52,8 +55,14 @@ yarn-error.log*
 # Testing
 coverage/
 .nyc_output/
+.pytest_cache/
+.hypothesis/
+test_artifacts/
+test_checkpoints/
 
 # Temporary files
 *.tmp
 *.temp
 .cache/
+checkpoints/
+artifacts/

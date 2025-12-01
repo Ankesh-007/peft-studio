@@ -7,21 +7,8 @@ import logging
 import asyncio
 import json
 
-from services import (
-    get_peft_service,
-    get_hardware_service,
-    get_model_registry_service,
-    get_smart_config_engine,
-    get_profile_service,
-    get_monitoring_service,
-    PEFTAlgorithm,
-    PEFTConfig,
-    HardwareSpecs,
-    ModelSpecs,
-    DatasetSpecs,
-    UseCase
-)
-from services.inference_service import get_inference_service
+# STARTUP OPTIMIZATION: Import startup optimizer first
+from services.startup_service import get_startup_optimizer, measure_startup
 
 # Configure logging
 logging.basicConfig(
@@ -30,7 +17,65 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Initialize startup optimizer
+startup_optimizer = get_startup_optimizer()
+
+# STARTUP OPTIMIZATION: Lazy load heavy services
+# These will be imported only when actually needed
+_services_loaded = False
+
+def _lazy_load_services():
+    """Lazily load service imports"""
+    global _services_loaded
+    if _services_loaded:
+        return
+    
+    global get_peft_service, get_hardware_service, get_model_registry_service
+    global get_smart_config_engine, get_profile_service, get_monitoring_service
+    global PEFTAlgorithm, PEFTConfig, HardwareSpecs, ModelSpecs, DatasetSpecs, UseCase
+    global get_inference_service, get_queue_manager, OperationType
+    global get_network_monitor, get_sync_engine, ConflictResolution
+    
+    from services import (
+        get_peft_service,
+        get_hardware_service,
+        get_model_registry_service,
+        get_smart_config_engine,
+        get_profile_service,
+        get_monitoring_service,
+        PEFTAlgorithm,
+        PEFTConfig,
+        HardwareSpecs,
+        ModelSpecs,
+        DatasetSpecs,
+        UseCase
+    )
+    from services.inference_service import get_inference_service
+    from services.offline_queue_service import get_queue_manager, OperationType
+    from services.network_service import get_network_monitor
+    from services.sync_engine import get_sync_engine, ConflictResolution
+    
+    _services_loaded = True
+
+# STARTUP OPTIMIZATION: Import routers (lightweight)
+from services.experiment_tracking_api import router as experiment_tracking_router
+from services.deployment_api import router as deployment_router
+from services.gradio_demo_api import router as gradio_demo_router
+from services.security_api import router as security_router
+from services.telemetry_api import router as telemetry_router
+from services.settings_api import router as settings_router
+from services.inference_api import router as inference_router
+from services.configuration_management_api import router as configuration_management_router
+from services.logging_api import router as logging_router
+
+# SECURITY: Import security middleware
+from services.security_middleware import SecurityMiddleware, InputValidationMiddleware
+
 app = FastAPI(title="PEFT Studio Backend")
+
+# SECURITY: Add security middleware (before CORS)
+app.add_middleware(SecurityMiddleware)
+app.add_middleware(InputValidationMiddleware)
 
 # CORS middleware for Electron
 app.add_middleware(
@@ -40,6 +85,40 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Performance monitoring middleware
+@app.middleware("http")
+async def performance_monitoring_middleware(request, call_next):
+    """Middleware to monitor request performance."""
+    import time
+    from services.performance_service import get_performance_monitor
+    
+    start_time = time.time()
+    error = False
+    
+    try:
+        response = await call_next(request)
+        return response
+    except Exception as e:
+        error = True
+        raise
+    finally:
+        duration = time.time() - start_time
+        endpoint = f"{request.method} {request.url.path}"
+        
+        monitor = get_performance_monitor()
+        monitor.record_request(endpoint, duration, error)
+
+# Include routers
+app.include_router(security_router)
+app.include_router(experiment_tracking_router)
+app.include_router(deployment_router)
+app.include_router(gradio_demo_router)
+app.include_router(telemetry_router)
+app.include_router(settings_router)
+app.include_router(inference_router)
+app.include_router(configuration_management_router)
+app.include_router(logging_router)
 
 
 # Request/Response Models
@@ -64,6 +143,43 @@ class ModelSearchRequest(BaseModel):
     limit: int = 20
 
 
+@app.on_event("startup")
+@measure_startup("app_startup")
+async def startup_event():
+    """
+    Application startup event handler.
+    
+    Implements startup optimizations:
+    - Preload critical resources
+    - Optimize database queries
+    - Initialize connection pools
+    """
+    logger.info("Starting PEFT Studio Backend...")
+    
+    # Initialize performance service
+    from services.performance_service import get_performance_service
+    from database import engine
+    
+    perf_service = get_performance_service()
+    await perf_service.initialize(engine)
+    logger.info("Performance optimizations initialized")
+    
+    # Preload critical resources (non-blocking)
+    await startup_optimizer.preload_critical_resources()
+    
+    # Optimize database queries
+    startup_optimizer.optimize_database_queries()
+    
+    # Log startup metrics
+    report = startup_optimizer.get_startup_report()
+    logger.info(f"Startup complete in {report['total_time']:.3f}s")
+    
+    if not report['meets_target']:
+        logger.warning(f"Startup time exceeds 3-second target!")
+        for rec in report['recommendations']:
+            logger.warning(f"  - {rec}")
+
+
 @app.get("/")
 async def root():
     return {"message": "PEFT Studio Backend Running"}
@@ -71,7 +187,15 @@ async def root():
 
 @app.get("/api/health")
 async def health_check():
+    """Health check endpoint - responds immediately without loading heavy services"""
     return {"status": "healthy"}
+
+
+@app.get("/api/startup/metrics")
+async def get_startup_metrics():
+    """Get startup performance metrics"""
+    report = startup_optimizer.get_startup_report()
+    return report
 
 
 # Hardware Endpoints
@@ -79,6 +203,8 @@ async def health_check():
 async def get_hardware_profile():
     """Get complete hardware profile"""
     try:
+        # STARTUP OPTIMIZATION: Lazy load services
+        _lazy_load_services()
         hardware_service = get_hardware_service()
         profile = hardware_service.get_hardware_profile()
         
@@ -218,13 +344,158 @@ async def get_popular_models(task: str = "text-generation", limit: int = 10):
                     "downloads": m.downloads,
                     "likes": m.likes,
                     "parameters": m.parameters,
-                    "architecture": m.architecture
+                    "architecture": m.architecture,
+                    "registry": m.registry
                 }
                 for m in models
             ]
         }
     except Exception as e:
         logger.error(f"Error getting popular models: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class MultiRegistrySearchRequest(BaseModel):
+    query: Optional[str] = None
+    task: Optional[str] = "text-generation"
+    registries: Optional[List[str]] = None
+    limit: int = 20
+
+
+@app.post("/api/models/search/multi-registry")
+async def search_multi_registry(request: MultiRegistrySearchRequest):
+    """Search across multiple model registries"""
+    try:
+        registry_service = get_model_registry_service()
+        models = registry_service.search_multi_registry(
+            query=request.query,
+            task=request.task,
+            registries=request.registries,
+            limit=request.limit
+        )
+        
+        return {
+            "models": [
+                {
+                    "model_id": m.model_id,
+                    "author": m.author,
+                    "model_name": m.model_name,
+                    "downloads": m.downloads,
+                    "likes": m.likes,
+                    "tags": m.tags,
+                    "pipeline_tag": m.pipeline_tag,
+                    "library_name": m.library_name,
+                    "size_mb": m.size_mb,
+                    "parameters": m.parameters,
+                    "architecture": m.architecture,
+                    "license": m.license,
+                    "registry": m.registry
+                }
+                for m in models
+            ]
+        }
+    except Exception as e:
+        logger.error(f"Error searching multi-registry: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/models/cache")
+async def list_cached_models():
+    """List all cached models"""
+    try:
+        registry_service = get_model_registry_service()
+        cached = registry_service.list_cached_models()
+        
+        return {
+            "cached_models": [
+                {
+                    "model_id": c.model_id,
+                    "registry": c.registry,
+                    "cached_at": c.cached_at,
+                    "expires_at": c.expires_at,
+                    "metadata": c.metadata
+                }
+                for c in cached
+            ]
+        }
+    except Exception as e:
+        logger.error(f"Error listing cached models: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/api/models/cache")
+async def clear_model_cache():
+    """Clear all model cache"""
+    try:
+        registry_service = get_model_registry_service()
+        registry_service.clear_cache()
+        return {"message": "Cache cleared successfully"}
+    except Exception as e:
+        logger.error(f"Error clearing cache: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/api/models/cache/{registry}/{model_id:path}")
+async def remove_from_cache(registry: str, model_id: str):
+    """Remove a specific model from cache"""
+    try:
+        registry_service = get_model_registry_service()
+        success = registry_service.remove_from_cache(model_id, registry)
+        
+        if success:
+            return {"message": f"Model {model_id} removed from cache"}
+        else:
+            raise HTTPException(status_code=404, detail="Model not found in cache")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error removing from cache: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class ModelCompatibilityRequest(BaseModel):
+    model_id: str
+    gpu_memory_gb: float
+
+
+@app.post("/api/models/compatibility")
+async def check_model_compatibility(request: ModelCompatibilityRequest):
+    """Check if a model is compatible with available hardware"""
+    try:
+        registry_service = get_model_registry_service()
+        model = registry_service.get_model_info(request.model_id)
+        
+        if not model:
+            raise HTTPException(status_code=404, detail="Model not found")
+        
+        # Estimate VRAM requirements
+        estimated_vram = 0.0
+        if model.parameters:
+            # Rough estimate: 2 bytes per parameter for FP16
+            estimated_vram = (model.parameters * 2) / (1024**3)
+        
+        compatible = estimated_vram <= request.gpu_memory_gb
+        warnings = []
+        recommendations = []
+        
+        if not compatible:
+            warnings.append(f"Model requires ~{estimated_vram:.1f}GB VRAM but only {request.gpu_memory_gb:.1f}GB available")
+            recommendations.append("Consider using 4-bit quantization to reduce memory usage")
+            recommendations.append("Try a smaller model variant")
+        elif estimated_vram > request.gpu_memory_gb * 0.8:
+            warnings.append("Model will use most of available VRAM")
+            recommendations.append("Consider using 8-bit quantization for better performance")
+        
+        return {
+            "compatible": compatible,
+            "estimatedVRAM": estimated_vram,
+            "warnings": warnings,
+            "recommendations": recommendations
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error checking compatibility: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -345,6 +616,83 @@ async def calculate_smart_defaults(request: SmartConfigRequest):
         }
     except Exception as e:
         logger.error(f"Error calculating smart defaults: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class TrainingConfigValidationRequest(BaseModel):
+    provider: str
+    algorithm: str
+    quantization: str = "none"
+    experiment_tracker: str = "none"
+    project_name: Optional[str] = None
+    model_name: str
+    model_path: str
+    dataset_id: str
+    dataset_path: str
+    lora_r: int = 8
+    lora_alpha: int = 16
+    lora_dropout: float = 0.1
+    target_modules: List[str] = ["q_proj", "k_proj", "v_proj", "o_proj"]
+    learning_rate: float = 2e-4
+    batch_size: int = 4
+    gradient_accumulation_steps: int = 4
+    num_epochs: int = 3
+    max_steps: int = -1
+
+
+@app.post("/api/config/validate-training")
+async def validate_training_configuration(request: TrainingConfigValidationRequest):
+    """
+    Validate a training configuration for completeness and correctness.
+    Validates: Requirements 4.1, 4.2, 4.3, 4.4, 4.5
+    """
+    try:
+        from services.training_config_service import (
+            get_training_config_service,
+            TrainingConfiguration,
+            PEFTAlgorithm,
+            QuantizationType,
+            ComputeProvider,
+            ExperimentTracker,
+        )
+        
+        # Convert request to TrainingConfiguration
+        config = TrainingConfiguration(
+            provider=ComputeProvider(request.provider),
+            algorithm=PEFTAlgorithm(request.algorithm),
+            quantization=QuantizationType(request.quantization),
+            experiment_tracker=ExperimentTracker(request.experiment_tracker),
+            project_name=request.project_name,
+            model_name=request.model_name,
+            model_path=request.model_path,
+            dataset_id=request.dataset_id,
+            dataset_path=request.dataset_path,
+            lora_r=request.lora_r,
+            lora_alpha=request.lora_alpha,
+            lora_dropout=request.lora_dropout,
+            target_modules=request.target_modules,
+            learning_rate=request.learning_rate,
+            batch_size=request.batch_size,
+            gradient_accumulation_steps=request.gradient_accumulation_steps,
+            num_epochs=request.num_epochs,
+            max_steps=request.max_steps,
+        )
+        
+        # Validate configuration
+        service = get_training_config_service()
+        validation_result = service.validate_configuration(config)
+        
+        return {
+            "is_valid": validation_result.is_valid,
+            "errors": validation_result.errors,
+            "warnings": validation_result.warnings,
+            "suggestions": validation_result.suggestions,
+        }
+    except ValueError as e:
+        # Invalid enum value
+        raise HTTPException(status_code=400, detail=f"Invalid configuration value: {str(e)}")
+    except Exception as e:
+        logger.error(f"Error validating training configuration: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -2519,6 +2867,347 @@ async def list_platforms():
     }
 
 
+# ============================================================================
+# Multi-Run Management Endpoints
+# Requirements: 16.1, 16.2, 16.3, 16.4, 16.5
+# ============================================================================
+
+from services.multi_run_service import (
+    get_multi_run_manager,
+    RunFilter,
+    RunStatus as MultiRunStatus
+)
+from database import get_db
+
+
+class RunFilterRequest(BaseModel):
+    """Request model for run filtering"""
+    status: Optional[List[str]] = None
+    provider: Optional[List[str]] = None
+    date_from: Optional[str] = None
+    date_to: Optional[str] = None
+    model_name: Optional[str] = None
+    job_ids: Optional[List[str]] = None
+
+
+@app.get("/api/runs/active")
+async def get_active_runs():
+    """
+    Get all active (running or paused) training runs.
+    
+    Requirements: 16.2
+    """
+    try:
+        multi_run_manager = get_multi_run_manager()
+        db = next(get_db())
+        
+        try:
+            active_runs = multi_run_manager.get_active_runs(db)
+            return {
+                "runs": [run.to_dict() for run in active_runs],
+                "count": len(active_runs)
+            }
+        finally:
+            db.close()
+            
+    except Exception as e:
+        logger.error(f"Error getting active runs: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/runs/history")
+async def get_run_history(filter_request: RunFilterRequest, limit: int = 100, offset: int = 0):
+    """
+    Get run history with optional filtering.
+    
+    Requirements: 16.4
+    """
+    try:
+        multi_run_manager = get_multi_run_manager()
+        db = next(get_db())
+        
+        try:
+            # Convert request to filter
+            from datetime import datetime
+            filter_criteria = RunFilter(
+                status=filter_request.status,
+                provider=filter_request.provider,
+                date_from=datetime.fromisoformat(filter_request.date_from) if filter_request.date_from else None,
+                date_to=datetime.fromisoformat(filter_request.date_to) if filter_request.date_to else None,
+                model_name=filter_request.model_name,
+                job_ids=filter_request.job_ids
+            )
+            
+            runs = multi_run_manager.get_run_history(db, filter_criteria, limit, offset)
+            
+            return {
+                "runs": [run.to_dict() for run in runs],
+                "count": len(runs),
+                "limit": limit,
+                "offset": offset
+            }
+        finally:
+            db.close()
+            
+    except Exception as e:
+        logger.error(f"Error getting run history: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/runs/stats")
+async def get_concurrent_stats():
+    """
+    Get statistics about concurrent runs.
+    
+    Requirements: 16.2
+    """
+    try:
+        multi_run_manager = get_multi_run_manager()
+        db = next(get_db())
+        
+        try:
+            stats = multi_run_manager.get_concurrent_stats(db)
+            return stats.to_dict()
+        finally:
+            db.close()
+            
+    except Exception as e:
+        logger.error(f"Error getting concurrent stats: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/runs/{job_id}")
+async def get_run_details(job_id: str):
+    """
+    Get detailed information about a specific run.
+    
+    Requirements: 16.3
+    """
+    try:
+        multi_run_manager = get_multi_run_manager()
+        db = next(get_db())
+        
+        try:
+            details = multi_run_manager.get_run_details(job_id, db)
+            
+            if details is None:
+                raise HTTPException(status_code=404, detail=f"Run not found: {job_id}")
+            
+            return details
+        finally:
+            db.close()
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting run details: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/runs/{job_id}/cancel")
+async def cancel_run(job_id: str):
+    """
+    Cancel a running or paused training run.
+    
+    Requirements: 16.5
+    """
+    try:
+        multi_run_manager = get_multi_run_manager()
+        db = next(get_db())
+        
+        try:
+            success = multi_run_manager.cancel_run(job_id, db)
+            
+            if not success:
+                raise HTTPException(status_code=500, detail=f"Failed to cancel run: {job_id}")
+            
+            return {"success": True, "message": f"Run {job_id} cancelled successfully"}
+        finally:
+            db.close()
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error cancelling run: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/api/runs/{job_id}")
+async def cleanup_run(job_id: str):
+    """
+    Cleanup resources for a completed/failed/stopped run.
+    
+    Requirements: 16.5
+    """
+    try:
+        multi_run_manager = get_multi_run_manager()
+        db = next(get_db())
+        
+        try:
+            success = multi_run_manager.cleanup_run(job_id, db)
+            
+            if not success:
+                raise HTTPException(status_code=500, detail=f"Failed to cleanup run: {job_id}")
+            
+            return {"success": True, "message": f"Run {job_id} cleaned up successfully"}
+        finally:
+            db.close()
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error cleaning up run: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# Performance Monitoring Endpoints
+# ============================================================================
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Application shutdown event handler."""
+    logger.info("Shutting down PEFT Studio Backend...")
+    
+    # Cleanup performance service
+    from services.performance_service import get_performance_service
+    perf_service = get_performance_service()
+    await perf_service.cleanup()
+    
+    logger.info("Shutdown complete")
+
+
+@app.get("/api/performance/metrics")
+async def get_performance_metrics():
+    """
+    Get comprehensive performance metrics.
+    Validates: Requirements 14.4, 14.5
+    """
+    try:
+        from services.performance_service import get_performance_service
+        
+        perf_service = get_performance_service()
+        metrics = perf_service.get_all_metrics()
+        
+        return metrics
+    except Exception as e:
+        logger.error(f"Error getting performance metrics: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/performance/cache/stats")
+async def get_cache_stats():
+    """Get cache statistics."""
+    try:
+        from services.performance_service import get_request_cache
+        
+        cache = get_request_cache()
+        stats = cache.get_stats()
+        
+        return stats
+    except Exception as e:
+        logger.error(f"Error getting cache stats: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/api/performance/cache/clear")
+async def clear_cache():
+    """Clear request cache."""
+    try:
+        from services.performance_service import get_request_cache
+        
+        cache = get_request_cache()
+        await cache.clear()
+        
+        return {"message": "Cache cleared successfully"}
+    except Exception as e:
+        logger.error(f"Error clearing cache: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/performance/database/stats")
+async def get_database_stats():
+    """Get database query statistics."""
+    try:
+        from services.performance_service import get_db_optimizer
+        
+        optimizer = get_db_optimizer()
+        stats = optimizer.get_query_stats()
+        
+        return stats
+    except Exception as e:
+        logger.error(f"Error getting database stats: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/performance/database/slow-queries")
+async def get_slow_queries(limit: int = 10):
+    """Get recent slow database queries."""
+    try:
+        from services.performance_service import get_db_optimizer
+        
+        optimizer = get_db_optimizer()
+        slow_queries = optimizer.get_slow_queries(limit=limit)
+        
+        return {
+            "slow_queries": slow_queries,
+            "count": len(slow_queries)
+        }
+    except Exception as e:
+        logger.error(f"Error getting slow queries: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/performance/endpoints")
+async def get_endpoint_performance():
+    """Get performance metrics for all endpoints."""
+    try:
+        from services.performance_service import get_performance_monitor
+        
+        monitor = get_performance_monitor()
+        slowest = monitor.get_slowest_endpoints(limit=20)
+        
+        return {
+            "slowest_endpoints": slowest
+        }
+    except Exception as e:
+        logger.error(f"Error getting endpoint performance: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/performance/system")
+async def get_system_metrics():
+    """Get system resource metrics."""
+    try:
+        from services.performance_service import get_performance_monitor
+        
+        monitor = get_performance_monitor()
+        metrics = monitor.get_system_metrics()
+        
+        return metrics
+    except Exception as e:
+        logger.error(f"Error getting system metrics: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/performance/recommendations")
+async def get_optimization_recommendations():
+    """Get performance optimization recommendations."""
+    try:
+        from services.performance_service import get_performance_service
+        
+        perf_service = get_performance_service()
+        recommendations = perf_service.get_optimization_recommendations()
+        
+        return {
+            "recommendations": recommendations,
+            "count": len(recommendations)
+        }
+    except Exception as e:
+        logger.error(f"Error getting recommendations: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
 
@@ -2792,4 +3481,651 @@ async def export_from_version(request: ExportFromVersionRequest):
         raise
     except Exception as e:
         logger.error(f"Error exporting from version: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# Offline-First Architecture Endpoints
+# ============================================================================
+
+class QueueOperationRequest(BaseModel):
+    """Request to queue an offline operation"""
+    operation_type: str
+    payload: Dict[str, Any]
+    priority: int = 0
+
+
+@app.get("/api/offline/network-status")
+async def get_network_status():
+    """Get current network connectivity status"""
+    try:
+        monitor = get_network_monitor()
+        return monitor.get_status_info()
+    except Exception as e:
+        logger.error(f"Error getting network status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/offline/check-connectivity")
+async def check_connectivity():
+    """Manually trigger a connectivity check"""
+    try:
+        monitor = get_network_monitor()
+        is_online = await monitor.check_connectivity()
+        await monitor.update_status()
+        return {
+            "is_online": is_online,
+            "status": monitor.status.value,
+            "last_check": monitor.last_check.isoformat() if monitor.last_check else None
+        }
+    except Exception as e:
+        logger.error(f"Error checking connectivity: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/offline/queue")
+async def enqueue_operation(request: QueueOperationRequest):
+    """Add an operation to the offline queue"""
+    try:
+        queue_manager = get_queue_manager()
+        
+        # Validate operation type
+        try:
+            op_type = OperationType(request.operation_type)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid operation type: {request.operation_type}"
+            )
+        
+        operation_id = queue_manager.enqueue(
+            operation_type=op_type,
+            payload=request.payload,
+            priority=request.priority
+        )
+        
+        return {
+            "success": True,
+            "operation_id": operation_id,
+            "message": "Operation queued successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error queueing operation: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/offline/queue")
+async def get_queue_operations(limit: Optional[int] = None):
+    """Get pending operations from the queue"""
+    try:
+        queue_manager = get_queue_manager()
+        operations = queue_manager.get_pending_operations(limit=limit)
+        return {
+            "operations": operations,
+            "count": len(operations)
+        }
+    except Exception as e:
+        logger.error(f"Error getting queue operations: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/offline/queue/{operation_id}")
+async def get_queue_operation(operation_id: int):
+    """Get a specific operation from the queue"""
+    try:
+        queue_manager = get_queue_manager()
+        operation = queue_manager.get_operation(operation_id)
+        
+        if not operation:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Operation {operation_id} not found"
+            )
+        
+        return operation
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting operation: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/api/offline/queue/{operation_id}")
+async def delete_queue_operation(operation_id: int):
+    """Delete an operation from the queue"""
+    try:
+        queue_manager = get_queue_manager()
+        success = queue_manager.delete_operation(operation_id)
+        
+        if not success:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Operation {operation_id} not found"
+            )
+        
+        return {
+            "success": True,
+            "message": f"Operation {operation_id} deleted"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting operation: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/offline/queue/stats")
+async def get_queue_stats():
+    """Get statistics about the offline queue"""
+    try:
+        queue_manager = get_queue_manager()
+        stats = queue_manager.get_queue_stats()
+        return stats
+    except Exception as e:
+        logger.error(f"Error getting queue stats: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/offline/queue/clear-completed")
+async def clear_completed_operations():
+    """Clear all completed operations from the queue"""
+    try:
+        queue_manager = get_queue_manager()
+        count = queue_manager.clear_completed()
+        return {
+            "success": True,
+            "cleared": count,
+            "message": f"Cleared {count} completed operations"
+        }
+    except Exception as e:
+        logger.error(f"Error clearing completed operations: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/offline/sync")
+async def trigger_sync():
+    """Manually trigger synchronization of offline operations"""
+    try:
+        sync_engine = get_sync_engine()
+        results = await sync_engine.sync(force=False)
+        return results
+    except Exception as e:
+        logger.error(f"Error triggering sync: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/offline/sync/status")
+async def get_sync_status():
+    """Get current synchronization status"""
+    try:
+        sync_engine = get_sync_engine()
+        status = sync_engine.get_sync_status()
+        return status
+    except Exception as e:
+        logger.error(f"Error getting sync status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/offline/sync/start-auto")
+async def start_auto_sync():
+    """Start automatic synchronization"""
+    try:
+        sync_engine = get_sync_engine()
+        await sync_engine.start_auto_sync()
+        return {
+            "success": True,
+            "message": "Auto-sync started"
+        }
+    except Exception as e:
+        logger.error(f"Error starting auto-sync: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/offline/sync/stop-auto")
+async def stop_auto_sync():
+    """Stop automatic synchronization"""
+    try:
+        sync_engine = get_sync_engine()
+        await sync_engine.stop_auto_sync()
+        return {
+            "success": True,
+            "message": "Auto-sync stopped"
+        }
+    except Exception as e:
+        logger.error(f"Error stopping auto-sync: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class ConflictStrategyRequest(BaseModel):
+    """Request to set conflict resolution strategy"""
+    strategy: str
+
+
+@app.post("/api/offline/sync/conflict-strategy")
+async def set_conflict_strategy(request: ConflictStrategyRequest):
+    """Set the conflict resolution strategy"""
+    try:
+        # Validate strategy
+        try:
+            strategy = ConflictResolution(request.strategy)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid conflict strategy: {request.strategy}"
+            )
+        
+        sync_engine = get_sync_engine()
+        sync_engine.set_conflict_strategy(strategy)
+        
+        return {
+            "success": True,
+            "strategy": strategy.value,
+            "message": f"Conflict strategy set to {strategy.value}"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error setting conflict strategy: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# Platform Connection Management Endpoints
+# ============================================================================
+
+from services.platform_connection_service import get_platform_connection_service
+
+@app.get("/api/platforms")
+async def list_available_platforms():
+    """
+    List all available platforms that can be connected.
+    Validates: Requirements 1.1
+    """
+    try:
+        connection_service = get_platform_connection_service()
+        platforms = connection_service.list_available_platforms()
+        
+        return {
+            "platforms": platforms,
+            "count": len(platforms)
+        }
+    except Exception as e:
+        logger.error(f"Error listing platforms: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class ConnectPlatformRequest(BaseModel):
+    platform_name: str
+    credentials: Dict[str, str]
+
+
+@app.post("/api/platforms/connect")
+async def connect_platform(request: ConnectPlatformRequest):
+    """
+    Connect to a platform with provided credentials.
+    Validates: Requirements 1.2, 1.3
+    """
+    try:
+        connection_service = get_platform_connection_service()
+        connection = await connection_service.connect_platform(
+            platform_name=request.platform_name,
+            credentials=request.credentials
+        )
+        
+        return connection.to_dict()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except ConnectionError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error connecting platform: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/platforms/disconnect/{platform_name}")
+async def disconnect_platform(platform_name: str):
+    """
+    Disconnect from a platform.
+    Validates: Requirements 1.2
+    """
+    try:
+        connection_service = get_platform_connection_service()
+        success = await connection_service.disconnect_platform(platform_name)
+        
+        if not success:
+            raise HTTPException(status_code=500, detail="Failed to disconnect")
+        
+        return {
+            "platform": platform_name,
+            "status": "disconnected"
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error disconnecting platform: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/platforms/verify/{platform_name}")
+async def verify_platform_connection(platform_name: str):
+    """
+    Verify that a platform connection is still valid.
+    Validates: Requirements 1.4, 1.5
+    """
+    try:
+        connection_service = get_platform_connection_service()
+        result = await connection_service.verify_connection(platform_name)
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error verifying connection: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/platforms/test")
+async def test_platform_connection(request: ConnectPlatformRequest):
+    """
+    Test a connection without storing credentials.
+    Validates: Requirements 1.4
+    """
+    try:
+        connection_service = get_platform_connection_service()
+        result = await connection_service.test_connection(
+            platform_name=request.platform_name,
+            credentials=request.credentials
+        )
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error testing connection: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/platforms/connections")
+async def list_platform_connections():
+    """
+    List all active platform connections.
+    Validates: Requirements 1.1
+    """
+    try:
+        connection_service = get_platform_connection_service()
+        connections = connection_service.list_connections()
+        
+        return {
+            "connections": [c.to_dict() for c in connections],
+            "count": len(connections)
+        }
+    except Exception as e:
+        logger.error(f"Error listing connections: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/platforms/connection/{platform_name}")
+async def get_platform_connection(platform_name: str):
+    """
+    Get connection information for a specific platform.
+    Validates: Requirements 1.1
+    """
+    try:
+        connection_service = get_platform_connection_service()
+        connection = connection_service.get_connection(platform_name)
+        
+        if not connection:
+            raise HTTPException(status_code=404, detail="Platform not connected")
+        
+        return connection.to_dict()
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting connection: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.put("/api/platforms/credentials/{platform_name}")
+async def update_platform_credentials(platform_name: str, request: ConnectPlatformRequest):
+    """
+    Update credentials for an existing connection.
+    Validates: Requirements 1.2, 1.3
+    """
+    try:
+        connection_service = get_platform_connection_service()
+        success = await connection_service.update_credentials(
+            platform_name=platform_name,
+            credentials=request.credentials
+        )
+        
+        if not success:
+            raise HTTPException(status_code=500, detail="Failed to update credentials")
+        
+        return {
+            "platform": platform_name,
+            "status": "credentials_updated"
+        }
+    except Exception as e:
+        logger.error(f"Error updating credentials: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/platforms/verify-all")
+async def verify_all_connections():
+    """
+    Verify all active platform connections.
+    Validates: Requirements 1.4
+    """
+    try:
+        connection_service = get_platform_connection_service()
+        results = await connection_service.verify_all_connections()
+        
+        return {
+            "results": results,
+            "total": len(results),
+            "valid": sum(1 for r in results.values() if r["valid"]),
+            "invalid": sum(1 for r in results.values() if not r["valid"])
+        }
+    except Exception as e:
+        logger.error(f"Error verifying all connections: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/platforms/stats")
+async def get_connection_stats():
+    """
+    Get statistics about platform connections.
+    Validates: Requirements 1.1
+    """
+    try:
+        connection_service = get_platform_connection_service()
+        stats = connection_service.get_connection_stats()
+        
+        return stats
+    except Exception as e:
+        logger.error(f"Error getting connection stats: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Cloud Platform Comparison Endpoints
+class CloudCostComparisonRequest(BaseModel):
+    training_hours: float
+    local_gpu_type: Optional[str] = None
+    local_electricity_cost: Optional[float] = None
+    min_memory_gb: Optional[int] = None
+
+
+@app.post("/api/cloud/compare-costs")
+async def compare_cloud_costs(request: CloudCostComparisonRequest):
+    """
+    Compare costs across all cloud platforms.
+    Validates: Requirements 3.1, 3.2, 3.3, 3.4, 3.5
+    """
+    try:
+        from services.cloud_platform_service import get_cloud_platform_service
+        
+        cloud_service = get_cloud_platform_service()
+        
+        # Perform cost comparison
+        comparison = cloud_service.compare_costs(
+            training_hours=request.training_hours,
+            local_gpu_type=request.local_gpu_type,
+            local_electricity_cost=request.local_electricity_cost,
+            min_memory_gb=request.min_memory_gb
+        )
+        
+        # Format the response
+        result = cloud_service.format_cost_comparison(comparison)
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error comparing cloud costs: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/cloud/instances")
+async def list_cloud_instances(
+    gpu_type: Optional[str] = None,
+    min_memory_gb: Optional[int] = None,
+    platform: Optional[str] = None
+):
+    """
+    List available cloud GPU instances.
+    Validates: Requirements 3.1, 3.3
+    """
+    try:
+        from services.cloud_platform_service import get_cloud_platform_service, GPUType, PlatformType
+        
+        cloud_service = get_cloud_platform_service()
+        
+        # Convert string to enum if provided
+        gpu_type_enum = None
+        if gpu_type:
+            try:
+                gpu_type_enum = GPUType[gpu_type.upper().replace(" ", "_").replace("-", "_")]
+            except KeyError:
+                raise HTTPException(status_code=400, detail=f"Invalid GPU type: {gpu_type}")
+        
+        # Get instances based on platform
+        if platform:
+            try:
+                platform_enum = PlatformType[platform.upper()]
+                if platform_enum == PlatformType.RUNPOD:
+                    instances = cloud_service.get_runpod_instances(gpu_type_enum, min_memory_gb)
+                elif platform_enum == PlatformType.LAMBDA_LABS:
+                    instances = cloud_service.get_lambda_labs_instances(gpu_type_enum, min_memory_gb)
+                elif platform_enum == PlatformType.TOGETHER_AI:
+                    instances = cloud_service.get_together_ai_instances(gpu_type_enum, min_memory_gb)
+                else:
+                    raise HTTPException(status_code=400, detail=f"Unsupported platform: {platform}")
+            except KeyError:
+                raise HTTPException(status_code=400, detail=f"Invalid platform: {platform}")
+        else:
+            instances = cloud_service.get_all_cloud_instances(gpu_type_enum, min_memory_gb)
+        
+        return {
+            "instances": [
+                {
+                    "platform": inst.platform.value,
+                    "gpu_type": inst.gpu_type.value,
+                    "gpu_count": inst.gpu_count,
+                    "memory_gb": inst.memory_gb,
+                    "vcpus": inst.vcpus,
+                    "ram_gb": inst.ram_gb,
+                    "storage_gb": inst.storage_gb,
+                    "hourly_rate_usd": inst.hourly_rate_usd,
+                    "availability": inst.availability,
+                    "region": inst.region
+                }
+                for inst in instances
+            ],
+            "count": len(instances)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error listing cloud instances: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/cloud/platforms/{platform}/setup")
+async def get_platform_setup_instructions(platform: str):
+    """
+    Get setup instructions for a specific platform.
+    Validates: Requirements 3.4
+    """
+    try:
+        from services.cloud_platform_service import get_cloud_platform_service, PlatformType
+        
+        cloud_service = get_cloud_platform_service()
+        
+        try:
+            platform_enum = PlatformType[platform.upper()]
+        except KeyError:
+            raise HTTPException(status_code=400, detail=f"Invalid platform: {platform}")
+        
+        instructions = cloud_service.get_platform_setup_instructions(platform_enum)
+        
+        return instructions
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting setup instructions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class PlatformCostEstimateRequest(BaseModel):
+    platform: str
+    gpu_type: str
+    training_hours: float
+
+
+@app.post("/api/cloud/estimate-cost")
+async def estimate_platform_cost(request: PlatformCostEstimateRequest):
+    """
+    Estimate cost for a specific platform and GPU type.
+    Validates: Requirements 3.2
+    """
+    try:
+        from services.cloud_platform_service import get_cloud_platform_service, GPUType, PlatformType
+        
+        cloud_service = get_cloud_platform_service()
+        
+        # Convert strings to enums
+        try:
+            platform_enum = PlatformType[request.platform.upper()]
+            gpu_type_enum = GPUType[request.gpu_type.upper().replace(" ", "_").replace("-", "_")]
+        except KeyError as e:
+            raise HTTPException(status_code=400, detail=f"Invalid parameter: {str(e)}")
+        
+        # Get instances for this platform and GPU type
+        if platform_enum == PlatformType.RUNPOD:
+            instances = cloud_service.get_runpod_instances(gpu_type=gpu_type_enum)
+        elif platform_enum == PlatformType.LAMBDA_LABS:
+            instances = cloud_service.get_lambda_labs_instances(gpu_type=gpu_type_enum)
+        elif platform_enum == PlatformType.TOGETHER_AI:
+            instances = cloud_service.get_together_ai_instances(gpu_type=gpu_type_enum)
+        else:
+            raise HTTPException(status_code=400, detail=f"Unsupported platform: {request.platform}")
+        
+        if not instances:
+            raise HTTPException(status_code=404, detail=f"No instances found for {request.gpu_type} on {request.platform}")
+        
+        # Calculate cost for the first matching instance
+        instance = instances[0]
+        estimate = cloud_service.calculate_platform_cost(instance, request.training_hours)
+        
+        return {
+            "platform": estimate.platform.value,
+            "gpu_type": estimate.instance.gpu_type.value,
+            "training_hours": estimate.training_hours,
+            "total_cost_usd": estimate.total_cost_usd,
+            "hourly_rate_usd": estimate.instance.hourly_rate_usd,
+            "setup_time_minutes": estimate.setup_time_minutes,
+            "estimated_start_time": estimate.estimated_start_time,
+            "pros": estimate.pros,
+            "cons": estimate.cons
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error estimating cost: {e}")
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\osf\layer.py
-# hypothesis_version: 6.148.3
-
-['S_high', 'S_low', 'U_high', 'U_low', 'V_high', 'V_low', '_osf_S_high', '_osf_U_high', '_osf_V_high', 'in_features', 'infeatures', 'input_size', 'osf.', 'osf_svd_params', 'out_features', 'outfeatures', 'output_size', 'weight']
