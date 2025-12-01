@@ -52,12 +52,6 @@ Successfully implemented a comprehensive cost and carbon footprint calculator th
    - Fetches default rate from API
    - Help text for users
 
-3. **`src/components/CostCalculatorExample.tsx`**
-   - Complete integration example
-   - Configuration controls (training time, GPU, region)
-   - Live estimate updates
-   - Educational information section
-
 #### Tests
 
 1. **`backend/tests/test_cost_calculator.py`** (21 tests)
@@ -199,7 +193,7 @@ import { CostEstimateDisplay } from './components/CostEstimateDisplay';
 
 ### Files Created/Modified
 
-#### Created Files (9)
+#### Created Files (8)
 1. `backend/services/cost_calculator_service.py`
 2. `backend/tests/test_cost_calculator.py`
 3. `backend/tests/test_cost_api.py`
@@ -207,8 +201,7 @@ import { CostEstimateDisplay } from './components/CostEstimateDisplay';
 5. `backend/services/COST_CALCULATOR.md`
 6. `src/components/CostEstimateDisplay.tsx`
 7. `src/components/ElectricityRateInput.tsx`
-8. `src/components/CostCalculatorExample.tsx`
-9. `COST_CALCULATOR_IMPLEMENTATION.md`
+8. `COST_CALCULATOR_IMPLEMENTATION.md`
 
 #### Modified Files (2)
 1. `backend/services/__init__.py` - Added cost calculator exports

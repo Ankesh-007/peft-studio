@@ -137,10 +137,12 @@ Tests that for any training progress, when crossing 25%, 50%, 75%, or 100%:
 
 ## Integration Example
 
-See `quality_notification_integration_example.py` for complete examples of:
+The quality analysis service integrates with the notification system to provide:
 1. Running training with quality analysis and notifications
 2. Manual quality analysis on completed jobs
 3. Notification milestone demonstration
+
+See the `quality_analysis_service.py` and `notification_service.py` for implementation details.
 
 ## Quality Scoring Algorithm
 

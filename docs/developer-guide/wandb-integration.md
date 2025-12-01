@@ -102,13 +102,15 @@ from services.training_orchestration_service import (
     TrainingOrchestrator,
     TrainingConfig
 )
-from services.wandb_integration_example import (
-    setup_wandb_for_training,
-    finish_wandb_for_training
+from services.wandb_integration_service import (
+    WandBIntegrationService,
+    ExperimentMetadata
 )
 
 # Create orchestrator and config
 orchestrator = TrainingOrchestrator()
+wandb_service = WandBIntegrationService()
+
 config = TrainingConfig(
     job_id="experiment_001",
     model_name="meta-llama/Llama-2-7b-hf",
@@ -124,12 +126,27 @@ config = TrainingConfig(
 # Create job
 job = orchestrator.create_job(config)
 
-# Set up WandB tracking
-setup_wandb_for_training(
-    orchestrator=orchestrator,
-    wandb_service=wandb_service,
+# Start WandB run
+metadata = ExperimentMetadata(
     job_id=config.job_id,
-    config=config
+    model_name=config.model_name,
+    dataset_name="training.json",
+    use_case="lora",
+    run_name=f"llama2-{config.job_id[:8]}"
+)
+
+hyperparameters = {
+    'learning_rate': config.learning_rate,
+    'batch_size': config.batch_size,
+    'lora_r': config.lora_r,
+    'lora_alpha': config.lora_alpha,
+    'num_epochs': config.num_epochs
+}
+
+wandb_service.start_run(
+    job_id=config.job_id,
+    metadata=metadata,
+    config=hyperparameters
 )
 
 # Start training (metrics will be logged automatically)
@@ -146,11 +163,10 @@ final_metrics = {
     'quality_score': 85.0
 }
 
-finish_wandb_for_training(
-    wandb_service=wandb_service,
+wandb_service.finish_run(
     job_id=config.job_id,
-    final_metrics=final_metrics,
-    success=True
+    exit_code=0,
+    summary=final_metrics
 )
 ```
 
@@ -183,14 +199,20 @@ wandb_service.log_hyperparameters(
 Log model checkpoints and artifacts:
 
 ```python
-from services.wandb_integration_example import log_checkpoint_to_wandb
+# Log checkpoint as artifact
+metadata = {
+    'step': 1000,
+    'loss': 0.5,
+    'learning_rate': 2e-4,
+    'epoch': 2
+}
 
-log_checkpoint_to_wandb(
-    wandb_service=wandb_service,
+wandb_service.log_artifact(
     job_id="experiment_001",
-    checkpoint_path="./checkpoints/step_1000",
-    step=1000,
-    metrics={'loss': 0.5, 'learning_rate': 2e-4}
+    artifact_path="./checkpoints/step_1000",
+    artifact_type='model',
+    name="checkpoint_step_1000",
+    metadata=metadata
 )
 ```
 
@@ -363,8 +385,12 @@ Log checkpoints at regular intervals:
 
 ```python
 if step % 500 == 0:
-    log_checkpoint_to_wandb(
-        wandb_service, job_id, checkpoint_path, step, metrics
+    wandb_service.log_artifact(
+        job_id=job_id,
+        artifact_path=checkpoint_path,
+        artifact_type='model',
+        name=f"checkpoint_step_{step}",
+        metadata={'step': step, 'loss': current_loss}
     )
 ```
 
@@ -394,8 +420,10 @@ try:
     orchestrator.start_training(job_id)
 except Exception as e:
     # Log error and finish run
-    finish_wandb_for_training(
-        wandb_service, job_id, {}, success=False
+    wandb_service.finish_run(
+        job_id=job_id,
+        exit_code=1,
+        summary={'error': str(e)}
     )
     raise
 ```

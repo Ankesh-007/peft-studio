@@ -85,13 +85,13 @@ A comprehensive React component that displays:
 - Info banner explaining paused state
 - Configuration display (model name, dataset)
 
-### 4. Integration Example (`src/components/PausedRunExample.tsx`)
+### 4. Integration
 
-Demonstrates how to:
+The `PausedRunDisplay` component can be integrated to:
 - Fetch paused run information from the API
 - Handle resume and stop actions
 - Display loading and error states
-- Integrate the PausedRunDisplay component
+- Show paused run details in the UI
 
 ## Usage
 
@@ -190,7 +190,6 @@ const pausedRun = await response.json();
 
 ### Frontend
 - ✅ `src/components/PausedRunDisplay.tsx` (new)
-- ✅ `src/components/PausedRunExample.tsx` (new)
 - ✅ `src/test/PausedRunDisplay.test.tsx` (new)
 
 ### Documentation
