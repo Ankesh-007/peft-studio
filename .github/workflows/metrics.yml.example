@@ -1,0 +1,134 @@
+# GitHub Metrics Collection Workflow (Example)
+# 
+# This is an OPTIONAL workflow for automated metrics collection.
+# To enable:
+# 1. Rename this file to metrics.yml
+# 2. Create a personal access token with repo permissions
+# 3. Add the token as a secret named METRICS_TOKEN
+# 4. Uncomment the workflow below
+
+# name: Collect Repository Metrics
+# 
+# on:
+#   schedule:
+#     # Run weekly on Sunday at midnight UTC
+#     - cron: '0 0 * * 0'
+#   workflow_dispatch:  # Allow manual trigger
+# 
+# jobs:
+#   metrics:
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: write
+#     
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+#       
+#       - name: Generate metrics
+#         uses: lowlighter/metrics@latest
+#         with:
+#           token: ${{ secrets.METRICS_TOKEN }}
+#           user: Ankesh-007
+#           repo: peft-studio
+#           
+#           # Base configuration
+#           base: header, activity, community, repositories, metadata
+#           
+#           # Enable plugins
+#           plugin_traffic: yes
+#           plugin_stars: yes
+#           plugin_followup: yes
+#           plugin_reactions: yes
+#           plugin_people: yes
+#           plugin_projects: yes
+#           plugin_code: yes
+#           plugin_activity: yes
+#           plugin_achievements: yes
+#           
+#           # Output configuration
+#           output_action: commit
+#           committer_branch: metrics
+#           committer_message: "Update repository metrics"
+#           filename: metrics.svg
+#       
+#       - name: Collect custom metrics
+#         run: |
+#           echo "Collecting repository statistics..."
+#           
+#           # Get repository info
+#           curl -s https://api.github.com/repos/Ankesh-007/peft-studio > repo_stats.json
+#           
+#           # Extract key metrics
+#           STARS=$(jq -r '.stargazers_count' repo_stats.json)
+#           FORKS=$(jq -r '.forks_count' repo_stats.json)
+#           WATCHERS=$(jq -r '.watchers_count' repo_stats.json)
+#           OPEN_ISSUES=$(jq -r '.open_issues_count' repo_stats.json)
+#           
+#           echo "Stars: $STARS"
+#           echo "Forks: $FORKS"
+#           echo "Watchers: $WATCHERS"
+#           echo "Open Issues: $OPEN_ISSUES"
+#           
+#           # Save to file
+#           cat > metrics_summary.txt << EOF
+#           Repository Metrics Summary
+#           Generated: $(date)
+#           
+#           Stars: $STARS
+#           Forks: $FORKS
+#           Watchers: $WATCHERS
+#           Open Issues: $OPEN_ISSUES
+#           EOF
+#       
+#       - name: Upload metrics artifact
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: metrics-report
+#           path: |
+#             repo_stats.json
+#             metrics_summary.txt
+#           retention-days: 90
+
+# Alternative: Simple metrics collection without external actions
+# 
+# name: Simple Metrics Collection
+# 
+# on:
+#   schedule:
+#     - cron: '0 0 * * 0'  # Weekly
+#   workflow_dispatch:
+# 
+# jobs:
+#   collect-metrics:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Collect metrics via GitHub API
+#         env:
+#           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         run: |
+#           # Repository statistics
+#           gh api repos/Ankesh-007/peft-studio > repo_stats.json
+#           
+#           # Contributors
+#           gh api repos/Ankesh-007/peft-studio/contributors > contributors.json
+#           
+#           # Releases
+#           gh api repos/Ankesh-007/peft-studio/releases > releases.json
+#           
+#           # Issues
+#           gh api repos/Ankesh-007/peft-studio/issues?state=all > issues.json
+#           
+#           # Pull requests
+#           gh api repos/Ankesh-007/peft-studio/pulls?state=all > pulls.json
+#           
+#           echo "Metrics collected successfully"
+#       
+#       - name: Upload metrics
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: github-metrics
+#           path: '*.json'
+#           retention-days: 90

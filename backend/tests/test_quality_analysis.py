@@ -7,7 +7,7 @@ Property-based tests for training completion quality analysis.
 
 import pytest
 from hypothesis import given, strategies as st
-from backend.services.quality_analysis_service import (
+from services.quality_analysis_service import (
     analyze_training_quality,
     TrainingResult,
     QualityAnalysis

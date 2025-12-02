@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\keyring\__init__.py
+# hypothesis_version: 6.148.3
+
+['delete_password', 'get_credential', 'get_keyring', 'get_password', 'set_keyring', 'set_password']

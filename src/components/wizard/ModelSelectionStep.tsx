@@ -1,7 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Loader2, AlertCircle, Download, Star, Tag, ExternalLink } from 'lucide-react';
-import { ModelInfo, WizardState } from '../../types/wizard';
-import Tooltip from '../Tooltip';
+import {
+  Search,
+  Loader2,
+  AlertCircle,
+  Download,
+  Star,
+  Tag,
+  ExternalLink,
+} from "lucide-react";
+import React, { useState, useEffect } from "react";
+
+import Tooltip from "../Tooltip";
+
+import type { ModelInfo, WizardState } from "../../types/wizard";
 
 interface ModelSelectionStepProps {
   wizardState: WizardState;
@@ -12,12 +22,17 @@ interface ModelSelectionStepProps {
  * Step 3: Model Selection with HuggingFace browser
  * Allows users to search, filter, and select models with compatibility warnings
  */
-const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({ wizardState, onModelSelect }) => {
+const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({
+  wizardState,
+  onModelSelect,
+}) => {
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'small' | 'medium' | 'large'>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState<
+    "all" | "small" | "medium" | "large"
+  >("all");
 
   useEffect(() => {
     loadPopularModels();
@@ -27,12 +42,14 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({ wizardState, on
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('http://127.0.0.1:8000/api/models/popular/text-generation?limit=20');
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/models/popular/text-generation?limit=20",
+      );
       const data = await response.json();
       setModels(data.models);
     } catch (err) {
-      setError('Failed to load models. Please ensure the backend is running.');
-      console.error('Error loading models:', err);
+      setError("Failed to load models. Please ensure the backend is running.");
+      console.error("Error loading models:", err);
     } finally {
       setLoading(false);
     }
@@ -47,29 +64,31 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({ wizardState, on
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('http://127.0.0.1:8000/api/models/search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("http://127.0.0.1:8000/api/models/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           query: searchQuery,
-          task: 'text-generation',
+          task: "text-generation",
           limit: 20,
         }),
       });
       const data = await response.json();
       setModels(data.models);
     } catch (err) {
-      setError('Search failed. Please try again.');
-      console.error('Error searching models:', err);
+      setError("Search failed. Please try again.");
+      console.error("Error searching models:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const getModelSizeCategory = (parameters: number): 'small' | 'medium' | 'large' => {
-    if (parameters < 3000) return 'small';
-    if (parameters < 13000) return 'medium';
-    return 'large';
+  const getModelSizeCategory = (
+    parameters: number,
+  ): "small" | "medium" | "large" => {
+    if (parameters < 3000) return "small";
+    if (parameters < 13000) return "medium";
+    return "large";
   };
 
   const getCompatibilityWarning = (model: ModelInfo): string | null => {
@@ -92,8 +111,8 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({ wizardState, on
     return null;
   };
 
-  const filteredModels = models.filter(model => {
-    if (selectedFilter === 'all') return true;
+  const filteredModels = models.filter((model) => {
+    if (selectedFilter === "all") return true;
     return getModelSizeCategory(model.parameters) === selectedFilter;
   });
 
@@ -101,10 +120,12 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({ wizardState, on
     <div className="space-y-6">
       {/* Instructions */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-blue-900 mb-2">Select Your Base Model</h2>
+        <h2 className="text-xl font-semibold text-blue-900 mb-2">
+          Select Your Base Model
+        </h2>
         <p className="text-blue-800 mb-3">
-          Choose a pre-trained model from HuggingFace to fine-tune. We'll show you popular models
-          and help you find the right one for your use case.
+          Choose a pre-trained model from HuggingFace to fine-tune. We'll show
+          you popular models and help you find the right one for your use case.
         </p>
         <div className="flex items-center gap-2">
           <Tooltip configKey="model_selection">
@@ -124,7 +145,7 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({ wizardState, on
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              onKeyPress={(e) => e.key === "Enter" && handleSearch()}
               placeholder="Search models (e.g., 'llama', 'mistral', 'phi')..."
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
@@ -140,28 +161,30 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({ wizardState, on
                 Searching...
               </>
             ) : (
-              'Search'
+              "Search"
             )}
           </button>
         </div>
 
         {/* Filters */}
         <div className="flex items-center gap-3 mt-4">
-          <span className="text-sm font-medium text-gray-700">Filter by size:</span>
+          <span className="text-sm font-medium text-gray-700">
+            Filter by size:
+          </span>
           <div className="flex gap-2">
             {[
-              { value: 'all', label: 'All Models' },
-              { value: 'small', label: 'Small (<3B)' },
-              { value: 'medium', label: 'Medium (3-13B)' },
-              { value: 'large', label: 'Large (>13B)' },
+              { value: "all", label: "All Models" },
+              { value: "small", label: "Small (<3B)" },
+              { value: "medium", label: "Medium (3-13B)" },
+              { value: "large", label: "Large (>13B)" },
             ].map((filter) => (
               <button
                 key={filter.value}
                 onClick={() => setSelectedFilter(filter.value as any)}
                 className={`px-4 py-1.5 text-sm rounded-lg border transition-colors ${
                   selectedFilter === filter.value
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-white text-gray-700 border-gray-300 hover:border-blue-300"
                 }`}
               >
                 {filter.label}
@@ -208,15 +231,17 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({ wizardState, on
                 onClick={() => onModelSelect(model)}
                 className={`text-left p-5 rounded-lg border-2 transition-all hover:shadow-lg ${
                   isSelected
-                    ? 'border-blue-600 bg-blue-50 shadow-md'
-                    : 'border-gray-200 bg-white hover:border-blue-300'
+                    ? "border-blue-600 bg-blue-50 shadow-md"
+                    : "border-gray-200 bg-white hover:border-blue-300"
                 }`}
                 data-testid={`model-card-${model.model_id}`}
               >
                 {/* Header */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 mb-1">{model.model_name}</h3>
+                    <h3 className="font-semibold text-gray-900 mb-1">
+                      {model.model_name}
+                    </h3>
                     <p className="text-sm text-gray-600">{model.author}</p>
                   </div>
                   {isSelected && (
@@ -287,9 +312,11 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({ wizardState, on
       {/* No Results */}
       {!loading && filteredModels.length === 0 && models.length > 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-600 mb-4">No models found matching your filters.</p>
+          <p className="text-gray-600 mb-4">
+            No models found matching your filters.
+          </p>
           <button
-            onClick={() => setSelectedFilter('all')}
+            onClick={() => setSelectedFilter("all")}
             className="text-blue-600 hover:text-blue-700 underline"
           >
             Clear filters
@@ -304,8 +331,8 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({ wizardState, on
             ✓ {wizardState.model.model_name} Selected
           </h4>
           <p className="text-sm text-green-800 mb-3">
-            This model will be fine-tuned using your {wizardState.profile?.name} configuration.
-            Click "Next" to review the smart configuration.
+            This model will be fine-tuned using your {wizardState.profile?.name}{" "}
+            configuration. Click "Next" to review the smart configuration.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
@@ -322,7 +349,9 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({ wizardState, on
             </div>
             <div>
               <span className="text-green-700 font-medium">Architecture:</span>
-              <span className="ml-2 text-green-900">{wizardState.model.architecture}</span>
+              <span className="ml-2 text-green-900">
+                {wizardState.model.architecture}
+              </span>
             </div>
             <div>
               <span className="text-green-700 font-medium">Downloads:</span>

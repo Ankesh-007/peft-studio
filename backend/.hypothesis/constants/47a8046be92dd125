@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\data_types\trace_tree.py
+# hypothesis_version: 6.148.3
+
+['<<non-serializable>>', 'AGENT', 'Artifact', 'CHAIN', 'ERROR', 'LLM', 'LocalRun', 'SUCCESS', 'Span', 'TOOL', 'Trace', '_type', 'media/wb_trace_tree', 'model_dict_dumps', 'model_hash', 'root_span_dumps', 'utf-8', 'wb_trace_tree', '{}']

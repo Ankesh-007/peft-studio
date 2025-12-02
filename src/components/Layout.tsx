@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import Sidebar from './Sidebar';
-import TopBar from './TopBar';
-import { cn } from '../lib/utils';
+import React, { useState } from "react";
+
+import { cn } from "../lib/utils";
+
+import Sidebar from "./Sidebar";
+import TopBar from "./TopBar";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,33 +21,31 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </a>
 
       {/* Left Sidebar */}
-      <Sidebar 
-        collapsed={sidebarCollapsed} 
+      <Sidebar
+        collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
-      
+
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
         <TopBar onToggleRightPanel={() => setRightPanelOpen(!rightPanelOpen)} />
-        
+
         {/* Content */}
-        <main 
+        <main
           id="main-content"
           className="flex-1 overflow-auto p-24 focus:outline-none"
           tabIndex={-1}
           role="main"
           aria-label="Main content"
         >
-          <div className="max-w-[1200px] mx-auto">
-            {children}
-          </div>
+          <div className="max-w-[1200px] mx-auto">{children}</div>
         </main>
       </div>
-      
+
       {/* Right Panel (collapsible) */}
       {rightPanelOpen && (
-        <aside 
+        <aside
           className="w-[320px] bg-dark-bg-secondary border-l border-dark-border p-20 overflow-auto animate-slide-down"
           role="complementary"
           aria-label="Quick help panel"
@@ -65,16 +65,28 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <h4 className="mb-8 font-medium">Keyboard Shortcuts:</h4>
               <ul className="space-y-4 font-mono text-tiny" role="list">
                 <li>
-                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">⌘K</kbd> - Command Palette
+                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">
+                    ⌘K
+                  </kbd>{" "}
+                  - Command Palette
                 </li>
                 <li>
-                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">⌘N</kbd> - New Training
+                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">
+                    ⌘N
+                  </kbd>{" "}
+                  - New Training
                 </li>
                 <li>
-                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">⌘O</kbd> - Open Dataset
+                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">
+                    ⌘O
+                  </kbd>{" "}
+                  - Open Dataset
                 </li>
                 <li>
-                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">⌘,</kbd> - Settings
+                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">
+                    ⌘,
+                  </kbd>{" "}
+                  - Settings
                 </li>
               </ul>
             </section>

@@ -1,4 +1,6 @@
-import { useEffect, useCallback, RefObject } from 'react';
+import { useEffect, useCallback } from "react";
+
+import type { RefObject } from "react";
 
 /**
  * Hook for managing keyboard navigation within a component
@@ -14,7 +16,7 @@ export const useKeyboardNavigation = (
     onArrowRight?: () => void;
     onTab?: (shiftKey: boolean) => void;
     enabled?: boolean;
-  } = {}
+  } = {},
 ) => {
   const { enabled = true } = options;
 
@@ -23,43 +25,43 @@ export const useKeyboardNavigation = (
       if (!enabled) return;
 
       switch (event.key) {
-        case 'Escape':
+        case "Escape":
           if (options.onEscape) {
             event.preventDefault();
             options.onEscape();
           }
           break;
-        case 'Enter':
+        case "Enter":
           if (options.onEnter) {
             event.preventDefault();
             options.onEnter();
           }
           break;
-        case 'ArrowUp':
+        case "ArrowUp":
           if (options.onArrowUp) {
             event.preventDefault();
             options.onArrowUp();
           }
           break;
-        case 'ArrowDown':
+        case "ArrowDown":
           if (options.onArrowDown) {
             event.preventDefault();
             options.onArrowDown();
           }
           break;
-        case 'ArrowLeft':
+        case "ArrowLeft":
           if (options.onArrowLeft) {
             event.preventDefault();
             options.onArrowLeft();
           }
           break;
-        case 'ArrowRight':
+        case "ArrowRight":
           if (options.onArrowRight) {
             event.preventDefault();
             options.onArrowRight();
           }
           break;
-        case 'Tab':
+        case "Tab":
           if (options.onTab) {
             event.preventDefault();
             options.onTab(event.shiftKey);
@@ -67,16 +69,16 @@ export const useKeyboardNavigation = (
           break;
       }
     },
-    [enabled, options]
+    [enabled, options],
   );
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container || !enabled) return;
 
-    container.addEventListener('keydown', handleKeyDown as any);
+    container.addEventListener("keydown", handleKeyDown as any);
     return () => {
-      container.removeEventListener('keydown', handleKeyDown as any);
+      container.removeEventListener("keydown", handleKeyDown as any);
     };
   }, [containerRef, handleKeyDown, enabled]);
 };
@@ -86,7 +88,7 @@ export const useKeyboardNavigation = (
  */
 export const useFocusTrap = (
   containerRef: RefObject<HTMLElement>,
-  enabled: boolean = true
+  enabled: boolean = true,
 ) => {
   useEffect(() => {
     if (!enabled) return;
@@ -95,14 +97,14 @@ export const useFocusTrap = (
     if (!container) return;
 
     const focusableElements = container.querySelectorAll<HTMLElement>(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
 
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
 
     const handleTabKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
+      if (e.key !== "Tab") return;
 
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
@@ -120,9 +122,9 @@ export const useFocusTrap = (
     // Focus first element when trap is enabled
     firstElement?.focus();
 
-    container.addEventListener('keydown', handleTabKey as any);
+    container.addEventListener("keydown", handleTabKey as any);
     return () => {
-      container.removeEventListener('keydown', handleTabKey as any);
+      container.removeEventListener("keydown", handleTabKey as any);
     };
   }, [containerRef, enabled]);
 };
@@ -133,21 +135,24 @@ export const useFocusTrap = (
 export const useRovingTabIndex = (
   itemsRef: RefObject<HTMLElement[]>,
   options: {
-    orientation?: 'horizontal' | 'vertical';
+    orientation?: "horizontal" | "vertical";
     loop?: boolean;
-  } = {}
+  } = {},
 ) => {
-  const { orientation = 'vertical', loop = true } = options;
+  const { orientation = "vertical", loop = true } = options;
 
-  const focusItem = useCallback((index: number) => {
-    const items = itemsRef.current;
-    if (!items || !items[index]) return;
+  const focusItem = useCallback(
+    (index: number) => {
+      const items = itemsRef.current;
+      if (!items || !items[index]) return;
 
-    items.forEach((item, i) => {
-      item.setAttribute('tabindex', i === index ? '0' : '-1');
-    });
-    items[index].focus();
-  }, [itemsRef]);
+      items.forEach((item, i) => {
+        item.setAttribute("tabindex", i === index ? "0" : "-1");
+      });
+      items[index].focus();
+    },
+    [itemsRef],
+  );
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent, currentIndex: number) => {
@@ -155,11 +160,11 @@ export const useRovingTabIndex = (
       if (!items) return;
 
       const isNext =
-        (orientation === 'vertical' && event.key === 'ArrowDown') ||
-        (orientation === 'horizontal' && event.key === 'ArrowRight');
+        (orientation === "vertical" && event.key === "ArrowDown") ||
+        (orientation === "horizontal" && event.key === "ArrowRight");
       const isPrev =
-        (orientation === 'vertical' && event.key === 'ArrowUp') ||
-        (orientation === 'horizontal' && event.key === 'ArrowLeft');
+        (orientation === "vertical" && event.key === "ArrowUp") ||
+        (orientation === "horizontal" && event.key === "ArrowLeft");
 
       if (!isNext && !isPrev) return;
 
@@ -180,7 +185,7 @@ export const useRovingTabIndex = (
 
       focusItem(nextIndex);
     },
-    [itemsRef, orientation, loop, focusItem]
+    [itemsRef, orientation, loop, focusItem],
   );
 
   return { focusItem, handleKeyDown };

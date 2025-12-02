@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Zap, Database, Brain, Settings, FileText } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { Search, Zap, Database, Brain, Settings, FileText } from "lucide-react";
+import React, { useState, useEffect } from "react";
+
+import { cn } from "../lib/utils";
 
 interface Command {
   id: string;
@@ -16,35 +17,69 @@ interface CommandPaletteProps {
 }
 
 const commands: Command[] = [
-  { id: 'new-training', label: 'Start New Training', icon: Zap, category: 'Actions', action: () => console.log('New training') },
-  { id: 'upload-dataset', label: 'Upload Dataset', icon: Database, category: 'Actions', action: () => console.log('Upload dataset') },
-  { id: 'browse-models', label: 'Browse Models', icon: Brain, category: 'Actions', action: () => console.log('Browse models') },
-  { id: 'settings', label: 'Open Settings', icon: Settings, category: 'Navigation', action: () => console.log('Settings') },
-  { id: 'docs', label: 'View Documentation', icon: FileText, category: 'Help', action: () => console.log('Docs') },
+  {
+    id: "new-training",
+    label: "Start New Training",
+    icon: Zap,
+    category: "Actions",
+    action: () => console.log("New training"),
+  },
+  {
+    id: "upload-dataset",
+    label: "Upload Dataset",
+    icon: Database,
+    category: "Actions",
+    action: () => console.log("Upload dataset"),
+  },
+  {
+    id: "browse-models",
+    label: "Browse Models",
+    icon: Brain,
+    category: "Actions",
+    action: () => console.log("Browse models"),
+  },
+  {
+    id: "settings",
+    label: "Open Settings",
+    icon: Settings,
+    category: "Navigation",
+    action: () => console.log("Settings"),
+  },
+  {
+    id: "docs",
+    label: "View Documentation",
+    icon: FileText,
+    category: "Help",
+    action: () => console.log("Docs"),
+  },
 ];
 
 const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const filteredCommands = commands.filter(cmd =>
-    cmd.label.toLowerCase().includes(search.toLowerCase()) ||
-    cmd.category.toLowerCase().includes(search.toLowerCase())
+  const filteredCommands = commands.filter(
+    (cmd) =>
+      cmd.label.toLowerCase().includes(search.toLowerCase()) ||
+      cmd.category.toLowerCase().includes(search.toLowerCase()),
   );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
 
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onClose();
-      } else if (e.key === 'ArrowDown') {
+      } else if (e.key === "ArrowDown") {
         e.preventDefault();
-        setSelectedIndex(prev => (prev + 1) % filteredCommands.length);
-      } else if (e.key === 'ArrowUp') {
+        setSelectedIndex((prev) => (prev + 1) % filteredCommands.length);
+      } else if (e.key === "ArrowUp") {
         e.preventDefault();
-        setSelectedIndex(prev => (prev - 1 + filteredCommands.length) % filteredCommands.length);
-      } else if (e.key === 'Enter') {
+        setSelectedIndex(
+          (prev) =>
+            (prev - 1 + filteredCommands.length) % filteredCommands.length,
+        );
+      } else if (e.key === "Enter") {
         e.preventDefault();
         if (filteredCommands[selectedIndex]) {
           filteredCommands[selectedIndex].action();
@@ -53,13 +88,13 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, selectedIndex, filteredCommands, onClose]);
 
   useEffect(() => {
     if (isOpen) {
-      setSearch('');
+      setSearch("");
       setSelectedIndex(0);
     }
   }, [isOpen]);
@@ -100,11 +135,14 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
           ) : (
             <div className="p-8">
               {Object.entries(
-                filteredCommands.reduce((acc, cmd) => {
-                  if (!acc[cmd.category]) acc[cmd.category] = [];
-                  acc[cmd.category].push(cmd);
-                  return acc;
-                }, {} as Record<string, Command[]>)
+                filteredCommands.reduce(
+                  (acc, cmd) => {
+                    if (!acc[cmd.category]) acc[cmd.category] = [];
+                    acc[cmd.category].push(cmd);
+                    return acc;
+                  },
+                  {} as Record<string, Command[]>,
+                ),
               ).map(([category, cmds]) => (
                 <div key={category} className="mb-12">
                   <div className="px-12 py-8 text-tiny text-dark-text-tertiary uppercase font-medium">
@@ -122,7 +160,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
                           "w-full flex items-center gap-12 px-12 py-10 rounded-lg transition-all",
                           isSelected
                             ? "bg-accent-primary text-white"
-                            : "text-dark-text-primary hover:bg-dark-bg-tertiary"
+                            : "text-dark-text-primary hover:bg-dark-bg-tertiary",
                         )}
                         onClick={() => {
                           cmd.action();
@@ -145,12 +183,18 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
         <div className="flex items-center justify-between px-16 py-12 border-t border-dark-border bg-dark-bg-tertiary/50">
           <div className="flex items-center gap-16 text-tiny text-dark-text-tertiary">
             <div className="flex items-center gap-4">
-              <kbd className="px-6 py-2 bg-dark-bg-secondary rounded font-mono">↑</kbd>
-              <kbd className="px-6 py-2 bg-dark-bg-secondary rounded font-mono">↓</kbd>
+              <kbd className="px-6 py-2 bg-dark-bg-secondary rounded font-mono">
+                ↑
+              </kbd>
+              <kbd className="px-6 py-2 bg-dark-bg-secondary rounded font-mono">
+                ↓
+              </kbd>
               <span>Navigate</span>
             </div>
             <div className="flex items-center gap-4">
-              <kbd className="px-6 py-2 bg-dark-bg-secondary rounded font-mono">↵</kbd>
+              <kbd className="px-6 py-2 bg-dark-bg-secondary rounded font-mono">
+                ↵
+              </kbd>
               <span>Select</span>
             </div>
           </div>

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\artifacts\storage_policies\wandb_storage_policy.py
+# hypothesis_version: 6.148.3
+
+[384, ':', 'Authorization', 'Content-Type', 'ETag', '_cache', 'api', 'artifactID', 'artifactManifestID', 'base_url', 'content-length', 'content-md5', 'content-type', 'default', 'hexMD5', 'md5', 'name', 'partNumber', 'rb', 'uploadPartsInput', 'wb']

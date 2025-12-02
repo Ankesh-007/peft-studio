@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\data_types\object_3d.py
+# hypothesis_version: 6.148.3
+
+[0.5, ',', ', ', '.', '.pts.json', ':', 'Artifact', 'BatchableMedia', 'Box3D', "File '", 'FileFormat3D', 'LocalRun', 'Object3D', 'Optional[numeric]', 'Optional[str]', 'Point', 'PointCloudType', 'RGBColor', 'TextIO', 'Vector3D', '_type', 'babylon', 'boxes', 'color', 'corners', 'count', 'file_type', 'filenames', 'glb', 'gltf', 'label', 'lidar/beta', 'media', 'name', 'np.ndarray', 'npt.ArrayLike', 'numpy', 'obj', 'object3D', 'object3D-file', 'objects', 'path', 'points', 'pts.json', 'read', 'score', 'seek', 'stl', 'type', 'utf-8', 'vectors', 'w', 'wandb.Error']

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { HelpCircle } from 'lucide-react';
-import { getTooltip } from '../config/tooltips';
+import { HelpCircle } from "lucide-react";
+import React, { useState } from "react";
+
+import { getTooltip } from "../config/tooltips";
 
 interface TooltipProps {
   configKey: string;
@@ -11,7 +12,11 @@ interface TooltipProps {
 /**
  * Tooltip component that displays plain-language explanations for configuration settings
  */
-export const Tooltip: React.FC<TooltipProps> = ({ configKey, children, className = '' }) => {
+export const Tooltip: React.FC<TooltipProps> = ({
+  configKey,
+  children,
+  className = "",
+}) => {
   const [isVisible, setIsVisible] = useState(false);
   const tooltipData = getTooltip(configKey);
 
@@ -30,7 +35,7 @@ export const Tooltip: React.FC<TooltipProps> = ({ configKey, children, className
         {children}
         <HelpCircle className="w-4 h-4 text-gray-400 hover:text-gray-600" />
       </div>
-      
+
       {isVisible && (
         <div
           className="absolute z-50 w-80 p-4 bg-white border border-gray-200 rounded-lg shadow-lg -top-2 left-full ml-2"
@@ -44,7 +49,8 @@ export const Tooltip: React.FC<TooltipProps> = ({ configKey, children, className
           </div>
           {tooltipData.example && (
             <div className="text-xs text-gray-500 italic border-t border-gray-100 pt-2">
-              <span className="font-medium">Example:</span> {tooltipData.example}
+              <span className="font-medium">Example:</span>{" "}
+              {tooltipData.example}
             </div>
           )}
         </div>

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\nacl\bindings\crypto_secretstream.py
+# hypothesis_version: 6.148.3
+
+['Invalid key length', 'Message is not bytes', 'Message is too long', 'Unexpected failure', 'rawbuf', 'statebuf', 'tagbuf', 'unsigned char *', 'unsigned char []', 'unsigned char[]']

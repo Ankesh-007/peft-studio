@@ -1,0 +1,391 @@
+name: Comprehensive Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  unit-tests:
+    name: Unit Tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+        
+    - name: Install frontend dependencies
+      run: npm ci
+      
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+        
+    - name: Run frontend unit tests
+      run: npm test -- --run
+      
+    - name: Run backend unit tests
+      run: |
+        cd backend
+        pytest -v -m "not integration and not e2e and not performance" --cov=. --cov-report=xml --cov-report=term
+        
+    - name: Upload frontend coverage
+      uses: codecov/codecov-action@v3
+      if: matrix.os == 'ubuntu-latest'
+      with:
+        files: ./coverage/coverage-final.json
+        flags: frontend-unit
+        name: frontend-unit-coverage-${{ matrix.os }}
+        
+    - name: Upload backend coverage
+      uses: codecov/codecov-action@v3
+      if: matrix.os == 'ubuntu-latest'
+      with:
+        files: ./backend/coverage.xml
+        flags: backend-unit
+        name: backend-unit-coverage-${{ matrix.os }}
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+        
+    - name: Install frontend dependencies
+      run: npm ci
+      
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+        
+    - name: Run frontend integration tests
+      run: npm run test:integration
+      
+    - name: Run backend integration tests
+      run: |
+        cd backend
+        pytest -v -m integration --cov=. --cov-report=xml --cov-report=term
+        
+    - name: Upload frontend integration coverage
+      uses: codecov/codecov-action@v3
+      if: always()
+      with:
+        files: ./coverage/coverage-final.json
+        flags: frontend-integration
+        name: frontend-integration-coverage
+        
+    - name: Upload backend integration coverage
+      uses: codecov/codecov-action@v3
+      if: always()
+      with:
+        files: ./backend/coverage.xml
+        flags: backend-integration
+        name: backend-integration-coverage
+
+  property-based-tests:
+    name: Property-Based Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+        
+    - name: Install frontend dependencies
+      run: npm ci
+      
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+        
+    - name: Run frontend property-based tests
+      run: npm run test:pbt
+      
+    - name: Run backend property-based tests
+      run: |
+        cd backend
+        pytest -v -m pbt --cov=. --cov-report=xml --cov-report=term
+        
+    - name: Upload frontend PBT coverage
+      uses: codecov/codecov-action@v3
+      if: always()
+      with:
+        files: ./coverage/coverage-final.json
+        flags: frontend-pbt
+        name: frontend-pbt-coverage
+        
+    - name: Upload backend PBT coverage
+      uses: codecov/codecov-action@v3
+      if: always()
+      with:
+        files: ./backend/coverage.xml
+        flags: backend-pbt
+        name: backend-pbt-coverage
+
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+        
+    - name: Install frontend dependencies
+      run: npm ci
+      
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+        
+    - name: Check for frontend performance tests
+      id: check-frontend-perf
+      run: |
+        if find src -name "*.perf.test.ts" -o -name "*.perf.test.tsx" | grep -q .; then
+          echo "has_tests=true" >> $GITHUB_OUTPUT
+        else
+          echo "has_tests=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Run frontend performance tests
+      if: steps.check-frontend-perf.outputs.has_tests == 'true'
+      run: |
+        # Run performance tests if they exist
+        npm test -- --run --testNamePattern="performance|perf"
+        
+    - name: Check for backend performance tests
+      id: check-backend-perf
+      run: |
+        cd backend
+        if find tests -name "*perf*.py" -o -name "*performance*.py" | grep -q .; then
+          echo "has_tests=true" >> $GITHUB_OUTPUT
+        else
+          echo "has_tests=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Run backend performance tests
+      if: steps.check-backend-perf.outputs.has_tests == 'true'
+      run: |
+        cd backend
+        pytest -v -m performance --cov=. --cov-report=xml --cov-report=term
+        
+    - name: Performance tests summary
+      run: |
+        echo "## Performance Tests Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        if [[ "${{ steps.check-frontend-perf.outputs.has_tests }}" == "true" ]]; then
+          echo "✅ Frontend performance tests: Executed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⚠️ Frontend performance tests: No tests found" >> $GITHUB_STEP_SUMMARY
+        fi
+        if [[ "${{ steps.check-backend-perf.outputs.has_tests }}" == "true" ]]; then
+          echo "✅ Backend performance tests: Executed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⚠️ Backend performance tests: No tests found" >> $GITHUB_STEP_SUMMARY
+        fi
+
+  e2e-tests:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+        
+    - name: Install frontend dependencies
+      run: npm ci
+      
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+        
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
+      
+    - name: Build application
+      run: npm run build
+      
+    - name: Run frontend E2E tests
+      run: npm run test:e2e
+      
+    - name: Run backend E2E tests
+      run: |
+        cd backend
+        pytest -v -m e2e --cov=. --cov-report=xml --cov-report=term
+        
+    - name: Upload E2E test artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: e2e-test-results
+        path: |
+          test-results/
+          playwright-report/
+        retention-days: 7
+        
+    - name: Upload frontend E2E coverage
+      uses: codecov/codecov-action@v3
+      if: always()
+      with:
+        files: ./coverage/coverage-final.json
+        flags: frontend-e2e
+        name: frontend-e2e-coverage
+        
+    - name: Upload backend E2E coverage
+      uses: codecov/codecov-action@v3
+      if: always()
+      with:
+        files: ./backend/coverage.xml
+        flags: backend-e2e
+        name: backend-e2e-coverage
+
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, property-based-tests, performance-tests, e2e-tests]
+    if: always()
+    
+    steps:
+    - name: Check all test results
+      run: |
+        echo "## Comprehensive Testing Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Test Results by Category" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Unit Tests
+        if [[ "${{ needs.unit-tests.result }}" == "success" ]]; then
+          echo "✅ **Unit Tests**: Passed on all platforms (ubuntu, macos, windows)" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Unit Tests**: Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        # Integration Tests
+        if [[ "${{ needs.integration-tests.result }}" == "success" ]]; then
+          echo "✅ **Integration Tests**: Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Integration Tests**: Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        # Property-Based Tests
+        if [[ "${{ needs.property-based-tests.result }}" == "success" ]]; then
+          echo "✅ **Property-Based Tests**: Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Property-Based Tests**: Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        # Performance Tests
+        if [[ "${{ needs.performance-tests.result }}" == "success" ]]; then
+          echo "✅ **Performance Tests**: Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⚠️ **Performance Tests**: Completed with warnings or no tests found" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        # E2E Tests
+        if [[ "${{ needs.e2e-tests.result }}" == "success" ]]; then
+          echo "✅ **End-to-End Tests**: Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **End-to-End Tests**: Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Overall status
+        if [[ "${{ needs.unit-tests.result }}" != "success" ]] || \
+           [[ "${{ needs.integration-tests.result }}" != "success" ]] || \
+           [[ "${{ needs.property-based-tests.result }}" != "success" ]] || \
+           [[ "${{ needs.e2e-tests.result }}" != "success" ]]; then
+          echo "### ❌ Overall Status: FAILED" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "One or more test suites failed. Please review the logs above for details." >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
+        
+        echo "### ✅ Overall Status: SUCCESS" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "All comprehensive tests passed successfully! 🎉" >> $GITHUB_STEP_SUMMARY
+        
+    - name: Create test badge data
+      run: |
+        mkdir -p .github/badges
+        if [[ "${{ needs.unit-tests.result }}" == "success" ]] && \
+           [[ "${{ needs.integration-tests.result }}" == "success" ]] && \
+           [[ "${{ needs.property-based-tests.result }}" == "success" ]] && \
+           [[ "${{ needs.e2e-tests.result }}" == "success" ]]; then
+          echo "passing" > .github/badges/tests.txt
+        else
+          echo "failing" > .github/badges/tests.txt
+        fi

@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import { Check, ChevronRight, ChevronLeft, Download, Database, Cpu } from 'lucide-react';
+import {
+  Check,
+  ChevronRight,
+  ChevronLeft,
+  Download,
+  Database,
+  Cpu,
+} from "lucide-react";
+import React, { useState } from "react";
 
 interface SetupWizardProps {
   onComplete: () => void;
@@ -11,21 +18,22 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, onSkip }) => {
   const [setupData, setSetupData] = useState({
     downloadSample: false,
     hardwareDetected: false,
-    preferencesSet: false
+    preferencesSet: false,
   });
 
   const steps = [
     {
-      id: 'hardware',
-      title: 'Hardware Detection',
-      description: 'Let\'s check your system capabilities',
+      id: "hardware",
+      title: "Hardware Detection",
+      description: "Let's check your system capabilities",
       icon: Cpu,
       content: (
         <div className="space-y-24">
           <p className="text-body text-dark-text-secondary">
-            PEFT Studio will automatically detect your GPU, CPU, and RAM to optimize training settings.
+            PEFT Studio will automatically detect your GPU, CPU, and RAM to
+            optimize training settings.
           </p>
-          
+
           <div className="card bg-dark-bg-tertiary">
             <div className="flex items-center justify-between mb-16">
               <span className="text-body font-medium">GPU Detection</span>
@@ -59,29 +67,36 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, onSkip }) => {
             disabled={setupData.hardwareDetected}
             className="btn btn-primary w-full"
           >
-            {setupData.hardwareDetected ? 'Hardware Detected' : 'Detect Hardware'}
+            {setupData.hardwareDetected
+              ? "Hardware Detected"
+              : "Detect Hardware"}
           </button>
         </div>
-      )
+      ),
     },
     {
-      id: 'sample',
-      title: 'Sample Dataset & Model',
-      description: 'Download a sample to try out the features',
+      id: "sample",
+      title: "Sample Dataset & Model",
+      description: "Download a sample to try out the features",
       icon: Database,
       content: (
         <div className="space-y-24">
           <p className="text-body text-dark-text-secondary">
-            We recommend downloading a sample dataset and model to explore PEFT Studio's features.
+            We recommend downloading a sample dataset and model to explore PEFT
+            Studio's features.
           </p>
 
           <div className="card bg-dark-bg-tertiary">
             <div className="flex items-start gap-16 mb-16">
-              <Download size={24} className="text-accent-info flex-shrink-0 mt-4" />
+              <Download
+                size={24}
+                className="text-accent-info flex-shrink-0 mt-4"
+              />
               <div className="flex-1">
                 <h4 className="text-body font-medium mb-8">Sample Package</h4>
                 <p className="text-small text-dark-text-secondary mb-12">
-                  Includes a small conversational dataset and Llama-3-8B model for testing
+                  Includes a small conversational dataset and Llama-3-8B model
+                  for testing
                 </p>
                 <div className="text-tiny text-dark-text-tertiary">
                   Size: ~500 MB • Download time: ~2 minutes
@@ -108,7 +123,7 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, onSkip }) => {
               disabled={setupData.downloadSample}
               className="btn btn-primary flex-1"
             >
-              {setupData.downloadSample ? 'Downloaded' : 'Download Sample'}
+              {setupData.downloadSample ? "Downloaded" : "Download Sample"}
             </button>
             <button
               onClick={() => setCurrentStep(2)}
@@ -118,12 +133,12 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, onSkip }) => {
             </button>
           </div>
         </div>
-      )
+      ),
     },
     {
-      id: 'preferences',
-      title: 'Quick Preferences',
-      description: 'Set your default preferences',
+      id: "preferences",
+      title: "Quick Preferences",
+      description: "Set your default preferences",
       icon: Check,
       content: (
         <div className="space-y-24">
@@ -135,7 +150,9 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, onSkip }) => {
             <div className="card bg-dark-bg-tertiary">
               <label className="flex items-center justify-between cursor-pointer">
                 <div>
-                  <div className="text-body font-medium mb-4">Enable Notifications</div>
+                  <div className="text-body font-medium mb-4">
+                    Enable Notifications
+                  </div>
                   <div className="text-small text-dark-text-secondary">
                     Get notified when training completes or errors occur
                   </div>
@@ -151,7 +168,9 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, onSkip }) => {
             <div className="card bg-dark-bg-tertiary">
               <label className="flex items-center justify-between cursor-pointer">
                 <div>
-                  <div className="text-body font-medium mb-4">Auto-Save Checkpoints</div>
+                  <div className="text-body font-medium mb-4">
+                    Auto-Save Checkpoints
+                  </div>
                   <div className="text-small text-dark-text-secondary">
                     Automatically save model checkpoints during training
                   </div>
@@ -167,7 +186,9 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, onSkip }) => {
             <div className="card bg-dark-bg-tertiary">
               <label className="flex items-center justify-between cursor-pointer">
                 <div>
-                  <div className="text-body font-medium mb-4">Show Advanced Settings</div>
+                  <div className="text-body font-medium mb-4">
+                    Show Advanced Settings
+                  </div>
                   <div className="text-small text-dark-text-secondary">
                     Display advanced configuration options in wizards
                   </div>
@@ -190,8 +211,8 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, onSkip }) => {
             Complete Setup
           </button>
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   const currentStepData = steps[currentStep];
@@ -209,24 +230,28 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, onSkip }) => {
                   <div
                     className={`w-40 h-40 rounded-full flex items-center justify-center transition-all ${
                       index <= currentStep
-                        ? 'bg-accent-primary text-white'
-                        : 'bg-dark-bg-tertiary text-dark-text-tertiary'
+                        ? "bg-accent-primary text-white"
+                        : "bg-dark-bg-tertiary text-dark-text-tertiary"
                     }`}
                   >
                     {index < currentStep ? (
                       <Check size={20} />
                     ) : (
-                      <span className="text-small font-medium">{index + 1}</span>
+                      <span className="text-small font-medium">
+                        {index + 1}
+                      </span>
                     )}
                   </div>
                   <span className="text-tiny text-dark-text-tertiary mt-8">
-                    {step.title.split(' ')[0]}
+                    {step.title.split(" ")[0]}
                   </span>
                 </div>
                 {index < steps.length - 1 && (
                   <div
                     className={`flex-1 h-2 mx-8 rounded-full transition-all ${
-                      index < currentStep ? 'bg-accent-primary' : 'bg-dark-bg-tertiary'
+                      index < currentStep
+                        ? "bg-accent-primary"
+                        : "bg-dark-bg-tertiary"
                     }`}
                   />
                 )}

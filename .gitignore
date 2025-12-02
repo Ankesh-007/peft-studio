@@ -19,6 +19,8 @@ __pycache__/
 .Python
 pip-log.txt
 pip-delete-this-directory.txt
+*.pyc
+.pytest_cache/
 
 # Data
 backend/data/
@@ -45,6 +47,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Environment
+*.env
 .env
 .env.local
 .env.*.local

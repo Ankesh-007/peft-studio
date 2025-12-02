@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\connectors\connector_manager.py
+# hypothesis_version: 6.148.3
+
+['*_connector.py', '_', 'cancel_job', 'connect', 'connectors', 'description', 'disconnect', 'display_name', 'fetch_artifact', 'get_job_status', 'get_pricing', 'list_resources', 'name', 'plugins', 'required_credentials', 'stream_logs', 'submit_job', 'supports_inference', 'supports_registry', 'supports_tracking', 'supports_training', 'upload_artifact', 'verify_connection', 'version']

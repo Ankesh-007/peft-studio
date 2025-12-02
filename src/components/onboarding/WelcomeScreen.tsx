@@ -1,37 +1,43 @@
-import React from 'react';
-import { Brain, Zap, Shield, Sparkles, ArrowRight } from 'lucide-react';
+import { Brain, Zap, Shield, Sparkles, ArrowRight } from "lucide-react";
+import React from "react";
 
 interface WelcomeScreenProps {
   onGetStarted: () => void;
   onSkip: () => void;
 }
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onGetStarted, onSkip }) => {
+const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
+  onGetStarted,
+  onSkip,
+}) => {
   const features = [
     {
       icon: Brain,
-      title: 'Smart Configuration',
-      description: 'Automatically optimizes settings based on your hardware and dataset',
-      color: 'text-accent-primary'
+      title: "Smart Configuration",
+      description:
+        "Automatically optimizes settings based on your hardware and dataset",
+      color: "text-accent-primary",
     },
     {
       icon: Zap,
-      title: 'Real-Time Monitoring',
-      description: 'Watch your model train with live metrics and visual feedback',
-      color: 'text-accent-success'
+      title: "Real-Time Monitoring",
+      description:
+        "Watch your model train with live metrics and visual feedback",
+      color: "text-accent-success",
     },
     {
       icon: Shield,
-      title: 'Auto-Recovery',
-      description: 'Detects and fixes training issues automatically',
-      color: 'text-accent-warning'
+      title: "Auto-Recovery",
+      description: "Detects and fixes training issues automatically",
+      color: "text-accent-warning",
     },
     {
       icon: Sparkles,
-      title: 'One-Click Export',
-      description: 'Deploy to HuggingFace, Ollama, and more with a single click',
-      color: 'text-accent-info'
-    }
+      title: "One-Click Export",
+      description:
+        "Deploy to HuggingFace, Ollama, and more with a single click",
+      color: "text-accent-info",
+    },
   ];
 
   return (
@@ -59,7 +65,9 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onGetStarted, onSkip }) =
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="flex items-start gap-16">
-                  <div className={`w-48 h-48 rounded-lg bg-dark-bg-tertiary flex items-center justify-center flex-shrink-0`}>
+                  <div
+                    className={`w-48 h-48 rounded-lg bg-dark-bg-tertiary flex items-center justify-center flex-shrink-0`}
+                  >
                     <Icon size={24} className={feature.color} />
                   </div>
                   <div>
@@ -75,24 +83,30 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onGetStarted, onSkip }) =
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex items-center justify-center gap-16 animate-fade-in" style={{ animationDelay: '400ms' }}>
+        <div
+          className="flex items-center justify-center gap-16 animate-fade-in"
+          style={{ animationDelay: "400ms" }}
+        >
           <button
             onClick={onGetStarted}
             className="btn btn-primary btn-lg group"
           >
             Get Started
-            <ArrowRight size={20} className="ml-8 group-hover:translate-x-4 transition-transform" />
+            <ArrowRight
+              size={20}
+              className="ml-8 group-hover:translate-x-4 transition-transform"
+            />
           </button>
-          <button
-            onClick={onSkip}
-            className="btn btn-secondary btn-lg"
-          >
+          <button onClick={onSkip} className="btn btn-secondary btn-lg">
             Skip Tour
           </button>
         </div>
 
         {/* Footer Note */}
-        <p className="text-center text-small text-dark-text-tertiary mt-24 animate-fade-in" style={{ animationDelay: '500ms' }}>
+        <p
+          className="text-center text-small text-dark-text-tertiary mt-24 animate-fade-in"
+          style={{ animationDelay: "500ms" }}
+        >
           This tour will take about 2 minutes and show you the key features
         </p>
       </div>

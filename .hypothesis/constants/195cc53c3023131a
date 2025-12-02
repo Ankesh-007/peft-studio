@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\telemetry_service.py
+# hypothesis_version: 6.148.3
+
+[-1000, 100, 1024, '.peft-studio', 'IP addresses', 'analytics', 'api_key', 'avg', 'config', 'context', 'count', 'cpu_count', 'created_at', 'data_collected', 'data_not_collected', 'deleted_at', 'disabled_at', 'duration_minutes', 'email', 'enabled', 'enabled_at', 'error', 'error_message', 'error_occurred', 'error_type', 'event_counts', 'event_type', 'events', 'file_path', 'last_prompt', 'max', 'metric_name', 'min', 'ms', 'name', 'os', 'os_version', 'password', 'performance_metric', 'performance_metrics', 'properties', 'python_version', 'r', 'session_ended', 'session_id', 'summary', 'system_info', 'timestamp', 'token', 'total_events', 'total_memory_gb', 'unit', 'user_id', 'username', 'value', 'w']

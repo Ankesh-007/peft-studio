@@ -1,7 +1,10 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { FormattedError } from '../types/error';
-import { formatError } from '../api/errors';
-import ErrorToast from '../components/ErrorToast';
+import React, { createContext, useContext, useState, useCallback } from "react";
+
+import { formatError } from "../api/errors";
+import ErrorToast from "../components/ErrorToast";
+
+import type { FormattedError } from "../types/error";
+import type { ReactNode } from "react";
 
 interface ErrorContextType {
   showError: (error: Error, context?: Record<string, any>) => Promise<void>;
@@ -23,39 +26,42 @@ export const ErrorProvider: React.FC<ErrorProviderProps> = ({ children }) => {
   const [currentError, setCurrentError] = useState<FormattedError | null>(null);
   const [toastErrors, setToastErrors] = useState<FormattedError[]>([]);
 
-  const showError = useCallback(async (error: Error, context?: Record<string, any>) => {
-    try {
-      const formatted = await formatError(error, context);
-      
-      // Critical errors are shown as full-screen modals
-      if (formatted.severity === 'critical') {
-        setCurrentError(formatted);
-      } else {
-        // Other errors are shown as toasts
-        setToastErrors((prev) => [...prev, formatted]);
+  const showError = useCallback(
+    async (error: Error, context?: Record<string, any>) => {
+      try {
+        const formatted = await formatError(error, context);
+
+        // Critical errors are shown as full-screen modals
+        if (formatted.severity === "critical") {
+          setCurrentError(formatted);
+        } else {
+          // Other errors are shown as toasts
+          setToastErrors((prev) => [...prev, formatted]);
+        }
+      } catch (e) {
+        console.error("Failed to format error:", e);
+        // Fallback
+        const fallbackError: FormattedError = {
+          title: "Error Occurred",
+          what_happened: error.message || "An unexpected error occurred.",
+          why_it_happened: "The system encountered an issue.",
+          actions: [
+            {
+              description: "Try again",
+              automatic: false,
+              action_type: "manual_step",
+            },
+          ],
+          category: "system" as any,
+          severity: "medium" as any,
+          help_link: "https://docs.peftstudio.ai/troubleshooting",
+          auto_recoverable: false,
+        };
+        setToastErrors((prev) => [...prev, fallbackError]);
       }
-    } catch (e) {
-      console.error('Failed to format error:', e);
-      // Fallback
-      const fallbackError: FormattedError = {
-        title: 'Error Occurred',
-        what_happened: error.message || 'An unexpected error occurred.',
-        why_it_happened: 'The system encountered an issue.',
-        actions: [
-          {
-            description: 'Try again',
-            automatic: false,
-            action_type: 'manual_step',
-          },
-        ],
-        category: 'system' as any,
-        severity: 'medium' as any,
-        help_link: 'https://docs.peftstudio.ai/troubleshooting',
-        auto_recoverable: false,
-      };
-      setToastErrors((prev) => [...prev, fallbackError]);
-    }
-  }, []);
+    },
+    [],
+  );
 
   const clearError = useCallback(() => {
     setCurrentError(null);
@@ -68,7 +74,7 @@ export const ErrorProvider: React.FC<ErrorProviderProps> = ({ children }) => {
   return (
     <ErrorContext.Provider value={{ showError, clearError, currentError }}>
       {children}
-      
+
       {/* Render toast notifications */}
       <div className="fixed bottom-0 right-0 p-4 space-y-2 pointer-events-none">
         <div className="space-y-2 pointer-events-auto">
@@ -77,7 +83,7 @@ export const ErrorProvider: React.FC<ErrorProviderProps> = ({ children }) => {
               key={index}
               error={error}
               onDismiss={() => dismissToast(index)}
-              autoHideDuration={error.severity === 'low' ? 5000 : 0}
+              autoHideDuration={error.severity === "low" ? 5000 : 0}
             />
           ))}
         </div>
@@ -92,7 +98,7 @@ export const ErrorProvider: React.FC<ErrorProviderProps> = ({ children }) => {
 export const useError = (): ErrorContextType => {
   const context = useContext(ErrorContext);
   if (!context) {
-    throw new Error('useError must be used within an ErrorProvider');
+    throw new Error("useError must be used within an ErrorProvider");
   }
   return context;
 };

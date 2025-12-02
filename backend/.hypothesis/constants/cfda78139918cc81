@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\plugins\connectors\vastai_connector.py
+# hypothesis_version: 6.148.3
+
+[200, 201, 300, 401, 1024, '/tmp/adapter.tar.gz', '/workspace/train.py', '1.0.0', 'Accept', 'Invalid API key', 'Invalid API response', 'USD', 'Unknown', 'Vast.ai', 'actual_status', 'api_key', 'api_key is required', 'application/json', 'asc', 'client_id', 'config', 'cpu_cores', 'cpu_ram', 'created', 'disk', 'disk_space', 'dph_total', 'eq', 'exited', 'external', 'gpu_name', 'gpu_ram', 'gte', 'id', 'image', 'instance_id', 'instances', 'label', 'loading', 'logs', 'new_contract', 'num_gpus', 'offers', 'on-demand', 'onstart', 'order', 'peft-studio', 'q', 'r', 'rentable', 'root', 'running', 'runtype', 'ssh', 'ssh_host', 'ssh_port', 'status', 'stopped', 'success', 'type', 'unknown', 'username', 'vastai', 'vastai-marketplace', 'verified', 'w']

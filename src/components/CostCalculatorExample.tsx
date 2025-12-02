@@ -1,6 +1,6 @@
 /**
  * Cost Calculator Example Component
- * 
+ *
  * Demonstrates the complete cost calculator integration with:
  * - User-input electricity rate (Requirement 9.4)
  * - GPU hours estimation (Requirement 9.2)
@@ -8,49 +8,52 @@
  * - Real-time estimate updates (Requirement 9.3)
  */
 
-import React, { useState } from 'react';
-import CostEstimateDisplay from './CostEstimateDisplay';
-import ElectricityRateInput from './ElectricityRateInput';
+import React, { useState } from "react";
+
+import CostEstimateDisplay from "./CostEstimateDisplay";
+import ElectricityRateInput from "./ElectricityRateInput";
 
 export const CostCalculatorExample: React.FC = () => {
   const [trainingTime, setTrainingTime] = useState<number>(2.5);
-  const [gpuName, setGpuName] = useState<string>('RTX 4090');
+  const [gpuName, setGpuName] = useState<string>("RTX 4090");
   const [numGpus, setNumGpus] = useState<number>(1);
-  const [electricityRate, setElectricityRate] = useState<number | undefined>(undefined);
-  const [region, setRegion] = useState<string>('US');
+  const [electricityRate, setElectricityRate] = useState<number | undefined>(
+    undefined,
+  );
+  const [region, setRegion] = useState<string>("US");
 
   const gpuOptions = [
-    'RTX 4090',
-    'RTX 4080',
-    'RTX 4070',
-    'RTX 3090',
-    'RTX 3080',
-    'A100',
-    'A100-80GB',
-    'H100',
-    'V100',
-    'T4'
+    "RTX 4090",
+    "RTX 4080",
+    "RTX 4070",
+    "RTX 3090",
+    "RTX 3080",
+    "A100",
+    "A100-80GB",
+    "H100",
+    "V100",
+    "T4",
   ];
 
   const regionOptions = [
-    { value: 'US', label: 'United States' },
-    { value: 'US-CA', label: 'California' },
-    { value: 'US-TX', label: 'Texas' },
-    { value: 'EU', label: 'European Union' },
-    { value: 'UK', label: 'United Kingdom' },
-    { value: 'DE', label: 'Germany' },
-    { value: 'FR', label: 'France' },
-    { value: 'CN', label: 'China' },
-    { value: 'IN', label: 'India' },
-    { value: 'JP', label: 'Japan' },
-    { value: 'AU', label: 'Australia' },
-    { value: 'CA', label: 'Canada' }
+    { value: "US", label: "United States" },
+    { value: "US-CA", label: "California" },
+    { value: "US-TX", label: "Texas" },
+    { value: "EU", label: "European Union" },
+    { value: "UK", label: "United Kingdom" },
+    { value: "DE", label: "Germany" },
+    { value: "FR", label: "France" },
+    { value: "CN", label: "China" },
+    { value: "IN", label: "India" },
+    { value: "JP", label: "Japan" },
+    { value: "AU", label: "Australia" },
+    { value: "CA", label: "Canada" },
   ];
 
   return (
     <div className="cost-calculator-example">
       <h2>Training Cost & Carbon Footprint Calculator</h2>
-      
+
       <div className="calculator-controls">
         <div className="control-group">
           <label htmlFor="training-time">Training Time (hours)</label>
@@ -123,7 +126,7 @@ export const CostCalculatorExample: React.FC = () => {
           electricityRate={electricityRate}
           region={region}
           onEstimatesUpdate={(estimates) => {
-            console.log('Estimates updated:', estimates);
+            console.log("Estimates updated:", estimates);
           }}
         />
       </div>
@@ -132,16 +135,20 @@ export const CostCalculatorExample: React.FC = () => {
         <h3>About These Estimates</h3>
         <ul>
           <li>
-            <strong>GPU Hours:</strong> Total GPU time = training time × number of GPUs
+            <strong>GPU Hours:</strong> Total GPU time = training time × number
+            of GPUs
           </li>
           <li>
-            <strong>Electricity Cost:</strong> Based on GPU power consumption and your electricity rate
+            <strong>Electricity Cost:</strong> Based on GPU power consumption
+            and your electricity rate
           </li>
           <li>
-            <strong>Carbon Footprint:</strong> CO₂ emissions based on regional grid carbon intensity
+            <strong>Carbon Footprint:</strong> CO₂ emissions based on regional
+            grid carbon intensity
           </li>
           <li>
-            <strong>Real-time Updates:</strong> Estimates update automatically when you change any parameter
+            <strong>Real-time Updates:</strong> Estimates update automatically
+            when you change any parameter
           </li>
         </ul>
       </div>

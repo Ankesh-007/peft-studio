@@ -1,7 +1,13 @@
-import React, { useState, useCallback } from 'react';
-import { Upload, File, AlertCircle, CheckCircle, Info, X } from 'lucide-react';
-import { Dataset, ValidationResult, WizardState } from '../../types/wizard';
-import Tooltip from '../Tooltip';
+import { Upload, File, AlertCircle, CheckCircle, Info, X } from "lucide-react";
+import React, { useState, useCallback } from "react";
+
+import Tooltip from "../Tooltip";
+
+import type {
+  Dataset,
+  ValidationResult,
+  WizardState,
+} from "../../types/wizard";
 
 interface DatasetUploadStepProps {
   wizardState: WizardState;
@@ -11,7 +17,10 @@ interface DatasetUploadStepProps {
 /**
  * Step 2: Dataset Upload with drag-and-drop, validation, and preview
  */
-const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({ wizardState, onDatasetSelect }) => {
+const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({
+  wizardState,
+  onDatasetSelect,
+}) => {
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<any[] | null>(null);
@@ -36,43 +45,49 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({ wizardState, onDa
     }
   }, []);
 
-  const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      await handleFileUpload(files[0]);
-    }
-  }, []);
+  const handleFileSelect = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (files && files.length > 0) {
+        await handleFileUpload(files[0]);
+      }
+    },
+    [],
+  );
 
   const handleFileUpload = async (file: File) => {
     setUploading(true);
-    
+
     try {
       // Upload file
       const formData = new FormData();
-      formData.append('file', file);
-      
-      const uploadResponse = await fetch('http://127.0.0.1:8000/api/datasets/upload', {
-        method: 'POST',
-        body: formData,
-      });
-      
+      formData.append("file", file);
+
+      const uploadResponse = await fetch(
+        "http://127.0.0.1:8000/api/datasets/upload",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
       if (!uploadResponse.ok) {
-        throw new Error('Upload failed');
+        throw new Error("Upload failed");
       }
-      
+
       const uploadData = await uploadResponse.json();
-      
+
       // Mock validation for now (backend endpoint to be implemented)
       const validation: ValidationResult[] = [];
-      
+
       // Detect format
-      const extension = file.name.split('.').pop()?.toLowerCase();
-      let format = 'unknown';
-      if (extension === 'csv') format = 'csv';
-      else if (extension === 'json') format = 'json';
-      else if (extension === 'jsonl') format = 'jsonl';
-      else if (extension === 'txt') format = 'txt';
-      
+      const extension = file.name.split(".").pop()?.toLowerCase();
+      let format = "unknown";
+      if (extension === "csv") format = "csv";
+      else if (extension === "json") format = "json";
+      else if (extension === "jsonl") format = "jsonl";
+      else if (extension === "txt") format = "txt";
+
       // Create dataset object
       const dataset: Dataset = {
         id: uploadData.id || Date.now().toString(),
@@ -82,59 +97,65 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({ wizardState, onDa
         size: file.size,
         num_samples: uploadData.num_samples,
       };
-      
+
       // Mock preview data
       setPreview([
-        { text: 'Sample training example 1...', tokens: 150 },
-        { text: 'Sample training example 2...', tokens: 200 },
-        { text: 'Sample training example 3...', tokens: 180 },
+        { text: "Sample training example 1...", tokens: 150 },
+        { text: "Sample training example 2...", tokens: 200 },
+        { text: "Sample training example 3...", tokens: 180 },
       ]);
-      
+
       // Add validation messages
       if (dataset.num_samples && dataset.num_samples < 100) {
         validation.push({
-          field: 'dataset_size',
-          level: 'warning',
+          field: "dataset_size",
+          level: "warning",
           message: `Dataset has only ${dataset.num_samples} samples`,
-          suggestion: 'Consider adding more training examples for better results. Recommended: 500+ samples.',
+          suggestion:
+            "Consider adding more training examples for better results. Recommended: 500+ samples.",
           autoFixable: false,
         });
       }
-      
-      if (format === 'unknown') {
+
+      if (format === "unknown") {
         validation.push({
-          field: 'format',
-          level: 'error',
-          message: 'Unsupported file format',
-          suggestion: 'Please upload a CSV, JSON, JSONL, or TXT file.',
+          field: "format",
+          level: "error",
+          message: "Unsupported file format",
+          suggestion: "Please upload a CSV, JSON, JSONL, or TXT file.",
           autoFixable: false,
         });
       } else {
         validation.push({
-          field: 'format',
-          level: 'info',
+          field: "format",
+          level: "info",
           message: `Format detected: ${format.toUpperCase()}`,
           autoFixable: false,
         });
       }
-      
+
       onDatasetSelect(dataset, validation);
     } catch (error) {
-      console.error('Upload error:', error);
-      const validation: ValidationResult[] = [{
-        field: 'upload',
-        level: 'error',
-        message: 'Failed to upload dataset',
-        suggestion: 'Please check your connection and try again.',
-        autoFixable: false,
-      }];
-      onDatasetSelect({
-        id: '',
-        name: file.name,
-        path: '',
-        format: 'unknown',
-        size: file.size,
-      }, validation);
+      console.error("Upload error:", error);
+      const validation: ValidationResult[] = [
+        {
+          field: "upload",
+          level: "error",
+          message: "Failed to upload dataset",
+          suggestion: "Please check your connection and try again.",
+          autoFixable: false,
+        },
+      ];
+      onDatasetSelect(
+        {
+          id: "",
+          name: file.name,
+          path: "",
+          format: "unknown",
+          size: file.size,
+        },
+        validation,
+      );
     } finally {
       setUploading(false);
     }
@@ -145,42 +166,44 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({ wizardState, onDa
     setPreview(null);
   };
 
-  const getValidationIcon = (level: ValidationResult['level']) => {
+  const getValidationIcon = (level: ValidationResult["level"]) => {
     switch (level) {
-      case 'error':
+      case "error":
         return <AlertCircle className="w-5 h-5 text-red-600" />;
-      case 'warning':
+      case "warning":
         return <AlertCircle className="w-5 h-5 text-yellow-600" />;
-      case 'info':
+      case "info":
         return <Info className="w-5 h-5 text-blue-600" />;
       default:
         return <CheckCircle className="w-5 h-5 text-green-600" />;
     }
   };
 
-  const getValidationBgColor = (level: ValidationResult['level']) => {
+  const getValidationBgColor = (level: ValidationResult["level"]) => {
     switch (level) {
-      case 'error':
-        return 'bg-red-50 border-red-200';
-      case 'warning':
-        return 'bg-yellow-50 border-yellow-200';
-      case 'info':
-        return 'bg-blue-50 border-blue-200';
+      case "error":
+        return "bg-red-50 border-red-200";
+      case "warning":
+        return "bg-yellow-50 border-yellow-200";
+      case "info":
+        return "bg-blue-50 border-blue-200";
       default:
-        return 'bg-green-50 border-green-200';
+        return "bg-green-50 border-green-200";
     }
   };
 
-  const hasErrors = wizardState.validation.some(v => v.level === 'error');
+  const hasErrors = wizardState.validation.some((v) => v.level === "error");
 
   return (
     <div className="space-y-6">
       {/* Instructions */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-blue-900 mb-2">Upload Your Training Data</h2>
+        <h2 className="text-xl font-semibold text-blue-900 mb-2">
+          Upload Your Training Data
+        </h2>
         <p className="text-blue-800 mb-3">
-          Upload your dataset in CSV, JSON, JSONL, or plain text format. We'll automatically
-          validate it and show you a preview.
+          Upload your dataset in CSV, JSON, JSONL, or plain text format. We'll
+          automatically validate it and show you a preview.
         </p>
         <div className="flex items-center gap-2">
           <Tooltip configKey="dataset_format">
@@ -199,15 +222,18 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({ wizardState, onDa
           onDrop={handleDrop}
           className={`
             border-2 border-dashed rounded-lg p-12 text-center transition-colors
-            ${isDragging
-              ? 'border-blue-600 bg-blue-50'
-              : 'border-gray-300 bg-white hover:border-gray-400'
+            ${
+              isDragging
+                ? "border-blue-600 bg-blue-50"
+                : "border-gray-300 bg-white hover:border-gray-400"
             }
           `}
         >
-          <Upload className={`w-16 h-16 mx-auto mb-4 ${isDragging ? 'text-blue-600' : 'text-gray-400'}`} />
+          <Upload
+            className={`w-16 h-16 mx-auto mb-4 ${isDragging ? "text-blue-600" : "text-gray-400"}`}
+          />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            {isDragging ? 'Drop your file here' : 'Drag and drop your dataset'}
+            {isDragging ? "Drop your file here" : "Drag and drop your dataset"}
           </h3>
           <p className="text-gray-600 mb-4">or</p>
           <label className="inline-block">
@@ -219,7 +245,7 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({ wizardState, onDa
               disabled={uploading}
             />
             <span className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer inline-block">
-              {uploading ? 'Uploading...' : 'Browse Files'}
+              {uploading ? "Uploading..." : "Browse Files"}
             </span>
           </label>
           <p className="text-sm text-gray-500 mt-4">
@@ -233,11 +259,15 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({ wizardState, onDa
             <div className="flex items-center gap-3">
               <File className="w-8 h-8 text-blue-600" />
               <div>
-                <h3 className="font-semibold text-gray-900">{wizardState.dataset.name}</h3>
+                <h3 className="font-semibold text-gray-900">
+                  {wizardState.dataset.name}
+                </h3>
                 <p className="text-sm text-gray-600">
                   {(wizardState.dataset.size / 1024).toFixed(2)} KB
-                  {wizardState.dataset.num_samples && ` • ${wizardState.dataset.num_samples} samples`}
-                  {wizardState.dataset.format && ` • ${wizardState.dataset.format.toUpperCase()}`}
+                  {wizardState.dataset.num_samples &&
+                    ` • ${wizardState.dataset.num_samples} samples`}
+                  {wizardState.dataset.format &&
+                    ` • ${wizardState.dataset.format.toUpperCase()}`}
                 </p>
               </div>
             </div>
@@ -254,7 +284,9 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({ wizardState, onDa
           {wizardState.validation.length > 0 && (
             <div className="space-y-2 mb-4">
               <div className="flex items-center gap-2">
-                <h4 className="text-sm font-semibold text-gray-900">Validation Results</h4>
+                <h4 className="text-sm font-semibold text-gray-900">
+                  Validation Results
+                </h4>
                 <Tooltip configKey="dataset_validation" />
               </div>
               {wizardState.validation.map((result, idx) => (
@@ -265,9 +297,13 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({ wizardState, onDa
                 >
                   {getValidationIcon(result.level)}
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">{result.message}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {result.message}
+                    </p>
                     {result.suggestion && (
-                      <p className="text-sm text-gray-600 mt-1">{result.suggestion}</p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {result.suggestion}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -278,12 +314,19 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({ wizardState, onDa
           {/* Preview */}
           {preview && preview.length > 0 && (
             <div>
-              <h4 className="text-sm font-semibold text-gray-900 mb-3">Dataset Preview</h4>
+              <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                Dataset Preview
+              </h4>
               <div className="space-y-2">
                 {preview.map((item, idx) => (
-                  <div key={idx} className="p-3 bg-gray-50 rounded border border-gray-200">
+                  <div
+                    key={idx}
+                    className="p-3 bg-gray-50 rounded border border-gray-200"
+                  >
                     <p className="text-sm text-gray-700 mb-1">{item.text}</p>
-                    <p className="text-xs text-gray-500">~{item.tokens} tokens</p>
+                    <p className="text-xs text-gray-500">
+                      ~{item.tokens} tokens
+                    </p>
                   </div>
                 ))}
               </div>
@@ -307,7 +350,8 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({ wizardState, onDa
         <div className="bg-green-50 border border-green-200 rounded-lg p-6">
           <h4 className="font-semibold text-green-900 mb-2">✓ Dataset Ready</h4>
           <p className="text-sm text-green-800">
-            Your dataset has been validated and is ready for training. Click "Next" to select a model.
+            Your dataset has been validated and is ready for training. Click
+            "Next" to select a model.
           </p>
         </div>
       )}

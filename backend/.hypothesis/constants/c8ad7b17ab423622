@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\data_types\graph.py
+# hypothesis_version: 6.148.3
+
+['.graph.json', 'Sequential', '__len__', '_inbound_nodes', '_is_graph_network', '_type', 'child_parameters', 'class_name', 'edges', 'format', 'from_id', 'from_node', 'functions', 'graph', 'graph-file', 'id', 'is_constant', 'is_output', 'keras', 'media', 'multiple', 'name', 'nodes', 'num_parameters', 'output_shape', 'parameters', 'size', 'to_id', 'to_node', 'utf-8', 'w']

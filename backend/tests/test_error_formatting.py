@@ -5,7 +5,7 @@ Tests that errors are formatted in plain language without technical jargon.
 
 import pytest
 from hypothesis import given, strategies as st, assume
-from backend.services.error_service import (
+from services.error_service import (
     ErrorRecoveryService,
     ErrorFormatter,
     FormattedError,

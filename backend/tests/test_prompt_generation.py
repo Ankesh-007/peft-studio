@@ -6,8 +6,8 @@ Tests that example prompts are generated for all use cases.
 import pytest
 from hypothesis import given, strategies as st
 
-from backend.services.inference_service import InferenceService
-from backend.services.profile_service import UseCase
+from services.inference_service import InferenceService
+from services.profile_service import UseCase
 
 
 # **Feature: simplified-llm-optimization, Property 14: Use case generates relevant prompts**

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { X, ArrowRight, ArrowLeft, Check } from 'lucide-react';
+import { X, ArrowRight, ArrowLeft, Check } from "lucide-react";
+import React, { useState, useEffect } from "react";
 
 interface TourStep {
   target: string;
   title: string;
   description: string;
-  position: 'top' | 'bottom' | 'left' | 'right';
+  position: "top" | "bottom" | "left" | "right";
 }
 
 interface GuidedTourProps {
@@ -14,41 +14,50 @@ interface GuidedTourProps {
   onSkip: () => void;
 }
 
-const GuidedTour: React.FC<GuidedTourProps> = ({ isActive, onComplete, onSkip }) => {
+const GuidedTour: React.FC<GuidedTourProps> = ({
+  isActive,
+  onComplete,
+  onSkip,
+}) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
 
   const tourSteps: TourStep[] = [
     {
       target: '[data-tour="dashboard"]',
-      title: 'Dashboard Overview',
-      description: 'This is your main dashboard where you can see all your training runs, models, and system resources at a glance.',
-      position: 'bottom'
+      title: "Dashboard Overview",
+      description:
+        "This is your main dashboard where you can see all your training runs, models, and system resources at a glance.",
+      position: "bottom",
     },
     {
       target: '[data-tour="start-training"]',
-      title: 'Start Training',
-      description: 'Click here to launch the Training Wizard. It will guide you through the entire process of fine-tuning a model.',
-      position: 'left'
+      title: "Start Training",
+      description:
+        "Click here to launch the Training Wizard. It will guide you through the entire process of fine-tuning a model.",
+      position: "left",
     },
     {
       target: '[data-tour="quick-actions"]',
-      title: 'Quick Actions',
-      description: 'Access common tasks quickly: upload datasets, start training, test models, or browse the model library.',
-      position: 'left'
+      title: "Quick Actions",
+      description:
+        "Access common tasks quickly: upload datasets, start training, test models, or browse the model library.",
+      position: "left",
     },
     {
       target: '[data-tour="training-runs"]',
-      title: 'Training Runs',
-      description: 'Monitor all your training runs here. See progress, status, and quickly access running or completed trainings.',
-      position: 'top'
+      title: "Training Runs",
+      description:
+        "Monitor all your training runs here. See progress, status, and quickly access running or completed trainings.",
+      position: "top",
     },
     {
       target: '[data-tour="system-resources"]',
-      title: 'System Resources',
-      description: 'Keep an eye on your GPU, CPU, and RAM usage. PEFT Studio automatically optimizes based on available resources.',
-      position: 'top'
-    }
+      title: "System Resources",
+      description:
+        "Keep an eye on your GPU, CPU, and RAM usage. PEFT Studio automatically optimizes based on available resources.",
+      position: "top",
+    },
   ];
 
   useEffect(() => {
@@ -57,26 +66,26 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ isActive, onComplete, onSkip })
     const updateTooltipPosition = () => {
       const step = tourSteps[currentStep];
       const targetElement = document.querySelector(step.target);
-      
+
       if (targetElement) {
         const rect = targetElement.getBoundingClientRect();
         let top = 0;
         let left = 0;
 
         switch (step.position) {
-          case 'bottom':
+          case "bottom":
             top = rect.bottom + 16;
             left = rect.left + rect.width / 2;
             break;
-          case 'top':
+          case "top":
             top = rect.top - 16;
             left = rect.left + rect.width / 2;
             break;
-          case 'left':
+          case "left":
             top = rect.top + rect.height / 2;
             left = rect.left - 16;
             break;
-          case 'right':
+          case "right":
             top = rect.top + rect.height / 2;
             left = rect.right + 16;
             break;
@@ -85,18 +94,18 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ isActive, onComplete, onSkip })
         setTooltipPosition({ top, left });
 
         // Highlight the target element
-        targetElement.classList.add('tour-highlight');
+        targetElement.classList.add("tour-highlight");
       }
     };
 
     updateTooltipPosition();
-    window.addEventListener('resize', updateTooltipPosition);
+    window.addEventListener("resize", updateTooltipPosition);
 
     return () => {
-      window.removeEventListener('resize', updateTooltipPosition);
+      window.removeEventListener("resize", updateTooltipPosition);
       // Remove highlight from all elements
-      document.querySelectorAll('.tour-highlight').forEach(el => {
-        el.classList.remove('tour-highlight');
+      document.querySelectorAll(".tour-highlight").forEach((el) => {
+        el.classList.remove("tour-highlight");
       });
     };
   }, [currentStep, isActive]);
@@ -131,12 +140,14 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ isActive, onComplete, onSkip })
         style={{
           top: `${tooltipPosition.top}px`,
           left: `${tooltipPosition.left}px`,
-          transform: currentStepData.position === 'bottom' || currentStepData.position === 'top'
-            ? 'translateX(-50%)'
-            : currentStepData.position === 'left'
-            ? 'translateX(-100%)'
-            : 'translateX(0)',
-          marginTop: currentStepData.position === 'top' ? '-100%' : '0'
+          transform:
+            currentStepData.position === "bottom" ||
+            currentStepData.position === "top"
+              ? "translateX(-50%)"
+              : currentStepData.position === "left"
+                ? "translateX(-100%)"
+                : "translateX(0)",
+          marginTop: currentStepData.position === "top" ? "-100%" : "0",
         }}
       >
         <div className="card max-w-sm shadow-2xl">
@@ -171,10 +182,10 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ isActive, onComplete, onSkip })
                 key={index}
                 className={`h-6 rounded-full transition-all ${
                   index === currentStep
-                    ? 'w-24 bg-accent-primary'
+                    ? "w-24 bg-accent-primary"
                     : index < currentStep
-                    ? 'w-6 bg-accent-primary/50'
-                    : 'w-6 bg-dark-bg-tertiary'
+                      ? "w-6 bg-accent-primary/50"
+                      : "w-6 bg-dark-bg-tertiary"
                 }`}
               />
             ))}
@@ -198,10 +209,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ isActive, onComplete, onSkip })
               Skip Tour
             </button>
 
-            <button
-              onClick={handleNext}
-              className="btn btn-primary btn-sm"
-            >
+            <button onClick={handleNext} className="btn btn-primary btn-sm">
               {isLastStep ? (
                 <>
                   Finish
@@ -220,13 +228,13 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ isActive, onComplete, onSkip })
         {/* Arrow indicator */}
         <div
           className={`absolute w-0 h-0 border-8 ${
-            currentStepData.position === 'bottom'
-              ? 'border-transparent border-b-dark-bg-secondary -top-16 left-1/2 -translate-x-1/2'
-              : currentStepData.position === 'top'
-              ? 'border-transparent border-t-dark-bg-secondary -bottom-16 left-1/2 -translate-x-1/2'
-              : currentStepData.position === 'left'
-              ? 'border-transparent border-l-dark-bg-secondary -right-16 top-1/2 -translate-y-1/2'
-              : 'border-transparent border-r-dark-bg-secondary -left-16 top-1/2 -translate-y-1/2'
+            currentStepData.position === "bottom"
+              ? "border-transparent border-b-dark-bg-secondary -top-16 left-1/2 -translate-x-1/2"
+              : currentStepData.position === "top"
+                ? "border-transparent border-t-dark-bg-secondary -bottom-16 left-1/2 -translate-x-1/2"
+                : currentStepData.position === "left"
+                  ? "border-transparent border-l-dark-bg-secondary -right-16 top-1/2 -translate-y-1/2"
+                  : "border-transparent border-r-dark-bg-secondary -left-16 top-1/2 -translate-y-1/2"
           }`}
         />
       </div>

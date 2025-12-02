@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\invoke\tasks.py
+# hypothesis_version: 6.148.3
+
+[' (called as: {!r})', ' ({})', ', ', '<Task {!r}{}>', 'Call', 'Config', 'Signature', 'T', 'Task', '_', '__doc__', '__module__', '__name__', 'attr_name', 'default', 'help', 'incrementable', 'kind', 'klass', 'names', 'optional', 'positional', 'pre', 'task args kwargs']

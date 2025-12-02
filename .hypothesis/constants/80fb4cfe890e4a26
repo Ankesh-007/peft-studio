@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\nacl\bindings\crypto_sign.py
+# hypothesis_version: 6.148.3
+
+['Invalid secret key', 'Invalid seed', 'state', 'unsigned char[]', 'unsigned long long *']

@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build outputs
+dist/
+build/
+release/
+coverage/
+.vite/
+
+# Backend (Python)
+backend/
+
+# Electron main process (if needed, can be linted separately)
+electron/*.js
+
+# Config files (already handled in eslint.config.js)
+*.config.js
+*.config.ts
+postcss.config.js
+tailwind.config.js
+vite.config.ts
+vitest.config.ts
+
+# Test artifacts
+.hypothesis/
+.pytest_cache/
+artifacts/
+checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+*.log
+*.md

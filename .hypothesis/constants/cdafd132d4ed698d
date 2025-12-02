@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\nacl\bindings\crypto_secretbox.py
+# hypothesis_version: 6.148.3
+
+[b'\x00', 'Encryption failed', 'Invalid key', 'Invalid nonce', 'unsigned char[]']

@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\plugins\connectors\runpod_connector.py
+# hypothesis_version: 6.148.3
+
+[200, 401, 404, '"', '1.0.0', 'Authorization', 'Content-Type', 'EXITED', 'FAILED', 'HF_TOKEN', 'Invalid API key', 'Invalid API response', 'NVIDIA RTX A4000', 'RUNNING', 'RunPod', 'SECURE', 'STOPPED', 'USD', 'WANDB_API_KEY', '\\"', '\\n', 'api_key', 'api_key is required', 'application/json', 'cloudType', 'config', 'containerDiskInGb', 'data', 'desiredStatus', 'displayName', 'dockerArgs', 'env', 'errors', 'file', 'gpuTypeId', 'gpuTypes', 'id', 'imageName', 'input', 'key', 'log', 'logs', 'lowestPrice', 'memoryInGb', 'metadata', 'minimumBidPrice', 'myself', 'name', 'pod', 'podId', 'pod_id', 'query', 'rb', 'runpod', 'runpod-cloud', 'secureCloud', 'status', 'uninterruptablePrice', 'url', 'value', 'variables', 'volumeInGb']

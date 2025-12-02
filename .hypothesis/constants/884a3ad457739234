@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\training_config_service.py
+# hypothesis_version: 6.148.3
+
+[0.0002, 0.001, 0.01, 0.1, 0.25, 0.5, 1.0, 100, 500, 1024, 'Unknown algorithm', 'Unknown quantization', 'activation_mb', 'adamw', 'adapter_mb', 'base_model_mb', 'cometml', 'dora', 'fp16', 'gradient_mb', 'int4', 'int8', 'k_proj', 'lambda', 'linear', 'local', 'lora', 'nf4', 'none', 'o_proj', 'optimizer_mb', 'phoenix', 'pissa', 'q_proj', 'qlora', 'rslora', 'runpod', 'steps', 'total_gb', 'total_mb', 'v_proj', 'vastai', 'wandb']

@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\gradio_demo_api.py
+# hypothesis_version: 6.148.3
+
+[0.7, 0.9, 400, 404, 500, 512, 7860, '/', '/api/gradio-demos', '/create', '/{demo_id}', '/{demo_id}/code', '/{demo_id}/embed', '/{demo_id}/launch', '/{demo_id}/stop', '127.0.0.1', 'Input', 'Output', 'gradio-demos', 'message', 'textbox']

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\nacl\bindings\crypto_generichash.py
+# hypothesis_version: 6.148.3
+
+['Blake2State', 'Digest_size', 'Key', 'Person', 'Salt', 'Unexpected failure', '_Blake2State', '_statebuf', 'digest_size', 'unsigned char []', 'unsigned char[]', '{0} greater than {1}']

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 /**
  * Hook for responsive design - detects media query matches
@@ -8,7 +8,7 @@ export const useMediaQuery = (query: string): boolean => {
 
   useEffect(() => {
     const media = window.matchMedia(query);
-    
+
     // Set initial value
     setMatches(media.matches);
 
@@ -19,7 +19,7 @@ export const useMediaQuery = (query: string): boolean => {
 
     // Add listener
     if (media.addEventListener) {
-      media.addEventListener('change', listener);
+      media.addEventListener("change", listener);
     } else {
       // Fallback for older browsers
       media.addListener(listener);
@@ -28,7 +28,7 @@ export const useMediaQuery = (query: string): boolean => {
     // Cleanup
     return () => {
       if (media.removeEventListener) {
-        media.removeEventListener('change', listener);
+        media.removeEventListener("change", listener);
       } else {
         media.removeListener(listener);
       }
@@ -41,21 +41,22 @@ export const useMediaQuery = (query: string): boolean => {
 /**
  * Predefined breakpoint hooks
  */
-export const useIsMobile = () => useMediaQuery('(max-width: 768px)');
-export const useIsTablet = () => useMediaQuery('(min-width: 769px) and (max-width: 1024px)');
-export const useIsDesktop = () => useMediaQuery('(min-width: 1025px)');
-export const useIsLargeScreen = () => useMediaQuery('(min-width: 1440px)');
+export const useIsMobile = () => useMediaQuery("(max-width: 768px)");
+export const useIsTablet = () =>
+  useMediaQuery("(min-width: 769px) and (max-width: 1024px)");
+export const useIsDesktop = () => useMediaQuery("(min-width: 1025px)");
+export const useIsLargeScreen = () => useMediaQuery("(min-width: 1440px)");
 
 /**
  * Hook for detecting reduced motion preference
  */
 export const usePrefersReducedMotion = () => {
-  return useMediaQuery('(prefers-reduced-motion: reduce)');
+  return useMediaQuery("(prefers-reduced-motion: reduce)");
 };
 
 /**
  * Hook for detecting dark mode preference
  */
 export const usePrefersDarkMode = () => {
-  return useMediaQuery('(prefers-color-scheme: dark)');
+  return useMediaQuery("(prefers-color-scheme: dark)");
 };

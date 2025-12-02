@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\plugins\connectors\huggingface_connector.py
+# hypothesis_version: 6.148.3
+
+[200, 401, 404, '\n```\n\n', '*.json', ',', '.bin', '.cache', '.peft-studio', '.safetensors', '1.0.0', 'Authorization', 'Content-Type', 'HuggingFace Hub', 'Invalid API response', 'Invalid API token', 'ModelMetadata', 'README.md', 'Unknown', '```json\n', 'api_key', 'application/json', 'author', 'base_model', 'cache', 'cached_at', 'cardData', 'card_data', 'config.json', 'createdAt', 'created_at', 'dataset', 'description', 'direction', 'downloads', 'filter', 'hf_', 'hub', 'huggingface', 'id', 'lastModified', 'last_modified', 'library_name', 'license', 'likes', 'limit', 'metrics', 'modelId', 'model_id', 'model_size', 'models', 'name', 'pipeline_tag', 'r', 'repo_id', 'rfilename', 'safetensors', 'search', 'siblings', 'sort', 'tags', 'token', 'token is required', 'total', 'training_config', 'w']

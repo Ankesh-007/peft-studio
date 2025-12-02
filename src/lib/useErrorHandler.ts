@@ -1,6 +1,8 @@
-import { useState, useCallback } from 'react';
-import { FormattedError } from '../types/error';
-import { formatError, executeAutoFix } from '../api/errors';
+import { useState, useCallback } from "react";
+
+import { formatError, executeAutoFix } from "../api/errors";
+
+import type { FormattedError } from "../types/error";
 
 interface UseErrorHandlerReturn {
   error: FormattedError | null;
@@ -18,31 +20,34 @@ export function useErrorHandler(): UseErrorHandlerReturn {
   const [error, setError] = useState<FormattedError | null>(null);
   const [isRecovering, setIsRecovering] = useState(false);
 
-  const handleError = useCallback(async (err: Error, context?: Record<string, any>) => {
-    try {
-      const formatted = await formatError(err, context);
-      setError(formatted);
-    } catch (e) {
-      console.error('Failed to format error:', e);
-      // Fallback error
-      setError({
-        title: 'Error Occurred',
-        what_happened: err.message || 'An unexpected error occurred.',
-        why_it_happened: 'The system encountered an issue.',
-        actions: [
-          {
-            description: 'Try the operation again',
-            automatic: false,
-            action_type: 'manual_step',
-          },
-        ],
-        category: 'system' as any,
-        severity: 'medium' as any,
-        help_link: 'https://docs.peftstudio.ai/troubleshooting',
-        auto_recoverable: false,
-      });
-    }
-  }, []);
+  const handleError = useCallback(
+    async (err: Error, context?: Record<string, any>) => {
+      try {
+        const formatted = await formatError(err, context);
+        setError(formatted);
+      } catch (e) {
+        console.error("Failed to format error:", e);
+        // Fallback error
+        setError({
+          title: "Error Occurred",
+          what_happened: err.message || "An unexpected error occurred.",
+          why_it_happened: "The system encountered an issue.",
+          actions: [
+            {
+              description: "Try the operation again",
+              automatic: false,
+              action_type: "manual_step",
+            },
+          ],
+          category: "system" as any,
+          severity: "medium" as any,
+          help_link: "https://docs.peftstudio.ai/troubleshooting",
+          auto_recoverable: false,
+        });
+      }
+    },
+    [],
+  );
 
   const clearError = useCallback(() => {
     setError(null);
@@ -68,13 +73,13 @@ export function useErrorHandler(): UseErrorHandlerReturn {
         }
         return success;
       } catch (e) {
-        console.error('Auto-fix failed:', e);
+        console.error("Auto-fix failed:", e);
         return false;
       } finally {
         setIsRecovering(false);
       }
     },
-    [error, clearError]
+    [error, clearError],
   );
 
   return {

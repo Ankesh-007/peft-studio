@@ -1,23 +1,23 @@
 export enum ErrorCategory {
-  USER_INPUT = 'user_input',
-  RESOURCE = 'resource',
-  TRAINING = 'training',
-  SYSTEM = 'system',
-  NETWORK = 'network',
-  DATASET = 'dataset',
+  USER_INPUT = "user_input",
+  RESOURCE = "resource",
+  TRAINING = "training",
+  SYSTEM = "system",
+  NETWORK = "network",
+  DATASET = "dataset",
 }
 
 export enum ErrorSeverity {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical',
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
 
 export interface ErrorAction {
   description: string;
   automatic: boolean;
-  action_type: 'auto_fix' | 'manual_step' | 'help_link';
+  action_type: "auto_fix" | "manual_step" | "help_link";
   action_data?: Record<string, any>;
 }
 

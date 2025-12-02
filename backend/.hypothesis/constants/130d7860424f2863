@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\paramiko\sftp_client.py
+# hypothesis_version: 6.148.3
+
+[b'/', 32768, '%', '%%', '+', '.', '..', '.sftp', 'Expected attributes', 'Expected handle', '[chan %s] ', 'a', 'ascii', 'chmod({!r}, {!r})', 'listdir({!r})', 'lstat({!r})', 'mkdir({!r}, {!r})', 'normalize({!r})', 'open({!r}, {!r})', 'r', 'rb', 'readlink({!r})', 'remove({!r})', 'rename({!r}, {!r})', 'rmdir({!r})', 'sftp', 'sftp session closed.', 'stat({!r})', 'symlink({!r}, {!r})', 'truncate({!r}, {!r})', 'utf-8', 'utime({!r}, {!r})', 'w', 'wb', 'x', '{}: {}']

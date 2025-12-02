@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\data_types\helper_types\classes.py
+# hypothesis_version: 6.148.3
+
+['Artifact', 'Classes', 'LocalRun', '_ClassesIdType', '_dtypes.Type', '_dtypes.UnionType', '_type', 'allowed_types', 'class_set', 'classes', 'classes-file', 'classesId', 'classes_obj', 'cls', 'digest', 'id', 'media', 'name', 'params', 'path', 'type', 'val', 'valid_ids', 'wandb.Classes_id']

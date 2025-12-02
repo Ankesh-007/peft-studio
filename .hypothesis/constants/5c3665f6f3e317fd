@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\scp.py
+# hypothesis_version: 6.148.3
+
+[b'\x00', b'\x01', b'\n', b' ', b' -f ', b' -l %d', b' -p', b' -r', b' -t ', b"'", b'\'"\'"\'', b'-r -t ', b'-t ', b'.', b'/', b'C', b'D', b'E', b'T', b'[^\\w@%+=:,./~-]', b'\\^J', b'scp', 10.0, 512, 1024, 16384, '\x00', '\x01', '%s: Not a directory', '0.15.0', '0644', 'Bad directory format', 'Bad file format', 'Bad time format', 'C%s %d ', 'D%s 0 ', 'E\n', 'T%d 0 %d 0\n', 'ascii', 'nt', 'rb', 'replace', 'utf-8', 'wb']

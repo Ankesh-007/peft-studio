@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import {
   Pause,
   Play,
@@ -15,7 +14,8 @@ import {
   TrendingDown,
   TrendingUp,
   AlertCircle,
-} from 'lucide-react';
+} from "lucide-react";
+import React, { useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -29,8 +29,9 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
-import { cn, formatDuration } from '../lib/utils';
+} from "recharts";
+
+import { cn, formatDuration } from "../lib/utils";
 
 interface TrainingMetric {
   label: string;
@@ -46,138 +47,175 @@ interface TrainingMonitorProps {
   runName: string;
 }
 
-const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => {
-  const [status, setStatus] = useState<'running' | 'paused' | 'completed' | 'failed'>('running');
+const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
+  runId,
+  runName,
+}) => {
+  const [status, setStatus] = useState<
+    "running" | "paused" | "completed" | "failed"
+  >("running");
   const [progress, setProgress] = useState(65);
   const [currentEpoch, setCurrentEpoch] = useState(3);
   const [totalEpochs] = useState(10);
   const [timeElapsed, setTimeElapsed] = useState(12345); // seconds
   const [timeRemaining, setTimeRemaining] = useState(16200); // seconds
-  const [activeTab, setActiveTab] = useState<'loss' | 'resources' | 'parameters'>('loss');
+  const [activeTab, setActiveTab] = useState<
+    "loss" | "resources" | "parameters"
+  >("loss");
   const [logsExpanded, setLogsExpanded] = useState(true);
 
   // Mock data - would come from WebSocket in production
   const metrics: TrainingMetric[] = [
     {
-      label: 'Current Loss',
-      value: '0.4532',
-      trend: '↓ 2.1%',
-      color: 'accent-success',
+      label: "Current Loss",
+      value: "0.4532",
+      trend: "↓ 2.1%",
+      color: "accent-success",
       icon: Target,
       sparkline: [0.8, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45],
     },
     {
-      label: 'Learning Rate',
-      value: '1.2e-5',
-      trend: '↓ 1.0e-7',
-      color: 'accent-warning',
+      label: "Learning Rate",
+      value: "1.2e-5",
+      trend: "↓ 1.0e-7",
+      color: "accent-warning",
       icon: Zap,
     },
     {
-      label: 'Epoch Progress',
+      label: "Epoch Progress",
       value: `${currentEpoch} / ${totalEpochs}`,
-      trend: '30%',
-      color: 'accent-primary',
+      trend: "30%",
+      color: "accent-primary",
       icon: Clock,
     },
     {
-      label: 'Training Throughput',
-      value: '12.3 steps/s',
-      trend: '↑ 0.5 steps/s',
-      color: 'accent-success',
+      label: "Training Throughput",
+      value: "12.3 steps/s",
+      trend: "↑ 0.5 steps/s",
+      color: "accent-success",
       icon: Gauge,
     },
     {
-      label: 'Validation Loss',
-      value: '0.5011',
-      trend: '↑ 0.1%',
-      color: 'accent-error',
+      label: "Validation Loss",
+      value: "0.5011",
+      trend: "↑ 0.1%",
+      color: "accent-error",
       icon: Shield,
     },
     {
-      label: 'GPU Utilization',
-      value: '98%',
-      trend: 'High',
-      color: 'accent-error',
+      label: "GPU Utilization",
+      value: "98%",
+      trend: "High",
+      color: "accent-error",
       icon: Server,
     },
     {
-      label: 'VRAM Usage',
-      value: '78.4 GB',
-      trend: '85% Max',
-      color: 'accent-primary',
+      label: "VRAM Usage",
+      value: "78.4 GB",
+      trend: "85% Max",
+      color: "accent-primary",
       icon: MemoryStick,
     },
     {
-      label: 'Time Remaining',
+      label: "Time Remaining",
       value: formatDuration(timeRemaining),
-      trend: 'Estimating...',
-      color: 'dark-text-secondary',
+      trend: "Estimating...",
+      color: "dark-text-secondary",
       icon: Hourglass,
     },
   ];
 
   const lossData = Array.from({ length: 50 }, (_, i) => ({
     step: i * 10,
-    trainLoss: 2.4 - (i * 0.04) + Math.random() * 0.1,
-    valLoss: 2.5 - (i * 0.035) + Math.random() * 0.12,
-    lr: 0.0002 - (i * 0.000003),
+    trainLoss: 2.4 - i * 0.04 + Math.random() * 0.1,
+    valLoss: 2.5 - i * 0.035 + Math.random() * 0.12,
+    lr: 0.0002 - i * 0.000003,
   }));
 
   const resourceData = [
-    { name: 'GPU 0', usage: 98 },
-    { name: 'GPU 1', usage: 45 },
-    { name: 'CPU', usage: 62 },
-    { name: 'RAM', usage: 71 },
+    { name: "GPU 0", usage: 98 },
+    { name: "GPU 1", usage: 45 },
+    { name: "CPU", usage: 62 },
+    { name: "RAM", usage: 71 },
   ];
 
   const logs = [
-    { time: '2025-11-29 10:30:15', level: 'INFO', message: 'Training started successfully' },
-    { time: '2025-11-29 10:30:20', level: 'INFO', message: 'Loaded model: Llama-3-8B' },
-    { time: '2025-11-29 10:30:25', level: 'INFO', message: 'Dataset loaded: 10,234 examples' },
-    { time: '2025-11-29 10:30:30', level: 'INFO', message: 'Step 100/1250 | Loss: 0.8234' },
-    { time: '2025-11-29 10:31:00', level: 'WARN', message: 'GPU temperature high: 82°C' },
-    { time: '2025-11-29 10:31:30', level: 'INFO', message: 'Step 200/1250 | Loss: 0.7123' },
-    { time: '2025-11-29 10:32:00', level: 'INFO', message: 'Checkpoint saved: epoch-1_step-250' },
+    {
+      time: "2025-11-29 10:30:15",
+      level: "INFO",
+      message: "Training started successfully",
+    },
+    {
+      time: "2025-11-29 10:30:20",
+      level: "INFO",
+      message: "Loaded model: Llama-3-8B",
+    },
+    {
+      time: "2025-11-29 10:30:25",
+      level: "INFO",
+      message: "Dataset loaded: 10,234 examples",
+    },
+    {
+      time: "2025-11-29 10:30:30",
+      level: "INFO",
+      message: "Step 100/1250 | Loss: 0.8234",
+    },
+    {
+      time: "2025-11-29 10:31:00",
+      level: "WARN",
+      message: "GPU temperature high: 82°C",
+    },
+    {
+      time: "2025-11-29 10:31:30",
+      level: "INFO",
+      message: "Step 200/1250 | Loss: 0.7123",
+    },
+    {
+      time: "2025-11-29 10:32:00",
+      level: "INFO",
+      message: "Checkpoint saved: epoch-1_step-250",
+    },
   ];
 
   const getStatusColor = () => {
     switch (status) {
-      case 'running':
-        return 'bg-accent-success';
-      case 'paused':
-        return 'bg-accent-warning';
-      case 'completed':
-        return 'bg-accent-success';
-      case 'failed':
-        return 'bg-accent-error';
+      case "running":
+        return "bg-accent-success";
+      case "paused":
+        return "bg-accent-warning";
+      case "completed":
+        return "bg-accent-success";
+      case "failed":
+        return "bg-accent-error";
       default:
-        return 'bg-dark-text-tertiary';
+        return "bg-dark-text-tertiary";
     }
   };
 
   const getStatusIcon = () => {
     switch (status) {
-      case 'running':
-        return '🟢';
-      case 'paused':
-        return '🟡';
-      case 'completed':
-        return '✅';
-      case 'failed':
-        return '🔴';
+      case "running":
+        return "🟢";
+      case "paused":
+        return "🟡";
+      case "completed":
+        return "✅";
+      case "failed":
+        return "🔴";
       default:
-        return '⚪';
+        return "⚪";
     }
   };
 
   const handlePauseResume = () => {
-    setStatus(status === 'running' ? 'paused' : 'running');
+    setStatus(status === "running" ? "paused" : "running");
   };
 
   const handleStop = () => {
-    if (confirm('Are you sure you want to stop training? Progress will be saved.')) {
-      setStatus('completed');
+    if (
+      confirm("Are you sure you want to stop training? Progress will be saved.")
+    ) {
+      setStatus("completed");
     }
   };
 
@@ -186,12 +224,14 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
       {/* Status Header */}
       <div className="text-center space-y-16">
         <div className="inline-flex items-center gap-12 px-24 py-12 bg-dark-bg-secondary border border-dark-border rounded-full">
-          <span className={cn('text-h2', status === 'running' && 'animate-pulse')}>
+          <span
+            className={cn("text-h2", status === "running" && "animate-pulse")}
+          >
             {getStatusIcon()}
           </span>
           <span className="text-h2 font-semibold capitalize">{status}</span>
         </div>
-        
+
         <h1 className="text-display">{runName}</h1>
         <p className="text-body text-dark-text-secondary">
           Started: {new Date().toLocaleString()}
@@ -202,11 +242,11 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
           <button
             onClick={handlePauseResume}
             className={cn(
-              'btn-primary flex items-center gap-8',
-              status === 'paused' && 'bg-accent-success'
+              "btn-primary flex items-center gap-8",
+              status === "paused" && "bg-accent-success",
             )}
           >
-            {status === 'running' ? (
+            {status === "running" ? (
               <>
                 <Pause size={16} />
                 <span>Pause</span>
@@ -218,12 +258,15 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
               </>
             )}
           </button>
-          
-          <button onClick={handleStop} className="btn-secondary flex items-center gap-8">
+
+          <button
+            onClick={handleStop}
+            className="btn-secondary flex items-center gap-8"
+          >
             <Square size={16} />
             <span>Stop & Save</span>
           </button>
-          
+
           <button className="btn-ghost flex items-center gap-8">
             <Download size={16} />
             <span>Snapshot</span>
@@ -238,7 +281,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
             <div className="text-display mb-4">{progress}%</div>
             <div className="text-small text-dark-text-tertiary">Complete</div>
           </div>
-          
+
           <div className="w-[200px] h-[200px] relative">
             <svg className="transform -rotate-90" viewBox="0 0 200 200">
               <circle
@@ -261,7 +304,13 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
                 className="transition-all duration-500"
               />
               <defs>
-                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <linearGradient
+                  id="progressGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
                   <stop offset="0%" stopColor="#6366f1" />
                   <stop offset="100%" stopColor="#3b82f6" />
                 </linearGradient>
@@ -269,18 +318,22 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <div className="text-h1 font-bold">{currentEpoch}</div>
-              <div className="text-small text-dark-text-tertiary">/ {totalEpochs}</div>
+              <div className="text-small text-dark-text-tertiary">
+                / {totalEpochs}
+              </div>
             </div>
           </div>
-          
+
           <div className="text-center flex-1">
             <div className="text-h2 mb-4">{formatDuration(timeElapsed)}</div>
             <div className="text-small text-dark-text-tertiary">Elapsed</div>
-            <div className="text-h3 mt-12 text-accent-info">{formatDuration(timeRemaining)}</div>
+            <div className="text-h3 mt-12 text-accent-info">
+              {formatDuration(timeRemaining)}
+            </div>
             <div className="text-tiny text-dark-text-tertiary">Remaining</div>
           </div>
         </div>
-        
+
         <div className="h-8 bg-dark-bg-primary rounded-full overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-accent-primary to-accent-info transition-all duration-500"
@@ -293,16 +346,23 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
       <div className="grid grid-cols-4 gap-16">
         {metrics.map((metric, index) => {
           const Icon = metric.icon;
-          const isNegativeTrend = metric.trend?.includes('↑') && metric.label.includes('Loss');
-          const isPositiveTrend = metric.trend?.includes('↑') && !metric.label.includes('Loss');
-          
+          const isNegativeTrend =
+            metric.trend?.includes("↑") && metric.label.includes("Loss");
+          const isPositiveTrend =
+            metric.trend?.includes("↑") && !metric.label.includes("Loss");
+
           return (
-            <div key={index} className="card card-hover relative overflow-hidden">
+            <div
+              key={index}
+              className="card card-hover relative overflow-hidden"
+            >
               {/* Sparkline background */}
               {metric.sparkline && (
                 <div className="absolute top-0 right-0 w-[100px] h-[40px] opacity-20">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={metric.sparkline.map((v, i) => ({ v, i }))}>
+                    <LineChart
+                      data={metric.sparkline.map((v, i) => ({ v, i }))}
+                    >
                       <Line
                         type="monotone"
                         dataKey="v"
@@ -314,17 +374,19 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
                   </ResponsiveContainer>
                 </div>
               )}
-              
+
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-12">
                   <Icon size={20} className={`text-${metric.color}`} />
                   {metric.trend && (
                     <div
                       className={cn(
-                        'flex items-center gap-4 text-tiny',
-                        isNegativeTrend && 'text-accent-error',
-                        isPositiveTrend && 'text-accent-success',
-                        !isNegativeTrend && !isPositiveTrend && 'text-dark-text-tertiary'
+                        "flex items-center gap-4 text-tiny",
+                        isNegativeTrend && "text-accent-error",
+                        isPositiveTrend && "text-accent-success",
+                        !isNegativeTrend &&
+                          !isPositiveTrend &&
+                          "text-dark-text-tertiary",
                       )}
                     >
                       {isNegativeTrend ? (
@@ -338,9 +400,11 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
                     </div>
                   )}
                 </div>
-                
+
                 <div className="text-h1 font-bold mb-4">{metric.value}</div>
-                <div className="text-small text-dark-text-tertiary">{metric.label}</div>
+                <div className="text-small text-dark-text-tertiary">
+                  {metric.label}
+                </div>
               </div>
             </div>
           );
@@ -352,18 +416,18 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
         {/* Tabs */}
         <div className="flex items-center gap-8 mb-24 border-b border-dark-border">
           {[
-            { id: 'loss', label: 'Loss Curves' },
-            { id: 'resources', label: 'Resource Monitoring' },
-            { id: 'parameters', label: 'Parameter Distributions' },
+            { id: "loss", label: "Loss Curves" },
+            { id: "resources", label: "Resource Monitoring" },
+            { id: "parameters", label: "Parameter Distributions" },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={cn(
-                'px-16 py-12 text-body font-medium transition-all relative',
+                "px-16 py-12 text-body font-medium transition-all relative",
                 activeTab === tab.id
-                  ? 'text-accent-primary'
-                  : 'text-dark-text-secondary hover:text-dark-text-primary'
+                  ? "text-accent-primary"
+                  : "text-dark-text-secondary hover:text-dark-text-primary",
               )}
             >
               {tab.label}
@@ -375,12 +439,18 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
         </div>
 
         {/* Tab Content */}
-        {activeTab === 'loss' && (
+        {activeTab === "loss" && (
           <div className="space-y-16">
             <ResponsiveContainer width="100%" height={400}>
               <LineChart data={lossData}>
                 <defs>
-                  <linearGradient id="trainGradient" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient
+                    id="trainGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
                     <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                   </linearGradient>
@@ -389,28 +459,36 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
                 <XAxis
                   dataKey="step"
                   stroke="#71717a"
-                  style={{ fontSize: '12px' }}
-                  label={{ value: 'Steps', position: 'insideBottom', offset: -5 }}
+                  style={{ fontSize: "12px" }}
+                  label={{
+                    value: "Steps",
+                    position: "insideBottom",
+                    offset: -5,
+                  }}
                 />
                 <YAxis
                   yAxisId="left"
                   stroke="#71717a"
-                  style={{ fontSize: '12px' }}
-                  label={{ value: 'Loss', angle: -90, position: 'insideLeft' }}
+                  style={{ fontSize: "12px" }}
+                  label={{ value: "Loss", angle: -90, position: "insideLeft" }}
                 />
                 <YAxis
                   yAxisId="right"
                   orientation="right"
                   stroke="#f59e0b"
-                  style={{ fontSize: '12px' }}
-                  label={{ value: 'Learning Rate', angle: 90, position: 'insideRight' }}
+                  style={{ fontSize: "12px" }}
+                  label={{
+                    value: "Learning Rate",
+                    angle: 90,
+                    position: "insideRight",
+                  }}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#111111',
-                    border: '1px solid #2a2a2a',
-                    borderRadius: '8px',
-                    fontSize: '12px',
+                    backgroundColor: "#111111",
+                    border: "1px solid #2a2a2a",
+                    borderRadius: "8px",
+                    fontSize: "12px",
                   }}
                 />
                 <Legend />
@@ -448,25 +526,29 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
           </div>
         )}
 
-        {activeTab === 'resources' && (
+        {activeTab === "resources" && (
           <div className="space-y-24">
             <div>
               <h3 className="text-h3 mb-16">GPU & System Utilization</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={resourceData} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
-                  <XAxis type="number" stroke="#71717a" style={{ fontSize: '12px' }} />
+                  <XAxis
+                    type="number"
+                    stroke="#71717a"
+                    style={{ fontSize: "12px" }}
+                  />
                   <YAxis
                     dataKey="name"
                     type="category"
                     stroke="#71717a"
-                    style={{ fontSize: '12px' }}
+                    style={{ fontSize: "12px" }}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#111111',
-                      border: '1px solid #2a2a2a',
-                      borderRadius: '8px',
+                      backgroundColor: "#111111",
+                      border: "1px solid #2a2a2a",
+                      borderRadius: "8px",
                     }}
                   />
                   <Bar dataKey="usage" radius={[0, 8, 8, 0]}>
@@ -475,10 +557,10 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
                         key={index}
                         fill={
                           entry.usage > 90
-                            ? '#ef4444'
+                            ? "#ef4444"
                             : entry.usage > 70
-                            ? '#f59e0b'
-                            : '#10b981'
+                              ? "#f59e0b"
+                              : "#10b981"
                         }
                       />
                     ))}
@@ -489,7 +571,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
           </div>
         )}
 
-        {activeTab === 'parameters' && (
+        {activeTab === "parameters" && (
           <div className="text-center py-64 text-dark-text-tertiary">
             <AlertCircle size={48} className="mx-auto mb-16 opacity-50" />
             <p>Parameter distribution visualization coming soon</p>
@@ -505,15 +587,21 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
           <div className="space-y-12 text-small">
             <div>
               <div className="text-dark-text-tertiary mb-4">Model</div>
-              <div className="text-dark-text-primary font-medium">Llama-3-8B</div>
+              <div className="text-dark-text-primary font-medium">
+                Llama-3-8B
+              </div>
             </div>
             <div>
               <div className="text-dark-text-tertiary mb-4">Dataset</div>
-              <div className="text-dark-text-primary font-medium">Finance-10k</div>
+              <div className="text-dark-text-primary font-medium">
+                Finance-10k
+              </div>
             </div>
             <div>
               <div className="text-dark-text-tertiary mb-4">PEFT Method</div>
-              <div className="text-dark-text-primary font-medium">QLoRA (r=64, α=128)</div>
+              <div className="text-dark-text-primary font-medium">
+                QLoRA (r=64, α=128)
+              </div>
             </div>
             <div>
               <div className="text-dark-text-tertiary mb-4">Batch Size</div>
@@ -530,7 +618,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
               </div>
             </div>
           </div>
-          
+
           <div className="mt-20 pt-20 border-t border-dark-border">
             <button className="btn-ghost w-full justify-center">
               View Full Config
@@ -555,14 +643,14 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
               <div
                 key={index}
                 className={cn(
-                  'mb-4',
-                  log.level === 'INFO' && 'text-[#a1a1aa]',
-                  log.level === 'WARN' && 'text-[#f59e0b]',
-                  log.level === 'ERROR' && 'text-[#ef4444] animate-pulse',
-                  log.level === 'DEBUG' && 'text-[#52525b]'
+                  "mb-4",
+                  log.level === "INFO" && "text-[#a1a1aa]",
+                  log.level === "WARN" && "text-[#f59e0b]",
+                  log.level === "ERROR" && "text-[#ef4444] animate-pulse",
+                  log.level === "DEBUG" && "text-[#52525b]",
                 )}
               >
-                <span className="text-dark-text-tertiary">[{log.time}]</span>{' '}
+                <span className="text-dark-text-tertiary">[{log.time}]</span>{" "}
                 <span className="font-semibold">{log.level}</span> {log.message}
               </div>
             ))}
@@ -580,30 +668,38 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
       </div>
 
       {/* Checkpoints (if completed) */}
-      {status === 'completed' && (
+      {status === "completed" && (
         <div className="card">
           <div className="text-center mb-32">
             <div className="text-display mb-8">✅ Training Completed!</div>
             <p className="text-body text-dark-text-secondary mb-24">
               Your model has been successfully trained and saved.
             </p>
-            
+
             <div className="grid grid-cols-4 gap-16 max-w-[800px] mx-auto mb-32">
               <div className="text-center">
                 <div className="text-h2 text-accent-success mb-4">0.4321</div>
-                <div className="text-small text-dark-text-tertiary">Best Loss</div>
+                <div className="text-small text-dark-text-tertiary">
+                  Best Loss
+                </div>
               </div>
               <div className="text-center">
                 <div className="text-h2 text-accent-primary mb-4">07:12:45</div>
-                <div className="text-small text-dark-text-tertiary">Total Time</div>
+                <div className="text-small text-dark-text-tertiary">
+                  Total Time
+                </div>
               </div>
               <div className="text-center">
                 <div className="text-h2 text-accent-info mb-4">1.5 GB</div>
-                <div className="text-small text-dark-text-tertiary">Checkpoint Size</div>
+                <div className="text-small text-dark-text-tertiary">
+                  Checkpoint Size
+                </div>
               </div>
               <div className="text-center">
                 <div className="text-h2 text-accent-warning mb-4">4</div>
-                <div className="text-small text-dark-text-tertiary">Artifacts</div>
+                <div className="text-small text-dark-text-tertiary">
+                  Artifacts
+                </div>
               </div>
             </div>
 
@@ -619,33 +715,54 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => 
             <h3 className="text-h3 mb-16">Saved Checkpoints</h3>
             <div className="space-y-8">
               {[
-                { name: 'epoch-1_step-250', step: 250, loss: 0.8230, time: '01:15:30' },
-                { name: 'epoch-5_step-625', step: 625, loss: 0.6120, time: '03:45:00' },
-                { name: 'best_model', step: 1250, loss: 0.4320, time: '07:12:45', isBest: true },
+                {
+                  name: "epoch-1_step-250",
+                  step: 250,
+                  loss: 0.823,
+                  time: "01:15:30",
+                },
+                {
+                  name: "epoch-5_step-625",
+                  step: 625,
+                  loss: 0.612,
+                  time: "03:45:00",
+                },
+                {
+                  name: "best_model",
+                  step: 1250,
+                  loss: 0.432,
+                  time: "07:12:45",
+                  isBest: true,
+                },
               ].map((checkpoint, index) => (
                 <div
                   key={index}
                   className={cn(
-                    'flex items-center justify-between p-16 rounded-lg',
+                    "flex items-center justify-between p-16 rounded-lg",
                     checkpoint.isBest
-                      ? 'bg-accent-success/10 border border-accent-success/30'
-                      : 'bg-dark-bg-tertiary'
+                      ? "bg-accent-success/10 border border-accent-success/30"
+                      : "bg-dark-bg-tertiary",
                   )}
                 >
                   <div className="flex items-center gap-16">
-                    {checkpoint.isBest && (
-                      <span className="text-h3">🏆</span>
-                    )}
+                    {checkpoint.isBest && <span className="text-h3">🏆</span>}
                     <div>
-                      <div className="text-body font-medium">{checkpoint.name}</div>
+                      <div className="text-body font-medium">
+                        {checkpoint.name}
+                      </div>
                       <div className="text-small text-dark-text-tertiary">
-                        Step {checkpoint.step} • Loss: {checkpoint.loss} • {checkpoint.time}
+                        Step {checkpoint.step} • Loss: {checkpoint.loss} •{" "}
+                        {checkpoint.time}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-8">
-                    <button className="btn-ghost text-tiny px-12 py-6">Load</button>
-                    <button className="btn-ghost text-tiny px-12 py-6">Export</button>
+                    <button className="btn-ghost text-tiny px-12 py-6">
+                      Load
+                    </button>
+                    <button className="btn-ghost text-tiny px-12 py-6">
+                      Export
+                    </button>
                     <button className="btn-ghost text-tiny px-12 py-6 text-accent-error">
                       Delete
                     </button>

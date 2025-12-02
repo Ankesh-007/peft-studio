@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\experiment_tracking_service.py
+# hypothesis_version: 6.148.3
+
+[5.0, 100, 'cometml', 'comparison_urls', 'completed', 'config', 'data', 'enabled_trackers', 'experiments', 'failed', 'finished_at', 'job_id', 'metadata', 'metric_comparison', 'model', 'model_name', 'peft-studio', 'phoenix', 'running', 'started_at', 'status', 'step', 'tags', 'timestamp', 'tracker_runs', 'use_case', 'wandb']

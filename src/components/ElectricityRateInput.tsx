@@ -1,11 +1,11 @@
 /**
  * Electricity Rate Input Component
- * 
+ *
  * Allows users to input their electricity rate for accurate cost calculations.
  * Validates: Requirement 9.4
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface ElectricityRateInputProps {
   region?: string;
@@ -14,9 +14,9 @@ interface ElectricityRateInputProps {
 }
 
 export const ElectricityRateInput: React.FC<ElectricityRateInputProps> = ({
-  region = 'default',
+  region = "default",
   onRateChange,
-  initialRate
+  initialRate,
 }) => {
   const [rate, setRate] = useState<number>(initialRate || 0);
   const [defaultRate, setDefaultRate] = useState<number>(0);
@@ -28,13 +28,13 @@ export const ElectricityRateInput: React.FC<ElectricityRateInputProps> = ({
     const fetchDefaultRate = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/cost/electricity-rate/${region}`
+          `http://localhost:8000/api/cost/electricity-rate/${region}`,
         );
-        
+
         if (response.ok) {
           const data = await response.json();
           setDefaultRate(data.electricity_rate_per_kwh);
-          
+
           // If not using custom rate, use the default
           if (!useCustomRate) {
             setRate(data.electricity_rate_per_kwh);
@@ -42,7 +42,7 @@ export const ElectricityRateInput: React.FC<ElectricityRateInputProps> = ({
           }
         }
       } catch (err) {
-        console.error('Failed to fetch default electricity rate:', err);
+        console.error("Failed to fetch default electricity rate:", err);
       } finally {
         setLoading(false);
       }
@@ -112,8 +112,8 @@ export const ElectricityRateInput: React.FC<ElectricityRateInputProps> = ({
 
       <div className="rate-help">
         <p>
-          💡 Your electricity rate affects the cost estimate. Check your utility bill
-          for your actual rate.
+          💡 Your electricity rate affects the cost estimate. Check your utility
+          bill for your actual rate.
         </p>
       </div>
     </div>

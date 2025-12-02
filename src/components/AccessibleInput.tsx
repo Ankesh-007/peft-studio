@@ -1,6 +1,7 @@
-import React, { forwardRef } from 'react';
-import { cn } from '../lib/utils';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle } from "lucide-react";
+import React, { forwardRef } from "react";
+
+import { cn } from "../lib/utils";
 
 export interface AccessibleInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -14,7 +15,10 @@ export interface AccessibleInputProps extends React.InputHTMLAttributes<HTMLInpu
 /**
  * Accessible input component with proper labels and error handling
  */
-export const AccessibleInput = forwardRef<HTMLInputElement, AccessibleInputProps>(
+export const AccessibleInput = forwardRef<
+  HTMLInputElement,
+  AccessibleInputProps
+>(
   (
     {
       label,
@@ -27,21 +31,25 @@ export const AccessibleInput = forwardRef<HTMLInputElement, AccessibleInputProps
       id,
       ...props
     },
-    ref
+    ref,
   ) => {
     const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
     const errorId = `${inputId}-error`;
     const hintId = `${inputId}-hint`;
 
     return (
-      <div className={cn('space-y-2', fullWidth && 'w-full')}>
+      <div className={cn("space-y-2", fullWidth && "w-full")}>
         {label && (
           <label
             htmlFor={inputId}
             className="block text-small font-medium text-dark-text-primary"
           >
             {label}
-            {required && <span className="text-accent-error ml-1" aria-label="required">*</span>}
+            {required && (
+              <span className="text-accent-error ml-1" aria-label="required">
+                *
+              </span>
+            )}
           </label>
         )}
 
@@ -51,21 +59,19 @@ export const AccessibleInput = forwardRef<HTMLInputElement, AccessibleInputProps
               {icon}
             </div>
           )}
-          
+
           <input
             ref={ref}
             id={inputId}
             className={cn(
-              'input w-full',
-              icon && 'pl-40',
-              error && 'border-accent-error focus:border-accent-error focus:ring-accent-error',
-              className
+              "input w-full",
+              icon && "pl-40",
+              error &&
+                "border-accent-error focus:border-accent-error focus:ring-accent-error",
+              className,
             )}
             aria-invalid={!!error}
-            aria-describedby={cn(
-              error && errorId,
-              hint && hintId
-            )}
+            aria-describedby={cn(error && errorId, hint && hintId)}
             aria-required={required}
             {...props}
           />
@@ -84,14 +90,18 @@ export const AccessibleInput = forwardRef<HTMLInputElement, AccessibleInputProps
         )}
 
         {error && (
-          <p id={errorId} className="text-tiny text-accent-error flex items-center gap-2" role="alert">
+          <p
+            id={errorId}
+            className="text-tiny text-accent-error flex items-center gap-2"
+            role="alert"
+          >
             <AlertCircle className="w-4 h-4" />
             {error}
           </p>
         )}
       </div>
     );
-  }
+  },
 );
 
-AccessibleInput.displayName = 'AccessibleInput';
+AccessibleInput.displayName = "AccessibleInput";

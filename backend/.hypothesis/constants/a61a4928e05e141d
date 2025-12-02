@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\security_middleware.py
+# hypothesis_version: 6.148.3
+
+[400, 403, 413, 429, 500, 1000, 1024, ',', '/', '/api/config/export', '/api/config/import', '/api/credentials', '/api/health', '/api/models/upload', '/api/training/start', '/config/export', '/config/import', '/credentials', '/deployment/deploy', '/platforms/connect', '/training/start', 'DELETE', 'PATCH', 'POST', 'PUT', 'Payload too large', 'Rate limit exceeded', 'X-CSRF-Token', 'X-Forwarded-For', 'X-Real-IP', 'application/json', 'content-type', 'detail', 'duration_ms', 'error', 'message', 'method', 'payload_too_large', 'reason', 'size_bytes', 'status_code', 'unknown']

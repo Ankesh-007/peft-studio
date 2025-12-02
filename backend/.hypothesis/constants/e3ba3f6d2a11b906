@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\peft_service.py
+# hypothesis_version: 6.148.3
+
+[0.1, 100, 1024, 2048, 'CAUSAL_LM', 'all_params', 'cpu', 'cuda', 'dora', 'down_proj', 'gate_proj', 'k_proj', 'lora', 'none', 'o_proj', 'pissa', 'q_proj', 'qlora', 'rslora', 'trainable_params', 'trainable_percentage', 'unsloth', 'up_proj', 'v_proj']

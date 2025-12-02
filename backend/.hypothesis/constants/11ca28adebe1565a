@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\paramiko\client.py
+# hypothesis_version: 6.148.3
+
+['-cert.pub', '.ssh', 'Trying SSH key {}', '[{}]:{}', 'ecdsa', 'ed25519', 'keyboard-interactive', 'password', 'r', 'rsa', 'ssh', 'vt100', 'w', 'wb', '{} {} {}\n', '~/.ssh/known_hosts', '~/{}/id_{}']

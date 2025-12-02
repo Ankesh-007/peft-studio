@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\data_types\saved_model.py
+# hypothesis_version: 6.148.3
+
+['.', '.wb_data', 'Model object is None', 'SavedModelObjType', 'cloudpickle', 'dep_py_files_path', 'extra_files', 'path', 'pkl', 'pt', 'pytorch-model-file', 'rb', 'saved_models', 'sklearn', 'sklearn-model-file', 'tensorflow', 'tfkeras-model-file', 'torch', 'torch.nn.Module', 'type', 'wb']

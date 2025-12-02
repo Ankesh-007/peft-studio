@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\keyring\util\platform_.py
+# hypothesis_version: 6.148.3
+
+['.', '.config', '.local/share', 'LOCALAPPDATA', 'Local Settings', 'ProgramData', 'Python Keyring', 'USERPROFILE', 'XDG_CONFIG_HOME', 'XDG_DATA_HOME', 'XP', '_config_root_', '_data_root_', 'keyringrc.cfg', 'python_keyring']

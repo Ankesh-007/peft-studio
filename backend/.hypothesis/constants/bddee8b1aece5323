@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\data_types\molecule.py
+# hypothesis_version: 6.148.3
+
+[200, ', ', '.', 'Artifact', 'BatchableMedia', 'LocalRun', 'Molecule', 'RDKitDataType', 'TextIO', '_type', 'captions', 'cif', 'count', 'file_type', 'filenames', 'gro', 'mcif', 'media', 'mmcif', 'mmtf', 'mol', 'mol2', 'molecule', 'molecule-file', 'name', 'path', 'pdb', 'pqr', 'rdkit.Chem', 'rdkit.Chem.AllChem', 'read', 'sd', 'sdf', 'seek', 'w']

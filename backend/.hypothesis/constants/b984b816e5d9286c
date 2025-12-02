@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\invoke\program.py
+# hypothesis_version: 6.148.3
+
+[" '{}'", ' ({})', ' ({}{}{})', ' [{}]', '*', ', ', '.', '.{}', '; ', 'Argument', 'Available{} tasks{}', 'Collection', 'Config', 'Core options:', 'D', 'Default{} task: {}\n', 'Docstring:', 'Enable debug output.', 'Executor', 'F', 'Lexicon', 'Loader', 'Options:', 'ParseResult', 'R', 'Subcommands', 'T', 'V', '[--options] ', 'c', 'collection', 'collections', 'command', 'command-timeout', 'complete', 'config', 'd', 'debug', 'dedupe', 'depth={}', 'dry', 'e', 'echo', 'f', 'flat', 'h', 'help', 'hide', 'l', 'list', 'list-depth', 'list-format', 'list_{}', 'nested', 'no-dedupe', 'none', 'p', 'password', 'pty', 'r', 'search-root', 'tasks', 'unknown', 'version', 'w', 'warn', 'warn-only', 'write-pyc', '{} {}', '{}:\n']

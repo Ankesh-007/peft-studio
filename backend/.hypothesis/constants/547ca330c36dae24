@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\sklearn\exceptions.py
+# hypothesis_version: 6.148.3
+
+['ConvergenceWarning', 'EfficiencyWarning', 'FitFailedWarning', 'Not expected to fail', 'NotFittedError', 'SkipTestWarning']

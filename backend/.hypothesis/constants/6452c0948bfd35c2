@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\launch\builder\templates\_wandb_bootstrap.py
+# hypothesis_version: 6.148.3
+
+[',', ', ', '--extra-index-url', '--force', '--no-cache-dir', '--no-deps', '=', '==', '@', 'Building wheel', 'Collecting', 'ERROR:', 'WANDB_DISABLE_CACHE', 'WANDB_ONLY_INCLUDE', '__main__', 'dev1', 'install', 'installing {}...', 'pip', 'utf8', 'uv', 'w', 'wandb', 'wandb==']

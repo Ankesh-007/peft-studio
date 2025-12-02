@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\keyring\backends\kwallet.py
+# hypothesis_version: 6.148.3
+
+[4.9, 5.1, '*', '*@*', '/modules/kwalletd', '/modules/kwalletd5', ':', '@', 'Cancelled by user', 'KDE', 'Password not found', 'Python', 'XDG_CURRENT_DESKTOP', 'dbus', 'org.kde.KWallet', 'org.kde.kwalletd', 'org.kde.kwalletd5']

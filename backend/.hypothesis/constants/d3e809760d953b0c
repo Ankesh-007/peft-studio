@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\launch\_launch_add.py
+# hypothesis_version: 6.148.3
+
+['default', 'entity', 'job', 'launch_job', 'local-process', 'project', 'public.QueuedRun', 'resource', 'resource_args', 'runQueueItemId', 'runSpec', 'template_variables', 'uri']

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\apis\public\sweeps.py
+# hypothesis_version: 6.148.3
+
+[420, '$and', '+', '+created_at', '-', '/', '<Sweep {} ({})>', '?jupyter=true', 'Sorting runs by {}', 'Sweep', 'Unknown State', 'config', 'cursor', 'display:none;', 'displayName', 'edges', 'endCursor', 'entity', 'goal', 'hasNextPage', 'metric', 'minimize', 'name', 'node', 'pageInfo', 'perPage', 'project', 'runCountExpected', 'state', 'sweep', 'sweeps', 'totalSweeps']

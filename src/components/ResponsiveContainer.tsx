@@ -1,6 +1,7 @@
-import React from 'react';
-import { cn } from '../lib/utils';
-import { useIsMobile, useIsTablet, useIsDesktop } from '../hooks/useMediaQuery';
+import React from "react";
+
+import { useIsMobile, useIsTablet, useIsDesktop } from "../hooks/useMediaQuery";
+import { cn } from "../lib/utils";
 
 interface ResponsiveContainerProps {
   children: React.ReactNode;
@@ -27,14 +28,10 @@ export const ResponsiveContainer: React.FC<ResponsiveContainerProps> = ({
   const responsiveClass = isMobile
     ? mobileClassName
     : isTablet
-    ? tabletClassName
-    : desktopClassName;
+      ? tabletClassName
+      : desktopClassName;
 
-  return (
-    <div className={cn(className, responsiveClass)}>
-      {children}
-    </div>
-  );
+  return <div className={cn(className, responsiveClass)}>{children}</div>;
 };
 
 interface ResponsiveGridProps {
@@ -63,12 +60,12 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
   const gridCols = isMobile
     ? cols.mobile
     : isTablet
-    ? cols.tablet
-    : cols.desktop;
+      ? cols.tablet
+      : cols.desktop;
 
   return (
     <div
-      className={cn('grid', className)}
+      className={cn("grid", className)}
       style={{
         gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
         gap: `${gap}px`,
@@ -82,22 +79,30 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
 /**
  * Show/hide content based on screen size
  */
-export const ShowOnMobile: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ShowOnMobile: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const isMobile = useIsMobile();
   return isMobile ? <>{children}</> : null;
 };
 
-export const HideOnMobile: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const HideOnMobile: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const isMobile = useIsMobile();
   return !isMobile ? <>{children}</> : null;
 };
 
-export const ShowOnTablet: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ShowOnTablet: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const isTablet = useIsTablet();
   return isTablet ? <>{children}</> : null;
 };
 
-export const ShowOnDesktop: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ShowOnDesktop: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const isDesktop = useIsDesktop();
   return isDesktop ? <>{children}</> : null;
 };

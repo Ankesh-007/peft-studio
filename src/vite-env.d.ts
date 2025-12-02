@@ -17,5 +17,13 @@ interface Window {
     onTrainingProgress: (callback: (data: any) => void) => void;
     onTrainingComplete: (callback: (data: any) => void) => void;
     onTrainingError: (callback: (data: any) => void) => void;
+    showNotification?: (options: {
+      title: string;
+      message: string;
+      urgency?: string;
+      sound?: boolean;
+    }) => Promise<{ success: boolean }>;
+    setProgress?: (progress: number) => Promise<void>;
+    checkDND?: () => Promise<{ enabled: boolean }>;
   };
 }

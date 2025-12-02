@@ -7,7 +7,7 @@ Property-based tests for memory threshold triggering batch size reduction.
 
 import pytest
 from hypothesis import given, strategies as st, settings, assume
-from backend.services.anomaly_detection_service import (
+from services.anomaly_detection_service import (
     AnomalyDetectionService,
     AnomalyType,
     get_anomaly_detection_service

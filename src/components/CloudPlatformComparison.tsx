@@ -1,11 +1,11 @@
 /**
  * Cloud Platform Cost Comparison Component
- * 
+ *
  * Displays cost comparison across cloud GPU platforms
  * Validates: Requirements 9.2
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface CloudInstance {
   platform: string;
@@ -49,12 +49,14 @@ interface CloudPlatformComparisonProps {
   onPlatformSelect?: (platform: string) => void;
 }
 
-export const CloudPlatformComparison: React.FC<CloudPlatformComparisonProps> = ({
+export const CloudPlatformComparison: React.FC<
+  CloudPlatformComparisonProps
+> = ({
   trainingHours,
   localGpuType,
   localElectricityCost,
   minMemoryGb,
-  onPlatformSelect
+  onPlatformSelect,
 }) => {
   const [comparison, setComparison] = useState<CostComparison | null>(null);
   const [loading, setLoading] = useState(true);
@@ -70,30 +72,33 @@ export const CloudPlatformComparison: React.FC<CloudPlatformComparisonProps> = (
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:8000/api/cloud/compare-costs', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        "http://localhost:8000/api/cloud/compare-costs",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            training_hours: trainingHours,
+            local_gpu_type: localGpuType,
+            local_electricity_cost: localElectricityCost,
+            min_memory_gb: minMemoryGb,
+          }),
         },
-        body: JSON.stringify({
-          training_hours: trainingHours,
-          local_gpu_type: localGpuType,
-          local_electricity_cost: localElectricityCost,
-          min_memory_gb: minMemoryGb,
-        }),
-      });
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch cost comparison');
+        throw new Error("Failed to fetch cost comparison");
       }
 
       const data = await response.json();
       setComparison(data);
-      
+
       // Auto-select recommended platform
       setSelectedPlatform(data.summary.recommended.platform);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -145,9 +150,15 @@ export const CloudPlatformComparison: React.FC<CloudPlatformComparisonProps> = (
               Best Value
             </span>
           </div>
-          <p className="text-2xl font-bold text-green-900">{comparison.summary.cheapest.cost}</p>
-          <p className="text-sm text-green-700 mt-1">{comparison.summary.cheapest.platform}</p>
-          <p className="text-xs text-green-600 mt-1">{comparison.summary.cheapest.gpu}</p>
+          <p className="text-2xl font-bold text-green-900">
+            {comparison.summary.cheapest.cost}
+          </p>
+          <p className="text-sm text-green-700 mt-1">
+            {comparison.summary.cheapest.platform}
+          </p>
+          <p className="text-xs text-green-600 mt-1">
+            {comparison.summary.cheapest.gpu}
+          </p>
         </div>
 
         {/* Fastest Option */}
@@ -158,9 +169,15 @@ export const CloudPlatformComparison: React.FC<CloudPlatformComparisonProps> = (
               Quick Start
             </span>
           </div>
-          <p className="text-2xl font-bold text-blue-900">{comparison.summary.fastest.setup_time}</p>
-          <p className="text-sm text-blue-700 mt-1">{comparison.summary.fastest.platform}</p>
-          <p className="text-xs text-blue-600 mt-1">{comparison.summary.fastest.gpu}</p>
+          <p className="text-2xl font-bold text-blue-900">
+            {comparison.summary.fastest.setup_time}
+          </p>
+          <p className="text-sm text-blue-700 mt-1">
+            {comparison.summary.fastest.platform}
+          </p>
+          <p className="text-xs text-blue-600 mt-1">
+            {comparison.summary.fastest.gpu}
+          </p>
         </div>
 
         {/* Recommended Option */}
@@ -171,9 +188,15 @@ export const CloudPlatformComparison: React.FC<CloudPlatformComparisonProps> = (
               ⭐ Best Choice
             </span>
           </div>
-          <p className="text-2xl font-bold text-purple-900">{comparison.summary.recommended.cost}</p>
-          <p className="text-sm text-purple-700 mt-1">{comparison.summary.recommended.platform}</p>
-          <p className="text-xs text-purple-600 mt-1">{comparison.summary.recommended.reason}</p>
+          <p className="text-2xl font-bold text-purple-900">
+            {comparison.summary.recommended.cost}
+          </p>
+          <p className="text-sm text-purple-700 mt-1">
+            {comparison.summary.recommended.platform}
+          </p>
+          <p className="text-xs text-purple-600 mt-1">
+            {comparison.summary.recommended.reason}
+          </p>
         </div>
       </div>
 
@@ -181,7 +204,8 @@ export const CloudPlatformComparison: React.FC<CloudPlatformComparisonProps> = (
       {comparison.summary.savings_vs_local && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <p className="text-yellow-800">
-            💰 Save <strong>{comparison.summary.savings_vs_local}</strong> by using cloud instead of local training
+            💰 Save <strong>{comparison.summary.savings_vs_local}</strong> by
+            using cloud instead of local training
           </p>
         </div>
       )}
@@ -195,8 +219,8 @@ export const CloudPlatformComparison: React.FC<CloudPlatformComparisonProps> = (
               key={index}
               className={`border rounded-lg p-4 cursor-pointer transition-all ${
                 selectedPlatform === option.platform
-                  ? 'border-blue-500 bg-blue-50 shadow-md'
-                  : 'border-gray-200 hover:border-gray-300 hover:shadow'
+                  ? "border-blue-500 bg-blue-50 shadow-md"
+                  : "border-gray-200 hover:border-gray-300 hover:shadow"
               }`}
               onClick={() => handlePlatformSelect(option.platform)}
             >
@@ -204,7 +228,7 @@ export const CloudPlatformComparison: React.FC<CloudPlatformComparisonProps> = (
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h4 className="text-lg font-semibold capitalize">
-                      {option.platform.replace('_', ' ')}
+                      {option.platform.replace("_", " ")}
                     </h4>
                     <span className="text-sm text-gray-600">{option.gpu}</span>
                     {selectedPlatform === option.platform && (
@@ -216,9 +240,13 @@ export const CloudPlatformComparison: React.FC<CloudPlatformComparisonProps> = (
 
                   <div className="flex items-center gap-4 mb-3">
                     <div>
-                      <span className="text-2xl font-bold text-gray-900">{option.cost}</span>
+                      <span className="text-2xl font-bold text-gray-900">
+                        {option.cost}
+                      </span>
                       {option.hourly_rate && (
-                        <span className="text-sm text-gray-600 ml-2">({option.hourly_rate})</span>
+                        <span className="text-sm text-gray-600 ml-2">
+                          ({option.hourly_rate})
+                        </span>
                       )}
                     </div>
                     <div className="text-sm text-gray-600">
@@ -228,11 +256,11 @@ export const CloudPlatformComparison: React.FC<CloudPlatformComparisonProps> = (
                       <div className="text-sm">
                         <span
                           className={`px-2 py-1 rounded ${
-                            option.availability === 'high'
-                              ? 'bg-green-100 text-green-800'
-                              : option.availability === 'medium'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-red-100 text-red-800'
+                            option.availability === "high"
+                              ? "bg-green-100 text-green-800"
+                              : option.availability === "medium"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
                           }`}
                         >
                           {option.availability} availability
@@ -244,10 +272,15 @@ export const CloudPlatformComparison: React.FC<CloudPlatformComparisonProps> = (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Pros */}
                     <div>
-                      <h5 className="text-sm font-medium text-green-700 mb-2">Pros</h5>
+                      <h5 className="text-sm font-medium text-green-700 mb-2">
+                        Pros
+                      </h5>
                       <ul className="space-y-1">
                         {option.pros.map((pro, i) => (
-                          <li key={i} className="text-sm text-gray-700 flex items-start">
+                          <li
+                            key={i}
+                            className="text-sm text-gray-700 flex items-start"
+                          >
                             <span className="text-green-500 mr-2">✓</span>
                             <span>{pro}</span>
                           </li>
@@ -257,10 +290,15 @@ export const CloudPlatformComparison: React.FC<CloudPlatformComparisonProps> = (
 
                     {/* Cons */}
                     <div>
-                      <h5 className="text-sm font-medium text-red-700 mb-2">Cons</h5>
+                      <h5 className="text-sm font-medium text-red-700 mb-2">
+                        Cons
+                      </h5>
                       <ul className="space-y-1">
                         {option.cons.map((con, i) => (
-                          <li key={i} className="text-sm text-gray-700 flex items-start">
+                          <li
+                            key={i}
+                            className="text-sm text-gray-700 flex items-start"
+                          >
                             <span className="text-red-500 mr-2">✗</span>
                             <span>{con}</span>
                           </li>
@@ -283,16 +321,16 @@ export const CloudPlatformComparison: React.FC<CloudPlatformComparisonProps> = (
         >
           Refresh Prices
         </button>
-        
+
         {selectedPlatform && (
           <button
             onClick={() => {
               // Handle platform selection
-              console.log('Selected platform:', selectedPlatform);
+              console.log("Selected platform:", selectedPlatform);
             }}
             className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium"
           >
-            Continue with {selectedPlatform.replace('_', ' ')}
+            Continue with {selectedPlatform.replace("_", " ")}
           </button>
         )}
       </div>

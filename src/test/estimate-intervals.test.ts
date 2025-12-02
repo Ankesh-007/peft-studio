@@ -1,5 +1,5 @@
-import { describe, test, expect } from 'vitest';
-import fc from 'fast-check';
+import fc from "fast-check";
+import { describe, test, expect } from "vitest";
 
 // **Feature: simplified-llm-optimization, Property 10: Training estimates include confidence intervals**
 
@@ -27,7 +27,9 @@ export interface TrainingConfig {
  * - Throughput (steps/sec) determines base time
  * - Confidence intervals account for variability (±20% typical)
  */
-export function calculateTrainingEstimate(config: TrainingConfig): TrainingEstimate {
+export function calculateTrainingEstimate(
+  config: TrainingConfig,
+): TrainingEstimate {
   // Validate inputs
   if (
     config.batchSize <= 0 ||
@@ -36,7 +38,9 @@ export function calculateTrainingEstimate(config: TrainingConfig): TrainingEstim
     config.stepsPerEpoch <= 0 ||
     config.throughputStepsPerSec <= 0
   ) {
-    throw new Error('Invalid training configuration: all values must be positive');
+    throw new Error(
+      "Invalid training configuration: all values must be positive",
+    );
   }
 
   // Calculate total steps
@@ -72,8 +76,8 @@ export function calculateTrainingEstimate(config: TrainingConfig): TrainingEstim
   };
 }
 
-describe('Property 10: Training estimates include confidence intervals', () => {
-  test('for any training configuration, estimate should include min, expected, and max duration', () => {
+describe("Property 10: Training estimates include confidence intervals", () => {
+  test("for any training configuration, estimate should include min, expected, and max duration", () => {
     fc.assert(
       fc.property(
         fc.record({
@@ -87,9 +91,9 @@ describe('Property 10: Training estimates include confidence intervals', () => {
           const estimate = calculateTrainingEstimate(config);
 
           // Property: All duration fields must exist and be numbers
-          expect(estimate.duration.min).toBeTypeOf('number');
-          expect(estimate.duration.expected).toBeTypeOf('number');
-          expect(estimate.duration.max).toBeTypeOf('number');
+          expect(estimate.duration.min).toBeTypeOf("number");
+          expect(estimate.duration.expected).toBeTypeOf("number");
+          expect(estimate.duration.max).toBeTypeOf("number");
 
           // Property: All durations must be non-negative
           expect(estimate.duration.min).toBeGreaterThanOrEqual(0);
@@ -97,16 +101,16 @@ describe('Property 10: Training estimates include confidence intervals', () => {
           expect(estimate.duration.max).toBeGreaterThanOrEqual(0);
 
           // Property: Confidence must exist and be between 0 and 1
-          expect(estimate.confidence).toBeTypeOf('number');
+          expect(estimate.confidence).toBeTypeOf("number");
           expect(estimate.confidence).toBeGreaterThanOrEqual(0);
           expect(estimate.confidence).toBeLessThanOrEqual(1);
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
 
-  test('for any training configuration, min <= expected <= max', () => {
+  test("for any training configuration, min <= expected <= max", () => {
     fc.assert(
       fc.property(
         fc.record({
@@ -120,15 +124,19 @@ describe('Property 10: Training estimates include confidence intervals', () => {
           const estimate = calculateTrainingEstimate(config);
 
           // Property: Duration bounds must be ordered correctly
-          expect(estimate.duration.min).toBeLessThanOrEqual(estimate.duration.expected);
-          expect(estimate.duration.expected).toBeLessThanOrEqual(estimate.duration.max);
-        }
+          expect(estimate.duration.min).toBeLessThanOrEqual(
+            estimate.duration.expected,
+          );
+          expect(estimate.duration.expected).toBeLessThanOrEqual(
+            estimate.duration.max,
+          );
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
 
-  test('for any training configuration, expected duration should be proportional to total steps', () => {
+  test("for any training configuration, expected duration should be proportional to total steps", () => {
     fc.assert(
       fc.property(
         fc.record({
@@ -146,14 +154,16 @@ describe('Property 10: Training estimates include confidence intervals', () => {
           const expectedDuration = totalSteps / config.throughputStepsPerSec;
 
           // Allow small floating point differences
-          expect(Math.abs(estimate.duration.expected - expectedDuration)).toBeLessThan(0.01);
-        }
+          expect(
+            Math.abs(estimate.duration.expected - expectedDuration),
+          ).toBeLessThan(0.01);
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
 
-  test('for any training configuration, confidence intervals should be reasonable', () => {
+  test("for any training configuration, confidence intervals should be reasonable", () => {
     fc.assert(
       fc.property(
         fc.record({
@@ -175,13 +185,13 @@ describe('Property 10: Training estimates include confidence intervals', () => {
 
           // Interval should be at most 100% of expected (not too wide)
           expect(intervalWidth).toBeLessThanOrEqual(expectedDuration * 1.0);
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
 
-  test('for any training configuration, longer runs should have lower confidence', () => {
+  test("for any training configuration, longer runs should have lower confidence", () => {
     fc.assert(
       fc.property(
         fc.record({
@@ -205,13 +215,13 @@ describe('Property 10: Training estimates include confidence intervals', () => {
           if (hoursExpected < 8) {
             expect(estimate.confidence).toBeGreaterThanOrEqual(0.7);
           }
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
 
-  test('for any invalid configuration, should throw error', () => {
+  test("for any invalid configuration, should throw error", () => {
     fc.assert(
       fc.property(
         fc.record({
@@ -224,13 +234,13 @@ describe('Property 10: Training estimates include confidence intervals', () => {
         (config) => {
           // Property: Invalid configurations should throw errors
           expect(() => calculateTrainingEstimate(config)).toThrow();
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
 
-  test('estimate calculation should be deterministic', () => {
+  test("estimate calculation should be deterministic", () => {
     fc.assert(
       fc.property(
         fc.record({
@@ -249,9 +259,9 @@ describe('Property 10: Training estimates include confidence intervals', () => {
           expect(estimate1.duration.expected).toBe(estimate2.duration.expected);
           expect(estimate1.duration.max).toBe(estimate2.duration.max);
           expect(estimate1.confidence).toBe(estimate2.confidence);
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
 });

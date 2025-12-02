@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\config.py
+# hypothesis_version: 6.148.3
+
+[0.0002, 0.1, 512, 8000, '127.0.0.1', 'cache', 'checkpoints', 'data', 'datasets', 'models', 'q_proj', 'v_proj']

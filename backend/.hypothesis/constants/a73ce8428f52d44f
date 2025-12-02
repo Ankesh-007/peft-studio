@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\data_types\audio.py
+# hypothesis_version: 6.148.3
+
+['.wav', '_type', 'audio', 'audio-file', 'caption', 'captions', 'count', 'durations', 'media', 'np.ndarray', 'path', 'sampleRates', 'soundfile', 'utf-8']

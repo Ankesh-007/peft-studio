@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\deployment_service.py
+# hypothesis_version: 6.148.3
+
+[0.0, 1000, 'active', 'avg_latency_ms', 'config', 'created_at', 'deployed_at', 'deploying', 'deployment_id', 'endpoint', 'error', 'error_message', 'estimated_cost', 'failed', 'failed_requests', 'last_health_check', 'latency_ms', 'modal', 'p50_latency_ms', 'p95_latency_ms', 'p99_latency_ms', 'pending', 'period_end', 'period_start', 'predibase', 'replicate', 'response', 'status', 'stopped', 'stopped_at', 'success', 'successful_requests', 'timestamp', 'together_ai', 'total_input_tokens', 'total_output_tokens', 'total_requests', 'updating', 'usage_metrics']

@@ -14,7 +14,7 @@ import json
 from datetime import datetime
 from contextlib import contextmanager
 
-from backend.services.model_versioning_service import (
+from services.model_versioning_service import (
     ModelVersioningService,
     ModelVersion
 )

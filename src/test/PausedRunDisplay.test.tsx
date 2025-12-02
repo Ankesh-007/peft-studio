@@ -2,16 +2,17 @@
  * Unit tests for PausedRunDisplay component
  */
 
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import PausedRunDisplay from '../components/PausedRunDisplay';
+import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
 
-describe('PausedRunDisplay', () => {
+import PausedRunDisplay from "../components/PausedRunDisplay";
+
+describe("PausedRunDisplay", () => {
   const mockPausedRun = {
-    job_id: 'test_job_123',
-    state: 'paused',
-    paused_at: '2025-11-29T10:30:00Z',
-    started_at: '2025-11-29T09:00:00Z',
+    job_id: "test_job_123",
+    state: "paused",
+    paused_at: "2025-11-29T10:30:00Z",
+    started_at: "2025-11-29T09:00:00Z",
     elapsed_time: 5400, // 1.5 hours in seconds
     remaining_time_estimate: 3600, // 1 hour in seconds
     current_step: 500,
@@ -23,20 +24,20 @@ describe('PausedRunDisplay', () => {
       cpu_utilization: 62.3,
       ram_used: 45000000000, // bytes
     },
-    model_name: 'Llama-3-8B',
-    dataset_name: 'Finance-10k',
+    model_name: "Llama-3-8B",
+    dataset_name: "Finance-10k",
   };
 
   const mockOnResume = vi.fn();
   const mockOnStop = vi.fn();
 
-  it('renders paused run information', () => {
+  it("renders paused run information", () => {
     render(
       <PausedRunDisplay
         pausedRun={mockPausedRun}
         onResume={mockOnResume}
         onStop={mockOnStop}
-      />
+      />,
     );
 
     // Check for job ID
@@ -54,43 +55,45 @@ describe('PausedRunDisplay', () => {
     expect(screen.getByText(/0.4532/)).toBeInTheDocument(); // current loss
   });
 
-  it('displays elapsed time', () => {
+  it("displays elapsed time", () => {
     render(
       <PausedRunDisplay
         pausedRun={mockPausedRun}
         onResume={mockOnResume}
         onStop={mockOnStop}
-      />
+      />,
     );
 
     // Should display elapsed time (1.5 hours = 1h 30m)
     expect(screen.getByText(/Elapsed Time/i)).toBeInTheDocument();
   });
 
-  it('displays remaining time estimate', () => {
+  it("displays remaining time estimate", () => {
     render(
       <PausedRunDisplay
         pausedRun={mockPausedRun}
         onResume={mockOnResume}
         onStop={mockOnStop}
-      />
+      />,
     );
 
     // Should display remaining time
     expect(screen.getByText(/Remaining Time/i)).toBeInTheDocument();
   });
 
-  it('displays resource usage at pause time', () => {
+  it("displays resource usage at pause time", () => {
     render(
       <PausedRunDisplay
         pausedRun={mockPausedRun}
         onResume={mockOnResume}
         onStop={mockOnStop}
-      />
+      />,
     );
 
     // Check for resource usage section
-    expect(screen.getByText(/Resource Usage at Pause Time/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Resource Usage at Pause Time/i),
+    ).toBeInTheDocument();
 
     // Check for GPU utilization
     expect(screen.getByText(/GPU Utilization/i)).toBeInTheDocument();
@@ -105,56 +108,58 @@ describe('PausedRunDisplay', () => {
     expect(screen.getByText(/RAM Usage/i)).toBeInTheDocument();
   });
 
-  it('calls onResume when resume button is clicked', () => {
+  it("calls onResume when resume button is clicked", () => {
     render(
       <PausedRunDisplay
         pausedRun={mockPausedRun}
         onResume={mockOnResume}
         onStop={mockOnStop}
-      />
+      />,
     );
 
-    const resumeButton = screen.getByRole('button', { name: /Resume Training/i });
+    const resumeButton = screen.getByRole("button", {
+      name: /Resume Training/i,
+    });
     fireEvent.click(resumeButton);
 
-    expect(mockOnResume).toHaveBeenCalledWith('test_job_123');
+    expect(mockOnResume).toHaveBeenCalledWith("test_job_123");
   });
 
-  it('calls onStop when stop button is clicked', () => {
+  it("calls onStop when stop button is clicked", () => {
     render(
       <PausedRunDisplay
         pausedRun={mockPausedRun}
         onResume={mockOnResume}
         onStop={mockOnStop}
-      />
+      />,
     );
 
-    const stopButton = screen.getByRole('button', { name: /Stop & Save/i });
+    const stopButton = screen.getByRole("button", { name: /Stop & Save/i });
     fireEvent.click(stopButton);
 
-    expect(mockOnStop).toHaveBeenCalledWith('test_job_123');
+    expect(mockOnStop).toHaveBeenCalledWith("test_job_123");
   });
 
-  it('displays model and dataset names when provided', () => {
+  it("displays model and dataset names when provided", () => {
     render(
       <PausedRunDisplay
         pausedRun={mockPausedRun}
         onResume={mockOnResume}
         onStop={mockOnStop}
-      />
+      />,
     );
 
     expect(screen.getByText(/Llama-3-8B/i)).toBeInTheDocument();
     expect(screen.getByText(/Finance-10k/i)).toBeInTheDocument();
   });
 
-  it('handles multiple GPUs correctly', () => {
+  it("handles multiple GPUs correctly", () => {
     render(
       <PausedRunDisplay
         pausedRun={mockPausedRun}
         onResume={mockOnResume}
         onStop={mockOnStop}
-      />
+      />,
     );
 
     // Should show GPU 0 and GPU 1 (may appear multiple times in the UI)
@@ -168,40 +173,39 @@ describe('PausedRunDisplay', () => {
     expect(screen.getByText(/45.2%/)).toBeInTheDocument();
   });
 
-  it('renders without stop button when onStop is not provided', () => {
+  it("renders without stop button when onStop is not provided", () => {
     render(
-      <PausedRunDisplay
-        pausedRun={mockPausedRun}
-        onResume={mockOnResume}
-      />
+      <PausedRunDisplay pausedRun={mockPausedRun} onResume={mockOnResume} />,
     );
 
-    const resumeButton = screen.getByRole('button', { name: /Resume Training/i });
+    const resumeButton = screen.getByRole("button", {
+      name: /Resume Training/i,
+    });
     expect(resumeButton).toBeInTheDocument();
 
-    const stopButton = screen.queryByRole('button', { name: /Stop & Save/i });
+    const stopButton = screen.queryByRole("button", { name: /Stop & Save/i });
     expect(stopButton).not.toBeInTheDocument();
   });
 
-  it('displays paused timestamp', () => {
+  it("displays paused timestamp", () => {
     render(
       <PausedRunDisplay
         pausedRun={mockPausedRun}
         onResume={mockOnResume}
         onStop={mockOnStop}
-      />
+      />,
     );
 
     expect(screen.getByText(/Paused At/i)).toBeInTheDocument();
   });
 
-  it('displays info banner about paused state', () => {
+  it("displays info banner about paused state", () => {
     render(
       <PausedRunDisplay
         pausedRun={mockPausedRun}
         onResume={mockOnResume}
         onStop={mockOnStop}
-      />
+      />,
     );
 
     expect(screen.getByText(/Training Paused/i)).toBeInTheDocument();

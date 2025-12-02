@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\database.py
+# hypothesis_version: 6.148.3
+
+['Dataset', 'Model', 'TrainingRun', 'configurations', 'dataset', 'datasets', 'datasets.id', 'evaluations', 'experiments', 'model', 'models', 'models.id', 'training_runs']

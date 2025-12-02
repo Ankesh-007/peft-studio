@@ -10,7 +10,7 @@ from pathlib import Path
 import tempfile
 import json
 
-from backend.services.export_service import ModelExporter
+from services.export_service import ModelExporter
 
 
 # Strategy for generating model metadata

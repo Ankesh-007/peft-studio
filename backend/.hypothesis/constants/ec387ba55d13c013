@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\artifacts\storage_handlers\azure_handler.py
+# hypothesis_version: 6.148.3
+
+['"', '/', 'azure.core', 'azure.identity', 'azure.storage.blob', 'etag', 'hdi_isfolder', 'https', 'metadata', 'true', 'versionID', 'versionId', 'versions', 'wb']

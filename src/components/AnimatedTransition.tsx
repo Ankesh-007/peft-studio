@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { cn } from '../lib/utils';
-import { usePrefersReducedMotion } from '../hooks/useMediaQuery';
+import React, { useEffect, useState } from "react";
+
+import { usePrefersReducedMotion } from "../hooks/useMediaQuery";
+import { cn } from "../lib/utils";
 
 interface AnimatedTransitionProps {
   children: React.ReactNode;
   show: boolean;
-  type?: 'fade' | 'slide-up' | 'slide-down' | 'scale';
+  type?: "fade" | "slide-up" | "slide-down" | "scale";
   duration?: number;
   className?: string;
 }
@@ -16,7 +17,7 @@ interface AnimatedTransitionProps {
 export const AnimatedTransition: React.FC<AnimatedTransitionProps> = ({
   children,
   show,
-  type = 'fade',
+  type = "fade",
   duration = 300,
   className,
 }) => {
@@ -34,9 +35,12 @@ export const AnimatedTransition: React.FC<AnimatedTransitionProps> = ({
     } else {
       setIsVisible(false);
       // Wait for animation to complete before unmounting
-      const timer = setTimeout(() => {
-        setShouldRender(false);
-      }, prefersReducedMotion ? 0 : duration);
+      const timer = setTimeout(
+        () => {
+          setShouldRender(false);
+        },
+        prefersReducedMotion ? 0 : duration,
+      );
       return () => clearTimeout(timer);
     }
   }, [show, duration, prefersReducedMotion]);
@@ -45,18 +49,18 @@ export const AnimatedTransition: React.FC<AnimatedTransitionProps> = ({
 
   const getTransitionClasses = () => {
     const baseClasses = prefersReducedMotion
-      ? ''
+      ? ""
       : `transition-all duration-${duration}`;
 
     const typeClasses = {
-      fade: isVisible ? 'opacity-100' : 'opacity-0',
-      'slide-up': isVisible
-        ? 'opacity-100 translate-y-0'
-        : 'opacity-0 translate-y-4',
-      'slide-down': isVisible
-        ? 'opacity-100 translate-y-0'
-        : 'opacity-0 -translate-y-4',
-      scale: isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95',
+      fade: isVisible ? "opacity-100" : "opacity-0",
+      "slide-up": isVisible
+        ? "opacity-100 translate-y-0"
+        : "opacity-0 translate-y-4",
+      "slide-down": isVisible
+        ? "opacity-100 translate-y-0"
+        : "opacity-0 -translate-y-4",
+      scale: isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95",
     };
 
     return cn(baseClasses, typeClasses[type], className);
@@ -85,11 +89,11 @@ export const StaggeredList: React.FC<StaggeredListProps> = ({
     <div className={className}>
       {React.Children.map(children, (child, index) => (
         <div
-          className={cn(
-            !prefersReducedMotion && 'animate-fade-in'
-          )}
+          className={cn(!prefersReducedMotion && "animate-fade-in")}
           style={{
-            animationDelay: prefersReducedMotion ? '0ms' : `${index * staggerDelay}ms`,
+            animationDelay: prefersReducedMotion
+              ? "0ms"
+              : `${index * staggerDelay}ms`,
           }}
         >
           {child}
@@ -118,8 +122,8 @@ export const Pulse: React.FC<PulseProps> = ({
   return (
     <div
       className={cn(
-        active && !prefersReducedMotion && 'animate-pulse',
-        className
+        active && !prefersReducedMotion && "animate-pulse",
+        className,
       )}
     >
       {children}

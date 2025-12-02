@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from "react";
 
 export interface TrainingMetrics {
   step: number;
   epoch: number;
-  loss: float;
+  loss: number;
   learning_rate: number;
   grad_norm?: number;
   throughput: number;
@@ -29,14 +29,14 @@ export interface UseTrainingMonitorResult {
   disconnect: () => void;
 }
 
-const WS_URL = 'ws://127.0.0.1:8000/ws/training';
+const WS_URL = "ws://127.0.0.1:8000/ws/training";
 
 export function useTrainingMonitor(jobId: string): UseTrainingMonitorResult {
   const [metrics, setMetrics] = useState<TrainingMetrics | null>(null);
   const [metricsHistory, setMetricsHistory] = useState<TrainingMetrics[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectAttemptsRef = useRef(0);
@@ -49,7 +49,7 @@ export function useTrainingMonitor(jobId: string): UseTrainingMonitorResult {
 
     try {
       const ws = new WebSocket(`${WS_URL}/${jobId}`);
-      
+
       ws.onopen = () => {
         console.log(`WebSocket connected for job ${jobId}`);
         setIsConnected(true);
@@ -60,49 +60,54 @@ export function useTrainingMonitor(jobId: string): UseTrainingMonitorResult {
       ws.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data);
-          
-          if (message.type === 'metrics' && message.data) {
+
+          if (message.type === "metrics" && message.data) {
             const newMetrics = message.data as TrainingMetrics;
             setMetrics(newMetrics);
             setMetricsHistory((prev) => [...prev, newMetrics].slice(-100)); // Keep last 100
-          } else if (message.type === 'connected') {
-            console.log('Connected to training metrics stream');
-          } else if (message.type === 'pong') {
+          } else if (message.type === "connected") {
+            console.log("Connected to training metrics stream");
+          } else if (message.type === "pong") {
             // Heartbeat response
           }
         } catch (err) {
-          console.error('Error parsing WebSocket message:', err);
+          console.error("Error parsing WebSocket message:", err);
         }
       };
 
       ws.onerror = (event) => {
-        console.error('WebSocket error:', event);
-        setError('WebSocket connection error');
+        console.error("WebSocket error:", event);
+        setError("WebSocket connection error");
       };
 
       ws.onclose = () => {
-        console.log('WebSocket disconnected');
+        console.log("WebSocket disconnected");
         setIsConnected(false);
         wsRef.current = null;
 
         // Attempt to reconnect
         if (reconnectAttemptsRef.current < maxReconnectAttempts) {
           reconnectAttemptsRef.current += 1;
-          const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 30000);
-          console.log(`Reconnecting in ${delay}ms (attempt ${reconnectAttemptsRef.current})`);
-          
+          const delay = Math.min(
+            1000 * Math.pow(2, reconnectAttemptsRef.current),
+            30000,
+          );
+          console.log(
+            `Reconnecting in ${delay}ms (attempt ${reconnectAttemptsRef.current})`,
+          );
+
           reconnectTimeoutRef.current = setTimeout(() => {
             connect();
           }, delay);
         } else {
-          setError('Failed to connect after multiple attempts');
+          setError("Failed to connect after multiple attempts");
         }
       };
 
       wsRef.current = ws;
     } catch (err) {
-      console.error('Error creating WebSocket:', err);
-      setError('Failed to create WebSocket connection');
+      console.error("Error creating WebSocket:", err);
+      setError("Failed to create WebSocket connection");
     }
   }, [jobId]);
 
@@ -127,7 +132,7 @@ export function useTrainingMonitor(jobId: string): UseTrainingMonitorResult {
 
     const pingInterval = setInterval(() => {
       if (wsRef.current?.readyState === WebSocket.OPEN) {
-        wsRef.current.send('ping');
+        wsRef.current.send("ping");
       }
     }, 30000); // Ping every 30 seconds
 

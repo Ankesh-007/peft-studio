@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\configuration_management_service.py
+# hypothesis_version: 6.148.3
+
+['%Y%m%d%H%M%S', '*.json', '.peft-studio', '1.0', 'algorithm', 'author', 'config', 'config_type', 'configuration', 'created_at', 'description', 'experiment_tracker', 'format_version', 'id', 'library', 'metadata', 'modified_at', 'name', 'provider', 'quantization', 'r', 'tags', 'training_results', 'unknown', 'utf-8', 'w']

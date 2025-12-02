@@ -3,7 +3,7 @@
  * Implements Property 9: Loss curve color coding
  */
 
-export type LossZone = 'green' | 'yellow' | 'red';
+export type LossZone = "green" | "yellow" | "red";
 
 export interface LossColorResult {
   zone: LossZone;
@@ -20,11 +20,11 @@ export function getLossColorZone(
   currentLoss: number,
   previousLoss: number | null = null,
   goodThreshold: number = 1.0,
-  acceptableThreshold: number = 2.0
+  acceptableThreshold: number = 2.0,
 ): LossColorResult {
   // Handle invalid inputs
   if (currentLoss < 0 || isNaN(currentLoss) || !isFinite(currentLoss)) {
-    return { zone: 'red', color: '#ef4444' };
+    return { zone: "red", color: "#ef4444" };
   }
 
   // If we have previous loss, check for trend
@@ -34,37 +34,37 @@ export function getLossColorZone(
 
     // Red zone: Loss is increasing significantly (>10% increase)
     if (percentChange > 10) {
-      return { zone: 'red', color: '#ef4444' };
+      return { zone: "red", color: "#ef4444" };
     }
 
     // Red zone: Loss is very high (>acceptableThreshold)
     if (currentLoss > acceptableThreshold) {
-      return { zone: 'red', color: '#ef4444' };
+      return { zone: "red", color: "#ef4444" };
     }
 
     // Yellow zone: Loss is slightly increasing (0-10% increase) or stable
     if (percentChange > 0 || Math.abs(percentChange) < 1) {
-      return { zone: 'yellow', color: '#f59e0b' };
+      return { zone: "yellow", color: "#f59e0b" };
     }
 
     // Green zone: Loss is decreasing and below good threshold
     if (lossChange < 0 && currentLoss < goodThreshold) {
-      return { zone: 'green', color: '#10b981' };
+      return { zone: "green", color: "#10b981" };
     }
 
     // Yellow zone: Loss is decreasing but still above good threshold
     if (lossChange < 0 && currentLoss >= goodThreshold) {
-      return { zone: 'yellow', color: '#f59e0b' };
+      return { zone: "yellow", color: "#f59e0b" };
     }
   }
 
   // No previous loss - judge based on absolute value only
   if (currentLoss < goodThreshold) {
-    return { zone: 'green', color: '#10b981' };
+    return { zone: "green", color: "#10b981" };
   } else if (currentLoss < acceptableThreshold) {
-    return { zone: 'yellow', color: '#f59e0b' };
+    return { zone: "yellow", color: "#f59e0b" };
   } else {
-    return { zone: 'red', color: '#ef4444' };
+    return { zone: "red", color: "#ef4444" };
   }
 }
 
@@ -73,11 +73,11 @@ export function getLossColorZone(
  */
 export function getLossZoneDescription(zone: LossZone): string {
   switch (zone) {
-    case 'green':
-      return 'Training is progressing well. Loss is low and decreasing.';
-    case 'yellow':
-      return 'Training is acceptable. Loss is stable or slightly increasing.';
-    case 'red':
-      return 'Training may have issues. Loss is high or diverging.';
+    case "green":
+      return "Training is progressing well. Loss is low and decreasing.";
+    case "yellow":
+      return "Training is acceptable. Loss is stable or slightly increasing.";
+    case "red":
+      return "Training may have issues. Loss is high or diverging.";
   }
 }

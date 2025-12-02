@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 interface OnboardingState {
   hasCompletedWelcome: boolean;
@@ -7,7 +7,7 @@ interface OnboardingState {
   isFirstVisit: boolean;
 }
 
-const ONBOARDING_KEY = 'peft-studio-onboarding';
+const ONBOARDING_KEY = "peft-studio-onboarding";
 
 export const useOnboarding = () => {
   const [state, setState] = useState<OnboardingState>(() => {
@@ -19,7 +19,7 @@ export const useOnboarding = () => {
       hasCompletedWelcome: false,
       hasCompletedSetup: false,
       hasCompletedTour: false,
-      isFirstVisit: true
+      isFirstVisit: true,
     };
   });
 
@@ -28,18 +28,18 @@ export const useOnboarding = () => {
   }, [state]);
 
   const completeWelcome = () => {
-    setState(prev => ({ ...prev, hasCompletedWelcome: true }));
+    setState((prev) => ({ ...prev, hasCompletedWelcome: true }));
   };
 
   const completeSetup = () => {
-    setState(prev => ({ ...prev, hasCompletedSetup: true }));
+    setState((prev) => ({ ...prev, hasCompletedSetup: true }));
   };
 
   const completeTour = () => {
-    setState(prev => ({ 
-      ...prev, 
+    setState((prev) => ({
+      ...prev,
       hasCompletedTour: true,
-      isFirstVisit: false 
+      isFirstVisit: false,
     }));
   };
 
@@ -48,7 +48,7 @@ export const useOnboarding = () => {
       hasCompletedWelcome: true,
       hasCompletedSetup: true,
       hasCompletedTour: true,
-      isFirstVisit: false
+      isFirstVisit: false,
     });
   };
 
@@ -57,7 +57,7 @@ export const useOnboarding = () => {
       hasCompletedWelcome: false,
       hasCompletedSetup: false,
       hasCompletedTour: false,
-      isFirstVisit: true
+      isFirstVisit: true,
     });
     localStorage.removeItem(ONBOARDING_KEY);
   };
@@ -75,6 +75,6 @@ export const useOnboarding = () => {
     resetOnboarding,
     shouldShowOnboarding,
     shouldShowSetup,
-    shouldShowTour
+    shouldShowTour,
   };
 };

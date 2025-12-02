@@ -1,7 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Info, Zap, DollarSign, Leaf, Clock, HelpCircle } from 'lucide-react';
-import { WizardState, TrainingEstimates } from '../../types/wizard';
-import Tooltip from '../Tooltip';
+import {
+  ChevronDown,
+  ChevronUp,
+  Info,
+  Zap,
+  DollarSign,
+  Leaf,
+  Clock,
+  HelpCircle,
+} from "lucide-react";
+import React, { useState, useEffect } from "react";
+
+import Tooltip from "../Tooltip";
+
+import type { WizardState, TrainingEstimates } from "../../types/wizard";
 
 interface SmartConfigurationStepProps {
   wizardState: WizardState;
@@ -26,39 +37,50 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
     if (wizardState.model && wizardState.dataset && wizardState.profile) {
       calculateSmartDefaults();
     }
-  }, [wizardState.model, wizardState.dataset, wizardState.profile, electricityRate]);
+  }, [
+    wizardState.model,
+    wizardState.dataset,
+    wizardState.profile,
+    electricityRate,
+  ]);
 
   const calculateSmartDefaults = async () => {
     try {
       setLoading(true);
 
       // Get hardware profile
-      const hardwareResponse = await fetch('http://127.0.0.1:8000/api/hardware/profile');
+      const hardwareResponse = await fetch(
+        "http://127.0.0.1:8000/api/hardware/profile",
+      );
       const hardwareData = await hardwareResponse.json();
 
-      const gpuMemoryMB = hardwareData.gpus[0]?.memory_available_gb * 1024 || 8000;
+      const gpuMemoryMB =
+        hardwareData.gpus[0]?.memory_available_gb * 1024 || 8000;
       const cpuCores = hardwareData.cpu?.cores_physical || 8;
       const ramGB = hardwareData.ram?.available_gb || 16;
 
       // Calculate smart defaults
-      const configResponse = await fetch('http://127.0.0.1:8000/api/config/smart-defaults', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          gpu_memory_mb: gpuMemoryMB,
-          cpu_cores: cpuCores,
-          ram_gb: ramGB,
-          compute_capability: hardwareData.gpus[0]?.compute_capability,
-          model_size_mb: wizardState.model!.size_mb,
-          num_parameters: wizardState.model!.parameters,
-          max_seq_length: wizardState.profile!.config.max_seq_length,
-          architecture: wizardState.model!.architecture,
-          num_samples: wizardState.dataset!.num_samples || 1000,
-          avg_sequence_length: wizardState.profile!.config.max_seq_length / 2,
-          max_sequence_length: wizardState.profile!.config.max_seq_length,
-          target_effective_batch_size: 32,
-        }),
-      });
+      const configResponse = await fetch(
+        "http://127.0.0.1:8000/api/config/smart-defaults",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            gpu_memory_mb: gpuMemoryMB,
+            cpu_cores: cpuCores,
+            ram_gb: ramGB,
+            compute_capability: hardwareData.gpus[0]?.compute_capability,
+            model_size_mb: wizardState.model!.size_mb,
+            num_parameters: wizardState.model!.parameters,
+            max_seq_length: wizardState.profile!.config.max_seq_length,
+            architecture: wizardState.model!.architecture,
+            num_samples: wizardState.dataset!.num_samples || 1000,
+            avg_sequence_length: wizardState.profile!.config.max_seq_length / 2,
+            max_sequence_length: wizardState.profile!.config.max_seq_length,
+            target_effective_batch_size: 32,
+          }),
+        },
+      );
 
       const configData = await configResponse.json();
       setSmartConfig(configData);
@@ -91,7 +113,7 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
       setEstimates(newEstimates);
       onConfigUpdate(configData, newEstimates);
     } catch (error) {
-      console.error('Error calculating smart defaults:', error);
+      console.error("Error calculating smart defaults:", error);
     } finally {
       setLoading(false);
     }
@@ -124,17 +146,22 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
     <div className="space-y-6">
       {/* Instructions */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-blue-900 mb-2">Smart Configuration Ready</h2>
+        <h2 className="text-xl font-semibold text-blue-900 mb-2">
+          Smart Configuration Ready
+        </h2>
         <p className="text-blue-800">
-          We've automatically calculated the optimal settings for your hardware and dataset.
-          Everything is ready to go, but you can adjust advanced settings if needed.
+          We've automatically calculated the optimal settings for your hardware
+          and dataset. Everything is ready to go, but you can adjust advanced
+          settings if needed.
         </p>
       </div>
 
       {/* Training Estimates */}
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <div className="flex items-center gap-2 mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Training Estimates</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Training Estimates
+          </h3>
           <Tooltip configKey="training_estimates">
             <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
           </Tooltip>
@@ -145,13 +172,16 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
           <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
             <div className="flex items-center gap-2 mb-2">
               <Clock className="w-5 h-5 text-blue-600" />
-              <span className="text-sm font-medium text-blue-900">Training Time</span>
+              <span className="text-sm font-medium text-blue-900">
+                Training Time
+              </span>
             </div>
             <p className="text-2xl font-bold text-blue-900">
               {formatDuration(estimates.duration.expected)}
             </p>
             <p className="text-xs text-blue-700 mt-1">
-              {formatDuration(estimates.duration.min)} - {formatDuration(estimates.duration.max)}
+              {formatDuration(estimates.duration.min)} -{" "}
+              {formatDuration(estimates.duration.max)}
             </p>
           </div>
 
@@ -159,7 +189,9 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
           <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
             <div className="flex items-center gap-2 mb-2">
               <Zap className="w-5 h-5 text-purple-600" />
-              <span className="text-sm font-medium text-purple-900">GPU Hours</span>
+              <span className="text-sm font-medium text-purple-900">
+                GPU Hours
+              </span>
             </div>
             <p className="text-2xl font-bold text-purple-900">
               {estimates.cost.gpuHours.toFixed(2)}
@@ -173,7 +205,9 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
           <div className="p-4 bg-green-50 rounded-lg border border-green-200">
             <div className="flex items-center gap-2 mb-2">
               <DollarSign className="w-5 h-5 text-green-600" />
-              <span className="text-sm font-medium text-green-900">Electricity Cost</span>
+              <span className="text-sm font-medium text-green-900">
+                Electricity Cost
+              </span>
             </div>
             <p className="text-2xl font-bold text-green-900">
               ${estimates.cost.electricityCost.toFixed(2)}
@@ -182,7 +216,9 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
               <input
                 type="number"
                 value={electricityRate}
-                onChange={(e) => setElectricityRate(parseFloat(e.target.value) || 0.12)}
+                onChange={(e) =>
+                  setElectricityRate(parseFloat(e.target.value) || 0.12)
+                }
                 step="0.01"
                 min="0"
                 className="w-full text-xs px-2 py-1 border border-green-300 rounded"
@@ -195,7 +231,9 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
           <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
             <div className="flex items-center gap-2 mb-2">
               <Leaf className="w-5 h-5 text-emerald-600" />
-              <span className="text-sm font-medium text-emerald-900">Carbon Footprint</span>
+              <span className="text-sm font-medium text-emerald-900">
+                Carbon Footprint
+              </span>
             </div>
             <p className="text-2xl font-bold text-emerald-900">
               {estimates.cost.carbonFootprint.toFixed(2)}
@@ -207,28 +245,36 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
         <div className="mt-4 p-3 bg-gray-50 rounded border border-gray-200">
           <p className="text-xs text-gray-600">
             <Info className="w-3 h-3 inline mr-1" />
-            Estimates are based on your hardware profile and may vary by ±20%. Confidence: {(estimates.confidence * 100).toFixed(0)}%
+            Estimates are based on your hardware profile and may vary by ±20%.
+            Confidence: {(estimates.confidence * 100).toFixed(0)}%
           </p>
         </div>
       </div>
 
       {/* Core Configuration */}
       <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Core Configuration</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Core Configuration
+        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Batch Size */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <label className="text-sm font-medium text-gray-700">Batch Size</label>
+              <label className="text-sm font-medium text-gray-700">
+                Batch Size
+              </label>
               <Tooltip configKey="batch_size">
                 <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
               </Tooltip>
             </div>
             <div className="p-3 bg-gray-50 rounded border border-gray-200">
-              <p className="text-lg font-semibold text-gray-900">{smartConfig.batch_size}</p>
+              <p className="text-lg font-semibold text-gray-900">
+                {smartConfig.batch_size}
+              </p>
               <p className="text-xs text-gray-600 mt-1">
-                {smartConfig.explanations?.batch_size || 'Optimized for your GPU memory'}
+                {smartConfig.explanations?.batch_size ||
+                  "Optimized for your GPU memory"}
               </p>
             </div>
           </div>
@@ -236,7 +282,9 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
           {/* Gradient Accumulation */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <label className="text-sm font-medium text-gray-700">Gradient Accumulation</label>
+              <label className="text-sm font-medium text-gray-700">
+                Gradient Accumulation
+              </label>
               <Tooltip configKey="gradient_accumulation">
                 <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
               </Tooltip>
@@ -254,15 +302,20 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
           {/* Learning Rate */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <label className="text-sm font-medium text-gray-700">Learning Rate</label>
+              <label className="text-sm font-medium text-gray-700">
+                Learning Rate
+              </label>
               <Tooltip configKey="learning_rate">
                 <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
               </Tooltip>
             </div>
             <div className="p-3 bg-gray-50 rounded border border-gray-200">
-              <p className="text-lg font-semibold text-gray-900">{smartConfig.learning_rate}</p>
+              <p className="text-lg font-semibold text-gray-900">
+                {smartConfig.learning_rate}
+              </p>
               <p className="text-xs text-gray-600 mt-1">
-                {smartConfig.explanations?.learning_rate || 'Scaled for batch size'}
+                {smartConfig.explanations?.learning_rate ||
+                  "Scaled for batch size"}
               </p>
             </div>
           </div>
@@ -270,7 +323,9 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
           {/* Precision */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <label className="text-sm font-medium text-gray-700">Precision</label>
+              <label className="text-sm font-medium text-gray-700">
+                Precision
+              </label>
               <Tooltip configKey="precision">
                 <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
               </Tooltip>
@@ -278,10 +333,12 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
             <div className="p-3 bg-gray-50 rounded border border-gray-200">
               <p className="text-lg font-semibold text-gray-900 uppercase">
                 {smartConfig.precision}
-                {smartConfig.quantization !== 'none' && ` + ${smartConfig.quantization}`}
+                {smartConfig.quantization !== "none" &&
+                  ` + ${smartConfig.quantization}`}
               </p>
               <p className="text-xs text-gray-600 mt-1">
-                {smartConfig.explanations?.precision || 'Optimized for your GPU'}
+                {smartConfig.explanations?.precision ||
+                  "Optimized for your GPU"}
               </p>
             </div>
           </div>
@@ -289,13 +346,17 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
           {/* Epochs */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <label className="text-sm font-medium text-gray-700">Training Epochs</label>
+              <label className="text-sm font-medium text-gray-700">
+                Training Epochs
+              </label>
               <Tooltip configKey="epochs">
                 <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
               </Tooltip>
             </div>
             <div className="p-3 bg-gray-50 rounded border border-gray-200">
-              <p className="text-lg font-semibold text-gray-900">{smartConfig.num_epochs}</p>
+              <p className="text-lg font-semibold text-gray-900">
+                {smartConfig.num_epochs}
+              </p>
               <p className="text-xs text-gray-600 mt-1">
                 Total steps: {smartConfig.max_steps}
               </p>
@@ -305,7 +366,9 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
           {/* Memory Usage */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <label className="text-sm font-medium text-gray-700">Memory Usage</label>
+              <label className="text-sm font-medium text-gray-700">
+                Memory Usage
+              </label>
               <Tooltip configKey="memory_usage">
                 <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
               </Tooltip>
@@ -329,7 +392,9 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
           className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
         >
           <div className="flex items-center gap-2">
-            <h3 className="text-lg font-semibold text-gray-900">Advanced Settings</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Advanced Settings
+            </h3>
             <span className="text-sm text-gray-500">(Optional)</span>
           </div>
           {showAdvanced ? (
@@ -345,7 +410,9 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
               {/* LoRA Rank */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <label className="text-sm font-medium text-gray-700">LoRA Rank (r)</label>
+                  <label className="text-sm font-medium text-gray-700">
+                    LoRA Rank (r)
+                  </label>
                   <Tooltip configKey="lora_r">
                     <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
                   </Tooltip>
@@ -354,14 +421,18 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
                   <p className="text-lg font-semibold text-gray-900">
                     {wizardState.profile?.config.lora_r}
                   </p>
-                  <p className="text-xs text-gray-600 mt-1">From {wizardState.profile?.name} profile</p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    From {wizardState.profile?.name} profile
+                  </p>
                 </div>
               </div>
 
               {/* LoRA Alpha */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <label className="text-sm font-medium text-gray-700">LoRA Alpha</label>
+                  <label className="text-sm font-medium text-gray-700">
+                    LoRA Alpha
+                  </label>
                   <Tooltip configKey="lora_alpha">
                     <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
                   </Tooltip>
@@ -377,7 +448,9 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
               {/* Dropout */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <label className="text-sm font-medium text-gray-700">LoRA Dropout</label>
+                  <label className="text-sm font-medium text-gray-700">
+                    LoRA Dropout
+                  </label>
                   <Tooltip configKey="lora_dropout">
                     <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
                   </Tooltip>
@@ -393,7 +466,9 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
               {/* Scheduler */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <label className="text-sm font-medium text-gray-700">LR Scheduler</label>
+                  <label className="text-sm font-medium text-gray-700">
+                    LR Scheduler
+                  </label>
                   <Tooltip configKey="scheduler">
                     <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
                   </Tooltip>
@@ -402,14 +477,18 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
                   <p className="text-lg font-semibold text-gray-900 capitalize">
                     {wizardState.profile?.config.scheduler}
                   </p>
-                  <p className="text-xs text-gray-600 mt-1">Learning rate schedule</p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Learning rate schedule
+                  </p>
                 </div>
               </div>
 
               {/* Weight Decay */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <label className="text-sm font-medium text-gray-700">Weight Decay</label>
+                  <label className="text-sm font-medium text-gray-700">
+                    Weight Decay
+                  </label>
                   <Tooltip configKey="weight_decay">
                     <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
                   </Tooltip>
@@ -418,14 +497,18 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
                   <p className="text-lg font-semibold text-gray-900">
                     {wizardState.profile?.config.weight_decay}
                   </p>
-                  <p className="text-xs text-gray-600 mt-1">L2 regularization</p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    L2 regularization
+                  </p>
                 </div>
               </div>
 
               {/* Max Grad Norm */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <label className="text-sm font-medium text-gray-700">Max Gradient Norm</label>
+                  <label className="text-sm font-medium text-gray-700">
+                    Max Gradient Norm
+                  </label>
                   <Tooltip configKey="max_grad_norm">
                     <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
                   </Tooltip>
@@ -434,7 +517,9 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
                   <p className="text-lg font-semibold text-gray-900">
                     {wizardState.profile?.config.max_grad_norm}
                   </p>
-                  <p className="text-xs text-gray-600 mt-1">Gradient clipping</p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Gradient clipping
+                  </p>
                 </div>
               </div>
             </div>
@@ -442,8 +527,9 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
             <div className="mt-6 p-4 bg-blue-50 rounded border border-blue-200">
               <p className="text-sm text-blue-800">
                 <Info className="w-4 h-4 inline mr-1" />
-                These advanced settings are pre-configured based on your selected use case.
-                Modifying them requires understanding of fine-tuning hyperparameters.
+                These advanced settings are pre-configured based on your
+                selected use case. Modifying them requires understanding of
+                fine-tuning hyperparameters.
               </p>
             </div>
           </div>
@@ -452,10 +538,12 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
 
       {/* Ready to Launch */}
       <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-        <h4 className="font-semibold text-green-900 mb-2">✓ Configuration Complete</h4>
+        <h4 className="font-semibold text-green-900 mb-2">
+          ✓ Configuration Complete
+        </h4>
         <p className="text-sm text-green-800">
-          Your training is configured and ready to launch. Click "Next" to review everything
-          before starting.
+          Your training is configured and ready to launch. Click "Next" to
+          review everything before starting.
         </p>
       </div>
     </div>

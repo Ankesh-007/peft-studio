@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\platform_connection_service.py
+# hypothesis_version: 6.148.3
+
+['Connection failed', 'Not connected', 'Platform not found', 'connected', 'description', 'disconnected', 'display_name', 'error', 'inference', 'name', 'platform', 'registry', 'required_credentials', 'success', 'supports_inference', 'supports_registry', 'supports_tracking', 'supports_training', 'test_time_seconds', 'tested_at', 'total_connections', 'tracking', 'training', 'valid', 'verified_at', 'verifying', 'version']

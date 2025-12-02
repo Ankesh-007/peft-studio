@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\launch\loader.py
+# hypothesis_version: 6.148.3
+
+['acr', 'aws', 'azure', 'docker', 'ecr', 'gcp', 'gcp-vertex', 'gcr', 'kaniko', 'kubernetes', 'local', 'local-container', 'local-process', 'noop', 'sagemaker', 'type', 'vertex']

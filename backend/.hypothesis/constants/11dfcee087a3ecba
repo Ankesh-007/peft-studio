@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\keyring\backends\Windows.py
+# hypothesis_version: 6.148.3
+
+[1168, 'CRED_PERSIST_', 'CredDelete', 'CredRead', 'CredentialBlob', 'UserName', '_', '_persist', 'utf-16', 'utf-8']

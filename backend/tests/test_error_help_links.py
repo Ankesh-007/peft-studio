@@ -5,7 +5,7 @@ Tests that unresolvable errors include help documentation links.
 
 import pytest
 from hypothesis import given, strategies as st
-from backend.services.error_service import (
+from services.error_service import (
     ErrorRecoveryService,
     ErrorCategory,
     FormattedError

@@ -1,0 +1,6 @@
+{
+  "note": "This project uses ESLint 9.x flat config format.",
+  "message": "Please see eslint.config.js for the actual configuration.",
+  "migration": "The flat config format (eslint.config.js) is the new standard for ESLint 9+",
+  "documentation": "https://eslint.org/docs/latest/use/configure/configuration-files"
+}

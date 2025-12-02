@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\plugins\connectors\lambda_labs_connector.py
+# hypothesis_version: 6.148.3
+
+[100.0, 200, 300, 401, 3600, '/tmp/adapter.tar.gz', '/tmp/train.py', '1.0.0', '3090', '80GB', 'A10', 'A100', 'A100 40GB', 'A100 80GB', 'Authorization', 'Content-Type', 'H100', 'Invalid API key', 'Invalid API response', 'Lambda Labs', 'RTX 3090', 'USD', 'Unknown', 'V100', '_', 'active', 'api_key', 'api_key is required', 'application/json', 'booting', 'config', 'data', 'description', 'file_system_names', 'gpu_1x_a100', 'instance_id', 'instance_ids', 'instance_type', 'instance_type_name', 'ip', 'ip_address', 'lambda-labs-cloud', 'lambda_labs', 'logs', 'memory_gib', 'name', 'price_cents_per_hour', 'quantity', 'region_name', 'specs', 'ssh_key_names', 'ssh_key_path', 'status', 'terminated', 'ubuntu', 'unhealthy', 'unknown', 'us-west-2', 'vcpus', 'w', 'x']

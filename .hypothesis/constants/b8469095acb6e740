@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\plugins\connectors\civitai_connector.py
+# hypothesis_version: 6.148.3
+
+[200, 201, 204, 401, 404, 8192, '*.json', ',', '.cache', '.peft-studio', '1.0.0', 'Authorization', 'Civitai', 'CivitaiModelMetadata', 'Content-Type', 'Highest Rated', 'Initial release', 'Invalid API key', 'LORA', 'No model ID returned', 'Untitled Model', 'api_key', 'api_key is required', 'application/json', 'baseModel', 'base_model', 'cache', 'cached_at', 'civitai', 'comments', 'content', 'createdAt', 'created_at', 'creator', 'data', 'description', 'downloadUrl', 'file', 'files', 'https://civitai.com', 'id', 'items', 'limit', 'modelId', 'modelVersions', 'model_id', 'model_versions', 'models', 'name', 'nsfw', 'query', 'r', 'rb', 'sort', 'stats', 'tags', 'token', 'type', 'types', 'updatedAt', 'updated_at', 'v1.0', 'version_description', 'w', 'wb']

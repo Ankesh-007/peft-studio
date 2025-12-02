@@ -6,8 +6,8 @@ Property-based tests for anomaly detection explanations and actions.
 """
 
 import pytest
-from hypothesis import given, strategies as st, settings
-from backend.services.anomaly_detection_service import (
+from hypothesis import given, strategies as st, settings, HealthCheck
+from services.anomaly_detection_service import (
     AnomalyDetectionService,
     AnomalyType,
     get_anomaly_detection_service
@@ -29,7 +29,7 @@ anomaly_types = st.sampled_from([
     job_id=st.text(min_size=1, max_size=50),
     step=st.integers(min_value=1, max_value=10000)
 )
-@settings(max_examples=100)
+@settings(max_examples=100, suppress_health_check=[HealthCheck.too_slow])
 def test_anomaly_detection_provides_explanations_and_actions(anomaly_type, job_id, step):
     """
     **Feature: simplified-llm-optimization, Property 11: Anomaly detection provides explanations and actions**

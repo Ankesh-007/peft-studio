@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\vendor\graphql-core-1.1\wandb_graphql\validation\rules\no_unused_fragments.py
+# hypothesis_version: 6.148.3
+
+['fragment_adjacencies', 'fragment_definitions', 'spread_names']

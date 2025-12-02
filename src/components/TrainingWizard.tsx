@@ -1,14 +1,23 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { WizardState, OptimizationProfile, Dataset, ModelInfo, TrainingEstimates } from '../types/wizard';
-import UseCaseSelection from './wizard/UseCaseSelection';
-import DatasetUploadStep from './wizard/DatasetUploadStep';
-import ModelSelectionStep from './wizard/ModelSelectionStep';
-import SmartConfigurationStep from './wizard/SmartConfigurationStep';
-import { SkeletonWizardStep } from './LoadingStates';
-import { AccessibleButton } from './AccessibleButton';
-import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
-import { usePrefersReducedMotion } from '../hooks/useMediaQuery';
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+
+import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation";
+import { usePrefersReducedMotion } from "../hooks/useMediaQuery";
+
+import { AccessibleButton } from "./AccessibleButton";
+import { SkeletonWizardStep } from "./LoadingStates";
+import DatasetUploadStep from "./wizard/DatasetUploadStep";
+import ModelSelectionStep from "./wizard/ModelSelectionStep";
+import SmartConfigurationStep from "./wizard/SmartConfigurationStep";
+import UseCaseSelection from "./wizard/UseCaseSelection";
+
+import type {
+  WizardState,
+  OptimizationProfile,
+  Dataset,
+  ModelInfo,
+  TrainingEstimates,
+} from "../types/wizard";
 
 interface TrainingWizardProps {
   onComplete?: (state: WizardState) => void;
@@ -16,18 +25,46 @@ interface TrainingWizardProps {
 }
 
 const STEPS = [
-  { id: 1, name: 'Use Case', component: UseCaseSelection, description: 'Select your training use case' },
-  { id: 2, name: 'Dataset', component: DatasetUploadStep, description: 'Upload and validate your training data' },
-  { id: 3, name: 'Model', component: ModelSelectionStep, description: 'Choose a base model to fine-tune' },
-  { id: 4, name: 'Configuration', component: SmartConfigurationStep, description: 'Review and adjust training settings' },
-  { id: 5, name: 'Review', component: null, description: 'Review and launch your training' }, // To be implemented
+  {
+    id: 1,
+    name: "Use Case",
+    component: UseCaseSelection,
+    description: "Select your training use case",
+  },
+  {
+    id: 2,
+    name: "Dataset",
+    component: DatasetUploadStep,
+    description: "Upload and validate your training data",
+  },
+  {
+    id: 3,
+    name: "Model",
+    component: ModelSelectionStep,
+    description: "Choose a base model to fine-tune",
+  },
+  {
+    id: 4,
+    name: "Configuration",
+    component: SmartConfigurationStep,
+    description: "Review and adjust training settings",
+  },
+  {
+    id: 5,
+    name: "Review",
+    component: null,
+    description: "Review and launch your training",
+  }, // To be implemented
 ];
 
 /**
  * Training Wizard - Multi-step guided interface for configuring training runs
  * with full keyboard navigation and accessibility support
  */
-const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel }) => {
+const TrainingWizard: React.FC<TrainingWizardProps> = ({
+  onComplete,
+  onCancel,
+}) => {
   const [wizardState, setWizardState] = useState<WizardState>({
     currentStep: 1,
     profile: null,
@@ -42,7 +79,7 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel })
   const containerRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
-  const currentStepData = STEPS.find(s => s.id === wizardState.currentStep);
+  const currentStepData = STEPS.find((s) => s.id === wizardState.currentStep);
   const StepComponent = currentStepData?.component;
 
   const canGoNext = (): boolean => {
@@ -50,7 +87,10 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel })
       case 1:
         return wizardState.profile !== null;
       case 2:
-        return wizardState.dataset !== null && wizardState.validation.filter(v => v.level === 'error').length === 0;
+        return (
+          wizardState.dataset !== null &&
+          wizardState.validation.filter((v) => v.level === "error").length === 0
+        );
       case 3:
         return wizardState.model !== null;
       case 4:
@@ -83,10 +123,10 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel })
 
   // Announce step changes to screen readers
   useEffect(() => {
-    const currentStep = STEPS.find(s => s.id === wizardState.currentStep);
+    const currentStep = STEPS.find((s) => s.id === wizardState.currentStep);
     if (currentStep) {
       const announcement = `Step ${wizardState.currentStep} of ${STEPS.length}: ${currentStep.name}. ${currentStep.description}`;
-      const liveRegion = document.getElementById('wizard-live-region');
+      const liveRegion = document.getElementById("wizard-live-region");
       if (liveRegion) {
         liveRegion.textContent = announcement;
       }
@@ -97,41 +137,51 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel })
     if (!canGoNext() || wizardState.currentStep >= STEPS.length) return;
 
     setIsTransitioning(true);
-    
+
     // Simulate async validation/processing
-    await new Promise(resolve => setTimeout(resolve, prefersReducedMotion ? 0 : 300));
-    
-    setWizardState(prev => ({
+    await new Promise((resolve) =>
+      setTimeout(resolve, prefersReducedMotion ? 0 : 300),
+    );
+
+    setWizardState((prev) => ({
       ...prev,
       currentStep: prev.currentStep + 1,
     }));
-    
+
     setIsTransitioning(false);
-    
+
     // Scroll to top of step content
-    containerRef.current?.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    containerRef.current?.scrollTo({
+      top: 0,
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    });
   };
 
   const handlePrevious = async () => {
     if (wizardState.currentStep <= 1) return;
 
     setIsTransitioning(true);
-    
-    await new Promise(resolve => setTimeout(resolve, prefersReducedMotion ? 0 : 300));
-    
-    setWizardState(prev => ({
+
+    await new Promise((resolve) =>
+      setTimeout(resolve, prefersReducedMotion ? 0 : 300),
+    );
+
+    setWizardState((prev) => ({
       ...prev,
       currentStep: prev.currentStep - 1,
     }));
-    
+
     setIsTransitioning(false);
-    
+
     // Scroll to top of step content
-    containerRef.current?.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    containerRef.current?.scrollTo({
+      top: 0,
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    });
   };
 
   const handleProfileSelect = (profile: OptimizationProfile) => {
-    setWizardState(prev => ({
+    setWizardState((prev) => ({
       ...prev,
       profile,
       config: {
@@ -151,7 +201,7 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel })
   };
 
   const handleDatasetSelect = (dataset: Dataset, validation: any[]) => {
-    setWizardState(prev => ({
+    setWizardState((prev) => ({
       ...prev,
       dataset,
       validation,
@@ -159,14 +209,14 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel })
   };
 
   const handleModelSelect = (model: ModelInfo) => {
-    setWizardState(prev => ({
+    setWizardState((prev) => ({
       ...prev,
       model,
     }));
   };
 
   const handleConfigUpdate = (config: any, estimates: TrainingEstimates) => {
-    setWizardState(prev => ({
+    setWizardState((prev) => ({
       ...prev,
       config: {
         ...prev.config,
@@ -183,7 +233,7 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel })
   };
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="flex flex-col h-full bg-gray-50"
       role="region"
@@ -207,7 +257,7 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel })
       </header>
 
       {/* Step Indicator */}
-      <nav 
+      <nav
         className="bg-white border-b border-gray-200 px-6 py-4"
         aria-label="Training wizard progress"
       >
@@ -219,11 +269,12 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel })
                   className={`
                     flex items-center justify-center w-10 h-10 rounded-full border-2 font-semibold
                     transition-all duration-300 ease-in-out
-                    ${wizardState.currentStep === step.id
-                      ? 'border-blue-600 bg-blue-600 text-white scale-110'
-                      : wizardState.currentStep > step.id
-                      ? 'border-green-600 bg-green-600 text-white'
-                      : 'border-gray-300 bg-white text-gray-400'
+                    ${
+                      wizardState.currentStep === step.id
+                        ? "border-blue-600 bg-blue-600 text-white scale-110"
+                        : wizardState.currentStep > step.id
+                          ? "border-green-600 bg-green-600 text-white"
+                          : "border-gray-300 bg-white text-gray-400"
                     }
                   `}
                   role="img"
@@ -231,15 +282,17 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel })
                     wizardState.currentStep === step.id
                       ? `Current step: ${step.name}`
                       : wizardState.currentStep > step.id
-                      ? `Completed step: ${step.name}`
-                      : `Upcoming step: ${step.name}`
+                        ? `Completed step: ${step.name}`
+                        : `Upcoming step: ${step.name}`
                   }
                 >
-                  {wizardState.currentStep > step.id ? '✓' : step.id}
+                  {wizardState.currentStep > step.id ? "✓" : step.id}
                 </div>
                 <span
                   className={`ml-2 text-sm font-medium transition-colors duration-200 ${
-                    wizardState.currentStep >= step.id ? 'text-gray-900' : 'text-gray-400'
+                    wizardState.currentStep >= step.id
+                      ? "text-gray-900"
+                      : "text-gray-400"
                   }`}
                 >
                   {step.name}
@@ -248,7 +301,9 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel })
               {index < STEPS.length - 1 && (
                 <div
                   className={`flex-1 h-0.5 mx-4 transition-all duration-500 ${
-                    wizardState.currentStep > step.id ? 'bg-green-600' : 'bg-gray-300'
+                    wizardState.currentStep > step.id
+                      ? "bg-green-600"
+                      : "bg-gray-300"
                   }`}
                   role="presentation"
                 />
@@ -259,7 +314,7 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel })
       </nav>
 
       {/* Step Content */}
-      <main 
+      <main
         className="flex-1 overflow-auto p-6"
         role="main"
         aria-label={`Step ${wizardState.currentStep}: ${currentStepData?.name}`}
@@ -271,7 +326,7 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel })
             <div
               className={`
                 transition-all duration-300 ease-in-out
-                ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}
+                ${isTransitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"}
               `}
             >
               {StepComponent && (
@@ -302,12 +357,16 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel })
             disabled={isTransitioning}
             icon={<ChevronLeft className="w-4 h-4" />}
             iconPosition="left"
-            ariaLabel={wizardState.currentStep === 1 ? 'Cancel wizard' : 'Go to previous step'}
+            ariaLabel={
+              wizardState.currentStep === 1
+                ? "Cancel wizard"
+                : "Go to previous step"
+            }
           >
-            {wizardState.currentStep === 1 ? 'Cancel' : 'Previous'}
+            {wizardState.currentStep === 1 ? "Cancel" : "Previous"}
           </AccessibleButton>
 
-          <div 
+          <div
             className="text-sm text-gray-600"
             role="status"
             aria-label={`Step ${wizardState.currentStep} of ${STEPS.length}`}

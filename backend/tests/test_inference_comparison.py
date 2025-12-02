@@ -6,7 +6,7 @@ Tests that comparisons include both fine-tuned and base model outputs.
 import pytest
 from hypothesis import given, strategies as st
 
-from backend.services.inference_service import InferenceService
+from services.inference_service import InferenceService
 
 
 # Strategy for generating valid prompts

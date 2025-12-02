@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\paramiko\util.py
+# hypothesis_version: 6.148.3
+
+[127, 128, 255, '%Y%m%d-%H:%M:%S', '%{:02X}', '.{:c}..', '>I', 'a', 'paramiko', 'utf8', '{:02X}', '{:50s} {}']

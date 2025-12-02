@@ -5,7 +5,7 @@ Tests that errors provide 2-3 actionable suggestions.
 
 import pytest
 from hypothesis import given, strategies as st
-from backend.services.error_service import (
+from services.error_service import (
     ErrorRecoveryService,
     ErrorAction,
     FormattedError

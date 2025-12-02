@@ -1,0 +1,195 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint-backend:
+    name: Lint Backend
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+        
+    - name: Install dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+        pip install ruff flake8 flake8-docstrings flake8-bugbear
+        
+    - name: Run Ruff linter
+      run: |
+        cd backend
+        ruff check . --output-format=github
+      continue-on-error: true
+        
+    - name: Run Flake8
+      run: |
+        cd backend
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  code-metrics:
+    name: Code Metrics
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+        
+    - name: Install radon
+      run: pip install radon
+        
+    - name: Calculate cyclomatic complexity
+      run: |
+        echo "## Backend Cyclomatic Complexity" >> $GITHUB_STEP_SUMMARY
+        radon cc backend -a -s >> $GITHUB_STEP_SUMMARY
+        
+    - name: Calculate maintainability index
+      run: |
+        echo "## Backend Maintainability Index" >> $GITHUB_STEP_SUMMARY
+        radon mi backend -s >> $GITHUB_STEP_SUMMARY
+        
+    - name: Calculate raw metrics
+      run: |
+        echo "## Backend Raw Metrics" >> $GITHUB_STEP_SUMMARY
+        radon raw backend -s >> $GITHUB_STEP_SUMMARY
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install frontend dependencies
+      run: npm ci
+        
+    - name: Count lines of code (Frontend)
+      run: |
+        echo "## Frontend Lines of Code" >> $GITHUB_STEP_SUMMARY
+        find src -name "*.ts" -o -name "*.tsx" | xargs wc -l | tail -1 >> $GITHUB_STEP_SUMMARY
+
+  dependency-check:
+    name: Dependency Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install frontend dependencies
+      run: npm ci
+        
+    - name: Run npm audit
+      run: |
+        echo "## NPM Security Audit" >> $GITHUB_STEP_SUMMARY
+        npm audit --audit-level=moderate || true
+        npm audit --json > npm-audit.json || true
+        
+    - name: Upload npm audit results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: npm-audit-results
+        path: npm-audit.json
+        retention-days: 30
+        
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+        
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+        pip install safety
+        
+    - name: Run safety check
+      run: |
+        cd backend
+        echo "## Python Security Check (Safety)" >> $GITHUB_STEP_SUMMARY
+        safety check --json > safety-report.json || true
+        safety check || true
+        
+    - name: Upload safety results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: safety-results
+        path: backend/safety-report.json
+        retention-days: 30
+        
+    - name: Check for outdated packages (Frontend)
+      run: |
+        echo "## Outdated NPM Packages" >> $GITHUB_STEP_SUMMARY
+        npm outdated || true
+        
+    - name: Check for outdated packages (Backend)
+      run: |
+        cd backend
+        echo "## Outdated Python Packages" >> $GITHUB_STEP_SUMMARY
+        pip list --outdated || true
+
+  quality-summary:
+    name: Quality Summary
+    runs-on: ubuntu-latest
+    needs: [lint-backend, code-metrics, dependency-check]
+    if: always()
+    
+    steps:
+    - name: Check all quality jobs
+      run: |
+        echo "## Code Quality Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [[ "${{ needs.lint-backend.result }}" == "success" ]]; then
+          echo "✅ Backend Linting: Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ Backend Linting: Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [[ "${{ needs.code-metrics.result }}" == "success" ]]; then
+          echo "✅ Code Metrics: Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ Code Metrics: Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [[ "${{ needs.dependency-check.result }}" == "success" ]]; then
+          echo "✅ Dependency Check: Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⚠️ Dependency Check: Completed with warnings" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [[ "${{ needs.lint-backend.result }}" != "success" ]] || \
+           [[ "${{ needs.code-metrics.result }}" != "success" ]]; then
+          echo "❌ Quality checks failed. Please review the logs above." >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
+        
+        echo "✅ All quality checks passed successfully!" >> $GITHUB_STEP_SUMMARY

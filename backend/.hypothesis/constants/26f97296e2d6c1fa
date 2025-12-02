@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\integration\sagemaker\config.py
+# hypothesis_version: 6.148.3
+
+['"', 'SM_TRAINING_ENV', 'TRAINING_JOB_NAME', '^-?[.\\d]+$', '^-?[\\d]+$']

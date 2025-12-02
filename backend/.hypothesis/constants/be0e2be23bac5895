@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\paramiko\sftp_attr.py
+# hypothesis_version: 6.148.3
+
+[15552000, '"{}"={!r} ', '%d %b %H:%M', '%d %b %Y', '(unknown date)', '-', '-r', '-w', '-xSs', '-xTt', '<SFTPAttributes: {}>', '?', '?---------', '[ ', ']', 'atime={} mtime={} ', 'b', 'c', 'd', 'filename', 'l', 'mode=', 'p', 's', 'size={} ', 'uid={} gid={} ']

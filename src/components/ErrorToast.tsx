@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { FormattedError, ErrorSeverity } from '../types/error';
+import React, { useEffect, useState } from "react";
+
+import { ErrorSeverity } from "../types/error";
+
+import type { FormattedError } from "../types/error";
 
 interface ErrorToastProps {
   error: FormattedError;
@@ -36,30 +39,30 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({
   const getSeverityStyles = (severity: ErrorSeverity): string => {
     switch (severity) {
       case ErrorSeverity.LOW:
-        return 'bg-blue-600 border-blue-700';
+        return "bg-blue-600 border-blue-700";
       case ErrorSeverity.MEDIUM:
-        return 'bg-yellow-600 border-yellow-700';
+        return "bg-yellow-600 border-yellow-700";
       case ErrorSeverity.HIGH:
-        return 'bg-orange-600 border-orange-700';
+        return "bg-orange-600 border-orange-700";
       case ErrorSeverity.CRITICAL:
-        return 'bg-red-600 border-red-700';
+        return "bg-red-600 border-red-700";
       default:
-        return 'bg-gray-600 border-gray-700';
+        return "bg-gray-600 border-gray-700";
     }
   };
 
   const getSeverityIcon = (severity: ErrorSeverity): string => {
     switch (severity) {
       case ErrorSeverity.LOW:
-        return 'ℹ️';
+        return "ℹ️";
       case ErrorSeverity.MEDIUM:
-        return '⚠️';
+        return "⚠️";
       case ErrorSeverity.HIGH:
-        return '⚠️';
+        return "⚠️";
       case ErrorSeverity.CRITICAL:
-        return '🚨';
+        return "🚨";
       default:
-        return '❗';
+        return "❗";
     }
   };
 
@@ -70,7 +73,7 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({
   return (
     <div
       className={`fixed bottom-4 right-4 max-w-md w-full shadow-lg rounded-lg border-2 overflow-hidden transition-all duration-300 ${
-        isExiting ? 'opacity-0 translate-x-full' : 'opacity-100 translate-x-0'
+        isExiting ? "opacity-0 translate-x-full" : "opacity-100 translate-x-0"
       } ${getSeverityStyles(error.severity)}`}
       role="alert"
       aria-live="assertive"
@@ -98,14 +101,14 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({
                 className="px-3 py-1 bg-white/20 hover:bg-white/30 rounded text-sm font-medium transition-colors"
                 onClick={() => {
                   // Handle action click
-                  if (action.action_type === 'help_link' && error.help_link) {
-                    window.open(error.help_link, '_blank');
+                  if (action.action_type === "help_link" && error.help_link) {
+                    window.open(error.help_link, "_blank");
                   }
                 }}
               >
-                {action.automatic ? '🔧 ' : ''}
+                {action.automatic ? "🔧 " : ""}
                 {action.description.length > 30
-                  ? action.description.substring(0, 30) + '...'
+                  ? action.description.substring(0, 30) + "..."
                   : action.description}
               </button>
             ))}
@@ -117,7 +120,7 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({
           <div
             className="h-full bg-white transition-all"
             style={{
-              width: '100%',
+              width: "100%",
               animation: `shrink ${autoHideDuration}ms linear`,
             }}
           />

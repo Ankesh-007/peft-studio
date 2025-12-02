@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\wandb_metric.py
+# hypothesis_version: 6.148.3
+
+['*', 'best', 'copy', 'first', 'last', 'max', 'maximize', 'mean', 'min', 'minimize', 'none', 'wandb']

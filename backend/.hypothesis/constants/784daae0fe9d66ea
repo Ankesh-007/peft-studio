@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\vendor\graphql-core-1.1\wandb_graphql\execution\executor.py
+# hypothesis_version: 6.148.3
+
+['Must provide schema', 'for field {}.{}.', 'mutation']

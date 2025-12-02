@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\plugins\connectors\replicate_connector.py
+# hypothesis_version: 6.148.3
+
+[0.23, 0.7, 0.9, 1.0, 1.4, 2.8, 200, 201, 204, 256, 300, 401, 1000, '1.0.0', 'A40', 'Authorization', 'Content-Type', 'Invalid API response', 'Invalid API token', 'NVIDIA A40 (Large)', 'NVIDIA A40 (Small)', 'NVIDIA T4', 'Replicate', 'T4', 'USD', 'adapter', 'api_token', 'application/json', 'base_model', 'canceled', 'config', 'created_at', 'default', 'description', 'failed', 'gpu-t4', 'hardware', 'id', 'input', 'latency_ms', 'max_length', 'max_tokens', 'metrics', 'model', 'model_id', 'name', 'output', 'owner', 'prediction_id', 'prompt', 'public', 'repetition_penalty', 'replicate', 'replicate-a40-large', 'replicate-a40-small', 'replicate-t4', 'results', 'starting', 'status', 'succeeded', 'temperature', 'text', 'top_p', 'type', 'url', 'us-east-1', 'username', 'v1', 'version', 'version_id', 'visibility', 'weights_url']

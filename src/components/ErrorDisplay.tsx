@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import { FormattedError, ErrorAction, ErrorSeverity } from '../types/error';
-import { executeAutoFix } from '../api/errors';
+import React, { useState } from "react";
+
+import { executeAutoFix } from "../api/errors";
+import { ErrorSeverity } from "../types/error";
+
+import type { FormattedError, ErrorAction } from "../types/error";
 
 interface ErrorDisplayProps {
   error: FormattedError;
@@ -16,35 +19,37 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   context = {},
 }) => {
   const [isExecutingFix, setIsExecutingFix] = useState(false);
-  const [executedActions, setExecutedActions] = useState<Set<number>>(new Set());
+  const [executedActions, setExecutedActions] = useState<Set<number>>(
+    new Set(),
+  );
 
   const getSeverityColor = (severity: ErrorSeverity): string => {
     switch (severity) {
       case ErrorSeverity.LOW:
-        return 'bg-blue-50 border-blue-200';
+        return "bg-blue-50 border-blue-200";
       case ErrorSeverity.MEDIUM:
-        return 'bg-yellow-50 border-yellow-200';
+        return "bg-yellow-50 border-yellow-200";
       case ErrorSeverity.HIGH:
-        return 'bg-orange-50 border-orange-200';
+        return "bg-orange-50 border-orange-200";
       case ErrorSeverity.CRITICAL:
-        return 'bg-red-50 border-red-200';
+        return "bg-red-50 border-red-200";
       default:
-        return 'bg-gray-50 border-gray-200';
+        return "bg-gray-50 border-gray-200";
     }
   };
 
   const getSeverityIcon = (severity: ErrorSeverity): string => {
     switch (severity) {
       case ErrorSeverity.LOW:
-        return 'ℹ️';
+        return "ℹ️";
       case ErrorSeverity.MEDIUM:
-        return '⚠️';
+        return "⚠️";
       case ErrorSeverity.HIGH:
-        return '⚠️';
+        return "⚠️";
       case ErrorSeverity.CRITICAL:
-        return '🚨';
+        return "🚨";
       default:
-        return '❗';
+        return "❗";
     }
   };
 
@@ -60,31 +65,34 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
             setTimeout(() => onRetry(), 1000);
           }
         } else {
-          alert('Auto-fix failed. Please try manual steps.');
+          alert("Auto-fix failed. Please try manual steps.");
         }
       } catch (e) {
-        console.error('Error executing auto-fix:', e);
-        alert('Failed to execute auto-fix.');
+        console.error("Error executing auto-fix:", e);
+        alert("Failed to execute auto-fix.");
       } finally {
         setIsExecutingFix(false);
       }
-    } else if (action.action_type === 'help_link' && action.action_data?.link) {
+    } else if (action.action_type === "help_link" && action.action_data?.link) {
       // Open help link
-      window.open(error.help_link || 'https://docs.peftstudio.ai/troubleshooting', '_blank');
+      window.open(
+        error.help_link || "https://docs.peftstudio.ai/troubleshooting",
+        "_blank",
+      );
     }
   };
 
   const getActionButtonText = (action: ErrorAction, index: number): string => {
     if (executedActions.has(index)) {
-      return '✓ Applied';
+      return "✓ Applied";
     }
     if (action.automatic) {
-      return isExecutingFix ? 'Applying...' : 'Apply Fix';
+      return isExecutingFix ? "Applying..." : "Apply Fix";
     }
-    if (action.action_type === 'help_link') {
-      return 'Get Help';
+    if (action.action_type === "help_link") {
+      return "Get Help";
     }
-    return 'View Details';
+    return "View Details";
   };
 
   return (
@@ -134,7 +142,11 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
               className="flex items-start gap-3 p-3 bg-white rounded-md border border-gray-200"
             >
               <span className="text-lg mt-0.5">
-                {action.automatic ? '🔧' : action.action_type === 'help_link' ? '📚' : '👉'}
+                {action.automatic
+                  ? "🔧"
+                  : action.action_type === "help_link"
+                    ? "📚"
+                    : "👉"}
               </span>
               <div className="flex-1">
                 <p className="text-gray-800">{action.description}</p>
@@ -144,16 +156,16 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
                   </span>
                 )}
               </div>
-              {(action.automatic || action.action_type === 'help_link') && (
+              {(action.automatic || action.action_type === "help_link") && (
                 <button
                   onClick={() => handleActionClick(action, index)}
                   disabled={isExecutingFix || executedActions.has(index)}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     executedActions.has(index)
-                      ? 'bg-green-100 text-green-700 cursor-not-allowed'
+                      ? "bg-green-100 text-green-700 cursor-not-allowed"
                       : action.automatic
-                      ? 'bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   {getActionButtonText(action, index)}
@@ -168,7 +180,7 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
       {error.help_link && (
         <div className="pt-4 border-t border-gray-300">
           <button
-            onClick={() => window.open(error.help_link, '_blank')}
+            onClick={() => window.open(error.help_link, "_blank")}
             className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
           >
             <span>📖</span>
@@ -182,7 +194,8 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
       {error.auto_recoverable && (
         <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
           <p className="text-sm text-green-800">
-            ✓ This error can be automatically recovered. Click "Apply Fix" above to try.
+            ✓ This error can be automatically recovered. Click "Apply Fix" above
+            to try.
           </p>
         </div>
       )}

@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\win32ctypes\core\cffi\_util.py
+# hypothesis_version: 6.148.3
+
+['intptr_t', 'uintptr_t', 'void *', 'wchar_t *', '{}.dll']

@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\connectors\__init__.py
+# hypothesis_version: 6.148.3
+
+['ConnectorManager', 'ConnectorRegistry', 'PlatformConnector', 'PricingInfo', 'Resource', 'TrainingConfig']

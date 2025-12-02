@@ -7,7 +7,7 @@ Property-based tests for progress milestone notifications.
 
 import pytest
 from hypothesis import given, strategies as st, assume
-from backend.services.notification_service import (
+from services.notification_service import (
     check_progress_milestone,
     NotificationEvent,
     ProgressUpdate

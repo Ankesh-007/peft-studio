@@ -10,7 +10,7 @@ from pathlib import Path
 import tempfile
 import json
 
-from backend.services.export_service import ModelExporter, ExportFormat
+from services.export_service import ModelExporter, ExportFormat
 
 
 # Strategy for generating model names

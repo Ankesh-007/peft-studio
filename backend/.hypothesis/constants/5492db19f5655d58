@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\multi_run_service.py
+# hypothesis_version: 6.148.3
+
+[0.0, 100, 1000, 'active_providers', 'artifact_hash', 'artifact_path', 'completed', 'completed_at', 'config', 'current_loss', 'current_step', 'duration_seconds', 'error_message', 'failed', 'final_loss', 'gpu_utilization', 'job_id', 'memory_used', 'name', 'paused', 'progress_percent', 'provider', 'provider_job_id', 'running', 'started_at', 'status', 'stopped', 'total_active', 'total_completed', 'total_failed', 'total_steps']

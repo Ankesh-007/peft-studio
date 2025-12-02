@@ -1,0 +1,68 @@
+# Ruff configuration for PEFT Studio backend
+# https://docs.astral.sh/ruff/
+
+# Exclude common directories
+exclude = [
+    ".git",
+    ".hypothesis",
+    ".pytest_cache",
+    "__pycache__",
+    "*.pyc",
+    "*.pyo",
+    "*.pyd",
+    ".venv",
+    "venv",
+    "build",
+    "dist",
+    "*.egg-info",
+]
+
+# Set line length to match flake8 configuration
+line-length = 127
+
+# Target Python 3.10+
+target-version = "py310"
+
+[lint]
+# Enable recommended rules
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+
+# Ignore specific rules that may be too strict
+ignore = [
+    "E501",  # line too long (handled by line-length)
+    "B008",  # do not perform function calls in argument defaults
+    "B904",  # raise from within except without from
+]
+
+# Allow autofix for all enabled rules
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[lint.per-file-ignores]
+# Ignore import order in __init__.py files
+"__init__.py" = ["F401", "I"]
+# Ignore complexity in test files
+"tests/**/*.py" = ["C901"]
+
+[format]
+# Use double quotes for strings
+quote-style = "double"
+
+# Indent with 4 spaces
+indent-style = "space"
+
+# Use Unix line endings
+line-ending = "lf"

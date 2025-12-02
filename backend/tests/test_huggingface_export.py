@@ -11,7 +11,7 @@ import tempfile
 import shutil
 import json
 
-from backend.services.export_service import ModelExporter, ExportFormat
+from services.export_service import ModelExporter, ExportFormat
 
 
 # Strategy for generating model metadata

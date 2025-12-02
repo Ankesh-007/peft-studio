@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\paramiko\pkey.py
+# hypothesis_version: 6.148.3
+
+[b'openssh-key-v1\x00', 127, ',', '-', '- {}', '-cert', '-cert.pub', '4,ENCRYPTED', ': ', '=', '>L', 'AES-128-CBC', 'AES-256-CBC', 'DES-EDE3-CBC', 'Invalid key', 'OPENSSH', 'aes256-cbc', 'aes256-ctr', 'bcrypt', 'blocksize', 'cipher', 'comment', 'dek-info', 'from_file', 'from_message', 'from_string', 'i', 'keysize', 'mode', 'none', 'proc-type', 'r', 's', 'ss', 'ssh-', 'sssur', 'su', 'u', 'utf-8', 'uusr', 'w']

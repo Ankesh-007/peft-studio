@@ -2,9 +2,9 @@
  * API client for configuration preset operations
  */
 
-import { ConfigurationPreset, TrainingConfig } from '../types/wizard';
+import type { ConfigurationPreset, TrainingConfig } from "../types/wizard";
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api';
+const API_BASE_URL = "http://127.0.0.1:8000/api";
 
 /**
  * Convert TrainingConfig to ConfigurationPreset format
@@ -13,19 +13,19 @@ export function trainingConfigToPreset(
   config: Partial<TrainingConfig>,
   id: string,
   name: string,
-  description: string = '',
-  tags: string[] = []
-): Omit<ConfigurationPreset, 'created_at' | 'updated_at'> {
+  description: string = "",
+  tags: string[] = [],
+): Omit<ConfigurationPreset, "created_at" | "updated_at"> {
   return {
     id,
     name,
     description,
     tags,
-    model_name: config.modelName || '',
-    model_path: config.modelPath || '',
-    dataset_id: config.datasetId || '',
-    dataset_path: config.datasetPath || '',
-    peft_method: config.peftMethod || 'lora',
+    model_name: config.modelName || "",
+    model_path: config.modelPath || "",
+    dataset_id: config.datasetId || "",
+    dataset_path: config.datasetPath || "",
+    peft_method: config.peftMethod || "lora",
     lora_r: config.loraR || 8,
     lora_alpha: config.loraAlpha || 16,
     lora_dropout: config.loraDropout || 0.1,
@@ -36,23 +36,25 @@ export function trainingConfigToPreset(
     epochs: config.epochs || 3,
     max_steps: config.maxSteps || 0,
     warmup_steps: config.warmupSteps || 0,
-    optimizer: config.optimizer || 'adamw',
-    scheduler: config.scheduler || 'linear',
+    optimizer: config.optimizer || "adamw",
+    scheduler: config.scheduler || "linear",
     weight_decay: config.weightDecay || 0.0,
     max_grad_norm: config.maxGradNorm || 1.0,
-    precision: config.precision || 'fp16',
+    precision: config.precision || "fp16",
     quantization: config.quantization || null,
     save_steps: config.saveSteps || 500,
     save_total: config.saveTotal || 3,
     eval_steps: config.evalSteps || 500,
-    eval_strategy: config.evalStrategy || 'steps',
+    eval_strategy: config.evalStrategy || "steps",
   };
 }
 
 /**
  * Convert ConfigurationPreset to TrainingConfig format
  */
-export function presetToTrainingConfig(preset: ConfigurationPreset): Partial<TrainingConfig> {
+export function presetToTrainingConfig(
+  preset: ConfigurationPreset,
+): Partial<TrainingConfig> {
   return {
     modelName: preset.model_name,
     modelPath: preset.model_path,
@@ -85,18 +87,20 @@ export function presetToTrainingConfig(preset: ConfigurationPreset): Partial<Tra
 /**
  * Save a configuration preset
  */
-export async function savePreset(preset: Omit<ConfigurationPreset, 'created_at' | 'updated_at'>): Promise<ConfigurationPreset> {
+export async function savePreset(
+  preset: Omit<ConfigurationPreset, "created_at" | "updated_at">,
+): Promise<ConfigurationPreset> {
   const response = await fetch(`${API_BASE_URL}/presets/save`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(preset),
   });
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.detail || 'Failed to save preset');
+    throw new Error(error.detail || "Failed to save preset");
   }
 
   const data = await response.json();
@@ -106,15 +110,18 @@ export async function savePreset(preset: Omit<ConfigurationPreset, 'created_at' 
 /**
  * List all presets with optional filtering
  */
-export async function listPresets(search?: string, tags?: string[]): Promise<ConfigurationPreset[]> {
+export async function listPresets(
+  search?: string,
+  tags?: string[],
+): Promise<ConfigurationPreset[]> {
   const params = new URLSearchParams();
-  if (search) params.append('search', search);
-  if (tags && tags.length > 0) params.append('tags', tags.join(','));
+  if (search) params.append("search", search);
+  if (tags && tags.length > 0) params.append("tags", tags.join(","));
 
   const response = await fetch(`${API_BASE_URL}/presets?${params.toString()}`);
 
   if (!response.ok) {
-    throw new Error('Failed to list presets');
+    throw new Error("Failed to list presets");
   }
 
   const data = await response.json();
@@ -124,14 +131,16 @@ export async function listPresets(search?: string, tags?: string[]): Promise<Con
 /**
  * Get a specific preset by ID
  */
-export async function getPreset(presetId: string): Promise<ConfigurationPreset> {
+export async function getPreset(
+  presetId: string,
+): Promise<ConfigurationPreset> {
   const response = await fetch(`${API_BASE_URL}/presets/${presetId}`);
 
   if (!response.ok) {
     if (response.status === 404) {
       throw new Error(`Preset not found: ${presetId}`);
     }
-    throw new Error('Failed to get preset');
+    throw new Error("Failed to get preset");
   }
 
   return await response.json();
@@ -142,14 +151,14 @@ export async function getPreset(presetId: string): Promise<ConfigurationPreset> 
  */
 export async function deletePreset(presetId: string): Promise<void> {
   const response = await fetch(`${API_BASE_URL}/presets/${presetId}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
 
   if (!response.ok) {
     if (response.status === 404) {
       throw new Error(`Preset not found: ${presetId}`);
     }
-    throw new Error('Failed to delete preset');
+    throw new Error("Failed to delete preset");
   }
 }
 
@@ -163,7 +172,7 @@ export async function exportPreset(presetId: string): Promise<any> {
     if (response.status === 404) {
       throw new Error(`Preset not found: ${presetId}`);
     }
-    throw new Error('Failed to export preset');
+    throw new Error("Failed to export preset");
   }
 
   return await response.json();
@@ -172,11 +181,14 @@ export async function exportPreset(presetId: string): Promise<any> {
 /**
  * Import a preset from JSON
  */
-export async function importPreset(importData: any, newId?: string): Promise<ConfigurationPreset> {
+export async function importPreset(
+  importData: any,
+  newId?: string,
+): Promise<ConfigurationPreset> {
   const response = await fetch(`${API_BASE_URL}/presets/import`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       import_data: importData,
@@ -186,7 +198,7 @@ export async function importPreset(importData: any, newId?: string): Promise<Con
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.detail || 'Failed to import preset');
+    throw new Error(error.detail || "Failed to import preset");
   }
 
   const data = await response.json();
@@ -196,18 +208,21 @@ export async function importPreset(importData: any, newId?: string): Promise<Con
 /**
  * Update an existing preset
  */
-export async function updatePreset(presetId: string, updates: Partial<ConfigurationPreset>): Promise<ConfigurationPreset> {
+export async function updatePreset(
+  presetId: string,
+  updates: Partial<ConfigurationPreset>,
+): Promise<ConfigurationPreset> {
   const response = await fetch(`${API_BASE_URL}/presets/${presetId}`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ updates }),
   });
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.detail || 'Failed to update preset');
+    throw new Error(error.detail || "Failed to update preset");
   }
 
   const data = await response.json();
@@ -217,12 +232,17 @@ export async function updatePreset(presetId: string, updates: Partial<Configurat
 /**
  * Download preset as JSON file
  */
-export async function downloadPresetAsFile(presetId: string, filename?: string): Promise<void> {
+export async function downloadPresetAsFile(
+  presetId: string,
+  filename?: string,
+): Promise<void> {
   const exportData = await exportPreset(presetId);
-  
-  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+    type: "application/json",
+  });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = url;
   link.download = filename || `preset-${presetId}.json`;
   document.body.appendChild(link);
@@ -234,10 +254,13 @@ export async function downloadPresetAsFile(presetId: string, filename?: string):
 /**
  * Upload and import preset from file
  */
-export async function uploadPresetFile(file: File, newId?: string): Promise<ConfigurationPreset> {
+export async function uploadPresetFile(
+  file: File,
+  newId?: string,
+): Promise<ConfigurationPreset> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    
+
     reader.onload = async (e) => {
       try {
         const content = e.target?.result as string;
@@ -248,8 +271,8 @@ export async function uploadPresetFile(file: File, newId?: string): Promise<Conf
         reject(error);
       }
     };
-    
-    reader.onerror = () => reject(new Error('Failed to read file'));
+
+    reader.onerror = () => reject(new Error("Failed to read file"));
     reader.readAsText(file);
   });
 }

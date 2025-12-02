@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\plot\roc_curve.py
+# hypothesis_version: 6.148.3
+
+['False positive rate', 'ROC Curve', 'True positive rate', 'class', 'fpr', 'numpy', 'pandas', 'sklearn.metrics', 'sklearn.utils', 'title', 'tpr', 'x', 'x-axis-title', 'y', 'y-axis-title']

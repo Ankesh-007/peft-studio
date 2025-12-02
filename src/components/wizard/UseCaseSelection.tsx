@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { OptimizationProfile, WizardState } from '../../types/wizard';
-import { apiClient } from '../../api/client';
-import Tooltip from '../Tooltip';
-import { Loader2 } from 'lucide-react';
+import { Loader2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+
+import { apiClient } from "../../api/client";
+import Tooltip from "../Tooltip";
+
+import type { OptimizationProfile, WizardState } from "../../types/wizard";
 
 interface UseCaseSelectionProps {
   wizardState: WizardState;
@@ -13,7 +15,10 @@ interface UseCaseSelectionProps {
  * Step 1: Use Case Selection
  * Displays optimization profiles with descriptions, icons, and hardware requirements
  */
-const UseCaseSelection: React.FC<UseCaseSelectionProps> = ({ wizardState, onProfileSelect }) => {
+const UseCaseSelection: React.FC<UseCaseSelectionProps> = ({
+  wizardState,
+  onProfileSelect,
+}) => {
   const [profiles, setProfiles] = useState<OptimizationProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,12 +31,14 @@ const UseCaseSelection: React.FC<UseCaseSelectionProps> = ({ wizardState, onProf
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('http://127.0.0.1:8000/api/profiles');
+      const response = await fetch("http://127.0.0.1:8000/api/profiles");
       const data = await response.json();
       setProfiles(data.profiles);
     } catch (err) {
-      setError('Failed to load optimization profiles. Please ensure the backend is running.');
-      console.error('Error loading profiles:', err);
+      setError(
+        "Failed to load optimization profiles. Please ensure the backend is running.",
+      );
+      console.error("Error loading profiles:", err);
     } finally {
       setLoading(false);
     }
@@ -41,7 +48,9 @@ const UseCaseSelection: React.FC<UseCaseSelectionProps> = ({ wizardState, onProf
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-        <span className="ml-3 text-gray-600">Loading optimization profiles...</span>
+        <span className="ml-3 text-gray-600">
+          Loading optimization profiles...
+        </span>
       </div>
     );
   }
@@ -68,15 +77,18 @@ const UseCaseSelection: React.FC<UseCaseSelectionProps> = ({ wizardState, onProf
           Welcome to the Training Wizard!
         </h2>
         <p className="text-blue-800">
-          Let's start by selecting what you want your model to do. Each use case has been
-          pre-configured with optimal settings, so you don't need to worry about technical details.
+          Let's start by selecting what you want your model to do. Each use case
+          has been pre-configured with optimal settings, so you don't need to
+          worry about technical details.
         </p>
       </div>
 
       {/* Profile Selection */}
       <div>
         <div className="flex items-center gap-2 mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Choose Your Use Case</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Choose Your Use Case
+          </h3>
           <Tooltip configKey="profile.use_case" />
         </div>
 
@@ -87,9 +99,10 @@ const UseCaseSelection: React.FC<UseCaseSelectionProps> = ({ wizardState, onProf
               onClick={() => onProfileSelect(profile)}
               className={`
                 text-left p-6 rounded-lg border-2 transition-all hover:shadow-lg
-                ${wizardState.profile?.id === profile.id
-                  ? 'border-blue-600 bg-blue-50 shadow-md'
-                  : 'border-gray-200 bg-white hover:border-blue-300'
+                ${
+                  wizardState.profile?.id === profile.id
+                    ? "border-blue-600 bg-blue-50 shadow-md"
+                    : "border-gray-200 bg-white hover:border-blue-300"
                 }
               `}
               data-testid={`profile-card-${profile.id}`}
@@ -100,19 +113,27 @@ const UseCaseSelection: React.FC<UseCaseSelectionProps> = ({ wizardState, onProf
                   {profile.icon}
                 </span>
                 <div>
-                  <h4 className="font-semibold text-gray-900">{profile.name}</h4>
+                  <h4 className="font-semibold text-gray-900">
+                    {profile.name}
+                  </h4>
                   {wizardState.profile?.id === profile.id && (
-                    <span className="text-xs text-blue-600 font-medium">Selected</span>
+                    <span className="text-xs text-blue-600 font-medium">
+                      Selected
+                    </span>
                   )}
                 </div>
               </div>
 
               {/* Description */}
-              <p className="text-sm text-gray-600 mb-4">{profile.description}</p>
+              <p className="text-sm text-gray-600 mb-4">
+                {profile.description}
+              </p>
 
               {/* Example Use Cases */}
               <div className="mb-4">
-                <p className="text-xs font-medium text-gray-700 mb-2">Perfect for:</p>
+                <p className="text-xs font-medium text-gray-700 mb-2">
+                  Perfect for:
+                </p>
                 <ul className="text-xs text-gray-600 space-y-1">
                   {profile.example_use_cases.slice(0, 3).map((useCase, idx) => (
                     <li key={idx} className="flex items-start">
@@ -182,25 +203,33 @@ const UseCaseSelection: React.FC<UseCaseSelectionProps> = ({ wizardState, onProf
             ✓ {wizardState.profile.name} Selected
           </h4>
           <p className="text-sm text-green-800 mb-3">
-            Your training will be optimized for {wizardState.profile.use_case} tasks.
-            Click "Next" to continue with dataset upload.
+            Your training will be optimized for {wizardState.profile.use_case}{" "}
+            tasks. Click "Next" to continue with dataset upload.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <span className="text-green-700 font-medium">LoRA Rank:</span>
-              <span className="ml-2 text-green-900">{wizardState.profile.config.lora_r}</span>
+              <span className="ml-2 text-green-900">
+                {wizardState.profile.config.lora_r}
+              </span>
             </div>
             <div>
               <span className="text-green-700 font-medium">Learning Rate:</span>
-              <span className="ml-2 text-green-900">{wizardState.profile.config.learning_rate}</span>
+              <span className="ml-2 text-green-900">
+                {wizardState.profile.config.learning_rate}
+              </span>
             </div>
             <div>
               <span className="text-green-700 font-medium">Epochs:</span>
-              <span className="ml-2 text-green-900">{wizardState.profile.config.num_epochs}</span>
+              <span className="ml-2 text-green-900">
+                {wizardState.profile.config.num_epochs}
+              </span>
             </div>
             <div>
               <span className="text-green-700 font-medium">Max Length:</span>
-              <span className="ml-2 text-green-900">{wizardState.profile.config.max_seq_length}</span>
+              <span className="ml-2 text-green-900">
+                {wizardState.profile.config.max_seq_length}
+              </span>
             </div>
           </div>
         </div>

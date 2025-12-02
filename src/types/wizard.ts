@@ -61,18 +61,18 @@ export interface TrainingConfig {
   // Model
   modelName: string;
   modelPath: string;
-  
+
   // Dataset
   datasetId: string;
   datasetPath: string;
-  
+
   // PEFT Settings
-  peftMethod: 'lora' | 'qlora' | 'prefix-tuning';
+  peftMethod: "lora" | "qlora" | "prefix-tuning";
   loraR: number;
   loraAlpha: number;
   loraDropout: number;
   targetModules: string[];
-  
+
   // Training Hyperparameters
   learningRate: number;
   batchSize: number;
@@ -80,24 +80,24 @@ export interface TrainingConfig {
   epochs: number;
   maxSteps: number;
   warmupSteps: number;
-  
+
   // Optimization
-  optimizer: 'adamw' | 'sgd';
-  scheduler: 'linear' | 'cosine' | 'constant';
+  optimizer: "adamw" | "sgd";
+  scheduler: "linear" | "cosine" | "constant";
   weightDecay: number;
   maxGradNorm: number;
-  
+
   // Precision
-  precision: 'fp32' | 'fp16' | 'bf16';
-  quantization: '8bit' | '4bit' | null;
-  
+  precision: "fp32" | "fp16" | "bf16";
+  quantization: "8bit" | "4bit" | null;
+
   // Checkpointing
   saveSteps: number;
   saveTotal: number;
-  
+
   // Validation
   evalSteps: number;
-  evalStrategy: 'steps' | 'epoch';
+  evalStrategy: "steps" | "epoch";
 }
 
 export interface TrainingEstimates {
@@ -121,7 +121,7 @@ export interface TrainingEstimates {
 
 export interface ValidationResult {
   field: string;
-  level: 'error' | 'warning' | 'info';
+  level: "error" | "warning" | "info";
   message: string;
   suggestion?: string;
   autoFixable: boolean;
@@ -152,22 +152,22 @@ export interface ConfigurationPreset {
   created_at: string;
   updated_at: string;
   tags: string[];
-  
+
   // Model configuration
   model_name: string;
   model_path: string;
-  
+
   // Dataset configuration
   dataset_id: string;
   dataset_path: string;
-  
+
   // PEFT Settings
-  peft_method: 'lora' | 'qlora' | 'prefix-tuning';
+  peft_method: "lora" | "qlora" | "prefix-tuning";
   lora_r: number;
   lora_alpha: number;
   lora_dropout: number;
   target_modules: string[];
-  
+
   // Training Hyperparameters
   learning_rate: number;
   batch_size: number;
@@ -175,22 +175,22 @@ export interface ConfigurationPreset {
   epochs: number;
   max_steps: number;
   warmup_steps: number;
-  
+
   // Optimization
-  optimizer: 'adamw' | 'sgd';
-  scheduler: 'linear' | 'cosine' | 'constant';
+  optimizer: "adamw" | "sgd";
+  scheduler: "linear" | "cosine" | "constant";
   weight_decay: number;
   max_grad_norm: number;
-  
+
   // Precision
-  precision: 'fp32' | 'fp16' | 'bf16';
-  quantization: '8bit' | '4bit' | null;
-  
+  precision: "fp32" | "fp16" | "bf16";
+  quantization: "8bit" | "4bit" | null;
+
   // Checkpointing
   save_steps: number;
   save_total: number;
-  
+
   // Validation
   eval_steps: number;
-  eval_strategy: 'steps' | 'epoch';
+  eval_strategy: "steps" | "epoch";
 }

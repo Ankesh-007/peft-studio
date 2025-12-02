@@ -1,0 +1,4 @@
+# file: D:\PEFT Studio\backend\services\deployment_api.py
+# hypothesis_version: 6.148.3
+
+['/', '/api/deployments', '/{deployment_id}', 'Deployment name', 'Enable auto-scaling', 'Instance type', 'Maximum batch size', 'Maximum instances', 'Minimum instances', 'Request timeout', 'Tags', 'Test input data', 'auto_scaling', 'deployment_id', 'deployments', 'environment_vars', 'max_instances', 'min_instances', 'success']

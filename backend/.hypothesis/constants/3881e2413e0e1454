@@ -1,0 +1,4 @@
+# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\apis\public\teams.py
+# hypothesis_version: 6.148.3
+
+['@', 'admin', 'deleteInvite', 'description', 'email', 'entity', 'entityName', 'id', 'members', 'name', 'success', 'teamAdminUserName', 'teamName', 'username']
