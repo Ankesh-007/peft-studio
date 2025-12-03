@@ -69,7 +69,7 @@
     "@types/react-window": "^1.8.8",
     "clsx": "^2.1.1",
     "electron": "^39.2.4",
-    "electron-builder": "^25.1.8",
+    "electron-builder": "^26.0.12",
     "electron-updater": "^6.6.2",
     "lucide-react": "^0.555.0",
     "react": "^18.3.1",
