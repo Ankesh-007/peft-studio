@@ -49,7 +49,7 @@ jobs:
         pytest -v -m "not integration and not e2e and not performance" --cov=. --cov-report=xml --cov-report=term
         
     - name: Upload frontend coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       if: matrix.os == 'ubuntu-latest'
       with:
         files: ./coverage/coverage-final.json
@@ -57,7 +57,7 @@ jobs:
         name: frontend-unit-coverage-${{ matrix.os }}
         
     - name: Upload backend coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       if: matrix.os == 'ubuntu-latest'
       with:
         files: ./backend/coverage.xml
@@ -101,7 +101,7 @@ jobs:
         pytest -v -m integration --cov=. --cov-report=xml --cov-report=term
         
     - name: Upload frontend integration coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       if: always()
       with:
         files: ./coverage/coverage-final.json
@@ -109,7 +109,7 @@ jobs:
         name: frontend-integration-coverage
         
     - name: Upload backend integration coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       if: always()
       with:
         files: ./backend/coverage.xml
@@ -153,7 +153,7 @@ jobs:
         pytest -v -m pbt --cov=. --cov-report=xml --cov-report=term
         
     - name: Upload frontend PBT coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       if: always()
       with:
         files: ./coverage/coverage-final.json
@@ -161,7 +161,7 @@ jobs:
         name: frontend-pbt-coverage
         
     - name: Upload backend PBT coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       if: always()
       with:
         files: ./backend/coverage.xml
@@ -295,7 +295,7 @@ jobs:
         retention-days: 7
         
     - name: Upload frontend E2E coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       if: always()
       with:
         files: ./coverage/coverage-final.json
@@ -303,7 +303,7 @@ jobs:
         name: frontend-e2e-coverage
         
     - name: Upload backend E2E coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       if: always()
       with:
         files: ./backend/coverage.xml
