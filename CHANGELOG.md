@@ -7,12 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Initial public release
-- Comprehensive documentation
-- Security policy
-- Contributing guidelines
-- Code of conduct
+## [1.0.1] - 2024-12-03
+
+### Changed
+- Merged pre-release-backup branch with codebase cleanup and optimizations
+- Improved code organization and module structure
+- Enhanced documentation structure with better categorization
+- Optimized test organization and performance
+
+### Removed
+- Cleaned up `.hypothesis` cache files and temporary test artifacts
+- Removed example files (CostCalculatorExample.tsx, PausedRunExample.tsx)
+- Consolidated duplicate documentation files
+
+### Fixed
+- Corrected module import paths in several components
+- Resolved test file organization issues
+- Fixed broken documentation links
 
 ## [1.0.0] - 2024-12-01
 
@@ -195,5 +206,6 @@ Security improvements and vulnerability fixes
 
 ---
 
-[Unreleased]: https://github.com/Ankesh-007/peft-studio/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/Ankesh-007/peft-studio/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/Ankesh-007/peft-studio/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/Ankesh-007/peft-studio/releases/tag/v1.0.0
