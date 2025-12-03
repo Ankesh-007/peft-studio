@@ -48,6 +48,24 @@ Professional desktop application for Parameter-Efficient Fine-Tuning (PEFT) of L
 
 ## 🚀 Quick Start
 
+### Download
+
+Pre-built installers are available for all major platforms. Download the appropriate version for your system:
+
+#### Windows
+- **[PEFT-Studio-Setup-1.0.0.exe](https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/PEFT-Studio-Setup-1.0.0.exe)** - Standard installer (recommended)
+- **[PEFT-Studio-1.0.0-portable.exe](https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/PEFT-Studio-1.0.0-portable.exe)** - Portable version (no installation required)
+
+#### macOS
+- **[PEFT-Studio-1.0.0.dmg](https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/PEFT-Studio-1.0.0.dmg)** - DMG installer (recommended)
+- **[PEFT-Studio-1.0.0-mac.zip](https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/PEFT-Studio-1.0.0-mac.zip)** - ZIP archive
+
+#### Linux
+- **[PEFT-Studio-1.0.0.AppImage](https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/PEFT-Studio-1.0.0.AppImage)** - Universal AppImage (recommended)
+- **[peft-studio_1.0.0_amd64.deb](https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/peft-studio_1.0.0_amd64.deb)** - Debian/Ubuntu package
+
+All installers are built from the `release/` directory and are available on the [releases page](https://github.com/YOUR_USERNAME/peft-studio/releases).
+
 ### Prerequisites
 - **Node.js** 18+ (for frontend development)
 - **Python** 3.10+ (for backend services)
