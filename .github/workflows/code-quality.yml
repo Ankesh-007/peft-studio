@@ -133,7 +133,7 @@ jobs:
           name: backend-coverage
       
       - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v5
         with:
           name: coverage-reports
           path: |
