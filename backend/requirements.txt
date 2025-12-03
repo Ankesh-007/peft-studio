@@ -28,7 +28,7 @@ xformers
 triton
 trl
 semver==3.0.2
-wandb==0.16.0
+wandb==0.23.1
 keyring==24.3.0
 cryptography==41.0.7
 paramiko==3.4.0
