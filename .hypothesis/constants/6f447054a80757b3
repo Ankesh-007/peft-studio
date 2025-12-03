@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\adaption_prompt\config.py
-# hypothesis_version: 6.148.3
-
-['ModelTypeConfig', 'attn', 'c_attn', 'compute_query_states', 'gpt2', 'help', 'k_proj', 'k_proj_layer', 'llama', 'mistral', 'o_proj', 'o_proj_layer', 'self_attn', 'target_modules', 'v_proj', 'v_proj_layer']

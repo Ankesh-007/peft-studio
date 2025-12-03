@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\_pydantic\__init__.py
-# hypothesis_version: 6.148.3
-
-['AliasChoices', 'CompatBaseModel', 'Connection', 'ConnectionWithTotal', 'Edge', 'GQLBase', 'GQLId', 'GQLInput', 'GQLResult', 'IS_PYDANTIC_V2', 'JsonableModel', 'PageInfo', 'Typename', 'computed_field', 'field_validator', 'from_json', 'gql_typename', 'model_validator', 'pydantic_isinstance', 'to_camel', 'to_json']

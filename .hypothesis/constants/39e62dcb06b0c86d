@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\lora\variants.py
-# hypothesis_version: 6.148.3
-
-['__base__', 'adapter_names', 'alora_offsets', 'arrow_config', 'cpu', 'cuda', 'fan_in_fan_out', 'input_ids', 'lora_arrow', 'qalora_group_size', 'xpu']

@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\torch\ao\ns\fx\ns_types.py
-# hypothesis_version: 6.148.3
-
-['node_input', 'node_output', 'weight']

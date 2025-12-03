@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\randlora\model.py
-# hypothesis_version: 6.148.3
-
-['bias', 'compress_statistics', 'compute_dtype', 'cpu', 'ds_shape', 'fan_in_fan_out', 'has_fp16_weights', 'index', 'init_weights', 'is_loaded_in_4bit', 'is_loaded_in_8bit', 'loaded_in_4bit', 'loaded_in_8bit', 'quant_type', 'r', 'randlora_', 'randlora_alpha', 'randlora_dropout', 'threshold']

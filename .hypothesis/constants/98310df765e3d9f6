@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\proto\v6\wandb_server_pb2.py
-# hypothesis_version: 6.148.3
-
-[b'Z\x19core/pkg/service_go_proto', 207, 314, 316, 435, 437, 505, 507, 531, 533, 599, 601, 623, 625, 739, 741, 767, 769, 841, 843, 871, 873, 945, 947, 1064, 1066, 1138, 1140, 1168, 1170, 1263, 1265, 1295, 1298, 2099, 2102, 2947, 'DESCRIPTOR', '_SERVERREQUEST', '_SERVERRESPONSE', '_SERVERSTATUSREQUEST']

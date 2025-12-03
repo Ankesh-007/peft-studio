@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\huggingface_hub\_inference_endpoints.py
-# hypothesis_version: 6.148.3
-
-[200, 'AsyncInferenceClient', 'HfApi', 'InferenceClient', 'InferenceEndpoint', 'createdAt', 'failed', 'framework', 'healthRoute', 'initializing', 'model', 'name', 'paused', 'pending', 'private', 'protected', 'public', 'repository', 'revision', 'running', 'scaledToZero', 'state', 'status', 'task', 'type', 'updateFailed', 'updatedAt', 'updating', 'url']

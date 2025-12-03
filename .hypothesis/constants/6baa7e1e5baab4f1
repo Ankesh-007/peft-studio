@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\data_types\image.py
-# hypothesis_version: 6.148.3
-
-[0.5, 108, 255, 65500, '.', '/', '0.12.10', '0.12.14', 'Artifact', 'BatchableMedia', 'BoundingBoxes2D', 'Classes', 'Image', 'ImageDataOrPathType', 'ImageDataType', 'ImageMask', 'L', 'Media', 'PIL.Image', 'PILImage', 'RGB', 'RGBA', 'TorchTensorType', '_boxes', '_classes', '_cls', '_masks', '_type', '_val', 'all_boxes', 'all_masks', 'artifact_path', 'bmp', 'box_layers', 'box_score_keys', 'boxes', 'caption', 'captions', 'class_labels', 'class_map', 'classes', 'classes-file', 'count', 'digest', 'dtype', 'filenames', 'format', 'grouping', 'height', 'id', 'image-file', 'images', 'images/separated', 'jpeg', 'jpg', 'mask_layers', 'masks', 'media', 'name', 'np.ndarray', 'numpy', 'path', 'png', 'requires_grad', 'scores', 'torch.Tensor', 'torch.Variable', 'torch.uint8', 'type', 'utf-8', 'val', 'wandb.Image', 'wandb.Run', 'width']

@@ -1,346 +1,229 @@
 # Contributing to PEFT Studio
 
-Thank you for your interest in contributing to PEFT Studio! This document provides guidelines and instructions for contributing to the project.
+Thank you for your interest in contributing to PEFT Studio! We welcome contributions from the community.
 
-## Table of Contents
+## 🤝 How to Contribute
 
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [Development Setup](#development-setup)
-- [Contribution Workflow](#contribution-workflow)
-- [Code Style Guidelines](#code-style-guidelines)
-- [Testing Requirements](#testing-requirements)
-- [Commit Message Conventions](#commit-message-conventions)
-- [Pull Request Process](#pull-request-process)
-- [Reporting Bugs](#reporting-bugs)
-- [Suggesting Features](#suggesting-features)
+### Reporting Bugs
 
-## Code of Conduct
+If you find a bug, please create an issue using the bug report template. Include:
+- Clear description of the issue
+- Steps to reproduce
+- Expected vs actual behavior
+- Your environment (OS, Node version, Python version)
+- Screenshots if applicable
 
-This project adheres to a Code of Conduct that all contributors are expected to follow. Please read [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before contributing.
+### Suggesting Features
 
-## Getting Started
+We love new ideas! Create a feature request issue with:
+- Clear description of the feature
+- Use case and benefits
+- Possible implementation approach (optional)
+
+### Code Contributions
+
+1. **Fork the repository**
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+3. **Make your changes**
+   - Write clean, readable code
+   - Follow existing code style
+   - Add tests for new features
+   - Update documentation
+
+4. **Test your changes**
+   ```bash
+   # Frontend tests
+   npm test
+   npm run lint
+   
+   # Backend tests
+   cd backend
+   pytest
+   ```
+
+5. **Commit your changes**
+   - Use clear, descriptive commit messages
+   - Follow conventional commits format:
+     - `feat: add new feature`
+     - `fix: resolve bug`
+     - `docs: update documentation`
+     - `test: add tests`
+     - `refactor: code improvements`
+
+6. **Push and create a Pull Request**
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+## 📋 Development Setup
 
 ### Prerequisites
+- Node.js 18+ and npm
+- Python 3.10+
+- Git
 
-Before you begin, ensure you have the following installed:
+### Setup Steps
 
-- **Node.js** 18 or higher
-- **Python** 3.10 or higher
-- **Git** for version control
-- **CUDA GPU** (recommended for testing training features)
-
-### Development Setup
-
-1. **Fork the repository** on GitHub
-
-2. **Clone your fork** locally:
+1. Clone the repository
    ```bash
    git clone https://github.com/YOUR_USERNAME/peft-studio.git
    cd peft-studio
    ```
 
-3. **Add upstream remote**:
-   ```bash
-   git remote add upstream https://github.com/Ankesh-007/peft-studio.git
-   ```
-
-4. **Install frontend dependencies**:
+2. Install frontend dependencies
    ```bash
    npm install
    ```
 
-5. **Set up Python environment**:
+3. Install backend dependencies
    ```bash
-   python -m venv peft_env
-   
-   # Windows
-   peft_env\Scripts\activate
-   
-   # macOS/Linux
-   source peft_env/bin/activate
-   
-   pip install -r backend/requirements.txt
+   cd backend
+   pip install -r requirements.txt
+   cd ..
    ```
 
-6. **Run the development servers**:
+4. Run development servers
    ```bash
-   # Terminal 1: Frontend development server
+   # Terminal 1 - Frontend
    npm run dev
    
-   # Terminal 2: Electron application
-   npm run electron:dev
-   ```
-
-## Contribution Workflow
-
-1. **Create a new branch** for your work:
-   ```bash
-   git checkout -b feature/your-feature-name
-   # or
-   git checkout -b fix/your-bug-fix
-   ```
-
-2. **Make your changes** following the code style guidelines
-
-3. **Test your changes** thoroughly:
-   ```bash
-   # Run frontend tests
-   npm test
-   
-   # Run backend tests
+   # Terminal 2 - Backend
    cd backend
-   pytest
+   python main.py
    ```
 
-4. **Commit your changes** using conventional commit messages
+## 🎨 Code Style
 
-5. **Push to your fork**:
-   ```bash
-   git push origin feature/your-feature-name
-   ```
+### TypeScript/React
+- Use TypeScript for type safety
+- Follow React best practices
+- Use functional components with hooks
+- Keep components small and focused
+- Use meaningful variable names
 
-6. **Create a Pull Request** on GitHub
+### Python
+- Follow PEP 8 style guide
+- Use type hints
+- Write docstrings for functions and classes
+- Keep functions focused and testable
 
-## Code Style Guidelines
+### General
+- Write self-documenting code
+- Add comments for complex logic
+- Keep files under 500 lines when possible
+- Use consistent naming conventions
 
-### TypeScript/React (Frontend)
+## ✅ Pull Request Guidelines
 
-- **Linting**: We use ESLint for code quality
-  ```bash
-  npm run lint
-  ```
-
-- **Formatting**: We use Prettier for code formatting
-  ```bash
-  npm run format:check  # Check formatting
-  npm run format        # Auto-fix formatting
-  ```
-
-- **Style Rules**:
-  - Use functional components with hooks
-  - Use TypeScript for type safety
-  - Follow React best practices (avoid inline functions in JSX, use proper key props)
-  - Use Tailwind CSS for styling (avoid inline styles)
-  - Keep components small and focused
-  - Use meaningful variable and function names
-
-- **File Organization**:
-  - Components go in `src/components/`
-  - Utilities go in `src/lib/`
-  - API clients go in `src/api/`
-  - Types go in `src/types/`
-
-### Python (Backend)
-
-- **Linting**: We use flake8 for linting
-  ```bash
-  cd backend
-  flake8 .
-  ```
-
-- **Formatting**: We use black for code formatting
-  ```bash
-  cd backend
-  black --check .  # Check formatting
-  black .          # Auto-fix formatting
-  ```
-
-- **Style Rules**:
-  - Follow PEP 8 style guide
-  - Use type hints for function parameters and return values
-  - Write docstrings for all public functions and classes
-  - Keep functions small and focused
-  - Use meaningful variable and function names
-
-- **File Organization**:
-  - Services go in `backend/services/`
-  - Tests go in `backend/tests/`
-  - Database models in `backend/database.py`
-  - Configuration in `backend/config.py`
-
-## Testing Requirements
-
-All contributions must include appropriate tests:
-
-### Frontend Tests
-
-- **Unit Tests**: Test individual components and utilities
-- **Integration Tests**: Test component interactions
-- **Property-Based Tests**: Use fast-check for complex logic
-
-Run tests:
-```bash
-npm test              # Run all tests once
-npm run test:watch    # Run tests in watch mode
-```
-
-### Backend Tests
-
-- **Unit Tests**: Test individual functions and classes
-- **Integration Tests**: Test API endpoints
-- **Property-Based Tests**: Use Hypothesis for complex logic
-
-Run tests:
-```bash
-cd backend
-pytest                    # Run all tests
-pytest -v                 # Verbose output
-pytest --cov              # With coverage report
-```
-
-### Test Coverage
-
-- Aim for at least 80% code coverage for new code
-- All bug fixes should include a test that would have caught the bug
-- All new features should include comprehensive tests
-
-## Commit Message Conventions
-
-We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
-
-### Format
-
-```
-<type>(<scope>): <subject>
-
-<body>
-
-<footer>
-```
-
-### Types
-
-- **feat**: A new feature
-- **fix**: A bug fix
-- **docs**: Documentation changes
-- **style**: Code style changes (formatting, missing semicolons, etc.)
-- **refactor**: Code refactoring without changing functionality
-- **perf**: Performance improvements
-- **test**: Adding or updating tests
-- **chore**: Maintenance tasks (dependencies, build config, etc.)
-
-### Examples
-
-```
-feat(training): add support for QLoRA fine-tuning
-
-Implement QLoRA training method with 4-bit quantization support.
-Includes UI components and backend integration.
-
-Closes #123
-```
-
-```
-fix(dashboard): correct memory usage calculation
-
-The memory usage was incorrectly calculated due to unit conversion error.
-Now properly converts bytes to GB.
-
-Fixes #456
-```
-
-```
-docs(readme): update installation instructions
-
-Add troubleshooting section for common installation issues.
-```
-
-### Scope
-
-Common scopes include:
-- `training`: Training-related features
-- `dashboard`: Dashboard components
-- `dataset`: Dataset management
-- `model`: Model browser and management
-- `inference`: Inference playground
-- `ui`: General UI components
-- `backend`: Backend services
-- `config`: Configuration
-- `build`: Build system
-- `deps`: Dependencies
-
-## Pull Request Process
-
-1. **Update documentation** if you're changing functionality
-
-2. **Add tests** for new features or bug fixes
-
-3. **Ensure all tests pass**:
-   ```bash
-   npm test
-   cd backend && pytest
-   ```
-
-4. **Update CHANGELOG.md** if applicable
-
-5. **Fill out the PR template** completely
-
-6. **Request review** from maintainers
-
-7. **Address review feedback** promptly
-
-8. **Squash commits** if requested before merging
-
-### PR Title Format
-
-Use the same format as commit messages:
-```
-feat(scope): brief description
-```
+### Before Submitting
+- [ ] Code follows project style guidelines
+- [ ] All tests pass
+- [ ] New tests added for new features
+- [ ] Documentation updated
+- [ ] No console.log or debug statements
+- [ ] Commit messages are clear
 
 ### PR Description
-
 Include:
-- **What**: What changes does this PR introduce?
-- **Why**: Why are these changes needed?
-- **How**: How were the changes implemented?
-- **Testing**: How were the changes tested?
-- **Screenshots**: For UI changes, include before/after screenshots
-- **Breaking Changes**: List any breaking changes
-- **Related Issues**: Link to related issues
+- What changes were made
+- Why the changes were needed
+- How to test the changes
+- Screenshots (for UI changes)
+- Related issue numbers
 
-## Reporting Bugs
+### Review Process
+- Maintainers will review your PR
+- Address any requested changes
+- Once approved, your PR will be merged
+- Your contribution will be credited
 
-Before creating a bug report:
+## 🧪 Testing
 
-1. **Check existing issues** to avoid duplicates
-2. **Verify the bug** in the latest version
-3. **Collect information**:
-   - Operating system and version
-   - Node.js and Python versions
-   - Steps to reproduce
-   - Expected vs actual behavior
-   - Error messages and stack traces
-   - Screenshots if applicable
+### Running Tests
+```bash
+# All frontend tests
+npm test
 
-Create a bug report using the [bug report template](.github/ISSUE_TEMPLATE/bug_report.md).
+# Watch mode
+npm test -- --watch
 
-## Suggesting Features
+# Coverage
+npm test -- --coverage
 
-Before suggesting a feature:
+# Backend tests
+cd backend
+pytest
 
-1. **Check existing issues** and discussions
-2. **Consider the scope**: Does it fit the project's goals?
-3. **Think about implementation**: Is it technically feasible?
+# With coverage
+pytest --cov=services
+```
 
-Create a feature request using the [feature request template](.github/ISSUE_TEMPLATE/feature_request.md).
+### Writing Tests
+- Write unit tests for new functions
+- Write integration tests for features
+- Aim for good coverage, not 100%
+- Test edge cases and error conditions
 
-## Questions?
+## 📚 Documentation
 
-- **GitHub Discussions**: For general questions and discussions
-- **GitHub Issues**: For bug reports and feature requests
-- **Documentation**: Check the [docs](docs/) directory
+### Code Documentation
+- Add JSDoc comments for TypeScript functions
+- Add docstrings for Python functions
+- Document complex algorithms
+- Explain "why" not just "what"
 
-## License
+### User Documentation
+- Update README if needed
+- Add to `/docs` for major features
+- Include examples and screenshots
+- Keep language clear and simple
 
-By contributing to PEFT Studio, you agree that your contributions will be licensed under the MIT License.
+## 🐛 Debugging
 
-## Recognition
+### Frontend
+- Use React DevTools
+- Check browser console
+- Use debugger statements
+- Check network tab for API calls
 
-Contributors will be recognized in:
-- The project README
-- Release notes
-- The contributors page on GitHub
+### Backend
+- Use Python debugger (pdb)
+- Check backend logs
+- Test API endpoints with curl/Postman
+- Verify database state
 
-Thank you for contributing to PEFT Studio! 🎉
+## 🔒 Security
+
+- Never commit secrets or API keys
+- Use environment variables for sensitive data
+- Report security issues privately
+- Follow secure coding practices
+
+## 📞 Getting Help
+
+- Check existing issues and discussions
+- Read the documentation in `/docs`
+- Ask questions in GitHub Discussions
+- Be respectful and patient
+
+## 🎯 Good First Issues
+
+Look for issues labeled `good first issue` - these are great for newcomers!
+
+## 📜 Code of Conduct
+
+Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## 📄 License
+
+By contributing, you agree that your contributions will be licensed under the MIT License.
+
+> **Note**: Before publishing, replace `YOUR_USERNAME` with your actual GitHub username or organization name.
+
+---
+
+Thank you for contributing to PEFT Studio! 🚀

@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\transformers\models\bloom\configuration_bloom.py
-# hypothesis_version: 6.148.3
-
-[0.0, 1e-05, 0.001, 0.02, 250880, '1.12', 'BloomConfig', 'BloomOnnxConfig', 'PreTrainedTokenizer', 'TensorType', 'attention_mask', 'batch', 'bloom', 'default', 'input_ids', 'inputs', 'n_embed', 'n_head', 'n_layer', 'num_attention_heads', 'num_hidden_layers', 'pad_token_id', 'past_key_values', 'sequence']

@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\launch\_project_spec.py
-# hypothesis_version: 6.148.3
-
-[1000, ',', '.git', '/', ':', 'EntryPoint', 'LaunchProject', 'True', 'WANDB_API_KEY', 'WANDB_ARTIFACTS', 'WANDB_BASE_URL', 'WANDB_CONFIG', 'WANDB_DOCKER', 'WANDB_ENTITY', 'WANDB_LAUNCH', 'WANDB_NAME', 'WANDB_PROJECT', 'WANDB_RESUME', 'WANDB_RUN_ID', 'WANDB_SWEEP_ID', 'WANDB_USERNAME', '_resume_count', '_wandb_api_key', 'accelerator', 'allow', 'args', 'artifacts', 'author', 'base_image', 'base_url', 'bash', 'builder', 'cuda', 'docker', 'docker_image', 'dockerfile', 'entity', 'entity_name', 'entry_point', 'files', 'git', 'https://', 'image_uri', 'job', 'local', 'local-process', 'name', 'overrides', 'placeholder', 'project', 'project_name', 'python', 'python_version', 'repo', 'requirements.txt', 'resource', 'resource_args', 'run_config', 'run_id', 'run_name', 'sagemaker', 'sweep_id', 'uri', 'user_id', 'version', 'wandb']

@@ -1,160 +1,392 @@
 # PEFT Studio
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://github.com/Ankesh-007/peft-studio/workflows/CI/badge.svg)](https://github.com/Ankesh-007/peft-studio/actions)
-[![Tests](https://github.com/Ankesh-007/peft-studio/workflows/Tests/badge.svg)](https://github.com/Ankesh-007/peft-studio/actions)
-[![GitHub release](https://img.shields.io/github/v/release/Ankesh-007/peft-studio)](https://github.com/Ankesh-007/peft-studio/releases)
-[![GitHub stars](https://img.shields.io/github/stars/Ankesh-007/peft-studio?style=social)](https://github.com/Ankesh-007/peft-studio/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/Ankesh-007/peft-studio?style=social)](https://github.com/Ankesh-007/peft-studio/network/members)
-[![GitHub issues](https://img.shields.io/github/issues/Ankesh-007/peft-studio)](https://github.com/Ankesh-007/peft-studio/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/Ankesh-007/peft-studio)](https://github.com/Ankesh-007/peft-studio/pulls)
-[![GitHub contributors](https://img.shields.io/github/contributors/Ankesh-007/peft-studio)](https://github.com/Ankesh-007/peft-studio/graphs/contributors)
-[![GitHub last commit](https://img.shields.io/github/last-commit/Ankesh-007/peft-studio)](https://github.com/Ankesh-007/peft-studio/commits/main)
+> **Note**: Before publishing, replace all instances of `YOUR_USERNAME` with your actual GitHub username or organization name.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Professional desktop application for Parameter-Efficient Fine-Tuning (PEFT) of Large Language Models.
 
 ## ✨ Features
 
-- **Modern UI**: Dark theme with smooth animations and real-time updates
-- **Dashboard**: Monitor training runs, system resources, and statistics
-- **Dataset Management**: Upload, validate, and analyze training data
-- **Model Browser**: Search and download models from HuggingFace
-- **PEFT Methods**: LoRA, QLoRA, Prefix Tuning, and more
-- **Training Monitor**: Real-time progress with interactive charts
-- **Inference Playground**: Test fine-tuned models
-- **Platform Integration**: Export to HuggingFace, Ollama, LM Studio
+### Core Training Capabilities
+- **Model Browser**: Search, filter, and download models from HuggingFace with integrated metadata and comparison tools
+- **Dataset Management**: Upload, validate, and analyze training data with drag-and-drop support and format detection
+- **PEFT Methods**: Support for LoRA, QLoRA, Prefix Tuning, and more fine-tuning techniques with smart configuration
+- **Training Configuration**: Guided wizard for setting up training runs with hardware-aware recommendations
+- **Training Monitor**: Real-time progress tracking with interactive charts, metrics, and resource monitoring
+- **Multi-Run Management**: Run multiple training jobs in parallel with isolation and resource management
+- **Experiment Tracking**: Integration with Weights & Biases for comprehensive experiment tracking and comparison
+
+### Platform Integration
+- **Cloud Platforms**: Connect to AWS, Azure, GCP, Lambda Labs, RunPod, and more for remote training
+- **Compute Providers**: Intelligent provider selection with cost estimation and performance comparison
+- **Platform Connections**: Secure credential management for HuggingFace, Ollama, and other platforms
+- **Export System**: Export trained models to HuggingFace Hub, Ollama, LM Studio, and other formats
+- **Deployment Management**: Deploy models as REST APIs with monitoring and endpoint testing
+
+### Testing & Validation
+- **Inference Playground**: Test and compare fine-tuned models with live inference and side-by-side comparison
+- **Gradio Demo Generator**: Automatically generate interactive Gradio demos for your fine-tuned models
+- **Configuration Management**: Import/export training configurations with validation and library browser
+- **Cost Calculator**: Estimate training costs across different providers with electricity rate customization
+
+### Developer Experience
+- **Modern UI**: Professional dark theme with smooth animations and real-time updates
+- **Dashboard**: Monitor training runs, system resources, and statistics at a glance
+- **Command Palette**: Quick access to all features with keyboard shortcuts (⌘K / Ctrl+K)
+- **Error Recovery**: Plain-language error messages with automatic fix suggestions
+- **Logging & Diagnostics**: Comprehensive logging system with filtering, search, and export capabilities
+- **Telemetry**: Optional usage analytics with privacy controls and analytics dashboard
+
+### Design System
+- **Professional Dark Theme**: Deep black background (#0a0a0a) with indigo accents (#6366f1)
+- **Typography**: Inter font for UI, JetBrains Mono for code
+- **Responsive Layout**: Collapsible sidebar, top action bar, and contextual help panel
+- **Smooth Animations**: 60fps transitions and micro-interactions
+- **Accessibility**: Keyboard navigation, ARIA labels, and WCAG AA compliant colors
+- **Performance Optimized**: Web workers, canvas rendering, and lazy loading for smooth 60fps experience
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- **Node.js** 18 or higher ([Download](https://nodejs.org/))
-- **Python** 3.10 or higher ([Download](https://www.python.org/downloads/))
-- **Git** ([Download](https://git-scm.com/downloads))
-- **CUDA GPU** (recommended for training, but CPU mode is supported)
+- **Node.js** 18+ (for frontend development)
+- **Python** 3.10+ (for backend services)
+- **CUDA GPU** (recommended for training, optional for development)
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Ankesh-007/peft-studio.git
-   cd peft-studio
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/peft-studio.git
+cd peft-studio
 
-2. **Install Node.js dependencies**
-   ```bash
-   npm install
-   ```
+# Install frontend dependencies
+npm install
 
-3. **Set up Python environment**
-   
-   **Windows:**
-   ```bash
-   python -m venv peft_env
-   peft_env\Scripts\activate
-   pip install -r backend/requirements.txt
-   ```
-   
-   **macOS/Linux:**
-   ```bash
-   python3 -m venv peft_env
-   source peft_env/bin/activate
-   pip install -r backend/requirements.txt
-   ```
+# Create and activate Python virtual environment
+python -m venv peft_env
 
-4. **Verify installation**
-   ```bash
-   npm test
-   cd backend && pytest
-   ```
+# Windows
+peft_env\Scripts\activate
+
+# macOS/Linux
+source peft_env/bin/activate
+
+# Install Python dependencies
+pip install -r backend/requirements.txt
+```
 
 ### Development
 
-Run the application in development mode:
+Start the development environment with two terminals:
 
 ```bash
-# Terminal 1: Start the frontend development server
+# Terminal 1: Start Vite dev server
 npm run dev
 
-# Terminal 2: Start the Electron application
+# Terminal 2: Start Electron app
 npm run electron:dev
 ```
 
-The application will open automatically. The frontend will hot-reload on changes.
+The application will open in an Electron window with hot-reload enabled.
 
 ### Building for Production
 
-Create production builds for your platform:
-
 ```bash
-# Build the frontend
+# Build frontend assets
 npm run build
 
-# Build the Electron application
+# Build Electron application
 npm run electron:build
+
+# Build platform-specific installers
+npm run build:installers
 ```
 
-Built applications will be available in the `release/` directory.
+For detailed build instructions, see [Build and Installers Guide](docs/developer-guide/build-and-installers.md).
 
-### Platform-Specific Builds
+### First Steps
 
-```bash
-# Windows
-npm run package:win
+1. **Connect a Platform**: Go to Settings → Platform Connections to add your HuggingFace token
+2. **Browse Models**: Use the Model Browser to search and download a base model
+3. **Upload Dataset**: Navigate to Datasets and upload your training data
+4. **Configure Training**: Use the Training Configuration wizard to set up your first fine-tuning job
+5. **Monitor Progress**: Watch real-time metrics in the Training Monitor
 
-# macOS
-npm run package:mac
-
-# Linux
-npm run package:linux
-```
+For a complete walkthrough, see the [Quick Start Guide](docs/user-guide/quick-start.md).
 
 ## 🏗️ Architecture
 
-- **Frontend**: Electron + React + TypeScript + Tailwind CSS
-- **UI Components**: Lucide React icons + Recharts
-- **Backend**: Python FastAPI
+### Frontend Stack
+- **Framework**: Electron + React 18 + TypeScript
+- **Styling**: Tailwind CSS with custom design system
+- **UI Components**: Lucide React icons + Recharts for data visualization
+- **State Management**: React hooks + Context API
+- **Performance**: Web Workers for background processing, Canvas rendering for charts
+- **Build Tool**: Vite for fast development and optimized production builds
+
+### Backend Stack
+- **API Server**: Python FastAPI with async support
 - **ML Framework**: PyTorch + Transformers + PEFT + bitsandbytes
-- **Database**: SQLite
-- **IPC**: Electron IPC for frontend-backend communication
+- **Database**: SQLite with SQLAlchemy ORM
+- **Task Queue**: Background job processing for training orchestration
+- **Integrations**: HuggingFace Hub, Weights & Biases, cloud platform APIs
+
+### Communication
+- **IPC**: Electron IPC bridge for frontend-backend communication
+- **REST API**: FastAPI endpoints for all backend operations
+- **WebSockets**: Real-time updates for training progress and system metrics
+
+For detailed architecture documentation, see [API Documentation](docs/developer-guide/api-documentation.md).
 
 ## 📁 Project Structure
 
 ```
 peft-studio/
-├── electron/           # Electron main process
-│   ├── main.js        # Main process entry
-│   └── preload.js     # IPC bridge
-├── src/               # React frontend
-│   ├── components/    # UI components
-│   ├── lib/          # Utilities
-│   ├── api/          # API client
-│   └── App.tsx       # Root component
-├── backend/          # Python FastAPI backend
-│   ├── main.py       # FastAPI server
-│   ├── config.py     # Configuration
-│   ├── database.py   # SQLAlchemy models
-│   └── requirements.txt
-└── package.json
+├── .github/                    # GitHub workflows and templates
+│   └── workflows/             # CI/CD pipelines (test, build, deploy)
+├── .kiro/                     # Kiro AI assistant specifications
+│   └── specs/                 # Feature specifications and requirements
+├── electron/                  # Electron main process
+│   ├── main.js               # Main process entry point
+│   └── preload.js            # IPC bridge and security context
+├── src/                       # React frontend application
+│   ├── components/           # React UI components
+│   │   ├── wizard/          # Training configuration wizard
+│   │   └── configuration/   # Configuration management UI
+│   ├── lib/                 # Utility functions and helpers
+│   ├── api/                 # Backend API client
+│   ├── hooks/               # Custom React hooks
+│   ├── workers/             # Web Workers for background processing
+│   ├── types/               # TypeScript type definitions
+│   ├── config/              # Frontend configuration
+│   ├── test/                # Frontend tests
+│   └── App.tsx              # Root application component
+├── backend/                   # Python FastAPI backend
+│   ├── main.py               # FastAPI server entry point
+│   ├── config.py             # Backend configuration
+│   ├── database.py           # Database models and setup
+│   ├── services/             # Business logic services
+│   │   ├── *_service.py     # Core service implementations
+│   │   └── *_api.py         # FastAPI route handlers
+│   ├── connectors/           # Platform connector implementations
+│   │   ├── base.py          # Base connector interface
+│   │   └── connector_manager.py
+│   ├── plugins/              # Plugin system
+│   │   └── connectors/      # Third-party connector plugins
+│   ├── tests/                # Backend test suite
+│   │   ├── conftest.py      # Pytest configuration
+│   │   └── test_*.py        # Test files
+│   └── requirements.txt      # Python dependencies
+├── docs/                      # Documentation
+│   ├── user-guide/           # End-user documentation
+│   ├── developer-guide/      # Developer documentation
+│   ├── reference/            # API reference and troubleshooting
+│   ├── video-tutorials/      # Video tutorial index
+│   └── README.md             # Documentation index
+├── scripts/                   # Build and utility scripts
+│   ├── build.js              # Build orchestration
+│   ├── build.sh              # Unix build script
+│   └── build.ps1             # Windows build script
+├── build/                     # Build output directory
+├── dist/                      # Distribution packages
+├── public/                    # Static assets
+├── package.json              # Node.js dependencies and scripts
+├── tsconfig.json             # TypeScript configuration
+├── tailwind.config.js        # Tailwind CSS configuration
+├── vite.config.ts            # Vite build configuration
+├── vitest.config.ts          # Vitest test configuration
+├── README.md                 # This file
+├── QUICKSTART.md             # Quick start guide
+└── DEVELOPMENT.md            # Development guide
 ```
 
-## 🎨 UI Components
+### Key Directories
 
-- **Layout**: Sidebar navigation + top bar + main content
-- **Dashboard**: Stats cards, training runs, charts
-- **Dataset Upload**: Drag-and-drop with progress tracking
-- **Charts**: Line charts, bar charts using Recharts
-- **Theme**: Dark mode with customizable accents
+- **`src/components/`**: All React UI components, organized by feature
+- **`backend/services/`**: Backend business logic and API endpoints
+- **`backend/connectors/`**: Platform integration connectors (HuggingFace, cloud providers)
+- **`docs/`**: Comprehensive documentation for users and developers
+- **`.github/workflows/`**: Automated CI/CD pipelines for testing, building, and deployment
 
-## 🔧 Configuration
+## 📚 Documentation
 
-The application uses a design system with:
-- Custom Tailwind configuration
-- Design tokens for colors, spacing, typography
-- Reusable component classes
-- Smooth animations and transitions
+### For Users
+- **[Quick Start Guide](docs/user-guide/quick-start.md)** - Get up and running in minutes
+- **[Training Configuration](docs/user-guide/training-configuration.md)** - Configure your first fine-tuning job
+- **[Platform Connections](docs/user-guide/platform-connections.md)** - Connect to HuggingFace and cloud providers
+- **[Model Browser](docs/user-guide/model-browser.md)** - Search and download models
+- **[Deployment Management](docs/user-guide/deployment.md)** - Deploy your fine-tuned models
+- **[Inference Playground](docs/user-guide/inference-playground.md)** - Test your models
+- **[Configuration Management](docs/user-guide/configuration-management.md)** - Import/export configurations
+- **[Troubleshooting](docs/reference/troubleshooting.md)** - Common issues and solutions
+- **[FAQ](docs/reference/faq.md)** - Frequently asked questions
+
+### For Developers
+- **[API Documentation](docs/developer-guide/api-documentation.md)** - Backend API reference
+- **[Connector Development](docs/developer-guide/connector-development.md)** - Build custom platform connectors
+- **[Architecture Overview](docs/developer-guide/api-documentation.md)** - System architecture and design
+- **[Performance Optimization](docs/developer-guide/performance-optimization.md)** - Performance best practices
+- **[Security Guide](docs/developer-guide/security.md)** - Security implementation details
+- **[Testing Guide](docs/developer-guide/testing.md)** - Testing strategy and guidelines
+- **[Build and Installers](docs/developer-guide/build-and-installers.md)** - Building and packaging
+- **[CI/CD Setup](docs/developer-guide/ci-cd-setup.md)** - Continuous integration and deployment
+- **[Auto-Update System](docs/developer-guide/auto-update-system.md)** - Application update mechanism
+- **[Contributing Guidelines](docs/CONTRIBUTING.md)** - How to contribute to the project
+
+### Complete Documentation Index
+See **[docs/README.md](docs/README.md)** for the complete documentation index with all available guides and references.
+
+## 🛠️ Development
+
+### Running Tests
+
+```bash
+# Run frontend tests
+npm test
+
+# Run backend tests
+cd backend
+pytest
+
+# Run tests with coverage
+pytest --cov=services --cov-report=html
+```
+
+### Code Quality
+
+```bash
+# Lint frontend code
+npm run lint
+
+# Format code
+npm run format
+
+# Type check
+npm run type-check
+```
+
+### Building Installers
+
+```bash
+# Build installers for all platforms
+npm run build:installers
+
+# Build for specific platform
+npm run build:win    # Windows
+npm run build:mac    # macOS
+npm run build:linux  # Linux
+```
+
+For detailed development instructions, see [DEVELOPMENT.md](DEVELOPMENT.md).
+
+## 💬 Getting Help
+
+We're here to help! If you have questions, encounter issues, or need support:
+
+### 📖 Documentation
+Start with our comprehensive documentation:
+- **[Quick Start Guide](docs/user-guide/quick-start.md)** - Get started in minutes
+- **[Troubleshooting Guide](docs/reference/troubleshooting.md)** - Common issues and solutions
+- **[FAQ](docs/reference/faq.md)** - Frequently asked questions
+- **[Complete Documentation](docs/README.md)** - Full documentation index
+
+### 🐛 Bug Reports
+Found a bug? Please [open an issue](https://github.com/YOUR_USERNAME/peft-studio/issues/new?template=bug_report.md) with:
+- Clear description of the problem
+- Steps to reproduce
+- Expected vs actual behavior
+- System information (OS, version, GPU)
+- Relevant logs or screenshots
+
+### 💡 Feature Requests
+Have an idea for improvement? [Submit a feature request](https://github.com/YOUR_USERNAME/peft-studio/issues/new?template=feature_request.md) describing:
+- The problem you're trying to solve
+- Your proposed solution
+- Any alternatives you've considered
+- How this would benefit other users
+
+### ❓ Questions & Discussions
+For general questions, discussions, or community interaction:
+- **[GitHub Discussions](https://github.com/YOUR_USERNAME/peft-studio/discussions)** - Ask questions, share ideas, and connect with the community
+  - **Q&A** - Get help with using PEFT Studio
+  - **Ideas** - Propose and discuss new features
+  - **Show and Tell** - Share your fine-tuned models and success stories
+  - **General** - Everything else related to PEFT Studio
+
+### 🔒 Security Issues
+Found a security vulnerability? Please **do not** open a public issue. Instead, see our [Security Policy](SECURITY.md) for responsible disclosure instructions.
+
+### 📧 Direct Support
+For private inquiries or partnership opportunities, you can reach out through:
+- GitHub Discussions (preferred for community benefit)
+- Email: [Add your support email if applicable]
+
+### 🕐 Response Times
+- **Critical bugs**: We aim to respond within 24 hours
+- **Feature requests**: Reviewed weekly, prioritized based on community feedback
+- **Questions**: Community-driven, typically answered within 1-3 days
+- **Security issues**: Acknowledged within 24 hours, fixed as priority
+
+### 🌟 Community Guidelines
+When seeking help:
+- Search existing issues and discussions first
+- Provide clear, detailed information
+- Be respectful and patient
+- Follow our [Code of Conduct](CODE_OF_CONDUCT.md)
+- Help others when you can!
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](docs/CONTRIBUTING.md) for details on:
+
+- Code style and conventions
+- Development workflow
+- Testing requirements
+- Pull request process
+- Issue reporting
+
+## 📊 Project Status
+
+**Current Version**: 1.0.0
+
+### Recent Improvements
+- ✅ Comprehensive documentation reorganization
+- ✅ Performance optimization with Web Workers
+- ✅ Enhanced security with credential encryption
+- ✅ Multi-run management with isolation
+- ✅ Cloud platform integration (AWS, Azure, GCP, Lambda Labs, RunPod)
+- ✅ Cost estimation across providers
+- ✅ Deployment management with endpoint testing
+- ✅ Telemetry system with privacy controls
+- ✅ Auto-update system with delta updates
+- ✅ CI/CD pipelines with automated testing and deployment
+
+### Roadmap
+
+See our [detailed roadmap](ROADMAP.md) for planned features and improvements.
+
+**Coming in v1.1.0 (Q1 2025):**
+- 🔄 Enhanced model comparison tools with side-by-side analysis
+- 🔄 Advanced dataset validation and preprocessing
+- 🔄 Improved error handling with automatic recovery
+- 🔄 Performance improvements and optimizations
+
+**Future versions:**
+- 🔄 Distributed training support (v1.2.0)
+- 🔄 Model quantization and optimization tools (v1.2.0)
+- 🔄 Custom connector marketplace (v1.3.0)
+- 🔄 Advanced training techniques (RLHF, DPO) (v2.0.0)
+
+Want to influence the roadmap? Share your ideas in [GitHub Discussions](https://github.com/YOUR_USERNAME/peft-studio/discussions/categories/ideas)!
+
+## 🔗 Links
+
+- **Documentation**: [docs/README.md](docs/README.md)
+- **Quick Start**: [QUICKSTART.md](QUICKSTART.md)
+- **Development Guide**: [DEVELOPMENT.md](DEVELOPMENT.md)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/YOUR_USERNAME/peft-studio/issues)
+- **Discussions**: [Community forum](https://github.com/YOUR_USERNAME/peft-studio/discussions)
 
 ## 🆘 Getting Help
 
@@ -181,4 +413,8 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ## 📝 License
 
-MIT License - see the [LICENSE](LICENSE) file for details
+MIT License - see [LICENSE](LICENSE) for details
+
+---
+
+**Built with ❤️ for the ML community**

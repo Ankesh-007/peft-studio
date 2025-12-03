@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\vendor\graphql-core-1.1\wandb_graphql\language\visitor_meta.py
-# hypothesis_version: 6.148.3
-
-['_enter_handlers', '_get_enter_handler', '_get_leave_handler', '_leave_handlers', 'alias', 'arguments', 'default_value', 'definition', 'definitions', 'directives', 'enter_', 'fields', 'interfaces', 'leave_', 'locations', 'name', 'operation_types', 'selection_set', 'selections', 'type', 'type_condition', 'types', 'value', 'values', 'variable', 'variable_definitions']

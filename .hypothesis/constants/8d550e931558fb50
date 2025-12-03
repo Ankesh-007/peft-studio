@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\integration\torch\wandb_torch.py
-# hypothesis_version: 6.148.3
-
-['.', 'Container', 'Module', 'ModuleDict', 'ModuleList', 'Sequential', 'Tensor', '_wandb_hook_names', '_wandb_watch_called', 'get_shape', 'grad_fn', 'gradients/', 'numpy', 'parameters/', 'shape', 'size', 'topology/', 'torch']

@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\launch\sweeps\utils.py
-# hypothesis_version: 6.148.3
-
-['${', '${args}', '${env}', '${interpreter}', '${program}', '+', '++', '--', '--author', '--image_uri', '--job', '--project', '--queue', '/', 'PublicApi', 'WANDB_SWEEP_ID', 'args', 'args_append_hydra', 'args_dict', 'args_json', 'args_no_equals', 'args_no_hyphens', 'args_override_hydra', 'author', 'image_uri', 'job', 'name', 'overrides', 'project', 'queue', 'resource', 'resource_args', 'run_config', 'scheduler', 'settings', 'sweep_id', 'value', '}']

@@ -1,48 +1,76 @@
 ---
 name: Bug Report
-about: Report a bug or unexpected behavior
+about: Create a report to help us improve
 title: '[BUG] '
 labels: bug
 assignees: ''
 ---
 
 ## Bug Description
-A clear and concise description of what the bug is.
+
+<!-- A clear and concise description of what the bug is -->
 
 ## Steps to Reproduce
+
 1. Go to '...'
 2. Click on '...'
 3. Scroll down to '...'
 4. See error
 
 ## Expected Behavior
-A clear and concise description of what you expected to happen.
+
+<!-- A clear and concise description of what you expected to happen -->
 
 ## Actual Behavior
-A clear and concise description of what actually happened.
+
+<!-- A clear and concise description of what actually happened -->
 
 ## Screenshots
-If applicable, add screenshots to help explain your problem.
+
+<!-- If applicable, add screenshots to help explain your problem -->
 
 ## Environment
-- OS: [e.g., Windows 11, macOS 14, Ubuntu 22.04]
-- PEFT Studio Version: [e.g., 1.0.0]
-- Python Version: [e.g., 3.10.0]
-- Node.js Version: [e.g., 18.0.0]
-- GPU: [e.g., NVIDIA RTX 4090, None]
-- CUDA Version: [e.g., 12.1, N/A]
 
-## Additional Context
-Add any other context about the problem here.
+**Desktop:**
+- OS: [e.g. Windows 10, macOS 12.0, Ubuntu 20.04]
+- Version: [e.g. 1.0.0]
+- Installation Method: [e.g. installer, portable, AppImage]
+
+**Additional Context:**
+- Node.js Version: [if applicable]
+- Python Version: [if applicable]
+- GPU: [if applicable]
 
 ## Logs
-If applicable, paste relevant logs here:
+
+<!-- Please attach relevant logs from the application -->
+
+<details>
+<summary>Application Logs</summary>
+
 ```
-[paste logs here]
+Paste logs here
 ```
 
-## Checklist
-- [ ] I have searched existing issues to ensure this is not a duplicate
-- [ ] I have provided all required information above
-- [ ] I have included steps to reproduce the issue
-- [ ] I have included my environment details
+</details>
+
+<details>
+<summary>Console Output</summary>
+
+```
+Paste console output here
+```
+
+</details>
+
+## Additional Context
+
+<!-- Add any other context about the problem here -->
+
+## Possible Solution
+
+<!-- If you have suggestions on how to fix the bug, please describe them here -->
+
+## Related Issues
+
+<!-- Link to related issues if any -->

@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\semver\cli.py
-# hypothesis_version: 6.148.3
-
-['%(prog)s ', '--version', '-h', 'Bump commands', 'Bumps a version', 'Compare two versions', 'ERROR', 'First version', 'Invalid version %r', 'Second version', 'Version to check', 'Version to raise', 'build', 'bump', 'bump_build', 'bump_major', 'bump_minor', 'bump_patch', 'bump_prerelease', 'check', 'compare', 'func', 'major', 'minor', 'nextver', 'part', 'patch', 'prerelease', 'version', 'version1', 'version2']

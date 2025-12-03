@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\semver\version.py
-# hypothesis_version: 6.148.3
-
-['!=', '%d.%d.%d', '%s(%s)', '%s=%r', '+%s', ', ', '-%s', '.', '.0', '0', '0123456789', '<', '<=', '==', '>', '>=', '?', 'T', 'UTF-8', 'Version', '^\\d+$', '_build', '_major', '_minor', '_patch', '_prerelease', 'build', 'build.0', 'bump_', 'major', 'minor', 'patch', 'rc', 'rc.0']

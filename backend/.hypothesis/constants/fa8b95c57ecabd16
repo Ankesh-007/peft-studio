@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\transformers\quantizers\quantizer_hqq.py
-# hypothesis_version: 6.148.3
-
-['.', '.bias', '.weight', 'PreTrainedModel', 'bias', 'cpu', 'device_map', 'disk', 'dtype', 'from_flax', 'from_tf', 'hqq', 'hqq_params', 'meta', 'quant_config', 'skip_modules', 'torch.Tensor', 'torch.device', 'weight', 'weight_quant_params']

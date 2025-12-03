@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\vendor\graphql-core-1.1\wandb_graphql\execution\base.py
-# hypothesis_version: 6.148.3
-
-['__schema', '__type', '__typename', '_subfields_cache', 'context_value', 'data', 'errors', 'executor', 'field_asts', 'field_name', 'fragments', 'if', 'invalid', 'middleware', 'mutation', 'operation', 'parent_type', 'query', 'return_type', 'root_value', 'schema', 'subscription', 'variable_values']

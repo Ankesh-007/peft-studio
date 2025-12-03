@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\boft\model.py
-# hypothesis_version: 6.148.3
-
-['bias', 'boft_', 'boft_block_num', 'boft_block_size', 'boft_dropout', 'fan_in_fan_out', 'init_weights']

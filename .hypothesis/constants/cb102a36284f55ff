@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\lora\model.py
-# hypothesis_version: 6.148.3
-
-[0.0, '.', 'W_q', '__base__', 'adapter_names', 'alora_offsets', 'aqlm', 'arrow_config', 'awq', 'base_layer', 'cat', 'dare_linear', 'dare_linear_svd', 'dare_ties', 'dare_ties_svd', 'fan_in_fan_out', 'frequency', 'get_encoder', 'gptq', 'hf_device_map', 'in_proj_weight', 'init_lora_weights', 'is_loaded_in_4bit', 'is_loaded_in_8bit', 'layer_replication', 'linear', 'loaded_in_4bit', 'loaded_in_8bit', 'lora_', 'lora_A', 'lora_B', 'lora_alpha', 'lora_bias', 'lora_dropout', 'magnitude_prune', 'magnitude_prune_svd', 'meta', 'model_type', 'modules_to_save', 'num_beams', 'parameter_name', 'pissa', 'qalora_group_size', 'quantization_method', 'qweight', 'r', 'ranknum', 'state_dict', 'svd', 'ties', 'ties_svd', 'total', 'use_alora', 'use_dora', 'use_qalora', 'use_rslora', 'weight', '|']

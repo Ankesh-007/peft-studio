@@ -1,34 +1,44 @@
 ---
 name: Question
-about: Ask a question about PEFT Studio
+about: Ask a question about using PEFT Studio
 title: '[QUESTION] '
 labels: question
 assignees: ''
 ---
 
 ## Question
-A clear and concise question about PEFT Studio.
+
+<!-- Please describe your question clearly and concisely -->
 
 ## Context
-Provide context about what you're trying to accomplish or understand.
 
-## What I've Tried
-Describe what you've already tried or researched:
-- Documentation sections reviewed: [e.g., Installation Guide, Configuration]
-- Search terms used: [e.g., "LoRA configuration", "training error"]
-- Related issues reviewed: [e.g., #123, #456]
+<!-- Provide context about what you're trying to accomplish -->
 
-## Environment (if relevant)
-- OS: [e.g., Windows 11, macOS 14, Ubuntu 22.04]
-- PEFT Studio Version: [e.g., 1.0.0]
-- Python Version: [e.g., 3.10.0]
+**What I'm trying to do:**
+<!-- Describe your goal or use case -->
+
+**What I've tried:**
+<!-- List any approaches you've already attempted -->
+
+## Environment
+
+**PEFT Studio Version:** [e.g. 1.0.0]
+**Operating System:** [e.g. Windows 11, macOS 13, Ubuntu 22.04]
+**Installation Method:** [e.g. installer, portable, AppImage]
 
 ## Additional Information
-Add any other information that might help answer your question.
+
+<!-- Add any other relevant information, screenshots, or examples -->
 
 ## Checklist
-- [ ] I have searched existing issues and discussions
-- [ ] I have reviewed the documentation
-- [ ] I have provided sufficient context for my question
-- [ ] This is not a bug report (use Bug Report template instead)
-- [ ] This is not a feature request (use Feature Request template instead)
+
+Before submitting, please confirm:
+
+- [ ] I've searched existing [issues](https://github.com/YOUR_USERNAME/peft-studio/issues) and [discussions](https://github.com/YOUR_USERNAME/peft-studio/discussions)
+- [ ] I've checked the [documentation](https://github.com/YOUR_USERNAME/peft-studio/tree/main/docs)
+- [ ] I've reviewed the [FAQ](https://github.com/YOUR_USERNAME/peft-studio/blob/main/docs/reference/faq.md)
+- [ ] I've reviewed the [Troubleshooting Guide](https://github.com/YOUR_USERNAME/peft-studio/blob/main/docs/reference/troubleshooting.md)
+
+---
+
+**Note:** For general discussions or community interaction, consider using [GitHub Discussions](https://github.com/YOUR_USERNAME/peft-studio/discussions) instead. Issues are best for specific, actionable questions about bugs or features.

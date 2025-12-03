@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\launch\git_reference.py
-# hypothesis_version: 6.148.3
-
-['.git', ':', '@', '[0-9a-f]{40}', 'git@', 'https://', 'main', 'master', 'origin', 'origin/', 'tag']

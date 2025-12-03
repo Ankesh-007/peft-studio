@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\setuptools\_vendor\packaging\specifiers.py
-# hypothesis_version: 6.148.3
-
-['!', '!=', ',', '.', '.*', '0', '<', '<=', '==', '===', '>', '>=', 'SpecifierSet', 'UnparsedVersionVar', '\\s*$', '^\\s*', 'a', 'arbitrary', 'b', 'compatible', 'dev', 'equal', 'greater_than', 'greater_than_equal', 'less_than', 'less_than_equal', 'not_equal', 'operator', 'post', 'prereleases', 'rc', 'version', '{}{}', '~=']

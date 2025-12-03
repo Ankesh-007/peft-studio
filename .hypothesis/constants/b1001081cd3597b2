@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\data_types\helper_types\bounding_boxes_2d.py
-# hypothesis_version: 6.148.3
-
-['Artifact', 'BoundingBoxes2D', 'Boxes must be a list', 'LocalRun', '_wandb_delimeter_', 'bounding-boxes', 'box_caption', 'box_data', 'boxes2D', 'class_', 'class_id', 'class_labels', 'height', 'maxX', 'maxY', 'middle', 'minX', 'minY', 'numpy', 'position', 'scores', 'width']

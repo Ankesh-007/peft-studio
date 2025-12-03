@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\import_utils.py
-# hypothesis_version: 6.148.3
-
-['0.4.0', '0.5.0', '1.24.0', '2.0.0', 'Darwin', 'Linear4bit', 'aqlm', 'auto_gptq', 'awq', 'bitsandbytes', 'diffusers', 'eetq', 'gptqmodel', 'hqq', 'neural_compressor', 'optimum', 'torch_xla', 'torchao', 'xpu']

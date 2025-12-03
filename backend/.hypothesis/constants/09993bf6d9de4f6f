@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\poly\layer.py
-# hypothesis_version: 6.148.3
-
-['bqs,qsdr->bqdr', 'bqs,qsrd->bqrd', 'n_skills', 'n_splits', 'n_tasks', 'poly.', 'poly_lora_A', 'poly_lora_B', 'poly_router', 'r']

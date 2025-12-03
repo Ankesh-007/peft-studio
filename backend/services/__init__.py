@@ -1,6 +1,18 @@
 """
 Services module for PEFT Studio backend.
+
+STARTUP OPTIMIZATION: This module uses lazy loading to improve startup time.
+Heavy services are only imported when actually needed.
 """
+
+# Import startup service first (lightweight)
+from .startup_service import (
+    get_startup_optimizer,
+    measure_startup,
+    lazy_import_torch,
+    lazy_import_transformers,
+    lazy_import_unsloth
+)
 
 from .peft_service import (
     PEFTService,
@@ -63,6 +75,7 @@ from .training_orchestration_service import (
     TrainingConfig,
     TrainingMetrics,
     CheckpointData,
+    ArtifactInfo,
     get_training_orchestrator
 )
 
@@ -183,6 +196,7 @@ __all__ = [
     "TrainingConfig",
     "TrainingMetrics",
     "CheckpointData",
+    "ArtifactInfo",
     "get_training_orchestrator",
     
     # Monitoring Service

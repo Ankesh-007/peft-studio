@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\ia3\model.py
-# hypothesis_version: 6.148.3
-
-['compress_statistics', 'compute_dtype', 'fan_in_fan_out', 'has_fp16_weights', 'ia3_', 'index', 'init_ia3_weights', 'is_feedforward', 'is_loaded_in_4bit', 'is_loaded_in_8bit', 'loaded_in_4bit', 'loaded_in_8bit', 'model_type', 'quant_type', 'threshold', '|']

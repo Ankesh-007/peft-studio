@@ -1,175 +1,377 @@
-# PEFT Studio Security and Verification Scripts
+# Build Scripts
 
-This directory contains scripts for security scanning and publish verification before making the repository public.
+This directory contains scripts for building PEFT Studio installers.
 
-## Scripts
+## Available Scripts
 
-### 1. Security Scan Scripts
+### build.js
+**Cross-platform Node.js build script**
 
-Scans the repository for sensitive data, credentials, and security issues.
-
-#### Windows (PowerShell)
-```powershell
-.\scripts\security-scan.ps1
-```
-
-With verbose output:
-```powershell
-.\scripts\security-scan.ps1 -Verbose
-```
-
-#### Unix/Linux/macOS (Bash)
 ```bash
-bash scripts/security-scan.sh
+node scripts/build.js [windows|mac|linux|all]
 ```
 
-With verbose output:
+**Features:**
+- Works on all platforms
+- Color-coded output
+- Prerequisite checking
+- Build output summary
+- Error handling
+
+**Examples:**
 ```bash
-bash scripts/security-scan.sh --verbose
+node scripts/build.js all        # Build all platforms
+node scripts/build.js windows    # Build Windows only
+node scripts/build.js mac        # Build macOS only
+node scripts/build.js linux      # Build Linux only
 ```
 
-#### What it checks:
-- API keys, tokens, and credentials
-- AWS credentials
-- Private keys (RSA, DSA, EC, OpenSSH)
-- Passwords in code
-- Database connection URLs
-- Email addresses
-- IP addresses
-- Sensitive files (.env, .db, .sqlite, .pem, .key)
-- .gitignore coverage
-- Git commit history for sensitive data
-- Large files (>1MB)
-- Hardcoded configuration
+### build.sh
+**Unix/Linux/macOS shell script**
 
-### 2. Publish Verification Scripts
+```bash
+chmod +x scripts/build.sh
+./scripts/build.sh [windows|mac|linux|all]
+```
 
-Runs comprehensive pre-publication checks and generates a verification report.
+**Features:**
+- Bash-based automation
+- Dependency verification
+- Build orchestration
+- Error handling
 
-#### Windows (PowerShell)
+**Examples:**
+```bash
+./scripts/build.sh all        # Build all platforms
+./scripts/build.sh windows    # Build Windows only
+./scripts/build.sh mac        # Build macOS only
+./scripts/build.sh linux      # Build Linux only
+```
+
+### build.ps1
+**Windows PowerShell script**
+
 ```powershell
-.\scripts\publish.ps1
+.\scripts\build.ps1 [windows|mac|linux|all]
 ```
 
-With options:
+**Features:**
+- PowerShell-native
+- Windows-optimized
+- Color-coded output
+- Error handling
+
+**Examples:**
 ```powershell
-# Skip tests
-.\scripts\publish.ps1 -SkipTests
-
-# Skip build
-.\scripts\publish.ps1 -SkipBuild
-
-# Verbose output
-.\scripts\publish.ps1 -Verbose
-
-# Combine options
-.\scripts\publish.ps1 -SkipTests -SkipBuild -Verbose
+.\scripts\build.ps1 all        # Build all platforms
+.\scripts\build.ps1 windows    # Build Windows only
+.\scripts\build.ps1 mac        # Build macOS only
+.\scripts\build.ps1 linux      # Build Linux only
 ```
 
-#### Unix/Linux/macOS (Bash)
+### verify-build-config.js
+**Build configuration verification**
+
 ```bash
-bash scripts/publish.sh
+node scripts/verify-build-config.js
+# or
+npm run verify:build
 ```
 
-With options:
+**Checks:**
+- package.json build configuration
+- Build scripts presence
+- Build assets (icons, entitlements)
+- CI/CD workflows
+- Required dependencies
+
+**Output:**
+```
+✓ Build configuration found
+✓ All platform targets configured
+✓ All build scripts present
+✓ Build assets directory exists
+✓ macOS entitlements configured
+✓ CI/CD workflows configured
+✓ All dependencies installed
+```
+
+## NPM Scripts
+
+Alternatively, use npm scripts from the project root:
+
 ```bash
-# Skip tests
-bash scripts/publish.sh --skip-tests
+# Build all platforms
+npm run package:all
 
-# Skip build
-bash scripts/publish.sh --skip-build
+# Build single platform
+npm run package:win
+npm run package:mac
+npm run package:linux
 
-# Verbose output
-bash scripts/publish.sh --verbose
+# Using build scripts
+npm run dist           # All platforms
+npm run dist:win       # Windows only
+npm run dist:mac       # macOS only
+npm run dist:linux     # Linux only
 
-# Combine options
-bash scripts/publish.sh --skip-tests --skip-build --verbose
+# Verify configuration
+npm run verify:build
 ```
 
-#### What it checks:
-1. **Security Verification** - Runs security scan
-2. **Required Files** - Checks for README, LICENSE, CONTRIBUTING, etc.
-3. **GitHub Templates** - Verifies issue templates, PR template, workflows
-4. **Package.json Metadata** - Validates repository URL, author, license, keywords
-5. **Dependencies Security** - Runs npm audit for vulnerabilities
-6. **Code Quality** - Runs linting checks
-7. **Test Suite** - Runs frontend and backend tests
-8. **Build Verification** - Verifies build completes successfully
-9. **Git Repository** - Checks for uncommitted changes and version tags
-10. **Documentation** - Validates README links and badges
+## Build Process
 
-#### Output
+All scripts follow the same process:
 
-Both scripts generate a report file: `publish-verification-report.txt`
+1. **Check Prerequisites**
+   - Verify Node.js and npm are installed
+   - Check if node_modules exists
+   - Verify build assets
 
-The report includes:
-- Timestamp
-- Duration
-- Summary of checks (passed/failed/warnings)
-- Overall status (READY/NOT READY for publication)
+2. **Build Frontend**
+   - Run `npm run build`
+   - Compile TypeScript
+   - Bundle with Vite
+   - Optimize assets
 
-## Exit Codes
+3. **Build Installer**
+   - Run electron-builder for target platform(s)
+   - Apply code signing if configured
+   - Generate installers
 
-- `0` - All checks passed (or only warnings)
-- `1` - One or more critical checks failed
+4. **Show Output**
+   - List generated installers
+   - Display file sizes
+   - Show output location
 
-## Usage in CI/CD
+## Output Location
 
-These scripts can be integrated into GitHub Actions workflows:
+All installers are created in the `release/` directory:
 
-```yaml
-- name: Run Security Scan
-  run: |
-    if [ "$RUNNER_OS" == "Windows" ]; then
-      pwsh scripts/security-scan.ps1
-    else
-      bash scripts/security-scan.sh
-    fi
-
-- name: Run Publish Verification
-  run: |
-    if [ "$RUNNER_OS" == "Windows" ]; then
-      pwsh scripts/publish.ps1
-    else
-      bash scripts/publish.sh
-    fi
+```
+release/
+├── PEFT-Studio-Setup-1.0.0.exe          # Windows installer
+├── PEFT-Studio-1.0.0-portable.exe       # Windows portable
+├── PEFT-Studio-1.0.0.dmg                # macOS installer
+├── PEFT-Studio-1.0.0-mac.zip            # macOS archive
+├── PEFT-Studio-1.0.0.AppImage           # Linux universal
+└── peft-studio_1.0.0_amd64.deb          # Linux Debian/Ubuntu
 ```
 
-## Pre-Publication Checklist
+## Code Signing
 
-Before running these scripts, ensure:
+To enable code signing, set environment variables before running build scripts:
 
-1. All code changes are committed
-2. All tests are passing locally
-3. Documentation is up-to-date
-4. No sensitive data in codebase
-5. .gitignore is properly configured
-6. Version number is updated in package.json
+### Windows
+```bash
+# PowerShell
+$env:CSC_LINK = "C:\path\to\certificate.pfx"
+$env:CSC_KEY_PASSWORD = "your_password"
+
+# Command Prompt
+set CSC_LINK=C:\path\to\certificate.pfx
+set CSC_KEY_PASSWORD=your_password
+```
+
+### macOS
+```bash
+export CSC_LINK=/path/to/certificate.p12
+export CSC_KEY_PASSWORD=your_password
+export APPLE_ID=your@email.com
+export APPLE_ID_PASSWORD=app-specific-password
+```
 
 ## Troubleshooting
 
-### Security Scan Issues
+### Build fails with "Cannot find module"
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
 
-**Issue**: False positives for email addresses or IP addresses
-- **Solution**: Review the matches. If they're legitimate (e.g., in documentation), they can be ignored. Consider adding them to an exclusion list if needed.
+### Permission denied (Unix/Linux/macOS)
+```bash
+chmod +x scripts/build.sh
+```
 
-**Issue**: Large files detected
-- **Solution**: Remove large files from the repository or add them to .gitignore. Use Git LFS for large binary files if necessary.
+### PowerShell execution policy error (Windows)
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
 
-### Publish Verification Issues
+### Missing icons warning
+Add icon files to `build/` directory:
+- `icon.ico` (Windows)
+- `icon.icns` (macOS)
+- `icon.png` (Linux)
 
-**Issue**: Tests failing
-- **Solution**: Run tests locally first: `npm test -- --run` and `cd backend && pytest`
+See `build/README.md` for icon generation instructions.
 
-**Issue**: Build failing
-- **Solution**: Run build locally first: `npm run build`
+## Documentation
 
-**Issue**: npm audit vulnerabilities
-- **Solution**: Update vulnerable packages: `npm audit fix` or `npm audit fix --force`
+- **Build and Installer Guide:** `../docs/developer-guide/build-and-installers.md` - Comprehensive guide covering all aspects of building and distributing installers
 
 ## Support
 
-For issues or questions about these scripts, please:
-1. Check the troubleshooting section above
-2. Review the script output for specific error messages
-3. Open an issue on GitHub with the error details
+For issues or questions:
+- Review documentation in project root
+- Check GitHub Actions logs for CI failures
+- Consult electron-builder documentation
+
+
+---
+
+## Repository Configuration Scripts
+
+### configure-repository.sh / configure-repository.ps1
+**Automates GitHub repository configuration for public release**
+
+```bash
+# Unix/Linux/macOS
+./scripts/configure-repository.sh
+
+# Windows
+./scripts/configure-repository.ps1
+```
+
+**Configures:**
+- Repository description and metadata
+- Topics and tags for discoverability
+- Issues, Projects, and Discussions
+- Basic repository settings
+
+**Requirements:**
+- GitHub CLI (gh) installed: https://cli.github.com/
+- GitHub authentication: `gh auth login`
+- Admin access to repository
+
+### verify-branch-protection.sh / verify-branch-protection.ps1
+**Verifies GitHub branch protection rules**
+
+```bash
+# Unix/Linux/macOS
+./scripts/verify-branch-protection.sh
+
+# Windows
+./scripts/verify-branch-protection.ps1
+```
+
+**Checks:**
+- Branch protection enabled for main
+- Required pull request reviews
+- Required status checks
+- Enforce admins setting
+- Required conversation resolution
+
+### verify-workflows.sh / verify-workflows.ps1
+**Validates GitHub Actions workflow files**
+
+```bash
+# Unix/Linux/macOS
+./scripts/verify-workflows.sh
+
+# Windows
+./scripts/verify-workflows.ps1
+```
+
+**Checks:**
+- All required workflow files present
+- YAML syntax validity
+- Workflow triggers configured
+- Required jobs present
+- GitHub Actions directory structure
+
+## Security Scripts
+
+### security-scan.sh / security-scan.ps1
+**Comprehensive security scanning**
+
+```bash
+# Unix/Linux/macOS
+./scripts/security-scan.sh
+
+# Windows
+./scripts/security-scan.ps1
+```
+
+**Scans:**
+- npm dependencies for vulnerabilities
+- Python dependencies for vulnerabilities
+- Git history for secrets
+- Environment files for credentials
+- Database files for sensitive data
+
+## Publishing Scripts
+
+### publish.ps1
+**Pre-publication verification and checklist**
+
+```powershell
+./scripts/publish.ps1
+```
+
+**Verifies:**
+- Security scans pass
+- All tests pass
+- Build succeeds
+- Documentation complete
+- Community standards met
+
+### quick-start.ps1
+**Quick start script for new developers**
+
+```powershell
+./scripts/quick-start.ps1
+```
+
+**Features:**
+- Checks prerequisites
+- Installs dependencies
+- Sets up development environment
+- Runs initial build
+
+---
+
+## Repository Configuration Workflow
+
+For preparing the repository for public release:
+
+1. **Run security scan** to ensure no sensitive data
+   ```bash
+   ./scripts/security-scan.sh  # or .ps1
+   ```
+
+2. **Configure repository** with automated script
+   ```bash
+   ./scripts/configure-repository.sh  # or .ps1
+   ```
+
+3. **Complete manual steps** from script output
+
+4. **Verify configuration**
+   ```bash
+   ./scripts/verify-branch-protection.sh  # or .ps1
+   ./scripts/verify-workflows.sh  # or .ps1
+   ```
+
+5. **Run pre-publication checks**
+   ```powershell
+   ./scripts/publish.ps1
+   ```
+
+See `.github/REPOSITORY_CONFIGURATION_GUIDE.md` for detailed instructions.
+
+---
+
+## Related Documentation
+
+- `.github/REPOSITORY_CONFIGURATION_GUIDE.md` - Comprehensive repository setup guide
+- `.github/REPOSITORY_CONFIGURATION_CHECKLIST.md` - Configuration checklist
+- `.github/REPOSITORY_CONFIGURATION_SUMMARY.md` - Configuration summary
+- `CONTRIBUTING.md` - Contribution guidelines
+- `SECURITY.md` - Security policy
+- `docs/developer-guide/build-and-installers.md` - Build and installer guide
+
+---
+
+**For public release preparation:** Follow the workflow in `.github/REPOSITORY_CONFIGURATION_GUIDE.md`

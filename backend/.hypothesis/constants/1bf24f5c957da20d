@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\setuptools\config\setupcfg.py
-# hypothesis_version: 6.148.3
-
-['#', ',', '.', '1', ';', '=', 'Distribution', 'DistributionMetadata', 'Target', '_%s', '__', 'attr:', 'classifier', 'classifiers', 'cmdclass', 'data_files', 'dependency_links', 'description', 'eager_resources', 'entry_points', 'exclude', 'exclude_package_data', 'extras_require', 'file:', 'find:', 'find_namespace:', 'home_page', 'include', 'include_package_data', 'install_requires', 'keywords', 'license', 'license_files', 'long_description', 'metadata', 'namespace_packages', 'obsoletes', 'options', 'package_data', 'package_dir', 'packages', 'packages.find', 'parse_section%s', 'platform', 'platforms', 'project_urls', 'provides', 'py_modules', 'python_requires', 'scripts', 'set_%s', 'setup_requires', 'stacklevel', 'str', 'summary', 'tests_require', 'true', 'url', 'version', 'where', 'yes', 'zip_safe']

@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\data_types\table.py
-# hypothesis_version: 6.148.3
-
-[150, 1000, 10000, 200000, '-', '.', '.table.json', 'Expected', 'IMMUTABLE', 'INCREMENTAL', 'Input', 'LocalRun', 'MUTABLE', 'Output', '_type', 'allowed_types', 'artifact.Artifact', 'artifact_path', 'ascii', 'col_name', 'column_types', 'columns', 'data', 'foreignIndex', 'foreignKey', 'increment_num', 'join_key', 'joined-table', 'key', 'latest', 'log_mode', 'media', 'ncols', 'nrows', 'numpy', 'pandas', 'params', 'partitioned-table', 'parts_path', 'path', 'primaryKey', 'ref_url', 'shape', 'table', 'table-file', 'table1', 'table2', 'type_map', 'utf-8', 'w', 'wandb.Table', '{}.{}.json']

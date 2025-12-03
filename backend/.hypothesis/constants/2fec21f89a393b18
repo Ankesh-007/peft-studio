@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\osf\model.py
-# hypothesis_version: 6.148.3
-
-['base_layer', 'effective_rank', 'model', 'model_type', 'osf_', 'osf_svd_params', 'rank_pattern', 'target_modules', 'weight']

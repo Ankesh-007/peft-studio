@@ -17,13 +17,17 @@ interface Window {
     onTrainingProgress: (callback: (data: any) => void) => void;
     onTrainingComplete: (callback: (data: any) => void) => void;
     onTrainingError: (callback: (data: any) => void) => void;
-    showNotification?: (options: {
-      title: string;
-      message: string;
-      urgency?: string;
-      sound?: boolean;
-    }) => Promise<{ success: boolean }>;
-    setProgress?: (progress: number) => Promise<void>;
-    checkDND?: () => Promise<{ enabled: boolean }>;
+    showNotification: (options: any) => Promise<any>;
+    setProgress: (progress: number) => Promise<any>;
+    checkDND: () => Promise<any>;
+    // Auto-update methods
+    checkForUpdates: () => Promise<{ success: boolean; updateInfo?: any; error?: string; message?: string }>;
+    downloadUpdate: () => Promise<{ success: boolean; error?: string; message?: string }>;
+    installUpdate: () => Promise<{ success: boolean; error?: string; message?: string }>;
+    getAppVersion: () => Promise<{ version: string }>;
+    onUpdateAvailable: (callback: (data: { version: string; releaseNotes?: string; releaseDate?: string }) => void) => void;
+    onUpdateDownloadProgress: (callback: (data: { percent: number; bytesPerSecond: number; transferred: number; total: number }) => void) => void;
+    onUpdateDownloaded: (callback: (data: { version: string; releaseNotes?: string }) => void) => void;
+    onUpdateStatus: (callback: (data: { status: string; message?: string }) => void) => void;
   };
 }

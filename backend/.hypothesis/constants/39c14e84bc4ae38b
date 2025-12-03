@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\utils\peft_types.py
-# hypothesis_version: 6.148.3
-
-['ADALORA', 'ADAPTION_PROMPT', 'BOFT', 'BONE', 'C3A', 'CAUSAL_LM', 'CPT', 'DELORA', 'FEATURE_EXTRACTION', 'FOURIERFT', 'HRA', 'IA3', 'LN_TUNING', 'LOHA', 'LOKR', 'LORA', 'MISS', 'OFT', 'OSF', 'POLY', 'PREFIX_TUNING', 'PROMPT_TUNING', 'P_TUNING', 'QUESTION_ANS', 'RANDLORA', 'ROAD', 'SEQ_2_SEQ_LM', 'SEQ_CLS', 'SHIRA', 'TOKEN_CLS', 'TRAINABLE_TOKENS', 'VBLORA', 'VERA', 'WAVEFT', 'XLORA', '_', 'prefix']

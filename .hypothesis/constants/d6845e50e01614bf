@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\mixed\model.py
-# hypothesis_version: 6.148.3
-
-['Unloading ', 'all', 'and merging ', 'base_layer', 'bias', 'gptq', 'loaded_in_4bit', 'loaded_in_8bit', 'lora_only', 'model', 'model_type', 'none', 'quant_linear_module', 'quantization_method', 'ranknum', 'state']

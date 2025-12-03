@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\torch\fx\passes\utils\source_matcher_utils.py
-# hypothesis_version: 6.148.3
-
-['.', 'SourcePartition', 'WARNING', 'get_attr', 'source_fn_stack', 'torch_fn']

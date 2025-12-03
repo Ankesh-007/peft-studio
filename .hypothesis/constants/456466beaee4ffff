@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\randlora\layer.py
-# hypothesis_version: 6.148.3
-
-[0.0, 'cpu', 'ds_shape', 'kbj,kvj,bj->kb', 'kbj,kvj,kb->bj', 'randlora.', 'randlora_A', 'randlora_B', 'randlora_gamma', 'randlora_lambda']

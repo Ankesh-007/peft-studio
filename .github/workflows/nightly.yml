@@ -1,0 +1,142 @@
+name: Nightly Build
+
+on:
+  schedule:
+    # Run every night at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  nightly-build:
+    name: Nightly Build - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            platform: linux
+          - os: windows-latest
+            platform: windows
+          - os: macos-latest
+            platform: mac
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd backend
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio
+      
+      - name: Run all tests
+        run: |
+          npm run test -- --run
+          cd backend
+          pytest tests/ -v
+      
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+      
+      - name: Package application
+        run: npm run package --if-present
+        continue-on-error: true
+      
+      - name: Upload nightly build
+        uses: actions/upload-artifact@v3
+        with:
+          name: nightly-${{ matrix.platform }}-${{ github.run_number }}
+          path: |
+            dist/
+            release/
+          retention-days: 7
+
+  nightly-tests:
+    name: Nightly Extended Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd backend
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio hypothesis pytest-benchmark
+      
+      - name: Run extended property-based tests
+        run: |
+          cd backend
+          pytest tests/ -v -k "property" --hypothesis-profile=ci
+        timeout-minutes: 60
+        continue-on-error: true
+      
+      - name: Run performance benchmarks
+        run: |
+          cd backend
+          pytest tests/ -v -k "benchmark" --benchmark-only
+        continue-on-error: true
+      
+      - name: Run stress tests
+        run: |
+          cd backend
+          pytest tests/ -v -k "stress"
+        timeout-minutes: 30
+        continue-on-error: true
+
+  nightly-report:
+    name: Nightly Report
+    needs: [nightly-build, nightly-tests]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Generate nightly report
+        run: |
+          echo "## Nightly Build Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Status" >> $GITHUB_STEP_SUMMARY
+          echo "- Nightly Build: ${{ needs.nightly-build.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Extended Tests: ${{ needs.nightly-tests.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "Nightly builds are available in the Actions artifacts section." >> $GITHUB_STEP_SUMMARY
+      
+      - name: Send notification on failure
+        if: failure()
+        run: |
+          echo "Nightly build failed! Check the logs for details."
+          # Add notification logic here (Slack, Discord, email, etc.)

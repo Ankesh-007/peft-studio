@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\wandb\sdk\launch\_launch.py
-# hypothesis_version: 6.148.3
-
-['-', '.', 'WANDB_ENTITY', 'builder', 'entity', 'input', 'loc', 'local-container', 'max_jobs', 'max_schedulers', 'queue', 'queues', 'registry', 'verbosity', 'w', 'wandb.sdk.launch']

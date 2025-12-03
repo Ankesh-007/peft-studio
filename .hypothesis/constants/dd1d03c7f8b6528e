@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\peft\tuners\waveft\model.py
-# hypothesis_version: 6.148.3
-
-['bias', 'fan_in_fan_out', 'init_weights', 'n_frequency', 'random_loc_seed', 'scaling', 'use_idwt', 'waveft_', 'wavelet_family']

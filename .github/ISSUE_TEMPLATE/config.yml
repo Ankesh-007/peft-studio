@@ -1,8 +1,11 @@
 blank_issues_enabled: false
 contact_links:
-  - name: GitHub Discussions
-    url: https://github.com/Ankesh-007/peft-studio/discussions
-    about: Ask questions and discuss ideas with the community
-  - name: Documentation
-    url: https://github.com/Ankesh-007/peft-studio#readme
-    about: Read the documentation for guides and tutorials
+  - name: 💬 GitHub Discussions
+    url: https://github.com/YOUR_USERNAME/peft-studio/discussions
+    about: Ask questions, share ideas, and connect with the community
+  - name: 📖 Documentation
+    url: https://github.com/YOUR_USERNAME/peft-studio/tree/main/docs
+    about: Browse the complete documentation including guides and references
+  - name: 🔒 Security Vulnerability
+    url: https://github.com/YOUR_USERNAME/peft-studio/security/policy
+    about: Report security vulnerabilities privately (do not create public issues)

@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\quality_analysis_service.py
-# hypothesis_version: 6.148.3
-
-[0.05, 0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 50.0, 100, '\n\nMetrics Summary:', 'achieved', 'convergence', 'convergence_status', 'efficiency', 'high', 'loss_reduction', 'low', 'medium', 'moderate', 'not_achieved', 'overfitting', 'overfitting_risk', 'stability', 'stable', 'underfitting', 'unknown', 'unstable', '🔴', '🟡', '🟢']
