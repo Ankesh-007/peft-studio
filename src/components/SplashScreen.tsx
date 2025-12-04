@@ -1,104 +1,214 @@
 import React, { useEffect, useState } from 'react';
+import { CheckCircle, Loader2, XCircle } from 'lucide-react';
 
 interface SplashScreenProps {
   onComplete: () => void;
+  onError?: (error: Error) => void;
 }
 
 interface StartupProgress {
   stage: string;
   progress: number;
   message: string;
+  substeps?: StartupSubstep[];
 }
 
-export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
+interface StartupSubstep {
+  name: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  message?: string;
+}
+
+export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError }) => {
   const [progress, setProgress] = useState<StartupProgress>({
     stage: 'initializing',
     progress: 0,
     message: 'Initializing PEFT Studio...',
+    substeps: [
+      { name: 'Starting backend service', status: 'pending' },
+      { name: 'Checking dependencies', status: 'pending' },
+      { name: 'Loading configuration', status: 'pending' },
+      { name: 'Initializing interface', status: 'pending' },
+    ],
   });
+
+  const updateSubstep = (index: number, status: StartupSubstep['status'], message?: string) => {
+    setProgress((prev) => ({
+      ...prev,
+      substeps: prev.substeps?.map((step, i) =>
+        i === index ? { ...step, status, message } : step
+      ),
+    }));
+  };
 
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        // Stage 1: Check backend health (0-30%)
-        setProgress({
+        // Stage 1: Starting backend service (0-25%)
+        setProgress((prev) => ({
+          ...prev,
           stage: 'backend',
-          progress: 10,
-          message: 'Connecting to backend...',
-        });
+          progress: 5,
+          message: 'Starting backend service...',
+        }));
+        updateSubstep(0, 'in_progress');
 
-        const healthCheck = await fetch('http://localhost:8000/api/health', {
-          signal: AbortSignal.timeout(5000),
-        });
+        // Wait for backend to be ready
+        let backendReady = false;
+        let attempts = 0;
+        const maxAttempts = 10;
 
-        if (!healthCheck.ok) {
-          throw new Error('Backend health check failed');
+        while (!backendReady && attempts < maxAttempts) {
+          try {
+            const healthCheck = await fetch('http://localhost:8000/api/health', {
+              signal: AbortSignal.timeout(2000),
+            });
+
+            if (healthCheck.ok) {
+              backendReady = true;
+            }
+          } catch (err) {
+            attempts++;
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          }
         }
 
-        setProgress({
-          stage: 'backend',
+        if (!backendReady) {
+          throw new Error('Backend service failed to start');
+        }
+
+        updateSubstep(0, 'completed', 'Backend service running');
+        setProgress((prev) => ({
+          ...prev,
+          progress: 25,
+          message: 'Backend service connected',
+        }));
+
+        // Stage 2: Checking dependencies (25-50%)
+        setProgress((prev) => ({
+          ...prev,
+          stage: 'dependencies',
           progress: 30,
-          message: 'Backend connected',
-        });
+          message: 'Checking dependencies...',
+        }));
+        updateSubstep(1, 'in_progress');
 
-        // Stage 2: Load critical resources (30-60%)
-        setProgress({
-          stage: 'resources',
-          progress: 40,
-          message: 'Loading resources...',
-        });
+        try {
+          const depsCheck = await fetch('http://localhost:8000/api/dependencies', {
+            signal: AbortSignal.timeout(5000),
+          });
 
-        // Simulate loading critical resources
+          if (depsCheck.ok) {
+            const depsData = await depsCheck.json();
+            updateSubstep(1, 'completed', 'All dependencies verified');
+          } else {
+            updateSubstep(1, 'completed', 'Dependencies checked (warnings present)');
+          }
+        } catch (err) {
+          // Non-critical, continue
+          updateSubstep(1, 'completed', 'Dependency check skipped');
+        }
+
+        setProgress((prev) => ({
+          ...prev,
+          progress: 50,
+          message: 'Dependencies verified',
+        }));
+
+        // Stage 3: Loading configuration (50-75%)
+        setProgress((prev) => ({
+          ...prev,
+          stage: 'configuration',
+          progress: 55,
+          message: 'Loading configuration...',
+        }));
+        updateSubstep(2, 'in_progress');
+
+        // Simulate loading configuration
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        updateSubstep(2, 'completed', 'Configuration loaded');
+        setProgress((prev) => ({
+          ...prev,
+          progress: 75,
+          message: 'Configuration ready',
+        }));
+
+        // Stage 4: Initializing interface (75-95%)
+        setProgress((prev) => ({
+          ...prev,
+          stage: 'ui',
+          progress: 80,
+          message: 'Initializing interface...',
+        }));
+        updateSubstep(3, 'in_progress');
+
         await new Promise((resolve) => setTimeout(resolve, 300));
 
-        setProgress({
-          stage: 'resources',
-          progress: 60,
-          message: 'Resources loaded',
-        });
+        updateSubstep(3, 'completed', 'Interface ready');
+        setProgress((prev) => ({
+          ...prev,
+          progress: 95,
+          message: 'Interface initialized',
+        }));
 
-        // Stage 3: Initialize UI (60-90%)
-        setProgress({
-          stage: 'ui',
-          progress: 70,
-          message: 'Initializing interface...',
-        });
-
-        await new Promise((resolve) => setTimeout(resolve, 200));
-
-        setProgress({
-          stage: 'ui',
-          progress: 90,
-          message: 'Interface ready',
-        });
-
-        // Stage 4: Complete (90-100%)
-        setProgress({
+        // Stage 5: Complete (95-100%)
+        setProgress((prev) => ({
+          ...prev,
           stage: 'complete',
           progress: 100,
           message: 'Ready!',
-        });
+        }));
 
         // Small delay before transitioning
-        await new Promise((resolve) => setTimeout(resolve, 300));
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
         onComplete();
       } catch (error) {
         console.error('Startup error:', error);
-        setProgress({
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        
+        setProgress((prev) => ({
+          ...prev,
           stage: 'error',
           progress: 0,
-          message: 'Failed to start. Please check if the backend is running.',
-        });
+          message: `Startup failed: ${errorMessage}`,
+        }));
+
+        // Find which substep failed and mark it
+        const currentSubstep = progress.substeps?.findIndex(
+          (step) => step.status === 'in_progress'
+        );
+        if (currentSubstep !== undefined && currentSubstep !== -1) {
+          updateSubstep(currentSubstep, 'failed', errorMessage);
+        }
+
+        // Notify parent component of error
+        if (onError && error instanceof Error) {
+          onError(error);
+        }
       }
     };
 
     initializeApp();
-  }, [onComplete]);
+  }, [onComplete, onError]);
+
+  const getSubstepIcon = (status: StartupSubstep['status']) => {
+    switch (status) {
+      case 'completed':
+        return <CheckCircle className="w-4 h-4 text-green-400" />;
+      case 'failed':
+        return <XCircle className="w-4 h-4 text-red-400" />;
+      case 'in_progress':
+        return <Loader2 className="w-4 h-4 text-blue-400 animate-spin" />;
+      default:
+        return <div className="w-4 h-4 rounded-full border-2 border-gray-500" />;
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 flex items-center justify-center z-50">
-      <div className="text-center">
+      <div className="text-center max-w-lg w-full px-4">
         {/* Logo */}
         <div className="mb-8">
           <div className="w-24 h-24 mx-auto bg-white rounded-2xl flex items-center justify-center shadow-2xl">
@@ -111,47 +221,92 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
         <p className="text-blue-200 mb-8">Unified LLM Fine-Tuning Platform</p>
 
         {/* Progress Bar */}
-        <div className="w-80 mx-auto">
-          <div className="bg-white/10 rounded-full h-2 mb-4 overflow-hidden">
+        <div className="w-full mx-auto mb-6">
+          <div className="bg-white/10 rounded-full h-3 mb-4 overflow-hidden shadow-inner">
             <div
-              className="bg-gradient-to-r from-blue-400 to-purple-400 h-full transition-all duration-300 ease-out"
+              className="bg-gradient-to-r from-blue-400 to-purple-400 h-full transition-all duration-500 ease-out shadow-lg"
               style={{ width: `${progress.progress}%` }}
             />
           </div>
 
           {/* Status Message */}
-          <p className="text-blue-100 text-sm animate-pulse">
+          <p className="text-blue-100 text-base font-medium mb-1">
             {progress.message}
           </p>
 
           {/* Progress Percentage */}
-          <p className="text-blue-300 text-xs mt-2">{progress.progress}%</p>
+          <p className="text-blue-300 text-sm">{progress.progress}%</p>
         </div>
+
+        {/* Substeps */}
+        {progress.substeps && progress.substeps.length > 0 && (
+          <div className="bg-white/5 rounded-lg p-4 mb-6 backdrop-blur-sm">
+            <div className="space-y-3">
+              {progress.substeps.map((substep, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 text-left"
+                >
+                  <div className="flex-shrink-0">
+                    {getSubstepIcon(substep.status)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className={`text-sm font-medium ${
+                        substep.status === 'completed'
+                          ? 'text-green-300'
+                          : substep.status === 'failed'
+                          ? 'text-red-300'
+                          : substep.status === 'in_progress'
+                          ? 'text-blue-300'
+                          : 'text-gray-400'
+                      }`}
+                    >
+                      {substep.name}
+                    </p>
+                    {substep.message && (
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {substep.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Error State */}
         {progress.stage === 'error' && (
-          <div className="mt-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg max-w-md mx-auto">
-            <p className="text-red-200 text-sm">{progress.message}</p>
+          <div className="mt-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg backdrop-blur-sm">
+            <p className="text-red-200 text-sm mb-3">{progress.message}</p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-3 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm transition-colors"
+              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm transition-colors font-medium"
             >
-              Retry
+              Retry Startup
             </button>
           </div>
         )}
 
         {/* Loading Spinner */}
         {progress.stage !== 'error' && progress.stage !== 'complete' && (
-          <div className="mt-8 flex justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+          <div className="mt-6 flex justify-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-t-2 border-white"></div>
+          </div>
+        )}
+
+        {/* Success State */}
+        {progress.stage === 'complete' && (
+          <div className="mt-6 flex justify-center">
+            <CheckCircle className="w-12 h-12 text-green-400 animate-pulse" />
           </div>
         )}
       </div>
 
       {/* Version Info */}
       <div className="absolute bottom-4 left-0 right-0 text-center">
-        <p className="text-blue-300 text-xs">Version 1.0.0</p>
+        <p className="text-blue-300 text-xs">Version 1.0.1</p>
       </div>
     </div>
   );

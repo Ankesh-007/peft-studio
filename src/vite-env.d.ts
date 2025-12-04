@@ -30,5 +30,15 @@ interface Window {
     onUpdateDownloaded: (callback: (data: { version: string; releaseNotes?: string }) => void) => void;
     onUpdateStatus: (callback: (data: { status: string; message?: string }) => void) => void;
     onUpdateChecksumFailed: (callback: (data: { expected: string; actual: string; file: string }) => void) => void;
+    // Backend management methods
+    getBackendStatus: () => Promise<{ running: boolean; port: number; pid?: number; startTime?: Date; restartAttempts: number }>;
+    restartBackend: () => Promise<{ running: boolean; port: number; pid?: number; startTime?: Date }>;
+    forceRestartBackend: () => Promise<{ running: boolean; port: number; pid?: number; startTime?: Date }>;
+    checkBackendHealth: () => Promise<{ healthy: boolean; response?: any; error?: string }>;
+    getBackendLogs: () => Promise<{ logPath: string; logs: string }>;
+    installDependencies: () => Promise<{ success: boolean; output?: string; error?: string }>;
+    checkPort: (port: number) => Promise<{ port: number; available: boolean }>;
+    openLogFile: () => Promise<{ logPath: string }>;
+    onBackendStatus: (callback: (data: any) => void) => void;
   };
 }

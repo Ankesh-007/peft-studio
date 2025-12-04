@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\settings_api.py
-# hypothesis_version: 6.148.3
-
-[400, 404, 500, '/api/settings', '/category', '/cleanup/candidates', '/export/json', '/import', '/reset', '/setting', '/validate', '/{category}', '/{category}/{key}', 'Setting key', 'Setting value', 'Settings are valid', 'Settings category', 'Settings values', 'category', 'cleanup_candidates', 'error', 'key', 'message', 'settings', 'settings_json', 'success', 'valid', 'value']

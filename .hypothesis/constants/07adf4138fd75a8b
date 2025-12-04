@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\plugins\connectors\ollama_connector.py
-# hypothesis_version: 6.148.3
-
-[0.0, 200, '"', '*.json', '.peft-studio', '1.0.0', 'Content-Type', 'Local GPU', 'Local Machine', 'Ollama', 'OllamaModelMetadata', 'USD', '\\"', 'application/json', 'base_model', 'base_url', 'cache', 'cached_at', 'details', 'digest', 'local', 'model', 'modelfile', 'models', 'modified_at', 'name', 'ollama', 'options', 'parameters', 'prompt', 'push', 'r', 'response', 'size', 'status', 'stream', 'system_prompt', 'template', 'w']

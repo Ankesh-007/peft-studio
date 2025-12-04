@@ -30,8 +30,8 @@ def _get_torch():
         _torch = _torch_module
     return _torch
 
-from backend.connectors.base import PlatformConnector, JobStatus as ConnectorJobStatus
-from backend.connectors.connector_manager import get_connector_manager
+from connectors.base import PlatformConnector, JobStatus as ConnectorJobStatus
+from connectors.connector_manager import get_connector_manager
 
 from backend.services.quality_analysis_service import (
     analyze_training_quality,

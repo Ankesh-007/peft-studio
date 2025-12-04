@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\paramiko\agent.py
-# hypothesis_version: 6.148.3
-
-[0.5, 512, 1000, '/sshproxy.ssh', '>I', 'SSH_AUTH_SOCK', 'auth-agent', 'fileno', 'lost ssh-agent', 'rsa-sha2-256', 'rsa-sha2-512', 'sshproxy', 'thread', 'win32']

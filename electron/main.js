@@ -2,6 +2,7 @@ const { app, BrowserWindow, Notification, ipcMain, dialog } = require('electron'
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const log = require('electron-log');
+const http = require('http');
 
 let mainWindow;
 let pythonProcess;
@@ -9,6 +10,325 @@ let pythonProcess;
 // Configure logging
 log.transports.file.level = 'info';
 autoUpdater.logger = log;
+
+// Backend Service Manager
+class BackendServiceManager {
+  constructor() {
+    this.process = null;
+    this.port = 8000;
+    this.maxRestartAttempts = 3;
+    this.restartAttempts = 0;
+    this.healthCheckInterval = null;
+    this.healthCheckIntervalMs = 5000; // Check every 5 seconds
+    this.startTime = null;
+    this.isShuttingDown = false;
+  }
+
+  async start() {
+    if (this.process) {
+      log.info('Backend service already running');
+      return { running: true, port: this.port, pid: this.process.pid };
+    }
+
+    log.info('Starting Python backend service...');
+    this.startTime = new Date();
+
+    try {
+      const { spawn } = require('child_process');
+      const pythonPath = path.join(__dirname, '../backend/main.py');
+      
+      // Try to find Python executable
+      const pythonCmd = await this.findPythonExecutable();
+      if (!pythonCmd) {
+        const error = 'Python 3.10+ is required but not found. Please install Python from python.org';
+        log.error(error);
+        this.sendStatusToRenderer('error', { error, code: 'PYTHON_NOT_FOUND' });
+        return { running: false, error, code: 'PYTHON_NOT_FOUND' };
+      }
+
+      // Start the Python process
+      this.process = spawn(pythonCmd, [pythonPath], {
+        env: { ...process.env, PYTHONUNBUFFERED: '1' }
+      });
+
+      this.process.stdout.on('data', (data) => {
+        const output = data.toString();
+        log.info(`Backend: ${output}`);
+        
+        // Check if backend is ready
+        if (output.includes('Uvicorn running on') || output.includes('Application startup complete')) {
+          log.info('Backend service started successfully');
+          this.sendStatusToRenderer('ready', { port: this.port, pid: this.process.pid });
+          this.startHealthChecks();
+        }
+      });
+
+      this.process.stderr.on('data', (data) => {
+        const error = data.toString();
+        log.error(`Backend Error: ${error}`);
+        
+        // Check for specific errors
+        if (error.includes('Address already in use') || error.includes('EADDRINUSE')) {
+          log.error(`Port ${this.port} is already in use`);
+          this.sendStatusToRenderer('error', { 
+            error: `Port ${this.port} is in use. Trying alternative port...`,
+            code: 'PORT_IN_USE'
+          });
+          this.tryAlternativePort();
+        } else if (error.includes('ModuleNotFoundError') || error.includes('ImportError')) {
+          const missingModule = error.match(/No module named '(\w+)'/)?.[1] || 'unknown';
+          this.sendStatusToRenderer('error', {
+            error: `Missing Python package: ${missingModule}. Please run: pip install -r requirements.txt`,
+            code: 'MISSING_PACKAGE',
+            missingModule
+          });
+        }
+      });
+
+      this.process.on('close', (code) => {
+        log.info(`Backend process exited with code ${code}`);
+        
+        if (!this.isShuttingDown && code !== 0) {
+          log.warn('Backend crashed unexpectedly');
+          this.handleCrash();
+        }
+        
+        this.process = null;
+        this.stopHealthChecks();
+      });
+
+      this.process.on('error', (err) => {
+        log.error('Failed to start backend process:', err);
+        this.sendStatusToRenderer('error', {
+          error: err.message,
+          code: 'PROCESS_START_FAILED'
+        });
+      });
+
+      return { 
+        running: true, 
+        port: this.port, 
+        pid: this.process.pid,
+        startTime: this.startTime
+      };
+
+    } catch (error) {
+      log.error('Error starting backend:', error);
+      this.sendStatusToRenderer('error', {
+        error: error.message,
+        code: 'START_ERROR'
+      });
+      return { running: false, error: error.message };
+    }
+  }
+
+  async findPythonExecutable() {
+    const { exec } = require('child_process');
+    const { promisify } = require('util');
+    const execAsync = promisify(exec);
+
+    // Try different Python commands
+    const pythonCommands = ['python', 'python3', 'py'];
+    
+    for (const cmd of pythonCommands) {
+      try {
+        const { stdout } = await execAsync(`${cmd} --version`);
+        const version = stdout.trim();
+        log.info(`Found Python: ${version}`);
+        
+        // Check if version is 3.10+
+        const match = version.match(/Python (\d+)\.(\d+)/);
+        if (match) {
+          const major = parseInt(match[1]);
+          const minor = parseInt(match[2]);
+          if (major === 3 && minor >= 10) {
+            return cmd;
+          }
+        }
+      } catch (err) {
+        // Command not found, try next
+        continue;
+      }
+    }
+    
+    return null;
+  }
+
+  async tryAlternativePort() {
+    // Try ports 8001-8010
+    for (let port = 8001; port <= 8010; port++) {
+      const available = await this.isPortAvailable(port);
+      if (available) {
+        log.info(`Switching to alternative port: ${port}`);
+        this.port = port;
+        // Restart with new port
+        await this.stop();
+        await this.start();
+        return;
+      }
+    }
+    
+    log.error('No available ports found in range 8000-8010');
+    this.sendStatusToRenderer('error', {
+      error: 'All ports 8000-8010 are in use. Please close other applications.',
+      code: 'NO_AVAILABLE_PORTS'
+    });
+  }
+
+  async isPortAvailable(port) {
+    return new Promise((resolve) => {
+      const server = require('net').createServer();
+      server.once('error', () => resolve(false));
+      server.once('listening', () => {
+        server.close();
+        resolve(true);
+      });
+      server.listen(port);
+    });
+  }
+
+  async checkBackendHealth() {
+    return new Promise((resolve) => {
+      const options = {
+        hostname: 'localhost',
+        port: this.port,
+        path: '/api/health',
+        method: 'GET',
+        timeout: 3000
+      };
+
+      const req = http.request(options, (res) => {
+        let data = '';
+        res.on('data', (chunk) => { data += chunk; });
+        res.on('end', () => {
+          if (res.statusCode === 200) {
+            try {
+              const response = JSON.parse(data);
+              resolve({ healthy: true, response });
+            } catch (err) {
+              resolve({ healthy: false, error: 'Invalid response' });
+            }
+          } else {
+            resolve({ healthy: false, error: `Status ${res.statusCode}` });
+          }
+        });
+      });
+
+      req.on('error', (err) => {
+        resolve({ healthy: false, error: err.message });
+      });
+
+      req.on('timeout', () => {
+        req.destroy();
+        resolve({ healthy: false, error: 'Timeout' });
+      });
+
+      req.end();
+    });
+  }
+
+  startHealthChecks() {
+    if (this.healthCheckInterval) {
+      return;
+    }
+
+    log.info('Starting health check monitoring');
+    let consecutiveFailures = 0;
+
+    this.healthCheckInterval = setInterval(async () => {
+      const health = await this.checkBackendHealth();
+      
+      if (health.healthy) {
+        consecutiveFailures = 0;
+        this.sendStatusToRenderer('healthy', { port: this.port });
+      } else {
+        consecutiveFailures++;
+        log.warn(`Health check failed (${consecutiveFailures}/3): ${health.error}`);
+        
+        if (consecutiveFailures >= 3) {
+          log.error('Backend service is unhealthy after 3 consecutive failures');
+          this.sendStatusToRenderer('unhealthy', { error: health.error });
+          this.handleCrash();
+        }
+      }
+    }, this.healthCheckIntervalMs);
+  }
+
+  stopHealthChecks() {
+    if (this.healthCheckInterval) {
+      clearInterval(this.healthCheckInterval);
+      this.healthCheckInterval = null;
+      log.info('Stopped health check monitoring');
+    }
+  }
+
+  async handleCrash() {
+    this.stopHealthChecks();
+    
+    if (this.restartAttempts < this.maxRestartAttempts) {
+      this.restartAttempts++;
+      log.info(`Attempting to restart backend (attempt ${this.restartAttempts}/${this.maxRestartAttempts})`);
+      this.sendStatusToRenderer('restarting', { attempt: this.restartAttempts });
+      
+      // Wait a bit before restarting
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      await this.start();
+    } else {
+      log.error('Max restart attempts reached. Backend service failed to start.');
+      this.sendStatusToRenderer('failed', {
+        error: 'Backend service failed to start after multiple attempts',
+        code: 'MAX_RESTARTS_EXCEEDED'
+      });
+    }
+  }
+
+  async stop() {
+    this.isShuttingDown = true;
+    this.stopHealthChecks();
+    
+    if (this.process) {
+      log.info('Stopping backend service...');
+      this.process.kill('SIGTERM');
+      
+      // Wait for graceful shutdown
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Force kill if still running
+      if (this.process) {
+        this.process.kill('SIGKILL');
+      }
+      
+      this.process = null;
+    }
+  }
+
+  async restart() {
+    log.info('Restarting backend service...');
+    await this.stop();
+    this.restartAttempts = 0;
+    return await this.start();
+  }
+
+  getStatus() {
+    return {
+      running: this.process !== null,
+      port: this.port,
+      pid: this.process?.pid,
+      startTime: this.startTime,
+      restartAttempts: this.restartAttempts
+    };
+  }
+
+  sendStatusToRenderer(status, data = {}) {
+    if (mainWindow && mainWindow.webContents) {
+      mainWindow.webContents.send('backend-status', { status, ...data });
+    }
+  }
+}
+
+// Create backend service manager instance
+const backendManager = new BackendServiceManager();
 
 // Configure auto-updater
 autoUpdater.autoDownload = false; // We'll download manually after user confirmation
@@ -47,24 +367,10 @@ function createWindow() {
   });
 }
 
-// Start Python backend
-function startPythonBackend() {
-  const { spawn } = require('child_process');
-  const pythonPath = path.join(__dirname, '../backend/main.py');
-  
-  pythonProcess = spawn('python', [pythonPath]);
-  
-  pythonProcess.stdout.on('data', (data) => {
-    console.log(`Python: ${data}`);
-  });
-  
-  pythonProcess.stderr.on('data', (data) => {
-    console.error(`Python Error: ${data}`);
-  });
-  
-  pythonProcess.on('close', (code) => {
-    console.log(`Python process exited with code ${code}`);
-  });
+// Start Python backend using BackendServiceManager
+async function startPythonBackend() {
+  const status = await backendManager.start();
+  return status;
 }
 
 // Auto-updater functions
@@ -213,17 +519,21 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-  if (pythonProcess) {
-    pythonProcess.kill();
-  }
+  backendManager.stop();
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
 app.on('quit', () => {
-  if (pythonProcess) {
-    pythonProcess.kill();
+  backendManager.stop();
+});
+
+app.on('before-quit', async (event) => {
+  if (backendManager.process) {
+    event.preventDefault();
+    await backendManager.stop();
+    app.quit();
   }
 });
 
@@ -372,4 +682,72 @@ ipcMain.handle('get-app-version', async () => {
   const version = app.getVersion();
   log.info('App version requested:', version);
   return { version };
+});
+
+// Backend management IPC handlers
+ipcMain.handle('backend-status', async () => {
+  return backendManager.getStatus();
+});
+
+ipcMain.handle('backend-restart', async () => {
+  log.info('Backend restart requested');
+  return await backendManager.restart();
+});
+
+ipcMain.handle('backend-health-check', async () => {
+  return await backendManager.checkBackendHealth();
+});
+
+// Error recovery IPC handlers
+ipcMain.handle('backend-force-restart', async () => {
+  log.info('Backend force restart requested');
+  backendManager.restartAttempts = 0; // Reset restart counter
+  return await backendManager.restart();
+});
+
+ipcMain.handle('backend-get-logs', async () => {
+  log.info('Backend logs requested');
+  const logPath = log.transports.file.getFile().path;
+  return { logPath, logs: log.transports.file.readAllLogs() };
+});
+
+ipcMain.handle('backend-install-dependencies', async () => {
+  log.info('Backend dependency installation requested');
+  const { exec } = require('child_process');
+  const { promisify } = require('util');
+  const execAsync = promisify(exec);
+  
+  try {
+    const pythonCmd = await backendManager.findPythonExecutable();
+    if (!pythonCmd) {
+      return { success: false, error: 'Python not found' };
+    }
+    
+    const requirementsPath = path.join(__dirname, '../backend/requirements.txt');
+    const { stdout, stderr } = await execAsync(`${pythonCmd} -m pip install -r "${requirementsPath}"`);
+    
+    log.info('Dependency installation output:', stdout);
+    if (stderr) {
+      log.warn('Dependency installation warnings:', stderr);
+    }
+    
+    return { success: true, output: stdout };
+  } catch (error) {
+    log.error('Dependency installation failed:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('backend-check-port', async (event, port) => {
+  log.info(`Checking if port ${port} is available`);
+  const available = await backendManager.isPortAvailable(port);
+  return { port, available };
+});
+
+ipcMain.handle('open-log-file', async () => {
+  log.info('Opening log file');
+  const { shell } = require('electron');
+  const logPath = log.transports.file.getFile().path;
+  shell.showItemInFolder(logPath);
+  return { logPath };
 });

@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\plugins\connectors\wandb_connector.py
-# hypothesis_version: 6.148.3
-
-[5.0, 100, 200, 201, 204, 401, ', ', '1.0.0', 'Authorization', 'Content-Type', 'Invalid API key', 'Invalid API response', 'Not connected to W&B', 'Weights & Biases', '_', '_step', '_timestamp', 'algorithm', 'alpha', 'api_key', 'api_key is required', 'application/json', 'artifact', 'artifacts', 'base_model', 'batch_size', 'config', 'configs', 'crashed', 'created_at', 'data', 'dataset_path', 'dropout', 'entity', 'failed', 'file', 'finished', 'history', 'https://api.wandb.ai', 'id', 'job_id', 'killed', 'learning_rate', 'metadata', 'metrics', 'minStep', 'model', 'model_source', 'name', 'num_epochs', 'project', 'provider', 'quantization', 'rank', 'rb', 'run', 'running', 'runs', 'state', 'status', 'summary', 'tags', 'target_modules', 'type', 'url', 'username', 'validation_split', 'viewer', 'wandb', 'wandb_id', 'warmup_steps']

@@ -188,7 +188,162 @@ async def root():
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint - responds immediately without loading heavy services"""
-    return {"status": "healthy"}
+    return {"status": "healthy", "timestamp": __import__('datetime').datetime.now().isoformat()}
+
+
+@app.get("/api/dependencies")
+async def check_dependencies():
+    """
+    Check all Python dependencies and report their status.
+    Responds quickly without loading heavy ML libraries.
+    """
+    import sys
+    import importlib.util
+    from datetime import datetime
+    
+    dependencies = {
+        "python_version": sys.version,
+        "python_version_info": {
+            "major": sys.version_info.major,
+            "minor": sys.version_info.minor,
+            "micro": sys.version_info.micro
+        },
+        "timestamp": datetime.now().isoformat(),
+        "packages": {}
+    }
+    
+    # Check for required packages without importing them (fast)
+    required_packages = {
+        "torch": "PyTorch",
+        "transformers": "Transformers",
+        "peft": "PEFT",
+        "datasets": "Datasets",
+        "accelerate": "Accelerate",
+        "bitsandbytes": "BitsAndBytes (optional)",
+        "unsloth": "Unsloth (optional)",
+        "fastapi": "FastAPI",
+        "uvicorn": "Uvicorn",
+        "pydantic": "Pydantic"
+    }
+    
+    for package_name, display_name in required_packages.items():
+        spec = importlib.util.find_spec(package_name)
+        if spec is not None:
+            try:
+                # Try to get version without full import
+                if package_name == "torch":
+                    import torch
+                    version = torch.__version__
+                    dependencies["torch_available"] = True
+                    dependencies["cuda_available"] = torch.cuda.is_available()
+                    if torch.cuda.is_available():
+                        dependencies["cuda_version"] = torch.version.cuda
+                        dependencies["cuda_device_count"] = torch.cuda.device_count()
+                        dependencies["cuda_device_name"] = torch.cuda.get_device_name(0) if torch.cuda.device_count() > 0 else None
+                elif package_name == "transformers":
+                    import transformers
+                    version = transformers.__version__
+                elif package_name == "peft":
+                    import peft
+                    version = peft.__version__
+                else:
+                    # For other packages, just check if they exist
+                    module = __import__(package_name)
+                    version = getattr(module, "__version__", "unknown")
+                
+                dependencies["packages"][package_name] = {
+                    "installed": True,
+                    "version": version,
+                    "display_name": display_name
+                }
+            except Exception as e:
+                dependencies["packages"][package_name] = {
+                    "installed": True,
+                    "version": "unknown",
+                    "display_name": display_name,
+                    "error": str(e)
+                }
+        else:
+            dependencies["packages"][package_name] = {
+                "installed": False,
+                "display_name": display_name,
+                "fix_instructions": f"Install with: pip install {package_name}"
+            }
+    
+    # Check if Python version is compatible
+    if sys.version_info.major < 3 or (sys.version_info.major == 3 and sys.version_info.minor < 10):
+        dependencies["python_compatible"] = False
+        dependencies["python_error"] = "Python 3.10 or higher is required"
+    else:
+        dependencies["python_compatible"] = True
+    
+    # Determine overall status
+    missing_required = [
+        pkg for pkg, info in dependencies["packages"].items() 
+        if not info["installed"] and "(optional)" not in info["display_name"]
+    ]
+    
+    dependencies["all_dependencies_met"] = len(missing_required) == 0 and dependencies.get("python_compatible", True)
+    dependencies["missing_packages"] = missing_required
+    
+    return dependencies
+
+
+@app.get("/api/dependencies/check")
+async def check_dependencies_comprehensive():
+    """
+    Comprehensive dependency check using DependencyChecker service.
+    Returns detailed report with Python version, CUDA status, package versions,
+    and fix instructions for any issues.
+    """
+    from services.dependency_checker import get_dependency_checker
+    
+    checker = get_dependency_checker()
+    report = checker.check_all()
+    
+    # Convert dataclasses to dictionaries for JSON serialization
+    return {
+        "all_passed": report.all_passed,
+        "checks": [
+            {
+                "name": check.name,
+                "required": check.required,
+                "installed": check.installed,
+                "version": check.version,
+                "expected_version": check.expected_version,
+                "error": check.error,
+                "fix_instructions": check.fix_instructions
+            }
+            for check in report.checks
+        ],
+        "recommendations": report.recommendations,
+        "timestamp": report.timestamp.isoformat()
+    }
+
+
+@app.get("/api/startup/status")
+async def get_startup_status():
+    """
+    Get detailed startup status information.
+    Includes initialization progress, errors, and recommendations.
+    """
+    from datetime import datetime
+    
+    report = startup_optimizer.get_startup_report()
+    
+    # Add additional status information
+    status = {
+        "initialized": True,
+        "startup_time": report.get("total_time", 0),
+        "meets_target": report.get("meets_target", True),
+        "timestamp": datetime.now().isoformat(),
+        "phases": report.get("phases", {}),
+        "recommendations": report.get("recommendations", []),
+        "backend_version": "1.0.0",
+        "ready": True
+    }
+    
+    return status
 
 
 @app.get("/api/startup/metrics")
@@ -537,10 +692,48 @@ async def list_loaded_models():
 
 @app.get("/api/peft/algorithms")
 async def list_peft_algorithms():
-    """Get list of supported PEFT algorithms"""
-    return {
-        "algorithms": [algo.value for algo in PEFTAlgorithm]
-    }
+    """Get detailed information about all supported PEFT algorithms"""
+    _lazy_load_services()
+    peft_service = get_peft_service()
+    
+    try:
+        algorithms_info = peft_service.get_all_algorithms_info()
+        
+        # Convert to dict format for JSON response
+        algorithms = []
+        for algo_info in algorithms_info:
+            algorithms.append({
+                "id": algo_info.id,
+                "name": algo_info.name,
+                "description": algo_info.description,
+                "long_description": algo_info.long_description,
+                "recommended": algo_info.recommended,
+                "use_cases": algo_info.use_cases,
+                "requirements": algo_info.requirements,
+                "advantages": algo_info.advantages,
+                "disadvantages": algo_info.disadvantages,
+                "memory_efficiency": algo_info.memory_efficiency,
+                "training_speed": algo_info.training_speed,
+                "parameters": [
+                    {
+                        "name": param.name,
+                        "display_name": param.display_name,
+                        "description": param.description,
+                        "type": param.type,
+                        "default": param.default,
+                        "min_value": param.min_value,
+                        "max_value": param.max_value,
+                        "recommended_range": param.recommended_range
+                    }
+                    for param in algo_info.parameters
+                ]
+            })
+        
+        return {"algorithms": algorithms}
+        
+    except Exception as e:
+        logger.error(f"Error getting algorithm info: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # Smart Configuration Endpoints

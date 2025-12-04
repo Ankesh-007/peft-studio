@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\paramiko\sftp.py
-# hypothesis_version: 6.148.3
-
-[0.1, 101, 106, 200, 202, '>I', 'Bad message', 'Connection lost', 'End of file', 'Failure', 'IN: ', 'No connection', 'No such file', 'OUT: ', 'Permission denied', 'Success', 'attrs', 'check-file', 'close', 'data', 'extended', 'extended_reply', 'fsetstat', 'fstat', 'handle', 'init', 'lstat', 'md5,sha1', 'mkdir', 'name', 'open', 'opendir', 'paramiko.sftp', 'read', 'readdir', 'readlink', 'realpath', 'remove', 'rename', 'rmdir', 'setstat', 'stat', 'status', 'symlink', 'version', 'write']

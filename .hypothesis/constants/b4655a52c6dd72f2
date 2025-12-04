@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\configuration_management_api.py
-# hypothesis_version: 6.148.3
-
-[400, 404, 500, '-', '.json', '/api/configurations', '/export', '/export-file', '/import', '/import-file', '/library/list', '/library/save', '/library/{config_id}', '_', 'application/json', 'config_id', 'configuration', 'configuration.json', 'configurations', 'data', 'message', 'metadata', 'success', 'w', 'wb']

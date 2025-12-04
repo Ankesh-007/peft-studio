@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\plugins\connectors\honeyhive_connector.py
-# hypothesis_version: 6.148.3
-
-[200, 201, 204, 401, '\nEvaluation Metrics:', '1.0.0', 'Authorization', 'Content-Type', 'HoneyHive', 'Invalid API key', 'Invalid API response', 'accuracy', 'algorithm', 'alpha', 'api_key', 'api_key is required', 'application/json', 'base_model', 'battle_id', 'bertscore', 'bleu', 'comparison', 'completed', 'config', 'cost', 'created_at', 'current_metric', 'data', 'dataset_id', 'dataset_path', 'datasets', 'default', 'description', 'error', 'eval_id', 'evaluation_id', 'f1_score', 'failed', 'honeyhive', 'human_preference', 'id', 'job_id', 'latency', 'metadata', 'meteor', 'metrics', 'model_a_id', 'model_a_outputs', 'model_b_id', 'model_b_outputs', 'model_info', 'name', 'pending', 'perplexity', 'precision', 'progress', 'project_id', 'projects', 'rank', 'rb', 'recall', 'results', 'rouge', 'running', 'size', 'status', 'validation_split', 'visualization']

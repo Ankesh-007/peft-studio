@@ -7,23 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.1] - 2024-12-03
-
-### Changed
-- Merged pre-release-backup branch with codebase cleanup and optimizations
-- Improved code organization and module structure
-- Enhanced documentation structure with better categorization
-- Optimized test organization and performance
-
-### Removed
-- Cleaned up `.hypothesis` cache files and temporary test artifacts
-- Removed example files (CostCalculatorExample.tsx, PausedRunExample.tsx)
-- Consolidated duplicate documentation files
+## [1.0.1] - 2024-12-04
 
 ### Fixed
-- Corrected module import paths in several components
-- Resolved test file organization issues
-- Fixed broken documentation links
+- **Backend Service Not Starting**: Fixed critical issue where Python backend service was not initializing properly, causing blank window on application startup
+- **Backend Health Monitoring**: Added automatic health check polling and restart mechanism for crashed backend services
+- **Port Conflict Resolution**: Implemented automatic alternative port selection when default port is in use
+- **Dependency Verification**: Added comprehensive dependency checking on startup with clear error messages and fix instructions
+
+### Added
+- **PEFT Algorithm Display**: All five PEFT algorithms now visible in UI (LoRA, QLoRA, DoRA, PiSSA, RSLoRA) with descriptions and parameter controls
+- **Algorithm Metadata**: Added detailed descriptions, recommended use cases, and parameter definitions for each PEFT algorithm
+- **Dependency Status UI**: New component displays Python version, CUDA availability, and package installation status on startup
+- **Startup Error Screen**: Clear error messages with diagnostic information and actionable recovery steps
+- **Enhanced Splash Screen**: Progress indicators showing current initialization step during startup
+- **Health Check Endpoints**: New `/api/health`, `/api/dependencies`, and `/api/startup/status` endpoints for monitoring
+
+### Improved
+- **Error Handling**: Comprehensive error recovery mechanisms with automatic restart and manual recovery options
+- **User Feedback**: Real-time status updates during application startup with progress indicators
+- **Error Messages**: All errors now include what went wrong, why it happened, and how to fix it
+- **Backend Process Management**: Robust Python process lifecycle management with proper cleanup on exit
+- **Startup Flow**: Streamlined initialization sequence with better error detection and reporting
+
+### Cleaned
+- **Repository Size**: Removed build artifacts, test caches, and redundant documentation files
+- **Build Artifacts**: Cleaned `release/`, `dist/`, and `build/` directories (except essential files)
+- **Test Artifacts**: Removed `.hypothesis/` and `.pytest_cache/` directories
+- **Documentation**: Consolidated redundant completion status files into CHANGELOG
+- **Spec Files**: Removed completed specification directories
+
+### Technical
+- **Property-Based Tests**: Added comprehensive PBT coverage for backend initialization, PEFT completeness, dependency verification, cleanup idempotence, and error message clarity
+- **Backend Service Manager**: Enhanced Electron main process with robust backend lifecycle management
+- **Dependency Checker Service**: New Python service for comprehensive dependency validation
+- **PEFT Configuration Component**: New React component for algorithm selection and parameter configuration
+- **Updated .gitignore**: Added patterns to prevent re-addition of removed artifacts
 
 ## [1.0.0] - 2024-12-01
 
@@ -207,5 +226,5 @@ Security improvements and vulnerability fixes
 ---
 
 [Unreleased]: https://github.com/Ankesh-007/peft-studio/compare/v1.0.1...HEAD
-[1.0.1]: https://github.com/Ankesh-007/peft-studio/compare/v1.0.0...v1.0.1
+[1.0.1]: https://github.com/Ankesh-007/peft-studio/releases/tag/v1.0.1
 [1.0.0]: https://github.com/Ankesh-007/peft-studio/releases/tag/v1.0.0

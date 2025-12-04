@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\telemetry_api.py
-# hypothesis_version: 6.148.3
-
-[400, 403, '/analytics', '/api/telemetry', '/consent', '/data', '/events', '/export', '/health', '/performance', 'Event tracked', 'enabled', 'healthy', 'message', 'ms', 'session_id', 'status', 'success', 'telemetry']

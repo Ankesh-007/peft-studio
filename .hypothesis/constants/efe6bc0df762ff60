@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\performance_service.py
-# hypothesis_version: 6.148.3
-
-[0.05, 0.1, 0.5, 1.0, 100, 300, 1000, 1024, 3600, '/', 'after_cursor_execute', 'avg_response_time', 'avg_time', 'cache', 'capacity', 'cpu_percent', 'database', 'disk_free_gb', 'disk_percent', 'disk_used_gb', 'endpoint', 'error_count', 'error_rate', 'hit_rate', 'hits', 'max_response_time', 'max_time', 'memory_available_mb', 'memory_percent', 'memory_used_mb', 'min_response_time', 'min_time', 'misses', 'parameters', 'query_start_time', 'request_count', 'requests', 'requests_per_second', 'size', 'slow_queries', 'statement', 'system', 'time', 'timestamp', 'total_queries', 'total_requests', 'utilization']

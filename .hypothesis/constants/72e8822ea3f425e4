@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\logging_api.py
-# hypothesis_version: 6.148.3
-
-[100, 400, 404, 500, '%Y%m%d_%H%M%S', '.peft-studio', '/api/logging', '/debug-mode', '/diagnostic-report', '/export', '/logs', '/logs/search', '/stats', 'Filter by error type', 'Filter by severity', 'Report not found', 'Search query', 'application/json', 'by_error_type', 'by_severity', 'critical', 'debug', 'download_url', 'enabled', 'error', 'error_count', 'file_path', 'filepath', 'filtered', 'generated_at', 'high', 'info', 'log_count', 'logging', 'logs', 'low', 'medium', 'message', 'query', 'recent_actions_count', 'report_id', 'reports', 'success', 'total', 'total_logs', 'verbose_logging', 'w', 'warning']

@@ -13,7 +13,7 @@ import inspect
 from typing import Dict, List, Optional
 from pathlib import Path
 
-from backend.connectors.base import PlatformConnector
+from .base import PlatformConnector
 
 
 logger = logging.getLogger(__name__)

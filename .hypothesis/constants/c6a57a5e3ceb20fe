@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\paramiko\common.py
-# hypothesis_version: 6.148.3
-
-[0.01, 101, 255, 384, 420, 432, 438, 448, 511, 2147483648, 4294967295, 'B', 'Connect failed', 'Resource shortage', 'Unknown channel type', 'channel-close', 'channel-data', 'channel-eof', 'channel-failure', 'channel-open', 'channel-open-failure', 'channel-open-success', 'channel-request', 'channel-success', 'debug', 'disconnect', 'ext-info', 'global-request', 'ignore', 'kex30', 'kex31', 'kex32', 'kex33', 'kex34', 'kex40', 'kex41', 'kexinit', 'newkeys', 'request-failure', 'request-success', 'service-accept', 'service-request', 'unimplemented', 'userauth--banner', 'userauth-failure', 'userauth-gssapi-mic', 'userauth-request', 'userauth-success']

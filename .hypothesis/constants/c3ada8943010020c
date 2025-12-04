@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\nacl\bindings\crypto_pwhash.py
-# hypothesis_version: 6.148.3
-
-[127, 128, 1024, 32768, 1073741823, 'Invalid block size', 'Wrong password', 'char *', 'char[]', 'uint8_t[]', 'unsigned char[]']

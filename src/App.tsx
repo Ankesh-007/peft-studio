@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import { useHelpPanel } from './hooks/useHelpPanel';
 import { useOnboarding } from './hooks/useOnboarding';
 import SplashScreen from './components/SplashScreen';
+import StartupError, { StartupErrorInfo } from './components/StartupError';
 import PerformanceProfiler from './components/PerformanceProfiler';
 import { UpdateNotification } from './components/UpdateNotification';
 
@@ -34,6 +35,7 @@ type View = 'dashboard' | 'training' | 'deployment' | 'gradio-demos' | 'inferenc
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [isAppReady, setIsAppReady] = useState(false);
+  const [startupError, setStartupError] = useState<StartupErrorInfo | null>(null);
   const { isHelpOpen, currentContext, closeHelp } = useHelpPanel();
   const {
     shouldShowOnboarding,
@@ -45,9 +47,101 @@ function App() {
     skipOnboarding,
   } = useOnboarding();
 
+  const handleStartupError = (error: Error) => {
+    // Parse error and create StartupErrorInfo
+    const errorInfo: StartupErrorInfo = {
+      type: 'unknown',
+      message: error.message,
+      cause: 'The application failed to start properly.',
+      fixInstructions: [
+        'Check that Python 3.10+ is installed',
+        'Verify all dependencies are installed: pip install -r requirements.txt',
+        'Ensure no other application is using port 8000',
+        'Try restarting the application',
+      ],
+      technicalDetails: error.stack || error.message,
+      timestamp: new Date(),
+    };
+
+    // Detect specific error types
+    if (error.message.includes('Python') || error.message.includes('python')) {
+      errorInfo.type = 'python_not_found';
+      errorInfo.message = 'Python Not Found';
+      errorInfo.cause = 'Python 3.10+ is required but not found on your system.';
+      errorInfo.fixInstructions = [
+        'Download and install Python 3.10 or later from python.org',
+        'Make sure to check "Add Python to PATH" during installation',
+        'Restart the application after installing Python',
+      ];
+    } else if (error.message.includes('port') || error.message.includes('EADDRINUSE')) {
+      errorInfo.type = 'port_conflict';
+      errorInfo.message = 'Port Already in Use';
+      errorInfo.cause = 'Another application is using port 8000.';
+      errorInfo.fixInstructions = [
+        'Close any other applications using port 8000',
+        'The application will automatically try alternative ports',
+        'Click Retry to attempt startup again',
+      ];
+    } else if (error.message.includes('module') || error.message.includes('package')) {
+      errorInfo.type = 'missing_packages';
+      errorInfo.message = 'Missing Python Packages';
+      errorInfo.cause = 'Required Python packages are not installed.';
+      errorInfo.fixInstructions = [
+        'Click "Install Dependencies" to install required packages',
+        'Or manually run: pip install -r backend/requirements.txt',
+        'Restart the application after installation',
+      ];
+    } else if (error.message.includes('Backend') || error.message.includes('backend')) {
+      errorInfo.type = 'backend_crash';
+      errorInfo.message = 'Backend Service Failed';
+      errorInfo.cause = 'The backend service crashed during startup.';
+      errorInfo.fixInstructions = [
+        'Check the logs for detailed error information',
+        'Verify all dependencies are installed correctly',
+        'Try restarting the application',
+        'If the problem persists, report it on GitHub',
+      ];
+    }
+
+    setStartupError(errorInfo);
+  };
+
+  const handleRetry = () => {
+    setStartupError(null);
+    setIsAppReady(false);
+    // Force reload to retry startup
+    window.location.reload();
+  };
+
+  const handleViewLogs = async () => {
+    try {
+      if (window.electron) {
+        await window.electron.invoke('open-log-file');
+      }
+    } catch (error) {
+      console.error('Failed to open log file:', error);
+    }
+  };
+
+  // Show startup error screen if there's an error
+  if (startupError) {
+    return (
+      <StartupError
+        error={startupError}
+        onRetry={handleRetry}
+        onViewLogs={handleViewLogs}
+      />
+    );
+  }
+
   // Show splash screen during startup
   if (!isAppReady) {
-    return <SplashScreen onComplete={() => setIsAppReady(true)} />;
+    return (
+      <SplashScreen
+        onComplete={() => setIsAppReady(true)}
+        onError={handleStartupError}
+      />
+    );
   }
 
   // Show onboarding screens

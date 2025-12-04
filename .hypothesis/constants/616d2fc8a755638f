@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\paramiko\channel.py
-# hypothesis_version: 6.148.3
-
-[0.0, ' (EOF received)', ' (EOF sent)', ' (closed)', ' (open) window={}', ' -> ', ' in-buffer={}', '<paramiko.Channel {}', '>', 'Channel closed.', 'Channel is not open', 'EOF received ({})', 'EOF sent ({})', 'MIT-MAGIC-COOKIE-1', 'Socket is closed', '[chan ', '] ', 'addwindow send {}', 'addwindow {}', 'env', 'exec', 'exit-status', 'paramiko.transport', 'pty-req', 'r', 'shell', 'subsystem', 'vt100', 'window down to {}', 'window up {}', 'window-change', 'x11-req', 'xon-xoff']

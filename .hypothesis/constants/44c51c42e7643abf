@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\connectors\registry.py
-# hypothesis_version: 6.148.3
-
-['__isabstractmethod__', 'cancel_job', 'connect', 'description', 'disconnect', 'display_name', 'fetch_artifact', 'get_job_status', 'get_pricing', 'inference', 'list_resources', 'name', 'registry', 'stream_logs', 'submit_job', 'tracking', 'training', 'upload_artifact', 'verify_connection', 'version']

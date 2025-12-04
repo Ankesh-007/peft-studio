@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\keyring\backends\libsecret.py
-# hypothesis_version: 6.148.3
-
-[4.8, '1', 'No such password!', 'Secret', 'g-io-error-quark', 'libsecret required', 'secret-error', 'username']

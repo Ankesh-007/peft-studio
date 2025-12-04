@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\connectors\base.py
-# hypothesis_version: 6.148.3
-
-[0.0002, 0.1, 100, 500, './output', '1.0.0', 'USD', 'cancelled', 'completed', 'cpu', 'failed', 'gpu', 'local', 'peft-training', 'pending', 'running', 'tpu']

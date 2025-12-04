@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\offline_queue_service.py
-# hypothesis_version: 6.148.3
-
-['already_syncing', 'api_call', 'check_same_thread', 'completed', 'created_at', 'error', 'error_message', 'errors', 'experiment_sync', 'failed', 'file_upload', 'id', 'in_progress', 'metric_log', 'model_push', 'offline_operations', 'operation_type', 'payload', 'pending', 'priority', 'processed', 'retry_count', 'sqlite', 'status', 'succeeded', 'total', 'updated_at']

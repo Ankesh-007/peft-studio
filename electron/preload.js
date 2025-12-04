@@ -65,4 +65,19 @@ contextBridge.exposeInMainWorld('api', {
   onUpdateChecksumFailed: (callback) => {
     ipcRenderer.on('update-checksum-failed', (event, data) => callback(data));
   },
+  
+  // Backend management operations
+  getBackendStatus: () => ipcRenderer.invoke('backend-status'),
+  restartBackend: () => ipcRenderer.invoke('backend-restart'),
+  forceRestartBackend: () => ipcRenderer.invoke('backend-force-restart'),
+  checkBackendHealth: () => ipcRenderer.invoke('backend-health-check'),
+  getBackendLogs: () => ipcRenderer.invoke('backend-get-logs'),
+  installDependencies: () => ipcRenderer.invoke('backend-install-dependencies'),
+  checkPort: (port) => ipcRenderer.invoke('backend-check-port', port),
+  openLogFile: () => ipcRenderer.invoke('open-log-file'),
+  
+  // Backend status events
+  onBackendStatus: (callback) => {
+    ipcRenderer.on('backend-status', (event, data) => callback(data));
+  },
 });

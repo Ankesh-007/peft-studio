@@ -69,3 +69,8 @@ test_checkpoints/
 .cache/
 checkpoints/
 artifacts/
+
+# Temporary documentation
+*_COMPLETE.md
+*_STATUS.md
+*_SUMMARY.md

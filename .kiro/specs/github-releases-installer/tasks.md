@@ -423,6 +423,7 @@
 
 
 
+
   - Update version to 1.0.0 (if not already)
   - Create and push v1.0.0 tag
   - Monitor release workflow

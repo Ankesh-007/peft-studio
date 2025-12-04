@@ -11,6 +11,7 @@ import {
 import React, { useState, useEffect } from "react";
 
 import Tooltip from "../Tooltip";
+import PEFTConfiguration from "../PEFTConfiguration";
 
 import type { WizardState, TrainingEstimates } from "../../types/wizard";
 
@@ -32,6 +33,7 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
   const [electricityRate, setElectricityRate] = useState(0.12);
   const [smartConfig, setSmartConfig] = useState<any>(null);
   const [estimates, setEstimates] = useState<TrainingEstimates | null>(null);
+  const [peftConfig, setPeftConfig] = useState<any>(null);
 
   useEffect(() => {
     if (wizardState.model && wizardState.dataset && wizardState.profile) {
@@ -406,62 +408,36 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
 
         {showAdvanced && (
           <div className="px-6 pb-6 border-t border-gray-200">
+            {/* PEFT Algorithm Selection */}
+            <div className="mt-6 mb-8">
+              <h4 className="text-md font-semibold text-gray-900 mb-4">
+                PEFT Algorithm Configuration
+              </h4>
+              <PEFTConfiguration
+                onConfigChange={(config) => {
+                  setPeftConfig(config);
+                  // Update wizard state with PEFT config
+                  onConfigUpdate(
+                    { ...smartConfig, peft: config },
+                    estimates!
+                  );
+                }}
+                initialConfig={{
+                  algorithm: 'lora',
+                  r: wizardState.profile?.config.lora_r || 8,
+                  lora_alpha: wizardState.profile?.config.lora_alpha || 16,
+                  lora_dropout: wizardState.profile?.config.lora_dropout || 0.1,
+                }}
+              />
+            </div>
+
+            <div className="border-t border-gray-200 pt-6 mt-6">
+              <h4 className="text-md font-semibold text-gray-900 mb-4">
+                Other Training Parameters
+              </h4>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-              {/* LoRA Rank */}
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    LoRA Rank (r)
-                  </label>
-                  <Tooltip configKey="lora_r">
-                    <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
-                  </Tooltip>
-                </div>
-                <div className="p-3 bg-gray-50 rounded border border-gray-200">
-                  <p className="text-lg font-semibold text-gray-900">
-                    {wizardState.profile?.config.lora_r}
-                  </p>
-                  <p className="text-xs text-gray-600 mt-1">
-                    From {wizardState.profile?.name} profile
-                  </p>
-                </div>
-              </div>
-
-              {/* LoRA Alpha */}
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    LoRA Alpha
-                  </label>
-                  <Tooltip configKey="lora_alpha">
-                    <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
-                  </Tooltip>
-                </div>
-                <div className="p-3 bg-gray-50 rounded border border-gray-200">
-                  <p className="text-lg font-semibold text-gray-900">
-                    {wizardState.profile?.config.lora_alpha}
-                  </p>
-                  <p className="text-xs text-gray-600 mt-1">Scaling factor</p>
-                </div>
-              </div>
-
-              {/* Dropout */}
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    LoRA Dropout
-                  </label>
-                  <Tooltip configKey="lora_dropout">
-                    <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
-                  </Tooltip>
-                </div>
-                <div className="p-3 bg-gray-50 rounded border border-gray-200">
-                  <p className="text-lg font-semibold text-gray-900">
-                    {wizardState.profile?.config.lora_dropout}
-                  </p>
-                  <p className="text-xs text-gray-600 mt-1">Regularization</p>
-                </div>
-              </div>
 
               {/* Scheduler */}
               <div>

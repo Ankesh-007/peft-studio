@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\inference_api.py
-# hypothesis_version: 6.148.3
-
-[0.0, 0.05, 0.7, 0.9, 1.0, 1.1, 2.0, 100, 400, 404, 500, 512, 4096, '/api/inference', '/compare', '/conversation/save', '/conversations', '/generate', '/load', '/models/loaded', '/stream', 'Input prompt', 'Model identifier', 'Model not loaded', 'Repetition penalty', 'Sampling temperature', 'Stop sequences', 'adapter_path', 'complete', 'conversation_id', 'deleted', 'error', 'example_prompts', 'generation_time', 'index', 'inference', 'loaded_at', 'message_count', 'model_id', 'model_version_id', 'models', 'start', 'status', 'swapped', 'swapped_at', 'token', 'total_tokens', 'type', 'unloaded', 'updated_at', 'use_case']

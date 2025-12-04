@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\nacl\bindings\crypto_box.py
-# hypothesis_version: 6.148.3
-
-[b'\x00', 'Invalid nonce', 'Invalid nonce size', 'Invalid public key', 'Invalid secret key', 'Invalid seed', 'Invalid shared key', 'crypto_box', 'crypto_box_keypair', 'seed must be bytes', 'unsigned char[]']

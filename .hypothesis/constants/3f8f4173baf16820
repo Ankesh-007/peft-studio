@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\paramiko\ssh_gss.py
-# hypothesis_version: 6.148.3
-
-['!I', ', Target: {}', '1.2.840.113554.1.2.2', 'B', 'Kerberos', 'MIT', 'PYTHON-GSSAPI-NEW', 'SSPI', '__title__', 'accept', 'client', 'host/', 'host@', 'initiate', 'nt', 'python-gssapi', 'server', 'ssh-', 'ssh-connection', '{} Target: {}']

@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\plugins\connectors\local_connector.py
-# hypothesis_version: 6.148.3
-
-[b'dummy_adapter_data', 0.0, 0.5, 1024, '1.0.0', 'Job not completed', 'Local GPU', 'Starting training...', 'Training complete!', 'USD', 'config', 'local', 'logs', 'status']

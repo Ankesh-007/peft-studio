@@ -1,4 +1,0 @@
-# file: D:\PEFT Studio\backend\services\security_api.py
-# hypothesis_version: 6.148.3
-
-[100, 400, 3600, '/api/security', '/audit-log', '/csrf-token', '/headers', '/health', '/rate-limit-status', '/rate-limit/reset', '/suspicious-activity', '/validate-input', 'X-Session-ID', 'allowed_values', 'audit_logging', 'burst_size', 'count', 'csrf_protection', 'default', 'degraded', 'description', 'error', 'field_name', 'headers', 'health_check', 'healthy', 'input_validation', 'ip_address', 'is_allowed', 'limits', 'max_length', 'message', 'min_length', 'operational', 'pattern', 'rate_limiting', 'reason', 'requests_per_day', 'requests_per_hour', 'requests_per_minute', 'required', 'reset_ip', 'sanitize', 'security', 'severity', 'status', 'type', 'unhealthy', 'unknown']

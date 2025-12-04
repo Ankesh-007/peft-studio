@@ -1,6 +1,6 @@
 {
   "name": "peft-studio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Desktop application for Parameter-Efficient Fine-Tuning of Large Language Models",
   "main": "electron/main.js",
   "scripts": {
@@ -37,6 +37,10 @@
     "dist:linux": "node scripts/build.js linux",
     "verify:build": "node scripts/verify-build-config.js",
     "generate:checksums": "node scripts/generate-checksums.js",
+    "prepare:release": "pwsh -File scripts/prepare-release.ps1",
+    "prepare:release:dry": "pwsh -File scripts/prepare-release.ps1 -DryRun",
+    "release": "pwsh -File scripts/release-to-github.ps1",
+    "release:dry": "pwsh -File scripts/release-to-github.ps1 -DryRun",
     "ci": "npm run lint && npm run type-check && npm run test:run && npm run build",
     "ci:test": "npm run test:run",
     "ci:build": "npm run build"

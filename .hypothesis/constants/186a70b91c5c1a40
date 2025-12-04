@@ -1,4 +1,0 @@
-# file: C:\Users\MSII\AppData\Roaming\Python\Python314\site-packages\invoke\runners.py
-# hypothesis_version: 6.148.3
-
-[0.01, 1000, '\x03', '(no {})', '-c', '=== {} ===\n{}\n', 'Broken pipe', 'Context', 'HHHH', 'I/O error', 'Input/output error', 'KeyboardInterrupt', 'Promise', 'Result', 'Runner', 'StreamWatcher', 'asynchronous', 'both', 'buffer_', 'disown', 'dry', 'echo', 'echo_format', 'echo_stdin', 'encoding', 'env', 'err', 'err_stream', 'fallback', 'hide', 'in', 'in_stream', 'input_', 'out', 'out_stream', 'output', 'pty', 'replace', 'replace_env', 'shell', 'stderr', 'stdout', 'timeout', 'warn', 'watchers']
