@@ -66,7 +66,7 @@
     "url": "https://github.com/YOUR_USERNAME/peft-studio/issues"
   },
   "dependencies": {
-    "@types/react-window": "^1.8.8",
+    "@types/react-window": "^2.0.0",
     "clsx": "^2.1.1",
     "electron-updater": "^6.6.2",
     "lucide-react": "^0.555.0",
