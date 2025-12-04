@@ -55,7 +55,7 @@ PEFT Studio uses [electron-builder](https://www.electron.build/) to create insta
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/peft-studio.git
+git clone https://github.com/Ankesh-007/peft-studio.git
 cd peft-studio
 
 # Install Node.js dependencies
@@ -393,7 +393,7 @@ Configure auto-updates in `package.json`:
   "build": {
     "publish": {
       "provider": "github",
-      "owner": "YOUR_USERNAME",
+      "owner": "Ankesh-007",
       "repo": "peft-studio"
     }
   }

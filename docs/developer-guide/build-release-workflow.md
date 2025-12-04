@@ -381,6 +381,27 @@ This workflow provides:
 ✅ **Easy distribution** - GitHub Releases
 ✅ **User-friendly** - Simple installation process
 
+## Testing
+
+After building installers, comprehensive testing is required:
+
+- **[Release Testing Summary](./release-testing-summary.md)** - Overview of testing process
+- **[Test Release Process](./test-release-process.md)** - Step-by-step testing guide
+- **[Windows Testing](./test-windows-installer.md)** - Windows installer testing
+- **[macOS Testing](./test-macos-installer.md)** - macOS installer testing
+- **[Linux Testing](./test-linux-installer.md)** - Linux installer testing
+- **[Auto-Update Testing](./test-auto-update.md)** - Update mechanism testing
+
+### Quick Test
+
+```bash
+# PowerShell (Windows)
+.\scripts\test-release.ps1 -All
+
+# Bash (Linux/macOS)
+./scripts/test-release.sh --all
+```
+
 ## Resources
 
 - [Installer Build Guide](installer-build-guide.md)

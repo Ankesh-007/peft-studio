@@ -62,4 +62,7 @@ contextBridge.exposeInMainWorld('api', {
   onUpdateStatus: (callback) => {
     ipcRenderer.on('update-status', (event, data) => callback(data));
   },
+  onUpdateChecksumFailed: (callback) => {
+    ipcRenderer.on('update-checksum-failed', (event, data) => callback(data));
+  },
 });

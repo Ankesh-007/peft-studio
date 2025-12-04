@@ -457,6 +457,6 @@ GitHub Actions workflows are configured in `.github/workflows/`:
 If you encounter issues:
 
 1. Check this guide and [troubleshooting docs](docs/reference/troubleshooting.md)
-2. Search [existing issues](https://github.com/YOUR_USERNAME/peft-studio/issues)
-3. Ask in [discussions](https://github.com/YOUR_USERNAME/peft-studio/discussions)
-4. Open a [new issue](https://github.com/YOUR_USERNAME/peft-studio/issues/new)
+2. Search [existing issues](https://github.com/Ankesh-007/peft-studio/issues)
+3. Ask in [discussions](https://github.com/Ankesh-007/peft-studio/discussions)
+4. Open a [new issue](https://github.com/Ankesh-007/peft-studio/issues/new)

@@ -5,6 +5,7 @@ interface UpdateInfo {
   version: string;
   releaseNotes?: string;
   releaseDate?: string;
+  checksumVerified?: boolean;
 }
 
 interface DownloadProgress {
@@ -28,6 +29,7 @@ export const UpdateNotification: React.FC = () => {
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const [downloadProgress, setDownloadProgress] = useState<DownloadProgress | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [errorType, setErrorType] = useState<string | null>(null);
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
   const [currentVersion, setCurrentVersion] = useState<string>('');
 
@@ -62,15 +64,25 @@ export const UpdateNotification: React.FC = () => {
     }
 
     if (window.api?.onUpdateStatus) {
-      window.api.onUpdateStatus((data: { status: string; message?: string }) => {
+      window.api.onUpdateStatus((data: { status: string; message?: string; type?: string }) => {
         if (data.status === 'error') {
           setUpdateState('error');
           setError(data.message || 'An error occurred while checking for updates');
+          setErrorType(data.type || null);
         } else if (data.status === 'not-available') {
           setUpdateState('not-available');
           // Auto-hide after 3 seconds
           setTimeout(() => setUpdateState(null), 3000);
         }
+      });
+    }
+
+    // Listen for checksum verification failures
+    if (window.api?.onUpdateChecksumFailed) {
+      window.api.onUpdateChecksumFailed((data: { message: string; severity: string }) => {
+        setUpdateState('error');
+        setError(data.message);
+        setErrorType('checksum-mismatch');
       });
     }
   }, []);
@@ -268,9 +280,17 @@ export const UpdateNotification: React.FC = () => {
 
           {updateState === 'downloaded' && updateInfo && (
             <>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Version {updateInfo.version} has been downloaded and is ready to install.
-              </p>
+              <div className="space-y-2">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Version {updateInfo.version} has been downloaded and is ready to install.
+                </p>
+                {updateInfo.checksumVerified && (
+                  <div className="flex items-center gap-2 text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 rounded p-2">
+                    <CheckCircle className="w-4 h-4" />
+                    <span>Update integrity verified via checksum</span>
+                  </div>
+                )}
+              </div>
               <button
                 onClick={handleInstall}
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition-colors"
@@ -288,15 +308,40 @@ export const UpdateNotification: React.FC = () => {
 
           {updateState === 'error' && (
             <>
-              <p className="text-sm text-red-600 dark:text-red-400">
-                {error || 'An error occurred'}
-              </p>
-              <button
-                onClick={handleCheckForUpdates}
-                className="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded transition-colors"
-              >
-                Try Again
-              </button>
+              <div className={`text-sm rounded p-3 ${
+                errorType === 'checksum-mismatch' 
+                  ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800' 
+                  : ''
+              }`}>
+                <p className={`${
+                  errorType === 'checksum-mismatch' 
+                    ? 'text-red-700 dark:text-red-300 font-medium' 
+                    : 'text-red-600 dark:text-red-400'
+                }`}>
+                  {error || 'An error occurred'}
+                </p>
+                {errorType === 'checksum-mismatch' && (
+                  <p className="text-xs text-red-600 dark:text-red-400 mt-2">
+                    For your security, this update will not be installed. You can download manually from{' '}
+                    <a 
+                      href="https://github.com/Ankesh-007/peft-studio/releases" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="underline hover:text-red-700 dark:hover:text-red-300"
+                    >
+                      GitHub Releases
+                    </a>.
+                  </p>
+                )}
+              </div>
+              {errorType !== 'checksum-mismatch' && (
+                <button
+                  onClick={handleCheckForUpdates}
+                  className="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded transition-colors"
+                >
+                  Try Again
+                </button>
+              )}
             </>
           )}
         </div>

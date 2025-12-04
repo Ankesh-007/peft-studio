@@ -1,14 +1,12 @@
 # PEFT Studio
 
-> **Note**: Before publishing, replace all instances of `YOUR_USERNAME` with your actual GitHub username or organization name.
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Downloads](https://img.shields.io/github/downloads/YOUR_USERNAME/peft-studio/total)](https://github.com/YOUR_USERNAME/peft-studio/releases)
-[![Release](https://img.shields.io/github/v/release/YOUR_USERNAME/peft-studio)](https://github.com/YOUR_USERNAME/peft-studio/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/Ankesh-007/peft-studio/total)](https://github.com/Ankesh-007/peft-studio/releases)
+[![Release](https://img.shields.io/github/v/release/Ankesh-007/peft-studio)](https://github.com/Ankesh-007/peft-studio/releases/latest)
 
 Professional desktop application for Parameter-Efficient Fine-Tuning (PEFT) of Large Language Models.
 
-📦 **[Download Installers](https://github.com/YOUR_USERNAME/peft-studio/releases/latest)** | 📚 **[Documentation](docs/README.md)** | 🔨 **[Build Guide](BUILDING.md)** | 🚀 **[Quick Build](QUICK_START_BUILD.md)**
+📦 **[Download Installers](https://github.com/Ankesh-007/peft-studio/releases/latest)** | 📚 **[Documentation](docs/README.md)** | 🔨 **[Build Guide](BUILDING.md)** | 🚀 **[Quick Build](QUICK_START_BUILD.md)**
 
 ## ✨ Features
 
@@ -52,58 +50,90 @@ Professional desktop application for Parameter-Efficient Fine-Tuning (PEFT) of L
 
 ## 🚀 Quick Start
 
-### Download
+### 📦 Download
 
-Pre-built installers will be available on the [**Releases Page**](https://github.com/YOUR_USERNAME/peft-studio/releases/latest) once the project is published to GitHub.
+<div align="center">
+
+### [⬇️ Download Latest Release](https://github.com/Ankesh-007/peft-studio/releases/latest)
+
+**Pre-built installers for Windows, macOS, and Linux**
+
+</div>
+
+Choose the installer for your platform from the [releases page](https://github.com/Ankesh-007/peft-studio/releases/latest):
+
+| Platform | Installer Type | File Name | Notes |
+|----------|---------------|-----------|-------|
+| **Windows** | NSIS Installer | `PEFT-Studio-Setup-{version}.exe` | Recommended - includes auto-update |
+| **Windows** | Portable | `PEFT-Studio-Portable-{version}.exe` | No installation required |
+| **macOS** | DMG Image | `PEFT-Studio-{version}-{arch}.dmg` | Drag to Applications folder |
+| **macOS** | ZIP Archive | `PEFT-Studio-{version}-{arch}.zip` | Extract and run |
+| **Linux** | AppImage | `PEFT-Studio-{version}-{arch}.AppImage` | Universal, no installation |
+| **Linux** | DEB Package | `PEFT-Studio-{version}-{arch}.deb` | For Debian/Ubuntu |
+
+### 💻 System Requirements
+
+**Minimum Requirements:**
+- **OS**: Windows 10+, macOS 10.13+, or Linux (Ubuntu 18.04+, Fedora 28+)
+- **RAM**: 8 GB (16 GB recommended for training)
+- **Storage**: 10 GB free space (more for models and datasets)
+- **CPU**: 64-bit processor with 4+ cores
+- **GPU**: Optional but recommended - NVIDIA GPU with CUDA support for training
+
+**Recommended for Training:**
+- **RAM**: 32 GB or more
+- **GPU**: NVIDIA GPU with 16+ GB VRAM (RTX 3090, RTX 4090, A100, etc.)
+- **Storage**: SSD with 100+ GB free space
+
+### 📖 Installation Guides
+
+Detailed platform-specific installation instructions:
+
+- **[Windows Installation Guide](docs/user-guide/installation-windows.md)** - Step-by-step Windows setup
+- **[macOS Installation Guide](docs/user-guide/installation-macos.md)** - macOS installation and troubleshooting
+- **[Linux Installation Guide](docs/user-guide/installation-linux.md)** - Linux setup for various distributions
+
+### ✅ Quick Installation
 
 #### Windows
-Currently available in the `release/` directory:
-- **PEFT Studio Setup 1.0.0.exe** - Standard installer with auto-update support (recommended)
-- **PEFT Studio 1.0.0.exe** - Portable version (no installation required)
+1. Download `PEFT-Studio-Setup-{version}.exe` from the [releases page](https://github.com/Ankesh-007/peft-studio/releases/latest)
+2. Run the installer and follow the setup wizard
+3. Launch PEFT Studio from the Start Menu or Desktop shortcut
 
-Once published to GitHub, download from the releases page.
-
-**Installation:**
-1. Download the installer
-2. Run the `.exe` file
-3. Follow the installation wizard
-4. Launch PEFT Studio from the Start Menu or Desktop shortcut
-
-**Note:** Windows may show a SmartScreen warning for unsigned applications. Click "More info" → "Run anyway" to proceed.
+**Note:** Windows may show a SmartScreen warning for unsigned applications. Click "More info" → "Run anyway" to proceed. See the [Windows Installation Guide](docs/user-guide/installation-windows.md) for details.
 
 #### macOS
-**Note:** macOS installers are not yet available. They will be built automatically via GitHub Actions when you create a release. For now, you can:
-- Clone the repository and run from source (see [Development Setup](#development-setup))
-- Build locally on a Mac using `npm run build:mac`
+1. Download `PEFT-Studio-{version}-{arch}.dmg` from the [releases page](https://github.com/Ankesh-007/peft-studio/releases/latest)
+2. Open the DMG file and drag PEFT Studio to your Applications folder
+3. Launch PEFT Studio from Applications
 
-#### Linux
-**Note:** Linux installers are not yet available. They will be built automatically via GitHub Actions when you create a release. For now, you can:
-- Clone the repository and run from source (see [Development Setup](#development-setup))
-- Build locally using `npm run build:linux`
+**Note:** macOS may show a security warning for unsigned applications. See the [macOS Installation Guide](docs/user-guide/installation-macos.md) for bypass instructions.
 
-**Installation (AppImage):**
+#### Linux (AppImage)
 ```bash
 # Download the AppImage
-wget https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/PEFT-Studio-1.0.0.AppImage
+wget https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-{version}-x64.AppImage
 
 # Make it executable
-chmod +x PEFT-Studio-1.0.0.AppImage
+chmod +x PEFT-Studio-*.AppImage
 
 # Run it
-./PEFT-Studio-1.0.0.AppImage
+./PEFT-Studio-*.AppImage
 ```
 
-**Installation (Debian/Ubuntu):**
+#### Linux (Debian/Ubuntu)
 ```bash
 # Download the .deb package
-wget https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/peft-studio_1.0.0_amd64.deb
+wget https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-{version}-amd64.deb
 
 # Install it
-sudo dpkg -i peft-studio_1.0.0_amd64.deb
+sudo dpkg -i PEFT-Studio-*.deb
 
-# If there are dependency issues, run:
+# Fix dependencies if needed
 sudo apt-get install -f
 ```
+
+For other Linux distributions, see the [Linux Installation Guide](docs/user-guide/installation-linux.md).
 
 ### Building Installers Locally
 
@@ -173,7 +203,7 @@ This triggers the build workflow and creates a GitHub Release with installers fo
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/peft-studio.git
+git clone https://github.com/Ankesh-007/peft-studio.git
 cd peft-studio
 
 # Install frontend dependencies
@@ -408,7 +438,7 @@ Start with our comprehensive documentation:
 - **[Complete Documentation](docs/README.md)** - Full documentation index
 
 ### 🐛 Bug Reports
-Found a bug? Please [open an issue](https://github.com/YOUR_USERNAME/peft-studio/issues/new?template=bug_report.md) with:
+Found a bug? Please [open an issue](https://github.com/Ankesh-007/peft-studio/issues/new?template=bug_report.md) with:
 - Clear description of the problem
 - Steps to reproduce
 - Expected vs actual behavior
@@ -416,7 +446,7 @@ Found a bug? Please [open an issue](https://github.com/YOUR_USERNAME/peft-studio
 - Relevant logs or screenshots
 
 ### 💡 Feature Requests
-Have an idea for improvement? [Submit a feature request](https://github.com/YOUR_USERNAME/peft-studio/issues/new?template=feature_request.md) describing:
+Have an idea for improvement? [Submit a feature request](https://github.com/Ankesh-007/peft-studio/issues/new?template=feature_request.md) describing:
 - The problem you're trying to solve
 - Your proposed solution
 - Any alternatives you've considered
@@ -424,7 +454,7 @@ Have an idea for improvement? [Submit a feature request](https://github.com/YOUR
 
 ### ❓ Questions & Discussions
 For general questions, discussions, or community interaction:
-- **[GitHub Discussions](https://github.com/YOUR_USERNAME/peft-studio/discussions)** - Ask questions, share ideas, and connect with the community
+- **[GitHub Discussions](https://github.com/Ankesh-007/peft-studio/discussions)** - Ask questions, share ideas, and connect with the community
   - **Q&A** - Get help with using PEFT Studio
   - **Ideas** - Propose and discuss new features
   - **Show and Tell** - Share your fine-tuned models and success stories
@@ -494,15 +524,15 @@ See our [detailed roadmap](ROADMAP.md) for planned features and improvements.
 - 🔄 Custom connector marketplace (v1.3.0)
 - 🔄 Advanced training techniques (RLHF, DPO) (v2.0.0)
 
-Want to influence the roadmap? Share your ideas in [GitHub Discussions](https://github.com/YOUR_USERNAME/peft-studio/discussions/categories/ideas)!
+Want to influence the roadmap? Share your ideas in [GitHub Discussions](https://github.com/Ankesh-007/peft-studio/discussions/categories/ideas)!
 
 ## 🔗 Links
 
 - **Documentation**: [docs/README.md](docs/README.md)
 - **Quick Start**: [QUICKSTART.md](QUICKSTART.md)
 - **Development Guide**: [DEVELOPMENT.md](DEVELOPMENT.md)
-- **GitHub Issues**: [Report bugs or request features](https://github.com/YOUR_USERNAME/peft-studio/issues)
-- **Discussions**: [Community forum](https://github.com/YOUR_USERNAME/peft-studio/discussions)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/Ankesh-007/peft-studio/issues)
+- **Discussions**: [Community forum](https://github.com/Ankesh-007/peft-studio/discussions)
 
 ## 🆘 Getting Help
 

@@ -36,6 +36,7 @@
     "dist:mac": "node scripts/build.js mac",
     "dist:linux": "node scripts/build.js linux",
     "verify:build": "node scripts/verify-build-config.js",
+    "generate:checksums": "node scripts/generate-checksums.js",
     "ci": "npm run lint && npm run type-check && npm run test:run && npm run build",
     "ci:test": "npm run test:run",
     "ci:build": "npm run build"
@@ -59,15 +60,16 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/peft-studio.git"
+    "url": "https://github.com/Ankesh-007/peft-studio.git"
   },
-  "homepage": "https://github.com/YOUR_USERNAME/peft-studio#readme",
+  "homepage": "https://github.com/Ankesh-007/peft-studio#readme",
   "bugs": {
-    "url": "https://github.com/YOUR_USERNAME/peft-studio/issues"
+    "url": "https://github.com/Ankesh-007/peft-studio/issues"
   },
   "dependencies": {
     "@types/react-window": "^1.8.8",
     "clsx": "^2.1.1",
+    "electron-log": "^5.2.2",
     "electron-updater": "^6.6.2",
     "lucide-react": "^0.555.0",
     "react": "^18.3.1",
@@ -77,8 +79,6 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
-    "electron": "^39.2.4",
-    "electron-builder": "^25.1.8",
     "@axe-core/react": "^4.11.0",
     "@eslint/js": "^9.39.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -90,6 +90,8 @@
     "@typescript-eslint/parser": "^8.48.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "electron": "^39.2.4",
+    "electron-builder": "^25.1.8",
     "eslint": "^9.39.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
@@ -104,7 +106,8 @@
     "terser": "^5.44.1",
     "typescript": "^5.7.2",
     "vite": "^7.2.6",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.14",
+    "yaml": "^2.8.2"
   },
   "build": {
     "appId": "com.peftstudio.app",
@@ -120,43 +123,182 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "YOUR_USERNAME",
+      "owner": "Ankesh-007",
       "repo": "peft-studio"
     },
     "win": {
       "target": [
-        "nsis",
-        "portable"
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
       ],
       "icon": "build/icon.ico",
       "publisherName": "PEFT Studio",
-      "sign": null
+      "verifyUpdateCodeSignature": false,
+      "sign": "./scripts/sign-windows.js",
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "fileAssociations": [
+        {
+          "ext": "peft",
+          "name": "PEFT Configuration",
+          "description": "PEFT Studio Configuration File",
+          "icon": "build/icon.ico"
+        }
+      ]
     },
     "mac": {
       "target": [
-        "dmg",
-        "zip"
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
       ],
       "icon": "build/icon.icns",
       "category": "public.app-category.developer-tools",
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
       "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist"
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "notarize": {
+        "teamId": "${APPLE_TEAM_ID}"
+      },
+      "identity": null,
+      "type": "distribution",
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "minimumSystemVersion": "10.13.0",
+      "darkModeSupport": true,
+      "fileAssociations": [
+        {
+          "ext": "peft",
+          "name": "PEFT Configuration",
+          "description": "PEFT Studio Configuration File",
+          "icon": "build/icon.icns",
+          "role": "Editor"
+        }
+      ],
+      "afterSign": "./scripts/sign-macos.js"
+    },
+    "dmg": {
+      "title": "${productName} ${version}",
+      "icon": "build/icon.icns",
+      "background": "build/dmg-background.png",
+      "contents": [
+        {
+          "x": 130,
+          "y": 220,
+          "type": "file"
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 380
+      },
+      "iconSize": 128,
+      "iconTextSize": 12,
+      "format": "ULFO",
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
     },
     "linux": {
       "target": [
-        "AppImage",
-        "deb"
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
       ],
       "icon": "build/icon.png",
-      "category": "Development"
+      "category": "Development",
+      "maintainer": "PEFT Studio Contributors <peft-studio@example.com>",
+      "vendor": "PEFT Studio",
+      "synopsis": "Parameter-Efficient Fine-Tuning Studio",
+      "description": "Desktop application for Parameter-Efficient Fine-Tuning of Large Language Models",
+      "desktop": {
+        "Name": "PEFT Studio",
+        "Comment": "Parameter-Efficient Fine-Tuning of Large Language Models",
+        "GenericName": "Machine Learning Tool",
+        "Keywords": "peft;fine-tuning;machine-learning;ai;deep-learning;",
+        "Categories": "Development;Science;",
+        "StartupNotify": "true",
+        "Terminal": "false",
+        "Type": "Application"
+      },
+      "fileAssociations": [
+        {
+          "ext": "peft",
+          "name": "PEFT Configuration",
+          "description": "PEFT Studio Configuration File",
+          "mimeType": "application/x-peft-config"
+        }
+      ],
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "appImage": {
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "license": "LICENSE"
+    },
+    "deb": {
+      "depends": [
+        "gconf2",
+        "gconf-service",
+        "libnotify4",
+        "libappindicator1",
+        "libxtst6",
+        "libnss3"
+      ],
+      "priority": "optional",
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
+      "allowElevation": true,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "createStartMenuShortcut": true,
+      "shortcutName": "PEFT Studio",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true,
+      "menuCategory": true,
+      "displayLanguageSelector": false,
+      "perMachine": false,
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "${productName}-Portable-${version}.${ext}"
     }
   }
 }

@@ -281,6 +281,46 @@ For issues or questions:
 - Required jobs present
 - GitHub Actions directory structure
 
+## Testing Scripts
+
+### test-release.sh / test-release.ps1
+**Automated release testing**
+
+```bash
+# Unix/Linux/macOS
+./scripts/test-release.sh --all
+
+# Windows
+./scripts/test-release.ps1 -All
+```
+
+**Features:**
+- Checks workflow status
+- Verifies release assets
+- Validates checksums
+- Displays testing checklist
+- Color-coded output
+
+**Options:**
+```bash
+# Test specific version
+./scripts/test-release.sh --version v1.0.0-test.1 --all
+
+# Run individual checks
+./scripts/test-release.sh --check-workflow
+./scripts/test-release.sh --verify-assets
+./scripts/test-release.sh --verify-checksums
+```
+
+**Requirements:**
+- `jq` (JSON processor) - Install: `brew install jq` (macOS) or `apt-get install jq` (Linux)
+- `curl` (usually pre-installed)
+- Internet connection
+
+**Documentation:**
+- `docs/developer-guide/release-testing-summary.md` - Testing overview
+- `docs/developer-guide/test-release-process.md` - Detailed testing guide
+
 ## Security Scripts
 
 ### security-scan.sh / security-scan.ps1

@@ -1,13 +1,27 @@
 const { app, BrowserWindow, Notification, ipcMain, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
+const log = require('electron-log');
 
 let mainWindow;
 let pythonProcess;
 
+// Configure logging
+log.transports.file.level = 'info';
+autoUpdater.logger = log;
+
 // Configure auto-updater
 autoUpdater.autoDownload = false; // We'll download manually after user confirmation
 autoUpdater.autoInstallOnAppQuit = true;
+
+// Set update feed URL (GitHub releases)
+if (process.env.NODE_ENV !== 'development') {
+  autoUpdater.setFeedURL({
+    provider: 'github',
+    owner: 'Ankesh-007',
+    repo: 'peft-studio'
+  });
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -56,23 +70,29 @@ function startPythonBackend() {
 // Auto-updater functions
 function checkForUpdates() {
   if (process.env.NODE_ENV === 'development') {
-    console.log('Skipping update check in development mode');
+    log.info('Skipping update check in development mode');
     return;
   }
   
+  log.info('Checking for updates...');
   autoUpdater.checkForUpdates().catch(err => {
-    console.error('Error checking for updates:', err);
+    log.error('Error checking for updates:', err);
+    sendUpdateStatus('error', { message: err.message });
   });
 }
 
 // Auto-updater event handlers
 autoUpdater.on('checking-for-update', () => {
-  console.log('Checking for updates...');
+  log.info('Checking for updates...');
   sendUpdateStatus('checking');
 });
 
 autoUpdater.on('update-available', (info) => {
-  console.log('Update available:', info);
+  log.info('Update available:', {
+    version: info.version,
+    releaseDate: info.releaseDate,
+    files: info.files?.map(f => ({ url: f.url, size: f.size }))
+  });
   sendUpdateStatus('available', info);
   
   // Show notification to user
@@ -86,17 +106,47 @@ autoUpdater.on('update-available', (info) => {
 });
 
 autoUpdater.on('update-not-available', (info) => {
-  console.log('Update not available:', info);
+  log.info('Update not available. Current version is up to date:', info.version);
   sendUpdateStatus('not-available', info);
 });
 
 autoUpdater.on('error', (err) => {
-  console.error('Update error:', err);
-  sendUpdateStatus('error', { message: err.message });
+  log.error('Update error:', err);
+  
+  // Handle different types of errors
+  let errorMessage = err.message;
+  let errorType = 'general';
+  
+  if (err.message.includes('ENOTFOUND') || err.message.includes('ETIMEDOUT')) {
+    errorMessage = 'Network error: Unable to check for updates. Please check your internet connection.';
+    errorType = 'network';
+  } else if (err.message.includes('404')) {
+    errorMessage = 'Update server not found. Please try again later.';
+    errorType = 'not-found';
+  } else if (err.message.includes('sha512') || err.message.includes('checksum') || err.message.includes('integrity')) {
+    // Checksum verification failure
+    errorMessage = '⚠️ Update integrity verification failed. The downloaded update file may be corrupted or tampered with. For your security, the update will not be installed. Please try again later or download manually from GitHub.';
+    errorType = 'checksum-mismatch';
+    log.error('❌ CHECKSUM VERIFICATION FAILED - Update rejected for security');
+    
+    // Show critical notification to user
+    if (mainWindow) {
+      mainWindow.webContents.send('update-checksum-failed', {
+        message: errorMessage,
+        severity: 'critical'
+      });
+    }
+  }
+  
+  sendUpdateStatus('error', { 
+    message: errorMessage,
+    type: errorType,
+    originalError: err.message
+  });
 });
 
 autoUpdater.on('download-progress', (progressObj) => {
-  console.log(`Download progress: ${progressObj.percent}%`);
+  log.info(`Download progress: ${progressObj.percent.toFixed(2)}% (${progressObj.bytesPerSecond} bytes/sec)`);
   sendUpdateStatus('downloading', {
     percent: progressObj.percent,
     bytesPerSecond: progressObj.bytesPerSecond,
@@ -110,14 +160,32 @@ autoUpdater.on('download-progress', (progressObj) => {
 });
 
 autoUpdater.on('update-downloaded', (info) => {
-  console.log('Update downloaded:', info);
+  log.info('Update downloaded successfully:', {
+    version: info.version,
+    files: info.files?.map(f => ({ url: f.url, sha512: f.sha512 }))
+  });
+  
+  // electron-updater automatically verifies checksums during download
+  // The update will only reach this point if integrity verification passed
+  // electron-updater uses SHA512 for verification (more secure than SHA256)
+  log.info('✅ Update integrity verified via SHA512 checksum');
+  log.info('Checksum verification details:', {
+    verified: true,
+    algorithm: 'SHA512',
+    files: info.files?.map(f => ({
+      name: f.url.split('/').pop(),
+      checksumVerified: true
+    }))
+  });
+  
   sendUpdateStatus('downloaded', info);
   
   // Show notification that update is ready to install
   if (mainWindow) {
     mainWindow.webContents.send('update-downloaded', {
       version: info.version,
-      releaseNotes: info.releaseNotes
+      releaseNotes: info.releaseNotes,
+      checksumVerified: true
     });
   }
 });
@@ -234,43 +302,74 @@ ipcMain.handle('check-dnd', async () => {
 ipcMain.handle('check-for-updates', async () => {
   try {
     if (process.env.NODE_ENV === 'development') {
+      log.info('Updates disabled in development mode');
       return { success: false, message: 'Updates disabled in development mode' };
     }
+    
+    log.info('Manual update check requested');
     const result = await autoUpdater.checkForUpdates();
+    log.info('Update check result:', result.updateInfo);
+    
     return { success: true, updateInfo: result.updateInfo };
   } catch (error) {
-    console.error('Error checking for updates:', error);
-    return { success: false, error: error.message };
+    log.error('Error checking for updates:', error);
+    
+    // Handle network errors gracefully
+    let errorMessage = error.message;
+    if (error.message.includes('ENOTFOUND') || error.message.includes('ETIMEDOUT')) {
+      errorMessage = 'Network error: Unable to check for updates. Please check your internet connection.';
+    }
+    
+    return { success: false, error: errorMessage };
   }
 });
 
 ipcMain.handle('download-update', async () => {
   try {
     if (process.env.NODE_ENV === 'development') {
+      log.info('Updates disabled in development mode');
       return { success: false, message: 'Updates disabled in development mode' };
     }
+    
+    log.info('Starting update download');
     await autoUpdater.downloadUpdate();
+    log.info('Update download initiated successfully');
+    
     return { success: true };
   } catch (error) {
-    console.error('Error downloading update:', error);
-    return { success: false, error: error.message };
+    log.error('Error downloading update:', error);
+    
+    // Handle network errors gracefully
+    let errorMessage = error.message;
+    if (error.message.includes('ENOTFOUND') || error.message.includes('ETIMEDOUT')) {
+      errorMessage = 'Network error: Unable to download update. Please check your internet connection.';
+    }
+    
+    return { success: false, error: errorMessage };
   }
 });
 
 ipcMain.handle('install-update', async () => {
   try {
     if (process.env.NODE_ENV === 'development') {
+      log.info('Updates disabled in development mode');
       return { success: false, message: 'Updates disabled in development mode' };
     }
+    
+    log.info('Installing update and restarting application');
     // This will quit the app and install the update
+    // false = don't force run after finish, true = restart after install
     autoUpdater.quitAndInstall(false, true);
+    
     return { success: true };
   } catch (error) {
-    console.error('Error installing update:', error);
+    log.error('Error installing update:', error);
     return { success: false, error: error.message };
   }
 });
 
 ipcMain.handle('get-app-version', async () => {
-  return { version: app.getVersion() };
+  const version = app.getVersion();
+  log.info('App version requested:', version);
+  return { version };
 });

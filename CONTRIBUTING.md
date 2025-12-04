@@ -70,7 +70,7 @@ We love new ideas! Create a feature request issue with:
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/YOUR_USERNAME/peft-studio.git
+   git clone https://github.com/Ankesh-007/peft-studio.git
    cd peft-studio
    ```
 
@@ -221,8 +221,6 @@ Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md).
 ## 📄 License
 
 By contributing, you agree that your contributions will be licensed under the MIT License.
-
-> **Note**: Before publishing, replace `YOUR_USERNAME` with your actual GitHub username or organization name.
 
 ---
 

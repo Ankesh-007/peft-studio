@@ -34,11 +34,11 @@ assignees: ''
 
 Before submitting, please confirm:
 
-- [ ] I've searched existing [issues](https://github.com/YOUR_USERNAME/peft-studio/issues) and [discussions](https://github.com/YOUR_USERNAME/peft-studio/discussions)
-- [ ] I've checked the [documentation](https://github.com/YOUR_USERNAME/peft-studio/tree/main/docs)
-- [ ] I've reviewed the [FAQ](https://github.com/YOUR_USERNAME/peft-studio/blob/main/docs/reference/faq.md)
-- [ ] I've reviewed the [Troubleshooting Guide](https://github.com/YOUR_USERNAME/peft-studio/blob/main/docs/reference/troubleshooting.md)
+- [ ] I've searched existing [issues](https://github.com/Ankesh-007/peft-studio/issues) and [discussions](https://github.com/Ankesh-007/peft-studio/discussions)
+- [ ] I've checked the [documentation](https://github.com/Ankesh-007/peft-studio/tree/main/docs)
+- [ ] I've reviewed the [FAQ](https://github.com/Ankesh-007/peft-studio/blob/main/docs/reference/faq.md)
+- [ ] I've reviewed the [Troubleshooting Guide](https://github.com/Ankesh-007/peft-studio/blob/main/docs/reference/troubleshooting.md)
 
 ---
 
-**Note:** For general discussions or community interaction, consider using [GitHub Discussions](https://github.com/YOUR_USERNAME/peft-studio/discussions) instead. Issues are best for specific, actionable questions about bugs or features.
+**Note:** For general discussions or community interaction, consider using [GitHub Discussions](https://github.com/Ankesh-007/peft-studio/discussions) instead. Issues are best for specific, actionable questions about bugs or features.

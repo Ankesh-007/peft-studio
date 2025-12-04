@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
+      version: ${{ steps.get_version.outputs.VERSION }}
+      release_id: ${{ steps.create_release.outputs.id }}
     
     steps:
       - name: Checkout code
@@ -76,13 +78,10 @@ jobs:
             - [Report Issues](https://github.com/your-username/peft-studio/issues)
             - [Discussions](https://github.com/your-username/peft-studio/discussions)
 
-  build-and-upload:
-    name: Build and Upload ${{ matrix.os }}
+  build-windows:
+    name: Build Windows
     needs: create-release
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: windows-latest
     
     steps:
       - name: Checkout code
@@ -97,76 +96,268 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Build and package
-        run: npm run package
+      - name: Build and package Windows
+        run: npm run package:win
+        env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+      
+      - name: Check signing status
+        run: |
+          if (Test-Path "build/signing-status.txt") {
+            Get-Content "build/signing-status.txt"
+          } else {
+            echo "⚠️ Windows installer is NOT code signed - users will see security warnings"
+          }
+        shell: pwsh
+      
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-installers
+          path: |
+            release/*.exe
+            release/*.exe.blockmap
+          retention-days: 1
+      
+      - name: Upload signing status
+        uses: actions/upload-artifact@v3
+        with:
+          name: signing-status-windows
+          path: build/signing-status.txt
+          retention-days: 1
+        continue-on-error: true
+
+  build-macos:
+    name: Build macOS
+    needs: create-release
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build and package macOS
+        run: npm run package:mac
         env:
           CSC_LINK: ${{ secrets.CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      
+      - name: Check signing status
+        run: |
+          if [ -f "build/signing-status-macos.txt" ]; then
+            cat build/signing-status-macos.txt
+          else
+            echo "⚠️ macOS application is NOT code signed - users must bypass Gatekeeper"
+          fi
+      
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-installers
+          path: |
+            release/*.dmg
+            release/*.zip
+            release/*.dmg.blockmap
+          retention-days: 1
+      
+      - name: Upload signing status
+        uses: actions/upload-artifact@v3
+        with:
+          name: signing-status-macos
+          path: build/signing-status-macos.txt
+          retention-days: 1
+        continue-on-error: true
+
+  build-linux:
+    name: Build Linux
+    needs: create-release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build and package Linux
+        run: npm run package:linux
+      
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-installers
+          path: |
+            release/*.AppImage
+            release/*.deb
+          retention-days: 1
+
+  upload-assets:
+    name: Upload Release Assets
+    needs: [create-release, build-windows, build-macos, build-linux]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: windows-installers
+          path: ./artifacts/windows
+      
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: macos-installers
+          path: ./artifacts/macos
+      
+      - name: Download Linux artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: linux-installers
+          path: ./artifacts/linux
+      
+      - name: List all artifacts
+        run: |
+          echo "Windows artifacts:"
+          ls -lah ./artifacts/windows/ || echo "No Windows artifacts"
+          echo "macOS artifacts:"
+          ls -lah ./artifacts/macos/ || echo "No macOS artifacts"
+          echo "Linux artifacts:"
+          ls -lah ./artifacts/linux/ || echo "No Linux artifacts"
       
       - name: Upload Windows Installer
-        if: matrix.os == 'windows-latest'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./release/PEFT-Studio-Setup-1.0.0.exe
-          asset_name: PEFT-Studio-Setup-1.0.0.exe
+          asset_path: ./artifacts/windows/PEFT Studio Setup ${{ needs.create-release.outputs.version }}.exe
+          asset_name: PEFT-Studio-Setup-${{ needs.create-release.outputs.version }}.exe
           asset_content_type: application/octet-stream
+        continue-on-error: true
       
       - name: Upload Windows Portable
-        if: matrix.os == 'windows-latest'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./release/PEFT-Studio-1.0.0-portable.exe
-          asset_name: PEFT-Studio-1.0.0-portable.exe
+          asset_path: ./artifacts/windows/PEFT Studio ${{ needs.create-release.outputs.version }}.exe
+          asset_name: PEFT-Studio-${{ needs.create-release.outputs.version }}-portable.exe
           asset_content_type: application/octet-stream
+        continue-on-error: true
       
       - name: Upload macOS DMG
-        if: matrix.os == 'macos-latest'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./release/PEFT-Studio-1.0.0.dmg
-          asset_name: PEFT-Studio-1.0.0.dmg
+          asset_path: ./artifacts/macos/PEFT Studio-${{ needs.create-release.outputs.version }}.dmg
+          asset_name: PEFT-Studio-${{ needs.create-release.outputs.version }}.dmg
           asset_content_type: application/octet-stream
+        continue-on-error: true
       
       - name: Upload macOS ZIP
-        if: matrix.os == 'macos-latest'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./release/PEFT-Studio-1.0.0-mac.zip
-          asset_name: PEFT-Studio-1.0.0-mac.zip
+          asset_path: ./artifacts/macos/PEFT Studio-${{ needs.create-release.outputs.version }}-mac.zip
+          asset_name: PEFT-Studio-${{ needs.create-release.outputs.version }}-mac.zip
           asset_content_type: application/zip
+        continue-on-error: true
       
       - name: Upload Linux AppImage
-        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./release/PEFT-Studio-1.0.0.AppImage
-          asset_name: PEFT-Studio-1.0.0.AppImage
+          asset_path: ./artifacts/linux/PEFT Studio-${{ needs.create-release.outputs.version }}.AppImage
+          asset_name: PEFT-Studio-${{ needs.create-release.outputs.version }}.AppImage
           asset_content_type: application/octet-stream
+        continue-on-error: true
       
       - name: Upload Linux DEB
-        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./release/peft-studio_1.0.0_amd64.deb
-          asset_name: peft-studio_1.0.0_amd64.deb
+          asset_path: ./artifacts/linux/peft-studio_${{ needs.create-release.outputs.version }}_amd64.deb
+          asset_name: peft-studio_${{ needs.create-release.outputs.version }}_amd64.deb
           asset_content_type: application/vnd.debian.binary-package
+        continue-on-error: true
+
+  generate-checksums:
+    name: Generate Checksums
+    needs: [create-release, upload-assets]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: windows-installers
+          path: ./artifacts
+      
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: macos-installers
+          path: ./artifacts
+      
+      - name: Download Linux artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: linux-installers
+          path: ./artifacts
+      
+      - name: Generate SHA256 checksums
+        run: |
+          node scripts/generate-checksums.js ./artifacts
+        continue-on-error: false
+      
+      - name: Display checksums
+        run: |
+          echo "Generated checksums:"
+          cat ./artifacts/SHA256SUMS.txt
+      
+      - name: Upload SHA256SUMS.txt
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./artifacts/SHA256SUMS.txt
+          asset_name: SHA256SUMS.txt
+          asset_content_type: text/plain
