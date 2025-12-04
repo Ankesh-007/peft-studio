@@ -231,7 +231,7 @@ Make checksum verification a habit for all software downloads, not just PEFT Stu
 ### 2. Use Official Sources Only
 
 Only download PEFT Studio from:
-- Official GitHub releases: `https://github.com/Ankesh-007/peft-studioreleases`
+- Official GitHub releases: `https://github.com/Ankesh-007/peft-studio/releases`
 - Official website (if available)
 
 Never download from third-party sites or file-sharing services.

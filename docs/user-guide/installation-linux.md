@@ -18,7 +18,7 @@ This guide provides step-by-step instructions for installing PEFT Studio on Linu
 
 ## Download
 
-1. Visit the [PEFT Studio Releases page](https://github.com/Ankesh-007/peft-studioreleases/latest)
+1. Visit the [PEFT Studio Releases page](https://github.com/Ankesh-007/peft-studio/releases/latest)
 2. Download the appropriate Linux installer:
    - **PEFT-Studio-{version}-x64.AppImage** - Universal format (recommended)
    - **PEFT-Studio-{version}-amd64.deb** - For Debian/Ubuntu
@@ -213,7 +213,7 @@ If your GPU isn't detected, see [GPU Not Detected](#gpu-not-detected) in Trouble
 
 ### AppImage
 
-1. Download the latest AppImage from the [releases page](https://github.com/Ankesh-007/peft-studioreleases/latest)
+1. Download the latest AppImage from the [releases page](https://github.com/Ankesh-007/peft-studio/releases/latest)
 2. Replace your old AppImage with the new one
 3. Make it executable: `chmod +x PEFT-Studio-*.AppImage`
 4. Run the new version
@@ -222,7 +222,7 @@ If your GPU isn't detected, see [GPU Not Detected](#gpu-not-detected) in Trouble
 
 ```bash
 # Download the latest .deb package
-wget https://github.com/Ankesh-007/peft-studioreleases/latest/download/PEFT-Studio-{version}-amd64.deb
+wget https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-{version}-amd64.deb
 
 # Install the update
 sudo dpkg -i PEFT-Studio-*.deb
@@ -467,7 +467,7 @@ To ensure your download isn't corrupted or tampered with:
 
 ```bash
 # Download the checksums file
-wget https://github.com/Ankesh-007/peft-studioreleases/latest/download/SHA256SUMS.txt
+wget https://github.com/Ankesh-007/peft-studio/releases/latest/download/SHA256SUMS.txt
 
 # Verify the AppImage
 sha256sum -c SHA256SUMS.txt --ignore-missing

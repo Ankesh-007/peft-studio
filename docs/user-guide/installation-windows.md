@@ -18,7 +18,7 @@ This guide provides step-by-step instructions for installing PEFT Studio on Wind
 
 ## Download
 
-1. Visit the [PEFT Studio Releases page](https://github.com/Ankesh-007/peft-studioreleases/latest)
+1. Visit the [PEFT Studio Releases page](https://github.com/Ankesh-007/peft-studio/releases/latest)
 2. Download one of the Windows installers:
    - **PEFT-Studio-Setup-{version}.exe** - Standard installer (recommended)
    - **PEFT-Studio-Portable-{version}.exe** - Portable version (no installation)
@@ -146,7 +146,7 @@ PEFT Studio automatically checks for updates on startup:
 
 For portable version or if auto-update fails:
 
-1. Visit the [releases page](https://github.com/Ankesh-007/peft-studioreleases/latest)
+1. Visit the [releases page](https://github.com/Ankesh-007/peft-studio/releases/latest)
 2. Download the latest installer
 3. Run the new installer (it will update your existing installation)
 

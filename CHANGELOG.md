@@ -217,7 +217,7 @@ This is the initial public release. No migration is required.
 
 ### Getting Started
 
-1. Download the installer for your platform from the [Releases](https://github.com/Ankesh-007/peft-studioreleases/tag/v1.0.0) page
+1. Download the installer for your platform from the [Releases](https://github.com/Ankesh-007/peft-studio/releases/tag/v1.0.0) page
 2. Install the application following platform-specific instructions
 3. Launch PEFT Studio and complete the initial setup wizard
 4. Connect your HuggingFace account in Settings → Platform Connections
@@ -256,6 +256,7 @@ Security improvements and vulnerability fixes
 
 ---
 
-[Unreleased]: https://github.com/Ankesh-007/peft-studiocompare/v1.0.1...HEAD
-[1.0.1]: https://github.com/Ankesh-007/peft-studioreleases/tag/v1.0.1
-[1.0.0]: https://github.com/Ankesh-007/peft-studioreleases/tag/v1.0.0
+[Unreleased]: https://github.com/Ankesh-007/peft-studio/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/Ankesh-007/peft-studio/releases/tag/v1.1.0
+[1.0.1]: https://github.com/Ankesh-007/peft-studio/releases/tag/v1.0.1
+[1.0.0]: https://github.com/Ankesh-007/peft-studio/releases/tag/v1.0.0

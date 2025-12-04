@@ -6,7 +6,7 @@
 
 Professional desktop application for Parameter-Efficient Fine-Tuning (PEFT) of Large Language Models.
 
-📦 **[Download Installers](https://github.com/Ankesh-007/peft-studioreleases/latest)** | 📚 **[Documentation](docs/README.md)** | 🔨 **[Build Guide](BUILDING.md)** | 🚀 **[Quick Start](QUICKSTART.md)**
+📦 **[Download Installers](https://github.com/Ankesh-007/peft-studio/releases/latest)** | 📚 **[Documentation](docs/README.md)** | 🔨 **[Build Guide](BUILDING.md)** | 🚀 **[Quick Start](QUICKSTART.md)**
 
 ## ✨ Features
 
@@ -54,13 +54,13 @@ Professional desktop application for Parameter-Efficient Fine-Tuning (PEFT) of L
 
 <div align="center">
 
-### [⬇️ Download Latest Release](https://github.com/Ankesh-007/peft-studioreleases/latest)
+### [⬇️ Download Latest Release](https://github.com/Ankesh-007/peft-studio/releases/latest)
 
 **Pre-built installers for Windows, macOS, and Linux**
 
 </div>
 
-Choose the installer for your platform from the [releases page](https://github.com/Ankesh-007/peft-studioreleases/latest):
+Choose the installer for your platform from the [releases page](https://github.com/Ankesh-007/peft-studio/releases/latest):
 
 | Platform | Installer Type | File Name | Notes |
 |----------|---------------|-----------|-------|
@@ -96,14 +96,14 @@ Detailed platform-specific installation instructions:
 ### ✅ Quick Installation
 
 #### Windows
-1. Download `PEFT-Studio-Setup-{version}.exe` from the [releases page](https://github.com/Ankesh-007/peft-studioreleases/latest)
+1. Download `PEFT-Studio-Setup-{version}.exe` from the [releases page](https://github.com/Ankesh-007/peft-studio/releases/latest)
 2. Run the installer and follow the setup wizard
 3. Launch PEFT Studio from the Start Menu or Desktop shortcut
 
 **Note:** Windows may show a SmartScreen warning for unsigned applications. Click "More info" → "Run anyway" to proceed. See the [Windows Installation Guide](docs/user-guide/installation-windows.md) for details.
 
 #### macOS
-1. Download `PEFT-Studio-{version}-{arch}.dmg` from the [releases page](https://github.com/Ankesh-007/peft-studioreleases/latest)
+1. Download `PEFT-Studio-{version}-{arch}.dmg` from the [releases page](https://github.com/Ankesh-007/peft-studio/releases/latest)
 2. Open the DMG file and drag PEFT Studio to your Applications folder
 3. Launch PEFT Studio from Applications
 
@@ -112,7 +112,7 @@ Detailed platform-specific installation instructions:
 #### Linux (AppImage)
 ```bash
 # Download the AppImage
-wget https://github.com/Ankesh-007/peft-studioreleases/latest/download/PEFT-Studio-{version}-x64.AppImage
+wget https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-{version}-x64.AppImage
 
 # Make it executable
 chmod +x PEFT-Studio-*.AppImage
@@ -124,7 +124,7 @@ chmod +x PEFT-Studio-*.AppImage
 #### Linux (Debian/Ubuntu)
 ```bash
 # Download the .deb package
-wget https://github.com/Ankesh-007/peft-studioreleases/latest/download/PEFT-Studio-{version}-amd64.deb
+wget https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-{version}-amd64.deb
 
 # Install it
 sudo dpkg -i PEFT-Studio-*.deb

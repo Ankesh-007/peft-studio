@@ -63,7 +63,7 @@ Check that all jobs complete successfully:
 
 ### 1.5 Review Release Page
 
-Navigate to the releases page: `https://github.com/Ankesh-007/peft-studioreleases`
+Navigate to the releases page: `https://github.com/Ankesh-007/peft-studio/releases`
 
 Verify the test release contains:
 
