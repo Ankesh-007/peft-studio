@@ -74,18 +74,16 @@ Choose the installer for your platform from the [releases page](https://github.c
 #### 📥 Direct Download Links (v1.0.1)
 
 **Windows:**
-- [PEFT-Studio-Setup-1.0.1.exe](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT-Studio-Setup-1.0.1.exe) - NSIS Installer (Recommended)
-- [PEFT-Studio-Portable-1.0.1.exe](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT-Studio-Portable-1.0.1.exe) - Portable Version
+- [PEFT.Studio-Setup-1.0.1.exe](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT.Studio-Setup-1.0.1.exe) - NSIS Installer (Recommended)
+- [PEFT.Studio-Portable-1.0.1.exe](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT.Studio-Portable-1.0.1.exe) - Portable Version
 
-**macOS:**
-- [PEFT-Studio-1.0.1-x64.dmg](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT-Studio-1.0.1-x64.dmg) - Intel Mac DMG
-- [PEFT-Studio-1.0.1-arm64.dmg](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT-Studio-1.0.1-arm64.dmg) - Apple Silicon DMG
-- [PEFT-Studio-1.0.1-x64.zip](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT-Studio-1.0.1-x64.zip) - Intel Mac ZIP
-- [PEFT-Studio-1.0.1-arm64.zip](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT-Studio-1.0.1-arm64.zip) - Apple Silicon ZIP
+**macOS:** *(Coming Soon)*
+- Intel Mac DMG and ZIP
+- Apple Silicon DMG and ZIP
 
-**Linux:**
-- [PEFT-Studio-1.0.1-x64.AppImage](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT-Studio-1.0.1-x64.AppImage) - AppImage (Universal)
-- [PEFT-Studio-1.0.1-amd64.deb](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT-Studio-1.0.1-amd64.deb) - Debian/Ubuntu Package
+**Linux:** *(Coming Soon)*
+- AppImage (Universal)
+- DEB Package (Debian/Ubuntu)
 
 ### 💻 System Requirements
 
