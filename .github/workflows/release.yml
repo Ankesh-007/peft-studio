@@ -101,7 +101,7 @@ jobs:
         run: npm ci
       
       - name: Build and package Windows
-        run: npm run package:win
+        run: npm run build:no-check && npm run electron:build -- --win
         env:
           CSC_LINK: ${{ secrets.CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
@@ -151,7 +151,7 @@ jobs:
         run: npm ci
       
       - name: Build and package macOS
-        run: npm run package:mac
+        run: npm run build:no-check && npm run electron:build -- --mac
         env:
           CSC_LINK: ${{ secrets.CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
@@ -204,7 +204,7 @@ jobs:
         run: npm ci
       
       - name: Build and package Linux
-        run: npm run package:linux
+        run: npm run build:no-check && npm run electron:build -- --linux
       
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4

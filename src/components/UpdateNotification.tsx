@@ -79,9 +79,9 @@ export const UpdateNotification: React.FC = () => {
 
     // Listen for checksum verification failures
     if (window.api?.onUpdateChecksumFailed) {
-      window.api.onUpdateChecksumFailed((data: { message: string; severity: string }) => {
+      window.api.onUpdateChecksumFailed((data: { expected: string; actual: string; file: string }) => {
         setUpdateState('error');
-        setError(data.message);
+        setError(`Checksum verification failed for ${data.file}. Expected: ${data.expected}, Got: ${data.actual}`);
         setErrorType('checksum-mismatch');
       });
     }
