@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense, useEffect } from 'react';
 import Layout from './components/Layout';
 import { useHelpPanel } from './hooks/useHelpPanel';
 import { useOnboarding } from './hooks/useOnboarding';
@@ -6,6 +6,7 @@ import SplashScreen from './components/SplashScreen';
 import StartupError, { StartupErrorInfo } from './components/StartupError';
 import PerformanceProfiler from './components/PerformanceProfiler';
 import { UpdateNotification } from './components/UpdateNotification';
+import { BackendUnavailableBanner } from './components/BackendUnavailableBanner';
 
 // Lazy load heavy components
 const Dashboard = lazy(() => import('./components/Dashboard'));
@@ -36,6 +37,7 @@ function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [isAppReady, setIsAppReady] = useState(false);
   const [startupError, setStartupError] = useState<StartupErrorInfo | null>(null);
+  const [isBackendAvailable, setIsBackendAvailable] = useState(true);
   const { isHelpOpen, currentContext, closeHelp } = useHelpPanel();
   const {
     shouldShowOnboarding,
@@ -46,6 +48,14 @@ function App() {
     completeTour,
     skipOnboarding,
   } = useOnboarding();
+
+  // Check backend availability after app is ready
+  useEffect(() => {
+    if (isAppReady) {
+      const backendStatus = sessionStorage.getItem('backendAvailable');
+      setIsBackendAvailable(backendStatus === 'true');
+    }
+  }, [isAppReady]);
 
   const handleStartupError = (error: Error) => {
     // Parse error and create StartupErrorInfo
@@ -170,6 +180,9 @@ function App() {
   return (
     <Layout>
       <Suspense fallback={<LoadingFallback />}>
+        {/* Show backend unavailable banner if needed */}
+        {!isBackendAvailable && <BackendUnavailableBanner />}
+        
         {/* Navigation */}
         <div className="bg-white border-b px-6 py-3">
           <div className="flex gap-4">

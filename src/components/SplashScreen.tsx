@@ -53,15 +53,15 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
         }));
         updateSubstep(0, 'in_progress');
 
-        // Wait for backend to be ready
+        // Wait for backend to be ready (but don't block UI if it fails)
         let backendReady = false;
         let attempts = 0;
-        const maxAttempts = 10;
+        const maxAttempts = 5; // Reduced attempts for faster startup
 
         while (!backendReady && attempts < maxAttempts) {
           try {
             const healthCheck = await fetch('http://localhost:8000/api/health', {
-              signal: AbortSignal.timeout(2000),
+              signal: AbortSignal.timeout(1500),
             });
 
             if (healthCheck.ok) {
@@ -69,20 +69,31 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
             }
           } catch (err) {
             attempts++;
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 800));
           }
         }
 
         if (!backendReady) {
-          throw new Error('Backend service failed to start');
+          // Backend not available - continue anyway with warning
+          console.warn('Backend service not available - running in limited mode');
+          updateSubstep(0, 'failed', 'Backend unavailable (limited functionality)');
+          setProgress((prev) => ({
+            ...prev,
+            progress: 25,
+            message: 'Running without backend (limited mode)',
+          }));
+          
+          // Store backend status for the app to handle
+          sessionStorage.setItem('backendAvailable', 'false');
+        } else {
+          updateSubstep(0, 'completed', 'Backend service running');
+          setProgress((prev) => ({
+            ...prev,
+            progress: 25,
+            message: 'Backend service connected',
+          }));
+          sessionStorage.setItem('backendAvailable', 'true');
         }
-
-        updateSubstep(0, 'completed', 'Backend service running');
-        setProgress((prev) => ({
-          ...prev,
-          progress: 25,
-          message: 'Backend service connected',
-        }));
 
         // Stage 2: Checking dependencies (25-50%)
         setProgress((prev) => ({
@@ -93,26 +104,32 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
         }));
         updateSubstep(1, 'in_progress');
 
-        try {
-          const depsCheck = await fetch('http://localhost:8000/api/dependencies', {
-            signal: AbortSignal.timeout(5000),
-          });
+        // Only check dependencies if backend is available
+        if (backendReady) {
+          try {
+            const depsCheck = await fetch('http://localhost:8000/api/dependencies', {
+              signal: AbortSignal.timeout(5000),
+            });
 
-          if (depsCheck.ok) {
-            const depsData = await depsCheck.json();
-            updateSubstep(1, 'completed', 'All dependencies verified');
-          } else {
-            updateSubstep(1, 'completed', 'Dependencies checked (warnings present)');
+            if (depsCheck.ok) {
+              const depsData = await depsCheck.json();
+              updateSubstep(1, 'completed', 'All dependencies verified');
+            } else {
+              updateSubstep(1, 'completed', 'Dependencies checked (warnings present)');
+            }
+          } catch (err) {
+            // Non-critical, continue
+            updateSubstep(1, 'completed', 'Dependency check skipped');
           }
-        } catch (err) {
-          // Non-critical, continue
-          updateSubstep(1, 'completed', 'Dependency check skipped');
+        } else {
+          // Backend not available, skip dependency check
+          updateSubstep(1, 'completed', 'Skipped (backend unavailable)');
         }
 
         setProgress((prev) => ({
           ...prev,
           progress: 50,
-          message: 'Dependencies verified',
+          message: backendReady ? 'Dependencies verified' : 'Running in limited mode',
         }));
 
         // Stage 3: Loading configuration (50-75%)
