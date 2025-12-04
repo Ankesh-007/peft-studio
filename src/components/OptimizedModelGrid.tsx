@@ -11,9 +11,11 @@
  */
 
 import React, { memo, useMemo, useCallback, useState, useRef, useEffect } from 'react';
-import { Grid } from 'react-window';
 import { ModelMetadata } from '../types/model';
 import { throttleRAF } from '../lib/performance';
+
+// @ts-ignore - react-window types issue
+import { Grid } from 'react-window';
 
 interface OptimizedModelGridProps {
   models: ModelMetadata[];
