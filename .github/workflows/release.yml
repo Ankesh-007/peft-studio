@@ -116,7 +116,7 @@ jobs:
         shell: pwsh
       
       - name: Upload Windows artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-installers
           path: |
@@ -125,7 +125,7 @@ jobs:
           retention-days: 1
       
       - name: Upload signing status
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: signing-status-windows
           path: build/signing-status.txt
@@ -168,7 +168,7 @@ jobs:
           fi
       
       - name: Upload macOS artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macos-installers
           path: |
@@ -178,7 +178,7 @@ jobs:
           retention-days: 1
       
       - name: Upload signing status
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: signing-status-macos
           path: build/signing-status-macos.txt
@@ -207,7 +207,7 @@ jobs:
         run: npm run package:linux
       
       - name: Upload Linux artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-installers
           path: |
@@ -222,19 +222,19 @@ jobs:
     
     steps:
       - name: Download Windows artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-installers
           path: ./artifacts/windows
       
       - name: Download macOS artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: macos-installers
           path: ./artifacts/macos
       
       - name: Download Linux artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: linux-installers
           path: ./artifacts/linux
@@ -329,19 +329,19 @@ jobs:
           node-version: '18'
       
       - name: Download Windows artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-installers
           path: ./artifacts
       
       - name: Download macOS artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: macos-installers
           path: ./artifacts
       
       - name: Download Linux artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: linux-installers
           path: ./artifacts
