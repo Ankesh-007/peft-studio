@@ -8,10 +8,18 @@ import pytest
 from fastapi.testclient import TestClient
 from main import app
 
-client = TestClient(app)
+
+@pytest.fixture(scope="module")
+def client():
+    """Create test client with rate limiting disabled"""
+    from services.security_service import get_security_service
+    security_service = get_security_service()
+    security_service.rate_limiter.enabled = False
+    yield TestClient(app)
+    security_service.rate_limiter.enabled = True
 
 
-def test_performance_metrics_endpoint():
+def test_performance_metrics_endpoint(client):
     """Test GET /api/performance/metrics endpoint."""
     response = client.get("/api/performance/metrics")
     
@@ -25,7 +33,7 @@ def test_performance_metrics_endpoint():
     assert "timestamp" in data
 
 
-def test_cache_stats_endpoint():
+def test_cache_stats_endpoint(client):
     """Test GET /api/performance/cache/stats endpoint."""
     response = client.get("/api/performance/cache/stats")
     
@@ -39,7 +47,7 @@ def test_cache_stats_endpoint():
     assert "hit_rate" in data
 
 
-def test_clear_cache_endpoint():
+def test_clear_cache_endpoint(client):
     """Test DELETE /api/performance/cache/clear endpoint."""
     response = client.delete("/api/performance/cache/clear")
     
@@ -50,7 +58,7 @@ def test_clear_cache_endpoint():
     assert "cleared" in data["message"].lower()
 
 
-def test_database_stats_endpoint():
+def test_database_stats_endpoint(client):
     """Test GET /api/performance/database/stats endpoint."""
     response = client.get("/api/performance/database/stats")
     
@@ -62,7 +70,7 @@ def test_database_stats_endpoint():
     assert "slow_queries" in data
 
 
-def test_slow_queries_endpoint():
+def test_slow_queries_endpoint(client):
     """Test GET /api/performance/database/slow-queries endpoint."""
     response = client.get("/api/performance/database/slow-queries?limit=5")
     
@@ -74,7 +82,7 @@ def test_slow_queries_endpoint():
     assert isinstance(data["slow_queries"], list)
 
 
-def test_endpoint_performance():
+def test_endpoint_performance(client):
     """Test GET /api/performance/endpoints endpoint."""
     response = client.get("/api/performance/endpoints")
     
@@ -85,7 +93,7 @@ def test_endpoint_performance():
     assert isinstance(data["slowest_endpoints"], list)
 
 
-def test_system_metrics_endpoint():
+def test_system_metrics_endpoint(client):
     """Test GET /api/performance/system endpoint."""
     response = client.get("/api/performance/system")
     
@@ -97,7 +105,7 @@ def test_system_metrics_endpoint():
     assert "disk_percent" in data
 
 
-def test_optimization_recommendations_endpoint():
+def test_optimization_recommendations_endpoint(client):
     """Test GET /api/performance/recommendations endpoint."""
     response = client.get("/api/performance/recommendations")
     
@@ -109,7 +117,7 @@ def test_optimization_recommendations_endpoint():
     assert isinstance(data["recommendations"], list)
 
 
-def test_health_check_fast_response():
+def test_health_check_fast_response(client):
     """Test that health check responds quickly without loading heavy services."""
     import time
     

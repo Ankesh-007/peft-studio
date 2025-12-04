@@ -70,8 +70,13 @@ describe("Training Flow Integration", () => {
     expect(screen.getByRole("region", { name: /dashboard overview/i })).toBeInTheDocument();
   });
 
-  it("should allow pausing and resuming training", () => {
+  it("should allow pausing and resuming training", async () => {
     render(<Dashboard />);
+
+    // Wait for loading to complete
+    await waitFor(() => {
+      expect(screen.queryByRole("status", { name: /loading/i })).not.toBeInTheDocument();
+    }, { timeout: 2000 });
 
     // Dashboard should render - check for quick actions
     expect(screen.getByText(/quick actions/i)).toBeInTheDocument();
@@ -89,15 +94,25 @@ describe("Training Flow Integration", () => {
     expect(screen.getByText(/models trained/i)).toBeInTheDocument();
   });
 
-  it("should handle training completion", () => {
+  it("should handle training completion", async () => {
     render(<Dashboard />);
 
-    // Dashboard should render successfully - check for greeting
-    expect(screen.getByText(/good morning/i)).toBeInTheDocument();
+    // Wait for loading to complete
+    await waitFor(() => {
+      expect(screen.queryByRole("status", { name: /loading/i })).not.toBeInTheDocument();
+    }, { timeout: 2000 });
+
+    // Dashboard should render successfully - check for greeting (time-dependent, so use flexible matcher)
+    expect(screen.getByText(/good (morning|afternoon|evening)/i)).toBeInTheDocument();
   });
 
-  it("should allow exporting trained model", () => {
+  it("should allow exporting trained model", async () => {
     render(<Dashboard />);
+
+    // Wait for loading to complete
+    await waitFor(() => {
+      expect(screen.queryByRole("status", { name: /loading/i })).not.toBeInTheDocument();
+    }, { timeout: 2000 });
 
     // Dashboard should have quick actions
     expect(screen.getByText(/quick actions/i)).toBeInTheDocument();

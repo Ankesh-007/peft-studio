@@ -13,6 +13,7 @@ export default defineConfig({
       'build/',
       'electron/',
       'backend/',
+      'scripts/',
     ],
     testTimeout: 30000, // E2E tests may take longer
     hookTimeout: 30000,

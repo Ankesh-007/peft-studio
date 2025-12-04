@@ -15,8 +15,8 @@ import logging
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_, desc
 
-from backend.database import TrainingRun, get_db
-from backend.services.training_orchestration_service import (
+from database import TrainingRun, get_db
+from .training_orchestration_service import (
     TrainingOrchestrator,
     TrainingJob,
     TrainingState,

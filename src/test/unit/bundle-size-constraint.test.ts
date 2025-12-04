@@ -87,7 +87,7 @@ describe('Bundle Size Constraint Property Test', () => {
     if (usagePercentage > 80) {
       console.warn(`⚠️  Warning: Bundle size is using ${usagePercentage.toFixed(2)}% of the allowed budget`);
     }
-  });
+  }, 360000); // 6 minutes timeout for build
   
   it('should have reasonable chunk sizes for code splitting', () => {
     const distPath = join(process.cwd(), 'dist');

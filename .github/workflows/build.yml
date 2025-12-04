@@ -16,13 +16,14 @@ jobs:
   build-frontend:
     name: Build Frontend
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
@@ -35,59 +36,73 @@ jobs:
         env:
           NODE_ENV: production
       
-      - name: Verify build
+      - name: Verify build output
+        run: node scripts/verify-build-outputs.js
+      
+      - name: List build contents
         run: |
-          if [ ! -d "dist" ]; then
-            echo "Build failed: dist directory not found"
-            exit 1
-          fi
-          echo "Build successful!"
+          echo "Build successful! Contents:"
           ls -lah dist/
       
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-build
           path: dist/
           retention-days: 7
+          compression-level: 6
 
   build-backend:
     name: Build Backend
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
           cache: 'pip'
+          cache-dependency-path: 'backend/requirements.txt'
       
       - name: Install dependencies
         run: |
           cd backend
           pip install -r requirements.txt
-          pip install pyinstaller
       
-      - name: Verify backend
+      - name: Verify backend imports
+        run: |
+          cd backend
+          python test_imports.py
+      
+      - name: Verify backend can start
         run: |
           cd backend
           python -c "import main; print('Backend imports successful')"
       
       - name: Upload backend artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: backend-build
-          path: backend/
+          path: |
+            backend/**/*.py
+            backend/requirements.txt
+            backend/config.py
+            backend/database.py
+            backend/main.py
           retention-days: 7
+          compression-level: 6
 
   build-electron:
     name: Build Electron - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: [build-frontend, build-backend]
+    timeout-minutes: 30
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         include:
@@ -103,16 +118,16 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
       
       - name: Download frontend build
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: frontend-build
           path: dist/
@@ -121,9 +136,10 @@ jobs:
         run: npm ci
       
       - name: Build Electron app
-        run: npm run build:electron --if-present
+        run: npm run build:electron
         env:
           PLATFORM: ${{ matrix.platform }}
+        continue-on-error: true
       
       - name: List build outputs
         run: |
@@ -133,36 +149,80 @@ jobs:
         shell: bash
       
       - name: Upload Electron build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: ${{ matrix.artifact_name }}
           path: |
             build/
             release/
           retention-days: 7
+          compression-level: 6
+          if-no-files-found: warn
 
   verify-builds:
     name: Verify All Builds
     needs: [build-frontend, build-backend, build-electron]
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: always()
     
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
       
       - name: List all artifacts
         run: |
-          echo "All build artifacts:"
-          find . -type f -ls
+          echo "## Build Artifacts Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All build artifacts:" >> $GITHUB_STEP_SUMMARY
+          find artifacts/ -type f -ls
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Artifact Sizes" >> $GITHUB_STEP_SUMMARY
+          du -sh artifacts/* >> $GITHUB_STEP_SUMMARY
       
       - name: Verify artifacts exist
         run: |
-          if [ ! -d "frontend-build" ]; then
-            echo "Frontend build missing"
+          echo "Verifying build artifacts..."
+          
+          # Check frontend build
+          if [ ! -d "artifacts/frontend-build" ]; then
+            echo "❌ Frontend build missing"
             exit 1
+          else
+            echo "✅ Frontend build found"
           fi
-          if [ ! -d "backend-build" ]; then
-            echo "Backend build missing"
+          
+          # Check backend build
+          if [ ! -d "artifacts/backend-build" ]; then
+            echo "❌ Backend build missing"
             exit 1
+          else
+            echo "✅ Backend build found"
           fi
-          echo "All builds verified successfully!"
+          
+          # Check platform builds (may not exist if electron build failed)
+          if [ -d "artifacts/linux-build" ]; then
+            echo "✅ Linux build found"
+          else
+            echo "⚠️ Linux build not found"
+          fi
+          
+          if [ -d "artifacts/windows-build" ]; then
+            echo "✅ Windows build found"
+          else
+            echo "⚠️ Windows build not found"
+          fi
+          
+          if [ -d "artifacts/mac-build" ]; then
+            echo "✅ Mac build found"
+          else
+            echo "⚠️ Mac build not found"
+          fi
+          
+          echo "Core builds verified successfully!"

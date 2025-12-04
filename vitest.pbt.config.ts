@@ -13,6 +13,7 @@ export default defineConfig({
       'build/',
       'electron/',
       'backend/',
+      'scripts/',
     ],
     testTimeout: 60000, // Property-based tests run many iterations
     hookTimeout: 10000,

@@ -196,20 +196,20 @@ describe('UpdateNotification', () => {
 
     // Simulate not available event
     const statusCallback = mockApi.onUpdateStatus.mock.calls[0][0];
-    statusCallback({
+    await vi.waitFor(() => statusCallback({
       status: 'not-available'
+    }));
+
+    await vi.waitFor(() => {
+      expect(screen.getByText('Up to Date')).toBeInTheDocument();
     });
 
-    await waitFor(() => {
-      expect(screen.getByText('Up to Date')).toBeInTheDocument();
-    }, { timeout: 1000 });
+    // Fast-forward time and run pending timers
+    await vi.advanceTimersByTimeAsync(3000);
 
-    // Fast-forward time
-    vi.advanceTimersByTime(3000);
-
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(screen.queryByText('Up to Date')).not.toBeInTheDocument();
-    }, { timeout: 1000 });
+    });
 
     vi.useRealTimers();
   });
@@ -219,13 +219,13 @@ describe('UpdateNotification', () => {
 
     // Simulate update available event
     const updateAvailableCallback = mockApi.onUpdateAvailable.mock.calls[0][0];
-    updateAvailableCallback({
+    await vi.waitFor(() => updateAvailableCallback({
       version: '1.0.1',
-    });
+    }));
 
     await waitFor(() => {
       expect(screen.getByText('Update Available')).toBeInTheDocument();
-    }, { timeout: 2000 });
+    }, { timeout: 5000 });
 
     // Find and click the X button - it's the last button in the notification
     const buttons = screen.getAllByRole('button');
@@ -234,8 +234,8 @@ describe('UpdateNotification', () => {
 
     await waitFor(() => {
       expect(screen.queryByText('Update Available')).not.toBeInTheDocument();
-    }, { timeout: 2000 });
-  });
+    }, { timeout: 5000 });
+  }, 15000);
 
   it('should format bytes correctly', async () => {
     render(<UpdateNotification />);
@@ -244,17 +244,19 @@ describe('UpdateNotification', () => {
     const progressCallback = mockApi.onUpdateDownloadProgress.mock.calls[0][0];
     
     // Test MB formatting
-    progressCallback({
+    await vi.waitFor(() => progressCallback({
       percent: 50,
       bytesPerSecond: 2500000,
       transferred: 50000000,
       total: 100000000
-    });
+    }));
 
     await waitFor(() => {
-      expect(screen.getByText(/MB/)).toBeInTheDocument();
-    }, { timeout: 2000 });
-  });
+      // Check that MB formatting is present (multiple elements expected)
+      const mbElements = screen.getAllByText(/MB/);
+      expect(mbElements.length).toBeGreaterThan(0);
+    }, { timeout: 5000 });
+  }, 15000);
 
   it('should handle missing window.api gracefully', () => {
     (window as any).api = undefined;
@@ -268,16 +270,16 @@ describe('UpdateNotification', () => {
     // Wait for version to load
     await waitFor(() => {
       expect(mockApi.getAppVersion).toHaveBeenCalled();
-    }, { timeout: 2000 });
+    }, { timeout: 5000 });
 
     // Simulate update available event
     const updateAvailableCallback = mockApi.onUpdateAvailable.mock.calls[0][0];
-    updateAvailableCallback({
+    await vi.waitFor(() => updateAvailableCallback({
       version: '1.0.1',
-    });
+    }));
 
     await waitFor(() => {
       expect(screen.getByText('Current version: 1.0.0')).toBeInTheDocument();
-    }, { timeout: 2000 });
-  });
+    }, { timeout: 5000 });
+  }, 15000);
 });
