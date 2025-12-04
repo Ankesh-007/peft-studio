@@ -194,8 +194,7 @@
           "icon": "build/icon.icns",
           "role": "Editor"
         }
-      ],
-      "afterSign": "./scripts/sign-macos.js"
+      ]
     },
     "dmg": {
       "title": "${productName} ${version}",
