@@ -257,7 +257,7 @@ act -s GITHUB_TOKEN=your_token
 ## Monitoring
 
 ### GitHub Actions Dashboard
-- View all workflow runs: `https://github.com/YOUR_ORG/peft-studio/actions`
+- View all workflow runs: `https://github.com/Ankesh-007/peft-studio/actions`
 - Monitor build status
 - Download artifacts
 - Review logs
@@ -267,9 +267,9 @@ act -s GITHUB_TOKEN=your_token
 Add to README.md:
 
 ```markdown
-![CI](https://github.com/YOUR_ORG/peft-studio/workflows/CI/badge.svg)
-![Tests](https://github.com/YOUR_ORG/peft-studio/workflows/Comprehensive%20Testing/badge.svg)
-![Build](https://github.com/YOUR_ORG/peft-studio/workflows/Build/badge.svg)
+![CI](https://github.com/Ankesh-007/peft-studio/workflows/CI/badge.svg)
+![Tests](https://github.com/Ankesh-007/peft-studio/workflows/Comprehensive%20Testing/badge.svg)
+![Build](https://github.com/Ankesh-007/peft-studio/workflows/Build/badge.svg)
 ```
 
 ## Troubleshooting

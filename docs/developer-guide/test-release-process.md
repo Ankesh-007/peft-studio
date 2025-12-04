@@ -42,7 +42,7 @@ git push origin v1.0.0-test.1
 
 ### 1.3 Monitor Workflow Execution
 
-1. Navigate to GitHub Actions: `https://github.com/Ankesh-007/peft-studio/actions`
+1. Navigate to GitHub Actions: `https://github.com/Ankesh-007/peft-studioactions`
 2. Find the "Release" workflow triggered by your tag
 3. Monitor each job:
    - `create-release`: Creates the GitHub release (draft)
@@ -63,7 +63,7 @@ Check that all jobs complete successfully:
 
 ### 1.5 Review Release Page
 
-Navigate to the releases page: `https://github.com/Ankesh-007/peft-studio/releases`
+Navigate to the releases page: `https://github.com/Ankesh-007/peft-studioreleases`
 
 Verify the test release contains:
 

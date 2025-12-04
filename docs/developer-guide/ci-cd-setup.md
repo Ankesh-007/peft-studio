@@ -505,7 +505,7 @@ Or use the GitHub Actions UI:
 
 View all workflow runs:
 ```
-https://github.com/YOUR_ORG/peft-studio/actions
+https://github.com/Ankesh-007/peft-studio/actions
 ```
 
 ### Status Badges
@@ -513,10 +513,10 @@ https://github.com/YOUR_ORG/peft-studio/actions
 Add to README.md:
 
 ```markdown
-![CI](https://github.com/YOUR_ORG/peft-studio/workflows/CI/badge.svg)
-![Tests](https://github.com/YOUR_ORG/peft-studio/workflows/Comprehensive%20Testing/badge.svg)
-![Build](https://github.com/YOUR_ORG/peft-studio/workflows/Build/badge.svg)
-![Code Quality](https://github.com/YOUR_ORG/peft-studio/workflows/Code%20Quality/badge.svg)
+![CI](https://github.com/Ankesh-007/peft-studio/workflows/CI/badge.svg)
+![Tests](https://github.com/Ankesh-007/peft-studio/workflows/Comprehensive%20Testing/badge.svg)
+![Build](https://github.com/Ankesh-007/peft-studio/workflows/Build/badge.svg)
+![Code Quality](https://github.com/Ankesh-007/peft-studio/workflows/Code%20Quality/badge.svg)
 ```
 
 Replace `YOUR_ORG` with your GitHub username or organization.

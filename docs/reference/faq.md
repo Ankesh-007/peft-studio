@@ -34,7 +34,7 @@ Not required, but highly recommended. You can:
 ## Installation and Setup
 
 ### How do I install PEFT Studio?
-Download the installer for your OS from the [releases page](https://github.com/your-org/peft-studio/releases):
+Download the installer for your OS from the [releases page](https://github.com/Ankesh-007/peft-studio/releases):
 - Windows: Run the .exe installer
 - macOS: Open the .dmg and drag to Applications
 - Linux: Make the .AppImage executable and run
@@ -339,8 +339,8 @@ But consider:
 
 ### Where can I get help?
 - **Documentation**: [docs.peft-studio.com](https://docs.peft-studio.com)
-- **GitHub Issues**: [Report bugs](https://github.com/your-org/peft-studio/issues)
-- **Discussions**: [Ask questions](https://github.com/your-org/peft-studio/discussions)
+- **GitHub Issues**: [Report bugs](https://github.com/Ankesh-007/peft-studio/issues)
+- **Discussions**: [Ask questions](https://github.com/Ankesh-007/peft-studio/discussions)
 - **Discord**: [Join community](https://discord.gg/peft-studio)
 - **Email**: support@peft-studio.com
 
@@ -378,7 +378,7 @@ Planned features:
 - Cloud sync
 - Mobile companion app
 
-See [roadmap](https://github.com/your-org/peft-studio/projects) for details.
+See [roadmap](https://github.com/Ankesh-007/peft-studio/projects) for details.
 
 ### Can I influence the roadmap?
 Absolutely! We prioritize based on:
@@ -394,7 +394,7 @@ Vote on features in GitHub Discussions!
 Can't find your answer? 
 
 - **Search docs**: [docs.peft-studio.com](https://docs.peft-studio.com)
-- **Ask community**: [GitHub Discussions](https://github.com/your-org/peft-studio/discussions)
+- **Ask community**: [GitHub Discussions](https://github.com/Ankesh-007/peft-studio/discussions)
 - **Contact support**: support@peft-studio.com
 
 We're here to help! 🚀

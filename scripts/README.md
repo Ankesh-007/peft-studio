@@ -415,3 +415,63 @@ See `.github/REPOSITORY_CONFIGURATION_GUIDE.md` for detailed instructions.
 ---
 
 **For public release preparation:** Follow the workflow in `.github/REPOSITORY_CONFIGURATION_GUIDE.md`
+
+
+---
+
+## Release Process Documentation
+
+For comprehensive release documentation, see:
+
+- **[Complete Release Process](../docs/developer-guide/release-process.md)** - Overview of the entire release workflow
+- **[Step-by-Step Release Guide](../docs/developer-guide/release-step-by-step.md)** - Detailed instructions for creating releases
+- **[Scripts Reference](../docs/developer-guide/release-scripts-reference.md)** - Complete reference for all release scripts
+- **[Troubleshooting Guide](../docs/developer-guide/release-troubleshooting.md)** - Solutions for common issues
+- **[Dry-Run Testing Guide](../docs/developer-guide/release-dry-run-testing.md)** - How to test releases safely
+- **[Build and Installer Guide](../docs/developer-guide/build-and-installers.md)** - Building and distributing installers
+
+## Quick Start for Releases
+
+### First-Time Release
+
+```bash
+# 1. Set GitHub token
+export GITHUB_TOKEN="your_github_token"
+
+# 2. Update version and CHANGELOG
+npm version 1.0.0
+# Edit CHANGELOG.md
+
+# 3. Commit changes
+git add .
+git commit -m "chore: prepare release v1.0.0"
+git push origin main
+
+# 4. Test with dry-run
+node scripts/complete-release.js --dry-run
+
+# 5. Execute release
+node scripts/complete-release.js
+```
+
+### Subsequent Releases
+
+```bash
+# 1. Bump version
+npm version patch  # or minor, or major
+
+# 2. Update CHANGELOG
+# Edit CHANGELOG.md
+
+# 3. Commit and push
+git add .
+git commit -m "chore: prepare release v1.0.1"
+git push origin main
+
+# 4. Release
+node scripts/complete-release.js
+```
+
+---
+
+**For detailed information about the release process, see the [Release Process Documentation](../docs/developer-guide/release-process.md).**

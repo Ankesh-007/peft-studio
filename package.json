@@ -14,6 +14,8 @@
     "test:run": "vitest --run",
     "test:watch": "vitest",
     "test:coverage": "vitest --run --coverage",
+    "test:scripts": "vitest --run --config scripts/vitest.config.js",
+    "test:scripts:pbt": "vitest --run --config scripts/vitest.config.js scripts/test/*.pbt.test.js",
     "test:bundle": "vitest --run src/test/bundle-size-constraint.test.ts",
     "test:bundle-size": "vitest --run src/test/bundle-size-constraint.test.ts",
     "test:performance": "vitest --run src/test/performance.test.ts",
@@ -41,6 +43,8 @@
     "prepare:release:dry": "pwsh -File scripts/prepare-release.ps1 -DryRun",
     "release": "pwsh -File scripts/release-to-github.ps1",
     "release:dry": "pwsh -File scripts/release-to-github.ps1 -DryRun",
+    "verify:release": "node scripts/verify-final-release.js",
+    "verify:release:skip-downloads": "node scripts/verify-final-release.js --skip-downloads",
     "ci": "npm run lint && npm run type-check && npm run test:run && npm run build",
     "ci:test": "npm run test:run",
     "ci:build": "npm run build"

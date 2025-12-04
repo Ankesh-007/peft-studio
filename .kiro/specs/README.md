@@ -37,7 +37,42 @@ This directory contains all active specifications for PEFT Studio features and i
 
 ---
 
-### 2. Codebase Cleanup
+### 2. Release Workflow
+**Location:** `.kiro/specs/release-workflow/`
+
+**Status:** Active - Ready for Implementation
+
+**Description:** Comprehensive release workflow system for building installers, generating checksums, and creating GitHub releases. This spec defines the complete automation for releasing PEFT Studio across all supported platforms (Windows, macOS, Linux) with proper code signing, verification, and asset management.
+
+**Key Features:**
+- Multi-platform installer builds (Windows NSIS/Portable, macOS DMG/ZIP, Linux AppImage/DEB)
+- SHA-256 checksum generation for all artifacts
+- Code signing for Windows and macOS installers
+- GitHub release creation with automated asset uploads
+- Release notes extraction from CHANGELOG.md
+- Pre-release and stable release channel support
+- Comprehensive validation and error handling
+- Dry-run mode for testing
+
+**Requirements Coverage:**
+- 10 user stories covering the complete release workflow
+- Build configuration validation
+- Multi-platform installer generation
+- Checksum generation and verification
+- GitHub release management
+- Code signing and notarization
+- Asset organization and upload
+- Release notes generation
+- Pre-release support
+
+**Files:**
+- `requirements.md` - Complete requirements with acceptance criteria
+- `design.md` - System architecture and workflow design
+- `tasks.md` - Implementation task list (13 tasks)
+
+---
+
+### 3. Codebase Cleanup
 **Location:** `.kiro/specs/codebase-cleanup/`
 
 **Status:** Active - In Progress

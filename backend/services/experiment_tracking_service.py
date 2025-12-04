@@ -1,288 +1,174 @@
 """
-Unified Experiment Tracking Service
+Experiment Tracking Service
 
-Provides a unified interface for experiment tracking across multiple platforms:
-- Weights & Biases
-- Comet ML
-- Arize Phoenix
-
-Features:
-- Automatic metric logging with batching
-- Hyperparameter tracking
-- Artifact linking
-- Experiment comparison
-- Search and filtering
-- Offline queue support
+Unified service for experiment tracking across multiple platforms (W&B, Comet ML, Phoenix).
+Provides automatic metric logging, hyperparameter tracking, artifact linking, and experiment comparison.
 
 Requirements: 6.1, 6.2, 6.3, 6.4, 6.5
 """
 
-from typing import Dict, List, Optional, Any, Set
-from dataclasses import dataclass, asdict, field
-from enum import Enum
 import logging
-import asyncio
+from typing import Dict, List, Optional, Any
+from dataclasses import dataclass, asdict
 from datetime import datetime
-import json
+import asyncio
 from pathlib import Path
 
+from connectors.connector_manager import get_connector_manager
+from connectors.base import JobStatus
+
 logger = logging.getLogger(__name__)
-
-
-class TrackerType(Enum):
-    """Supported experiment tracker types"""
-    WANDB = "wandb"
-    COMETML = "cometml"
-    PHOENIX = "phoenix"
 
 
 @dataclass
 class ExperimentConfig:
     """Configuration for experiment tracking"""
-    enabled_trackers: List[TrackerType] = field(default_factory=list)
-    project_name: str = "peft-studio"
-    auto_log_metrics: bool = True
-    batch_size: int = 10  # Batch metrics to minimize API calls
-    batch_interval: float = 5.0  # Seconds between batch uploads
-    offline_mode: bool = False
+    tracker_name: str  # wandb, cometml, phoenix
+    project_name: str
+    experiment_name: Optional[str] = None
+    tags: List[str] = None
+    notes: Optional[str] = None
     
-    def to_dict(self) -> Dict:
-        """Convert to dictionary"""
-        data = asdict(self)
-        data['enabled_trackers'] = [t.value for t in self.enabled_trackers]
-        return data
+    def __post_init__(self):
+        if self.tags is None:
+            self.tags = []
 
 
 @dataclass
 class ExperimentMetadata:
     """Metadata for an experiment"""
     job_id: str
-    run_name: str
     model_name: str
     dataset_name: str
     use_case: str
-    tags: List[str] = field(default_factory=list)
-    notes: Optional[str] = None
+    provider: str
+    algorithm: str
     
     def to_dict(self) -> Dict:
-        """Convert to dictionary"""
         return asdict(self)
-
-
-@dataclass
-class MetricBatch:
-    """Batch of metrics to log"""
-    job_id: str
-    metrics: List[Dict[str, Any]] = field(default_factory=list)
-    timestamp: datetime = field(default_factory=datetime.now)
-    
-    def add_metric(self, metrics: Dict[str, Any], step: Optional[int] = None):
-        """Add metrics to batch"""
-        self.metrics.append({
-            'data': metrics,
-            'step': step,
-            'timestamp': datetime.now().isoformat()
-        })
-    
-    def is_full(self, batch_size: int) -> bool:
-        """Check if batch is full"""
-        return len(self.metrics) >= batch_size
-    
-    def clear(self):
-        """Clear batch"""
-        self.metrics.clear()
-        self.timestamp = datetime.now()
 
 
 class ExperimentTrackingService:
     """
     Unified service for experiment tracking across multiple platforms.
     
-    Provides automatic metric logging, hyperparameter tracking, and
-    experiment comparison with support for offline queueing.
+    Features:
+    - Automatic metric logging with batching
+    - Hyperparameter tracking
+    - Artifact linking and management
+    - Multi-platform experiment comparison
+    - Experiment search and filtering
     """
     
-    def __init__(self, config: Optional[ExperimentConfig] = None):
-        self.config = config or ExperimentConfig()
-        self.active_experiments: Dict[str, Dict[str, Any]] = {}  # job_id -> experiment info
-        self.metric_batches: Dict[str, MetricBatch] = {}  # job_id -> batch
-        self.offline_queue: List[Dict] = []
-        self._batch_task: Optional[asyncio.Task] = None
-        self._trackers: Dict[TrackerType, Any] = {}
+    def __init__(self):
+        self.connector_manager = get_connector_manager()
+        self.active_experiments: Dict[str, Dict] = {}  # job_id -> experiment info
+        self._metric_buffer: Dict[str, List[Dict]] = {}  # job_id -> buffered metrics
+        self._buffer_size = 10  # Buffer metrics before logging
         
-        # Initialize trackers
-        self._initialize_trackers()
-        
-        logger.info(f"ExperimentTrackingService initialized with trackers: {[t.value for t in self.config.enabled_trackers]}")
-    
-    def _initialize_trackers(self):
-        """Initialize enabled experiment trackers"""
-        for tracker_type in self.config.enabled_trackers:
-            try:
-                if tracker_type == TrackerType.WANDB:
-                    from services.wandb_integration_service import get_wandb_service
-                    self._trackers[tracker_type] = get_wandb_service()
-                    logger.info("Initialized W&B tracker")
-                
-                elif tracker_type == TrackerType.COMETML:
-                    # Import Comet ML service when available
-                    logger.info("Comet ML tracker not yet implemented")
-                
-                elif tracker_type == TrackerType.PHOENIX:
-                    # Import Phoenix service when available
-                    logger.info("Phoenix tracker not yet implemented")
-                
-            except Exception as e:
-                logger.error(f"Failed to initialize {tracker_type.value} tracker: {e}")
-    
-    def _start_batch_processing(self):
-        """Start background task for batch processing"""
-        try:
-            loop = asyncio.get_running_loop()
-            if self._batch_task is None or self._batch_task.done():
-                self._batch_task = loop.create_task(self._process_batches())
-                logger.info("Started batch processing task")
-        except RuntimeError:
-            # No event loop running, will start later when needed
-            logger.debug("No event loop running, batch processing will start on first use")
-    
-    async def _process_batches(self):
-        """Background task to process metric batches"""
-        while True:
-            try:
-                await asyncio.sleep(self.config.batch_interval)
-                
-                # Process all batches
-                for job_id, batch in list(self.metric_batches.items()):
-                    if batch.metrics:
-                        await self._flush_batch(job_id)
-                
-            except asyncio.CancelledError:
-                logger.info("Batch processing task cancelled")
-                break
-            except Exception as e:
-                logger.error(f"Error in batch processing: {e}")
-    
-    async def _flush_batch(self, job_id: str):
-        """Flush a metric batch to all trackers"""
-        if job_id not in self.metric_batches:
-            return
-        
-        batch = self.metric_batches[job_id]
-        if not batch.metrics:
-            return
-        
-        logger.debug(f"Flushing {len(batch.metrics)} metrics for job {job_id}")
-        
-        # Log to each enabled tracker
-        for tracker_type, tracker in self._trackers.items():
-            try:
-                for metric_entry in batch.metrics:
-                    await self._log_to_tracker(
-                        tracker_type,
-                        tracker,
-                        job_id,
-                        metric_entry['data'],
-                        metric_entry['step']
-                    )
-            except Exception as e:
-                logger.error(f"Failed to flush batch to {tracker_type.value}: {e}")
-        
-        # Clear batch
-        batch.clear()
-    
-    async def _log_to_tracker(
-        self,
-        tracker_type: TrackerType,
-        tracker: Any,
-        job_id: str,
-        metrics: Dict[str, Any],
-        step: Optional[int]
-    ):
-        """Log metrics to a specific tracker"""
-        if tracker_type == TrackerType.WANDB:
-            tracker.log_metrics(job_id, metrics, step=step, commit=True)
-        
-        # Add other tracker implementations here
+        logger.info("ExperimentTrackingService initialized")
     
     async def start_experiment(
         self,
         job_id: str,
+        config: ExperimentConfig,
         metadata: ExperimentMetadata,
-        config: Dict[str, Any],
-        resume: bool = False
+        hyperparameters: Dict[str, Any]
     ) -> bool:
         """
-        Start a new experiment across all enabled trackers.
+        Start experiment tracking for a training job.
         
         Args:
             job_id: Unique job identifier
+            config: Experiment tracking configuration
             metadata: Experiment metadata
-            config: Training configuration (hyperparameters)
-            resume: Whether to resume an existing experiment
+            hyperparameters: Training hyperparameters
             
         Returns:
-            True if started successfully on at least one tracker
+            True if experiment started successfully
         """
-        logger.info(f"Starting experiment for job {job_id}")
-        
-        # Start batch processing if not already running
-        if self.config.auto_log_metrics:
-            self._start_batch_processing()
-        
-        success_count = 0
-        tracker_runs = {}
-        
-        # Start experiment on each tracker
-        for tracker_type, tracker in self._trackers.items():
-            try:
-                if tracker_type == TrackerType.WANDB:
-                    from services.wandb_integration_service import ExperimentMetadata as WandBMetadata
-                    wandb_metadata = WandBMetadata(
-                        job_id=job_id,
-                        model_name=metadata.model_name,
-                        dataset_name=metadata.dataset_name,
-                        use_case=metadata.use_case,
-                        run_name=metadata.run_name
-                    )
-                    success = tracker.start_run(job_id, wandb_metadata, config, resume)
-                    if success:
-                        success_count += 1
-                        tracker_runs[tracker_type] = tracker.get_run_url(job_id)
-                        logger.info(f"Started experiment on {tracker_type.value}")
-                
-            except Exception as e:
-                logger.error(f"Failed to start experiment on {tracker_type.value}: {e}")
-        
-        if success_count > 0:
+        try:
+            # Get tracker connector
+            connector = self.connector_manager.get(config.tracker_name)
+            if not connector:
+                logger.error(f"Tracker {config.tracker_name} not found")
+                return False
+            
+            if not connector.supports_tracking:
+                logger.error(f"Connector {config.tracker_name} doesn't support tracking")
+                return False
+            
+            # Verify connection
+            if not await connector.verify_connection():
+                logger.error(f"Tracker {config.tracker_name} not connected")
+                return False
+            
+            # Create training config for connector
+            from connectors.base import TrainingConfig
+            training_config = TrainingConfig(
+                base_model=metadata.model_name,
+                model_source="huggingface",  # Default
+                algorithm=metadata.algorithm,
+                rank=hyperparameters.get("rank", 8),
+                alpha=hyperparameters.get("alpha", 16),
+                dropout=hyperparameters.get("dropout", 0.1),
+                target_modules=hyperparameters.get("target_modules", ["q_proj", "v_proj"]),
+                quantization=hyperparameters.get("quantization"),
+                learning_rate=hyperparameters.get("learning_rate", 2e-4),
+                batch_size=hyperparameters.get("batch_size", 4),
+                gradient_accumulation_steps=hyperparameters.get("gradient_accumulation_steps", 4),
+                num_epochs=hyperparameters.get("num_epochs", 3),
+                warmup_steps=hyperparameters.get("warmup_steps", 100),
+                provider=metadata.provider,
+                resource_id="",
+                dataset_path=metadata.dataset_name,
+                validation_split=hyperparameters.get("validation_split", 0.1),
+                project_name=config.project_name,
+                experiment_tracker=config.tracker_name,
+                output_dir="",
+                checkpoint_steps=hyperparameters.get("checkpoint_steps", 500),
+            )
+            
+            # Submit job to tracker (creates experiment/run)
+            tracker_job_id = await connector.submit_job(training_config)
+            
+            # Store experiment info
             self.active_experiments[job_id] = {
-                'tracker_runs': tracker_runs,
-                'started_at': datetime.now().isoformat(),
-                'status': 'running'
+                "tracker_name": config.tracker_name,
+                "tracker_job_id": tracker_job_id,
+                "config": config,
+                "metadata": metadata,
+                "hyperparameters": hyperparameters,
+                "connector": connector,
+                "started_at": datetime.now().isoformat(),
+                "status": "running",
             }
             
-            # Initialize metric batch
-            self.metric_batches[job_id] = MetricBatch(job_id=job_id)
+            # Initialize metric buffer
+            self._metric_buffer[job_id] = []
             
+            logger.info(f"Started experiment tracking for job {job_id} on {config.tracker_name}")
             return True
-        
-        return False
+            
+        except Exception as e:
+            logger.error(f"Failed to start experiment tracking for job {job_id}: {e}")
+            return False
     
     async def log_metrics(
         self,
         job_id: str,
         metrics: Dict[str, Any],
         step: Optional[int] = None,
-        immediate: bool = False
+        commit: bool = True
     ) -> bool:
         """
-        Log metrics for an experiment.
+        Log metrics for an experiment with automatic batching.
         
         Args:
             job_id: Job identifier
             metrics: Dictionary of metric name -> value
             step: Training step number
-            immediate: If True, bypass batching and log immediately
+            commit: Whether to commit immediately or buffer
             
         Returns:
             True if logged successfully
@@ -291,30 +177,67 @@ class ExperimentTrackingService:
             logger.warning(f"No active experiment for job {job_id}")
             return False
         
-        if immediate or not self.config.auto_log_metrics:
-            # Log immediately to all trackers
-            success = False
-            for tracker_type, tracker in self._trackers.items():
-                try:
-                    await self._log_to_tracker(tracker_type, tracker, job_id, metrics, step)
-                    success = True
-                except Exception as e:
-                    logger.error(f"Failed to log metrics to {tracker_type.value}: {e}")
-            return success
-        
-        else:
-            # Add to batch
-            if job_id not in self.metric_batches:
-                self.metric_batches[job_id] = MetricBatch(job_id=job_id)
+        try:
+            exp_info = self.active_experiments[job_id]
+            connector = exp_info["connector"]
+            tracker_job_id = exp_info["tracker_job_id"]
             
-            batch = self.metric_batches[job_id]
-            batch.add_metric(metrics, step)
+            # Add timestamp
+            metrics_with_timestamp = {
+                **metrics,
+                "_timestamp": datetime.now().isoformat(),
+            }
             
-            # Flush if batch is full
-            if batch.is_full(self.config.batch_size):
-                await self._flush_batch(job_id)
+            if commit:
+                # Log immediately
+                await connector.log_metrics(tracker_job_id, metrics_with_timestamp, step)
+            else:
+                # Buffer metrics
+                self._metric_buffer[job_id].append({
+                    "metrics": metrics_with_timestamp,
+                    "step": step,
+                })
+                
+                # Flush buffer if full
+                if len(self._metric_buffer[job_id]) >= self._buffer_size:
+                    await self._flush_metrics(job_id)
             
             return True
+            
+        except Exception as e:
+            logger.error(f"Failed to log metrics for job {job_id}: {e}")
+            return False
+    
+    async def _flush_metrics(self, job_id: str):
+        """Flush buffered metrics to tracker."""
+        if job_id not in self._metric_buffer:
+            return
+        
+        buffer = self._metric_buffer[job_id]
+        if not buffer:
+            return
+        
+        exp_info = self.active_experiments.get(job_id)
+        if not exp_info:
+            return
+        
+        connector = exp_info["connector"]
+        tracker_job_id = exp_info["tracker_job_id"]
+        
+        try:
+            # Log all buffered metrics
+            for entry in buffer:
+                await connector.log_metrics(
+                    tracker_job_id,
+                    entry["metrics"],
+                    entry["step"]
+                )
+            
+            # Clear buffer
+            buffer.clear()
+            
+        except Exception as e:
+            logger.error(f"Failed to flush metrics for job {job_id}: {e}")
     
     async def log_hyperparameters(
         self,
@@ -335,65 +258,107 @@ class ExperimentTrackingService:
             logger.warning(f"No active experiment for job {job_id}")
             return False
         
-        success = False
-        for tracker_type, tracker in self._trackers.items():
-            try:
-                if tracker_type == TrackerType.WANDB:
-                    tracker.log_hyperparameters(job_id, hyperparameters)
-                    success = True
-            except Exception as e:
-                logger.error(f"Failed to log hyperparameters to {tracker_type.value}: {e}")
-        
-        return success
+        try:
+            exp_info = self.active_experiments[job_id]
+            
+            # Update stored hyperparameters
+            exp_info["hyperparameters"].update(hyperparameters)
+            
+            # Log to tracker if connector supports it
+            connector = exp_info["connector"]
+            if hasattr(connector, "log_hyperparameters"):
+                tracker_job_id = exp_info["tracker_job_id"]
+                await connector.log_hyperparameters(tracker_job_id, hyperparameters)
+            
+            logger.debug(f"Logged hyperparameters for job {job_id}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to log hyperparameters for job {job_id}: {e}")
+            return False
     
-    async def log_artifact(
+    async def link_artifact(
         self,
         job_id: str,
         artifact_path: str,
         artifact_type: str = "model",
-        name: Optional[str] = None,
+        artifact_name: Optional[str] = None,
         metadata: Optional[Dict] = None
     ) -> bool:
         """
-        Log an artifact (model checkpoint, dataset, etc.) to trackers.
+        Link an artifact (model checkpoint, dataset, etc.) to an experiment.
         
         Args:
             job_id: Job identifier
             artifact_path: Path to the artifact file/directory
             artifact_type: Type of artifact (model, dataset, etc.)
-            name: Artifact name
-            metadata: Additional metadata
+            artifact_name: Artifact name (defaults to filename)
+            metadata: Additional metadata for the artifact
             
         Returns:
-            True if logged successfully
+            True if linked successfully
         """
         if job_id not in self.active_experiments:
             logger.warning(f"No active experiment for job {job_id}")
             return False
         
-        success = False
-        for tracker_type, tracker in self._trackers.items():
-            try:
-                if tracker_type == TrackerType.WANDB:
-                    tracker.log_artifact(job_id, artifact_path, artifact_type, name, metadata)
-                    success = True
-            except Exception as e:
-                logger.error(f"Failed to log artifact to {tracker_type.value}: {e}")
-        
-        return success
+        try:
+            # Verify artifact exists
+            path = Path(artifact_path)
+            if not path.exists():
+                logger.error(f"Artifact not found: {artifact_path}")
+                return False
+            
+            exp_info = self.active_experiments[job_id]
+            connector = exp_info["connector"]
+            tracker_job_id = exp_info["tracker_job_id"]
+            
+            # Prepare metadata
+            artifact_metadata = {
+                "job_id": tracker_job_id,
+                "type": artifact_type,
+                "name": artifact_name or path.name,
+                "linked_at": datetime.now().isoformat(),
+                **(metadata or {})
+            }
+            
+            # Upload artifact to tracker
+            artifact_id = await connector.upload_artifact(
+                str(artifact_path),
+                artifact_metadata
+            )
+            
+            # Store artifact reference
+            if "artifacts" not in exp_info:
+                exp_info["artifacts"] = []
+            
+            exp_info["artifacts"].append({
+                "id": artifact_id,
+                "path": str(artifact_path),
+                "type": artifact_type,
+                "name": artifact_name or path.name,
+                "linked_at": datetime.now().isoformat(),
+            })
+            
+            logger.info(f"Linked artifact {artifact_name or path.name} to job {job_id}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to link artifact for job {job_id}: {e}")
+            return False
     
     async def finish_experiment(
         self,
         job_id: str,
-        exit_code: int = 0,
+        status: str = "completed",
         summary: Optional[Dict[str, Any]] = None
     ) -> bool:
         """
-        Finish an experiment across all trackers.
+        Finish experiment tracking for a job.
         
         Args:
             job_id: Job identifier
-            exit_code: Exit code (0 for success, non-zero for failure)
+            status: Final status (completed, failed, cancelled)
             summary: Final summary metrics
             
         Returns:
@@ -403,61 +368,143 @@ class ExperimentTrackingService:
             logger.warning(f"No active experiment for job {job_id}")
             return False
         
-        # Flush any remaining metrics
-        if job_id in self.metric_batches:
-            await self._flush_batch(job_id)
-        
-        # Finish on all trackers
-        success = False
-        for tracker_type, tracker in self._trackers.items():
-            try:
-                if tracker_type == TrackerType.WANDB:
-                    tracker.finish_run(job_id, exit_code, summary)
-                    success = True
-            except Exception as e:
-                logger.error(f"Failed to finish experiment on {tracker_type.value}: {e}")
-        
-        # Update experiment info
-        if job_id in self.active_experiments:
-            self.active_experiments[job_id]['status'] = 'completed' if exit_code == 0 else 'failed'
-            self.active_experiments[job_id]['finished_at'] = datetime.now().isoformat()
-        
-        # Cleanup
-        self.metric_batches.pop(job_id, None)
-        
-        logger.info(f"Finished experiment for job {job_id}")
-        return success
+        try:
+            # Flush any remaining metrics
+            await self._flush_metrics(job_id)
+            
+            exp_info = self.active_experiments[job_id]
+            connector = exp_info["connector"]
+            tracker_job_id = exp_info["tracker_job_id"]
+            
+            # Cancel job on tracker (marks as complete)
+            await connector.cancel_job(tracker_job_id)
+            
+            # Update status
+            exp_info["status"] = status
+            exp_info["finished_at"] = datetime.now().isoformat()
+            if summary:
+                exp_info["summary"] = summary
+            
+            # Clean up
+            if job_id in self._metric_buffer:
+                del self._metric_buffer[job_id]
+            
+            logger.info(f"Finished experiment tracking for job {job_id} with status {status}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to finish experiment for job {job_id}: {e}")
+            return False
     
-    def get_experiment_urls(self, job_id: str) -> Dict[str, str]:
+    async def compare_experiments(
+        self,
+        job_ids: List[str],
+        metrics: Optional[List[str]] = None
+    ) -> Dict[str, Any]:
         """
-        Get dashboard URLs for an experiment across all trackers.
+        Compare multiple experiments across different trackers.
         
         Args:
-            job_id: Job identifier
+            job_ids: List of job identifiers to compare
+            metrics: Optional list of specific metrics to compare
             
         Returns:
-            Dictionary mapping tracker type to URL
+            Dictionary with comparison data
         """
-        if job_id not in self.active_experiments:
-            return {}
+        comparison_data = {
+            "experiments": [],
+            "metrics": {},
+            "hyperparameters": {},
+            "artifacts": {},
+            "summary": {},
+        }
         
-        return self.active_experiments[job_id].get('tracker_runs', {})
+        for job_id in job_ids:
+            if job_id not in self.active_experiments:
+                logger.warning(f"Experiment {job_id} not found")
+                continue
+            
+            try:
+                exp_info = self.active_experiments[job_id]
+                connector = exp_info["connector"]
+                tracker_job_id = exp_info["tracker_job_id"]
+                
+                # Add experiment info
+                comparison_data["experiments"].append({
+                    "job_id": job_id,
+                    "tracker": exp_info["tracker_name"],
+                    "project": exp_info["config"].project_name,
+                    "name": exp_info["config"].experiment_name,
+                    "status": exp_info["status"],
+                    "started_at": exp_info["started_at"],
+                    "metadata": exp_info["metadata"].to_dict(),
+                })
+                
+                # Add hyperparameters
+                comparison_data["hyperparameters"][job_id] = exp_info["hyperparameters"]
+                
+                # Add artifacts
+                comparison_data["artifacts"][job_id] = exp_info.get("artifacts", [])
+                
+                # Fetch metrics from tracker if connector supports comparison
+                if hasattr(connector, "compare_experiments"):
+                    tracker_comparison = await connector.compare_experiments([tracker_job_id])
+                    if tracker_job_id in tracker_comparison.get("metrics", {}):
+                        comparison_data["metrics"][job_id] = tracker_comparison["metrics"][tracker_job_id]
+                
+                # Add summary if available
+                if "summary" in exp_info:
+                    comparison_data["summary"][job_id] = exp_info["summary"]
+                
+            except Exception as e:
+                logger.error(f"Failed to get comparison data for job {job_id}: {e}")
+                continue
+        
+        # Calculate comparison statistics
+        comparison_data["statistics"] = self._calculate_comparison_stats(comparison_data)
+        
+        return comparison_data
     
-    def list_active_experiments(self) -> List[str]:
-        """Get list of active experiment job IDs"""
-        return [
-            job_id for job_id, info in self.active_experiments.items()
-            if info.get('status') == 'running'
-        ]
-    
-    def get_experiment_info(self, job_id: str) -> Optional[Dict]:
-        """Get information about an experiment"""
-        return self.active_experiments.get(job_id)
+    def _calculate_comparison_stats(self, comparison_data: Dict) -> Dict:
+        """Calculate statistics for experiment comparison."""
+        stats = {
+            "total_experiments": len(comparison_data["experiments"]),
+            "trackers_used": list(set(exp["tracker"] for exp in comparison_data["experiments"])),
+            "status_counts": {},
+        }
+        
+        # Count by status
+        for exp in comparison_data["experiments"]:
+            status = exp["status"]
+            stats["status_counts"][status] = stats["status_counts"].get(status, 0) + 1
+        
+        # Find best performing experiment (if metrics available)
+        if comparison_data["metrics"]:
+            # Look for common metrics like loss, accuracy
+            for metric_name in ["loss", "eval_loss", "accuracy", "eval_accuracy"]:
+                metric_values = {}
+                for job_id, metrics in comparison_data["metrics"].items():
+                    if metric_name in metrics:
+                        metric_values[job_id] = metrics[metric_name]
+                
+                if metric_values:
+                    # For loss, lower is better; for accuracy, higher is better
+                    if "loss" in metric_name:
+                        best_job_id = min(metric_values, key=metric_values.get)
+                    else:
+                        best_job_id = max(metric_values, key=metric_values.get)
+                    
+                    stats[f"best_{metric_name}"] = {
+                        "job_id": best_job_id,
+                        "value": metric_values[best_job_id],
+                    }
+        
+        return stats
     
     async def search_experiments(
         self,
         filters: Optional[Dict[str, Any]] = None,
-        sort_by: str = 'started_at',
+        sort_by: Optional[str] = None,
         limit: int = 100
     ) -> List[Dict]:
         """
@@ -471,108 +518,142 @@ class ExperimentTrackingService:
         Returns:
             List of matching experiments
         """
-        results = list(self.active_experiments.values())
+        results = []
         
-        # Apply filters
-        if filters:
-            for key, value in filters.items():
-                if key == 'status':
-                    results = [r for r in results if r.get('status') == value]
-                elif key == 'model_name':
-                    results = [r for r in results if r.get('metadata', {}).get('model_name') == value]
-                elif key == 'use_case':
-                    results = [r for r in results if r.get('metadata', {}).get('use_case') == value]
-                elif key == 'tags':
-                    # Filter by tags (any match)
-                    tag_set = set(value) if isinstance(value, list) else {value}
-                    results = [
-                        r for r in results
-                        if tag_set.intersection(set(r.get('metadata', {}).get('tags', [])))
-                    ]
+        for job_id, exp_info in self.active_experiments.items():
+            # Apply filters
+            if filters:
+                match = True
+                
+                # Filter by tracker
+                if "tracker" in filters and exp_info["tracker_name"] != filters["tracker"]:
+                    match = False
+                
+                # Filter by status
+                if "status" in filters and exp_info["status"] != filters["status"]:
+                    match = False
+                
+                # Filter by project
+                if "project" in filters and exp_info["config"].project_name != filters["project"]:
+                    match = False
+                
+                # Filter by tags
+                if "tags" in filters:
+                    required_tags = set(filters["tags"])
+                    exp_tags = set(exp_info["config"].tags)
+                    if not required_tags.issubset(exp_tags):
+                        match = False
+                
+                # Filter by date range
+                if "start_date" in filters:
+                    if exp_info["started_at"] < filters["start_date"]:
+                        match = False
+                
+                if "end_date" in filters:
+                    if exp_info["started_at"] > filters["end_date"]:
+                        match = False
+                
+                # Filter by metadata
+                if "metadata" in filters:
+                    for key, value in filters["metadata"].items():
+                        if not hasattr(exp_info["metadata"], key):
+                            match = False
+                            break
+                        if getattr(exp_info["metadata"], key) != value:
+                            match = False
+                            break
+                
+                if not match:
+                    continue
+            
+            # Add to results
+            results.append({
+                "job_id": job_id,
+                "tracker": exp_info["tracker_name"],
+                "project": exp_info["config"].project_name,
+                "name": exp_info["config"].experiment_name,
+                "status": exp_info["status"],
+                "started_at": exp_info["started_at"],
+                "metadata": exp_info["metadata"].to_dict(),
+                "hyperparameters": exp_info["hyperparameters"],
+                "tags": exp_info["config"].tags,
+            })
         
         # Sort results
-        results.sort(key=lambda x: x.get(sort_by, ''), reverse=True)
+        if sort_by:
+            reverse = sort_by.startswith("-")
+            sort_field = sort_by.lstrip("-")
+            results.sort(key=lambda x: x.get(sort_field, ""), reverse=reverse)
         
         # Limit results
         return results[:limit]
     
-    async def compare_experiments(
-        self,
-        job_ids: List[str],
-        metrics: Optional[List[str]] = None
-    ) -> Dict[str, Any]:
+    def get_experiment_url(self, job_id: str) -> Optional[str]:
         """
-        Compare multiple experiments.
+        Get the tracker dashboard URL for an experiment.
         
         Args:
-            job_ids: List of job identifiers to compare
-            metrics: Optional list of specific metrics to compare
+            job_id: Job identifier
             
         Returns:
-            Comparison data including metrics, configs, and URLs
+            URL string or None if not available
         """
-        comparison = {
-            'experiments': [],
-            'comparison_urls': {},
-            'metric_comparison': {},
-        }
+        if job_id not in self.active_experiments:
+            return None
         
-        # Gather experiment data
-        for job_id in job_ids:
-            if job_id in self.active_experiments:
-                exp_info = self.active_experiments[job_id]
-                comparison['experiments'].append({
-                    'job_id': job_id,
-                    'metadata': exp_info.get('metadata'),
-                    'config': exp_info.get('config'),
-                    'status': exp_info.get('status'),
-                })
+        exp_info = self.active_experiments[job_id]
+        connector = exp_info["connector"]
+        tracker_job_id = exp_info["tracker_job_id"]
         
-        # Get comparison URLs from trackers
-        for tracker_type, tracker in self._trackers.items():
-            try:
-                if tracker_type == TrackerType.WANDB:
-                    url = tracker.compare_runs(job_ids, metrics)
-                    if url:
-                        comparison['comparison_urls'][tracker_type.value] = url
-            except Exception as e:
-                logger.error(f"Failed to get comparison URL from {tracker_type.value}: {e}")
+        # Try to get URL from connector
+        if hasattr(connector, "get_run_url"):
+            return connector.get_run_url(tracker_job_id)
+        elif hasattr(connector, "get_experiment_url"):
+            return connector.get_experiment_url(tracker_job_id)
+        elif hasattr(connector, "get_trace_url"):
+            return connector.get_trace_url(tracker_job_id)
         
-        return comparison
+        return None
     
-    async def shutdown(self):
-        """Shutdown the service and cleanup resources"""
-        logger.info("Shutting down experiment tracking service")
+    def get_active_experiments(self) -> List[str]:
+        """Get list of active experiment job IDs."""
+        return [
+            job_id for job_id, exp_info in self.active_experiments.items()
+            if exp_info["status"] == "running"
+        ]
+    
+    def get_experiment_info(self, job_id: str) -> Optional[Dict]:
+        """Get detailed information about an experiment."""
+        if job_id not in self.active_experiments:
+            return None
         
-        # Cancel batch processing task
-        if self._batch_task and not self._batch_task.done():
-            self._batch_task.cancel()
-            try:
-                await self._batch_task
-            except asyncio.CancelledError:
-                pass
+        exp_info = self.active_experiments[job_id]
         
-        # Flush all remaining batches
-        for job_id in list(self.metric_batches.keys()):
-            await self._flush_batch(job_id)
-        
-        # Finish all active experiments
-        for job_id in list(self.active_experiments.keys()):
-            if self.active_experiments[job_id].get('status') == 'running':
-                await self.finish_experiment(job_id, exit_code=0)
-        
-        logger.info("Experiment tracking service shutdown complete")
+        return {
+            "job_id": job_id,
+            "tracker": exp_info["tracker_name"],
+            "tracker_job_id": exp_info["tracker_job_id"],
+            "project": exp_info["config"].project_name,
+            "name": exp_info["config"].experiment_name,
+            "status": exp_info["status"],
+            "started_at": exp_info["started_at"],
+            "finished_at": exp_info.get("finished_at"),
+            "metadata": exp_info["metadata"].to_dict(),
+            "hyperparameters": exp_info["hyperparameters"],
+            "tags": exp_info["config"].tags,
+            "artifacts": exp_info.get("artifacts", []),
+            "summary": exp_info.get("summary", {}),
+            "url": self.get_experiment_url(job_id),
+        }
 
 
 # Singleton instance
 _experiment_tracking_service = None
 
 
-def get_experiment_tracking_service(
-    config: Optional[ExperimentConfig] = None
-) -> ExperimentTrackingService:
-    """Get singleton instance of ExperimentTrackingService"""
+def get_experiment_tracking_service() -> ExperimentTrackingService:
+    """Get singleton instance of ExperimentTrackingService."""
     global _experiment_tracking_service
     if _experiment_tracking_service is None:
-        _experiment_tracking_service = ExperimentTrackingService(config)
+        _experiment_tracking_service = ExperimentTrackingService()
     return _experiment_tracking_service

@@ -197,8 +197,8 @@ Found a typo, broken link, or unclear explanation? Please:
 
 ## Support
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/your-org/peft-studio/issues)
-- **Discussions**: [Community forum](https://github.com/your-org/peft-studio/discussions)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/Ankesh-007/peft-studio/issues)
+- **Discussions**: [Community forum](https://github.com/Ankesh-007/peft-studio/discussions)
 - **Documentation Issues**: Use the `documentation` label when creating issues
 
 ---

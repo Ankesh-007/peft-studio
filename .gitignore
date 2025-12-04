@@ -74,3 +74,24 @@ artifacts/
 *_COMPLETE.md
 *_STATUS.md
 *_SUMMARY.md
+
+# Build artifacts
+release/*
+dist/
+build/
+
+# Test caches
+.pytest_cache/
+.hypothesis/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Temporary files
+*.tmp
+*.log
+*_SUMMARY.md
+*_STATUS.md
+*_COMPLETE.md

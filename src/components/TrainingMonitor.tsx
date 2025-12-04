@@ -32,6 +32,8 @@ import {
 } from "recharts";
 
 import { cn, formatDuration } from "../lib/utils";
+import { useWebSocket } from "../hooks/useWebSocket";
+import { ConnectionStatus } from "./ConnectionStatus";
 
 interface TrainingMetric {
   label: string;
@@ -40,6 +42,36 @@ interface TrainingMetric {
   color: string;
   icon: React.ElementType;
   sparkline?: number[];
+}
+
+interface TrainingUpdate {
+  type: 'training_update' | 'status_change' | 'log_entry';
+  data: {
+    step?: number;
+    epoch?: number;
+    loss?: number;
+    valLoss?: number;
+    learningRate?: number;
+    gpuUtilization?: number;
+    gpuMemory?: number;
+    tokensPerSecond?: number;
+    timeElapsed?: number;
+    timeRemaining?: number;
+    status?: 'running' | 'paused' | 'completed' | 'failed';
+    progress?: number;
+    log?: {
+      time: string;
+      level: string;
+      message: string;
+    };
+  };
+}
+
+interface LossDataPoint {
+  step: number;
+  trainLoss: number;
+  valLoss: number;
+  lr: number;
 }
 
 interface TrainingMonitorProps {
@@ -54,65 +86,149 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
   const [status, setStatus] = useState<
     "running" | "paused" | "completed" | "failed"
   >("running");
-  const [progress, setProgress] = useState(65);
-  const [currentEpoch, setCurrentEpoch] = useState(3);
+  const [progress, setProgress] = useState(0);
+  const [currentEpoch, setCurrentEpoch] = useState(0);
   const [totalEpochs] = useState(10);
-  const [timeElapsed, setTimeElapsed] = useState(12345); // seconds
-  const [timeRemaining, setTimeRemaining] = useState(16200); // seconds
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(0);
   const [activeTab, setActiveTab] = useState<
     "loss" | "resources" | "parameters"
   >("loss");
   const [logsExpanded, setLogsExpanded] = useState(true);
+  
+  // Real-time data from WebSocket
+  const [lossData, setLossData] = useState<LossDataPoint[]>([]);
+  const [currentMetrics, setCurrentMetrics] = useState({
+    loss: 0,
+    valLoss: 0,
+    learningRate: 0,
+    gpuUtilization: 0,
+    gpuMemory: 0,
+    tokensPerSecond: 0,
+  });
+  const [logs, setLogs] = useState<Array<{ time: string; level: string; message: string }>>([]);
+  const [lossSparkline, setLossSparkline] = useState<number[]>([]);
 
-  // Mock data - would come from WebSocket in production
+  // WebSocket connection for real-time updates
+  const wsUrl = `ws://localhost:8000/ws/training/${runId}`;
+  const { isConnected, subscribe } = useWebSocket<TrainingUpdate>(wsUrl, {
+    autoConnect: true,
+    onConnectionChange: (connected) => {
+      console.log(`Training monitor ${connected ? 'connected' : 'disconnected'}`);
+    },
+    onError: (error) => {
+      console.error('WebSocket error:', error);
+    },
+  });
+
+  // Subscribe to training updates
+  useEffect(() => {
+    const unsubscribe = subscribe((update: TrainingUpdate) => {
+      if (update.type === 'training_update' && update.data) {
+        const data = update.data;
+        
+        // Update metrics
+        if (data.loss !== undefined) {
+          setCurrentMetrics(prev => ({ ...prev, loss: data.loss! }));
+          setLossSparkline(prev => [...prev.slice(-6), data.loss!]);
+        }
+        if (data.valLoss !== undefined) {
+          setCurrentMetrics(prev => ({ ...prev, valLoss: data.valLoss! }));
+        }
+        if (data.learningRate !== undefined) {
+          setCurrentMetrics(prev => ({ ...prev, learningRate: data.learningRate! }));
+        }
+        if (data.gpuUtilization !== undefined) {
+          setCurrentMetrics(prev => ({ ...prev, gpuUtilization: data.gpuUtilization! }));
+        }
+        if (data.gpuMemory !== undefined) {
+          setCurrentMetrics(prev => ({ ...prev, gpuMemory: data.gpuMemory! }));
+        }
+        if (data.tokensPerSecond !== undefined) {
+          setCurrentMetrics(prev => ({ ...prev, tokensPerSecond: data.tokensPerSecond! }));
+        }
+        
+        // Update progress
+        if (data.epoch !== undefined) setCurrentEpoch(data.epoch);
+        if (data.progress !== undefined) setProgress(data.progress);
+        if (data.timeElapsed !== undefined) setTimeElapsed(data.timeElapsed);
+        if (data.timeRemaining !== undefined) setTimeRemaining(data.timeRemaining);
+        
+        // Update loss chart data
+        if (data.step !== undefined && data.loss !== undefined) {
+          setLossData(prev => [
+            ...prev,
+            {
+              step: data.step!,
+              trainLoss: data.loss!,
+              valLoss: data.valLoss || 0,
+              lr: data.learningRate || 0,
+            }
+          ].slice(-100)); // Keep last 100 points
+        }
+      } else if (update.type === 'status_change' && update.data.status) {
+        setStatus(update.data.status);
+      } else if (update.type === 'log_entry' && update.data.log) {
+        setLogs(prev => [...prev, update.data.log!].slice(-100)); // Keep last 100 logs
+      }
+    });
+
+    return unsubscribe;
+  }, [subscribe]);
+
+  // Build metrics from real-time data
   const metrics: TrainingMetric[] = [
     {
       label: "Current Loss",
-      value: "0.4532",
-      trend: "↓ 2.1%",
+      value: currentMetrics.loss.toFixed(4),
+      trend: lossData.length > 1 ? 
+        `↓ ${((lossData[lossData.length - 2].trainLoss - currentMetrics.loss) / lossData[lossData.length - 2].trainLoss * 100).toFixed(1)}%` : 
+        undefined,
       color: "accent-success",
       icon: Target,
-      sparkline: [0.8, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45],
+      sparkline: lossSparkline,
     },
     {
       label: "Learning Rate",
-      value: "1.2e-5",
-      trend: "↓ 1.0e-7",
+      value: currentMetrics.learningRate.toExponential(1),
+      trend: lossData.length > 1 ? 
+        `↓ ${(lossData[lossData.length - 2].lr - currentMetrics.learningRate).toExponential(1)}` : 
+        undefined,
       color: "accent-warning",
       icon: Zap,
     },
     {
       label: "Epoch Progress",
       value: `${currentEpoch} / ${totalEpochs}`,
-      trend: "30%",
+      trend: `${progress}%`,
       color: "accent-primary",
       icon: Clock,
     },
     {
       label: "Training Throughput",
-      value: "12.3 steps/s",
-      trend: "↑ 0.5 steps/s",
+      value: `${currentMetrics.tokensPerSecond.toFixed(1)} steps/s`,
+      trend: currentMetrics.tokensPerSecond > 10 ? "↑ Fast" : "Normal",
       color: "accent-success",
       icon: Gauge,
     },
     {
       label: "Validation Loss",
-      value: "0.5011",
-      trend: "↑ 0.1%",
-      color: "accent-error",
+      value: currentMetrics.valLoss.toFixed(4),
+      trend: currentMetrics.valLoss > currentMetrics.loss ? "↑ Higher" : "↓ Lower",
+      color: currentMetrics.valLoss > currentMetrics.loss ? "accent-error" : "accent-success",
       icon: Shield,
     },
     {
       label: "GPU Utilization",
-      value: "98%",
-      trend: "High",
-      color: "accent-error",
+      value: `${Math.round(currentMetrics.gpuUtilization)}%`,
+      trend: currentMetrics.gpuUtilization > 90 ? "High" : "Normal",
+      color: currentMetrics.gpuUtilization > 90 ? "accent-error" : "accent-success",
       icon: Server,
     },
     {
       label: "VRAM Usage",
-      value: "78.4 GB",
-      trend: "85% Max",
+      value: `${currentMetrics.gpuMemory.toFixed(1)} GB`,
+      trend: `${Math.round(currentMetrics.gpuMemory / 80 * 100)}% Max`,
       color: "accent-primary",
       icon: MemoryStick,
     },
@@ -125,56 +241,11 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
     },
   ];
 
-  const lossData = Array.from({ length: 50 }, (_, i) => ({
-    step: i * 10,
-    trainLoss: 2.4 - i * 0.04 + Math.random() * 0.1,
-    valLoss: 2.5 - i * 0.035 + Math.random() * 0.12,
-    lr: 0.0002 - i * 0.000003,
-  }));
-
   const resourceData = [
-    { name: "GPU 0", usage: 98 },
-    { name: "GPU 1", usage: 45 },
-    { name: "CPU", usage: 62 },
-    { name: "RAM", usage: 71 },
-  ];
-
-  const logs = [
-    {
-      time: "2025-11-29 10:30:15",
-      level: "INFO",
-      message: "Training started successfully",
-    },
-    {
-      time: "2025-11-29 10:30:20",
-      level: "INFO",
-      message: "Loaded model: Llama-3-8B",
-    },
-    {
-      time: "2025-11-29 10:30:25",
-      level: "INFO",
-      message: "Dataset loaded: 10,234 examples",
-    },
-    {
-      time: "2025-11-29 10:30:30",
-      level: "INFO",
-      message: "Step 100/1250 | Loss: 0.8234",
-    },
-    {
-      time: "2025-11-29 10:31:00",
-      level: "WARN",
-      message: "GPU temperature high: 82°C",
-    },
-    {
-      time: "2025-11-29 10:31:30",
-      level: "INFO",
-      message: "Step 200/1250 | Loss: 0.7123",
-    },
-    {
-      time: "2025-11-29 10:32:00",
-      level: "INFO",
-      message: "Checkpoint saved: epoch-1_step-250",
-    },
+    { name: "GPU 0", usage: Math.round(currentMetrics.gpuUtilization) },
+    { name: "GPU 1", usage: Math.round(currentMetrics.gpuUtilization * 0.5) }, // Mock second GPU
+    { name: "CPU", usage: 62 }, // Would come from backend
+    { name: "RAM", usage: 71 }, // Would come from backend
   ];
 
   const getStatusColor = () => {
@@ -207,20 +278,53 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
     }
   };
 
-  const handlePauseResume = () => {
-    setStatus(status === "running" ? "paused" : "running");
+  const handlePauseResume = async () => {
+    try {
+      const action = status === "running" ? "pause" : "resume";
+      const response = await fetch(`http://localhost:8000/api/training/${runId}/${action}`, {
+        method: 'POST',
+      });
+      
+      if (response.ok) {
+        setStatus(status === "running" ? "paused" : "running");
+      } else {
+        console.error(`Failed to ${action} training`);
+      }
+    } catch (error) {
+      console.error('Error controlling training:', error);
+    }
   };
 
-  const handleStop = () => {
+  const handleStop = async () => {
     if (
       confirm("Are you sure you want to stop training? Progress will be saved.")
     ) {
-      setStatus("completed");
+      try {
+        const response = await fetch(`http://localhost:8000/api/training/${runId}/stop`, {
+          method: 'POST',
+        });
+        
+        if (response.ok) {
+          setStatus("completed");
+        } else {
+          console.error('Failed to stop training');
+        }
+      } catch (error) {
+        console.error('Error stopping training:', error);
+      }
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0f0f0f] p-24 space-y-24">
+      {/* WebSocket Connection Status */}
+      <div className="fixed top-16 right-16 z-50">
+        <ConnectionStatus 
+          status={isConnected ? "online" : "offline"} 
+          showLabel={true}
+        />
+      </div>
+
       {/* Status Header */}
       <div className="text-center space-y-16">
         <div className="inline-flex items-center gap-12 px-24 py-12 bg-dark-bg-secondary border border-dark-border rounded-full">

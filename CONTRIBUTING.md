@@ -70,7 +70,7 @@ We love new ideas! Create a feature request issue with:
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/Ankesh-007/peft-studio.git
+   git clone https://github.com/Ankesh-007/peft-studio
    cd peft-studio
    ```
 

@@ -19,7 +19,7 @@ GitHub provides a comprehensive analytics dashboard through the **Insights** tab
 ## Accessing the Dashboard
 
 ### Main Insights Page
-**URL:** https://github.com/Ankesh-007/peft-studio/pulse
+**URL:** https://github.com/Ankesh-007/peft-studiopulse
 
 The Pulse page shows recent activity including:
 - Merged pull requests
@@ -57,7 +57,7 @@ The Pulse page shows recent activity including:
 
 ### 2. Contributors
 
-**URL:** https://github.com/Ankesh-007/peft-studio/graphs/contributors
+**URL:** https://github.com/Ankesh-007/peft-studiographs/contributors
 
 **What it shows:**
 - Contribution graphs over time
@@ -78,7 +78,7 @@ The Pulse page shows recent activity including:
 
 ### 3. Community Profile
 
-**URL:** https://github.com/Ankesh-007/peft-studio/community
+**URL:** https://github.com/Ankesh-007/peft-studiocommunity
 
 **What it shows:**
 - Community standards checklist
@@ -98,7 +98,7 @@ The Pulse page shows recent activity including:
 
 ### 4. Traffic (Admin Only)
 
-**URL:** https://github.com/Ankesh-007/peft-studio/graphs/traffic
+**URL:** https://github.com/Ankesh-007/peft-studiographs/traffic
 
 **What it shows:**
 - Page views (last 14 days)
@@ -123,7 +123,7 @@ The Pulse page shows recent activity including:
 
 ### 5. Commits
 
-**URL:** https://github.com/Ankesh-007/peft-studio/graphs/commit-activity
+**URL:** https://github.com/Ankesh-007/peft-studiographs/commit-activity
 
 **What it shows:**
 - Commit frequency over time
@@ -144,7 +144,7 @@ The Pulse page shows recent activity including:
 
 ### 6. Code Frequency
 
-**URL:** https://github.com/Ankesh-007/peft-studio/graphs/code-frequency
+**URL:** https://github.com/Ankesh-007/peft-studiographs/code-frequency
 
 **What it shows:**
 - Lines added/deleted over time
@@ -164,7 +164,7 @@ The Pulse page shows recent activity including:
 
 ### 7. Dependency Graph
 
-**URL:** https://github.com/Ankesh-007/peft-studio/network/dependencies
+**URL:** https://github.com/Ankesh-007/peft-studionetwork/dependencies
 
 **What it shows:**
 - Project dependencies
@@ -185,7 +185,7 @@ The Pulse page shows recent activity including:
 
 ### 8. Network
 
-**URL:** https://github.com/Ankesh-007/peft-studio/network
+**URL:** https://github.com/Ankesh-007/peft-studionetwork
 
 **What it shows:**
 - Fork network
@@ -379,5 +379,5 @@ curl -H "Authorization: token YOUR_TOKEN" \
 ---
 
 For questions or assistance with analytics, please:
-- [Open an issue](https://github.com/Ankesh-007/peft-studio/issues/new)
-- [Start a discussion](https://github.com/Ankesh-007/peft-studio/discussions)
+- [Open an issue](https://github.com/Ankesh-007/peft-studioissues/new)
+- [Start a discussion](https://github.com/Ankesh-007/peft-studiodiscussions)

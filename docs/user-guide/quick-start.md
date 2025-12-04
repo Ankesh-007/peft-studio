@@ -12,19 +12,19 @@ Get up and running with PEFT Studio in 5 minutes.
 ## Installation
 
 ### Windows
-1. Download `PEFT-Studio-Setup.exe` from [releases](https://github.com/your-org/peft-studio/releases)
+1. Download `PEFT-Studio-Setup.exe` from [releases](https://github.com/Ankesh-007/peft-studio/releases)
 2. Run the installer
 3. Follow the installation wizard
 4. Launch PEFT Studio from the Start Menu
 
 ### macOS
-1. Download `PEFT-Studio.dmg` from [releases](https://github.com/your-org/peft-studio/releases)
+1. Download `PEFT-Studio.dmg` from [releases](https://github.com/Ankesh-007/peft-studio/releases)
 2. Open the DMG file
 3. Drag PEFT Studio to Applications
 4. Launch from Applications folder
 
 ### Linux
-1. Download `PEFT-Studio.AppImage` from [releases](https://github.com/your-org/peft-studio/releases)
+1. Download `PEFT-Studio.AppImage` from [releases](https://github.com/Ankesh-007/peft-studio/releases)
 2. Make it executable: `chmod +x PEFT-Studio.AppImage`
 3. Run: `./PEFT-Studio.AppImage`
 

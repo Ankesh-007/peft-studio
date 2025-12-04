@@ -128,12 +128,170 @@ function writeChecksumsFile(checksums, outputPath) {
 }
 
 /**
+ * Verify checksums from SHA256SUMS.txt file
+ * @param {string} directory - Directory containing SHA256SUMS.txt and installer files
+ * @returns {Promise<{valid: boolean, verified: string[], failed: string[], missing: string[]}>}
+ */
+async function verifyChecksums(directory) {
+  try {
+    const checksumsFilePath = path.join(directory, 'SHA256SUMS.txt');
+    
+    // Check if checksums file exists
+    if (!fs.existsSync(checksumsFilePath)) {
+      throw new Error(`Checksums file not found: ${checksumsFilePath}`);
+    }
+    
+    // Read checksums file
+    const content = fs.readFileSync(checksumsFilePath, 'utf8');
+    const lines = content.trim().split('\n').filter(line => line.length > 0);
+    
+    const verified = [];
+    const failed = [];
+    const missing = [];
+    
+    console.log(`\n🔍 Verifying ${lines.length} checksum(s)...\n`);
+    
+    for (const line of lines) {
+      // Validate format
+      if (!validateChecksumFormat(line)) {
+        console.error(`   ✗ Invalid format: ${line}`);
+        failed.push({ file: line, reason: 'Invalid format' });
+        continue;
+      }
+      
+      // Parse line
+      const expectedHash = line.substring(0, 64);
+      const filename = line.substring(66);
+      const filePath = path.join(directory, filename);
+      
+      // Check if file exists
+      if (!fs.existsSync(filePath)) {
+        console.error(`   ✗ File not found: ${filename}`);
+        missing.push(filename);
+        continue;
+      }
+      
+      // Recalculate checksum
+      try {
+        const actualHash = await calculateChecksum(filePath);
+        
+        if (actualHash === expectedHash) {
+          console.log(`   ✓ ${filename}`);
+          verified.push(filename);
+        } else {
+          console.error(`   ✗ Checksum mismatch: ${filename}`);
+          console.error(`      Expected: ${expectedHash}`);
+          console.error(`      Actual:   ${actualHash}`);
+          failed.push({ file: filename, expected: expectedHash, actual: actualHash });
+        }
+      } catch (err) {
+        console.error(`   ✗ Error verifying ${filename}:`, err.message);
+        failed.push({ file: filename, reason: err.message });
+      }
+    }
+    
+    const valid = failed.length === 0 && missing.length === 0;
+    
+    return { valid, verified, failed, missing };
+  } catch (err) {
+    console.error(`❌ Error verifying checksums:`, err.message);
+    throw err;
+  }
+}
+
+/**
+ * Validate checksum line format
+ * @param {string} line - Line from SHA256SUMS.txt
+ * @returns {boolean} - True if format is valid
+ */
+function validateChecksumFormat(line) {
+  // Format: <64 hex chars>  <filename>
+  const formatRegex = /^[a-f0-9]{64}  .+$/;
+  return formatRegex.test(line);
+}
+
+/**
+ * Display help message
+ */
+function displayHelp() {
+  console.log(`
+🔐 SHA256 Checksum Generator
+
+Usage:
+  node generate-checksums.js [directory]           Generate checksums for installer files
+  node generate-checksums.js verify [directory]    Verify existing checksums
+  node generate-checksums.js --help                Display this help message
+
+Options:
+  directory    Directory containing installer files (default: ./release)
+
+Examples:
+  node generate-checksums.js                       Generate checksums in ./release
+  node generate-checksums.js ./dist                Generate checksums in ./dist
+  node generate-checksums.js verify                Verify checksums in ./release
+  node generate-checksums.js verify ./dist         Verify checksums in ./dist
+`);
+}
+
+/**
  * Main function
  */
 async function main() {
   try {
-    // Get directory from command line argument or use default
-    const directory = process.argv[2] || './release';
+    // Parse command line arguments
+    const args = process.argv.slice(2);
+    const command = args[0];
+    
+    // Check for help command
+    if (command === '--help' || command === '-h' || command === 'help') {
+      displayHelp();
+      process.exit(0);
+    }
+    
+    // Check for verify command
+    if (command === 'verify' || command === '--verify' || command === '-v') {
+      const directory = args[1] || './release';
+      
+      console.log(`\n🔐 Verifying SHA256 checksums in: ${directory}\n`);
+      
+      const result = await verifyChecksums(directory);
+      
+      console.log(`\n📊 Verification Summary:`);
+      console.log(`   ✓ Verified: ${result.verified.length}`);
+      console.log(`   ✗ Failed: ${result.failed.length}`);
+      console.log(`   ⚠️  Missing: ${result.missing.length}`);
+      
+      if (result.valid) {
+        console.log('\n✅ All checksums verified successfully!\n');
+        process.exit(0);
+      } else {
+        console.log('\n❌ Checksum verification failed!\n');
+        
+        if (result.failed.length > 0) {
+          console.log('Failed verifications:');
+          for (const item of result.failed) {
+            if (item.reason) {
+              console.log(`   - ${item.file}: ${item.reason}`);
+            } else {
+              console.log(`   - ${item.file}`);
+            }
+          }
+        }
+        
+        if (result.missing.length > 0) {
+          console.log('\nMissing files:');
+          for (const file of result.missing) {
+            console.log(`   - ${file}`);
+          }
+        }
+        
+        console.log();
+        process.exit(1);
+      }
+    }
+    
+    // Default: Generate checksums
+    const directory = command || './release';
     const outputPath = path.join(directory, 'SHA256SUMS.txt');
     
     console.log(`\n🔐 Generating SHA256 checksums for installers in: ${directory}\n`);
@@ -148,6 +306,16 @@ async function main() {
     
     // Write checksums to file
     writeChecksumsFile(checksums, outputPath);
+    
+    // Verify checksums immediately after generation
+    console.log('\n🔍 Verifying generated checksums...\n');
+    const verification = await verifyChecksums(directory);
+    
+    if (verification.valid) {
+      console.log('✅ All checksums verified successfully!');
+    } else {
+      console.log('⚠️  Some checksums could not be verified');
+    }
     
     console.log('\n✨ Checksum generation complete!\n');
     process.exit(0);
@@ -167,5 +335,7 @@ module.exports = {
   calculateChecksum,
   shouldIncludeFile,
   generateChecksums,
-  writeChecksumsFile
+  writeChecksumsFile,
+  verifyChecksums,
+  validateChecksumFormat
 };

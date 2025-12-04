@@ -18,7 +18,7 @@ This guide provides step-by-step instructions for installing PEFT Studio on macO
 
 ## Download
 
-1. Visit the [PEFT Studio Releases page](https://github.com/Ankesh-007/peft-studio/releases/latest)
+1. Visit the [PEFT Studio Releases page](https://github.com/Ankesh-007/peft-studioreleases/latest)
 2. Download the appropriate macOS installer:
    - **PEFT-Studio-{version}-arm64.dmg** - For Apple Silicon Macs (M1/M2/M3)
    - **PEFT-Studio-{version}-x64.dmg** - For Intel Macs
@@ -140,7 +140,7 @@ PEFT Studio automatically checks for updates on startup:
 
 If auto-update fails or you prefer manual updates:
 
-1. Visit the [releases page](https://github.com/Ankesh-007/peft-studio/releases/latest)
+1. Visit the [releases page](https://github.com/Ankesh-007/peft-studioreleases/latest)
 2. Download the latest DMG or ZIP for your Mac
 3. Follow the installation steps above (it will replace your existing installation)
 
@@ -358,15 +358,15 @@ If you're still having issues:
    - [FAQ](../reference/faq.md)
 
 2. **Search Existing Issues:**
-   - [GitHub Issues](https://github.com/Ankesh-007/peft-studio/issues)
+   - [GitHub Issues](https://github.com/Ankesh-007/peft-studioissues)
    - Someone may have already solved your problem
 
 3. **Ask for Help:**
-   - [GitHub Discussions](https://github.com/Ankesh-007/peft-studio/discussions)
+   - [GitHub Discussions](https://github.com/Ankesh-007/peft-studiodiscussions)
    - Provide details: macOS version, Mac model, error messages, logs
 
 4. **Report a Bug:**
-   - [Open an issue](https://github.com/Ankesh-007/peft-studio/issues/new?template=bug_report.md)
+   - [Open an issue](https://github.com/Ankesh-007/peft-studioissues/new?template=bug_report.md)
    - Include: macOS version, Mac model (Intel/Apple Silicon), error messages, logs
 
 ## Next Steps

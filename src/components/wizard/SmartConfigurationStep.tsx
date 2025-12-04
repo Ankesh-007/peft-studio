@@ -34,6 +34,8 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
   const [smartConfig, setSmartConfig] = useState<any>(null);
   const [estimates, setEstimates] = useState<TrainingEstimates | null>(null);
   const [peftConfig, setPeftConfig] = useState<any>(null);
+  const [quantization, setQuantization] = useState<'4bit' | '8bit' | 'none'>('none');
+  const [gradientCheckpointing, setGradientCheckpointing] = useState(false);
 
   useEffect(() => {
     if (wizardState.model && wizardState.dataset && wizardState.profile) {
@@ -86,6 +88,14 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
 
       const configData = await configResponse.json();
       setSmartConfig(configData);
+      
+      // Set initial quantization from smart config
+      if (configData.quantization && configData.quantization !== 'none') {
+        setQuantization(configData.quantization);
+      }
+      
+      // Set initial gradient checkpointing
+      setGradientCheckpointing(configData.gradient_checkpointing || false);
 
       // Calculate estimates
       const trainingSeconds = configData.estimated_training_time_hours * 3600;
@@ -113,11 +123,46 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
       };
 
       setEstimates(newEstimates);
-      onConfigUpdate(configData, newEstimates);
+      onConfigUpdate({
+        ...configData,
+        quantization,
+        gradient_checkpointing: gradientCheckpointing,
+      }, newEstimates);
     } catch (error) {
       console.error("Error calculating smart defaults:", error);
     } finally {
       setLoading(false);
+    }
+  };
+  
+  const handleQuantizationChange = (value: '4bit' | '8bit' | 'none') => {
+    setQuantization(value);
+    if (smartConfig && estimates) {
+      onConfigUpdate({
+        ...smartConfig,
+        quantization: value,
+        gradient_checkpointing: gradientCheckpointing,
+        peft: peftConfig,
+      }, estimates);
+    }
+  };
+  
+  const handleGradientCheckpointingChange = (enabled: boolean) => {
+    setGradientCheckpointing(enabled);
+    if (smartConfig && estimates) {
+      // Recalculate memory savings
+      const memorySavings = enabled ? smartConfig.estimated_memory_mb * 0.3 : 0;
+      const updatedConfig = {
+        ...smartConfig,
+        quantization,
+        gradient_checkpointing: enabled,
+        peft: peftConfig,
+        estimated_memory_mb: enabled 
+          ? smartConfig.estimated_memory_mb * 0.7 
+          : smartConfig.estimated_memory_mb / 0.7,
+      };
+      
+      onConfigUpdate(updatedConfig, estimates);
     }
   };
 
@@ -258,6 +303,118 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Core Configuration
         </h3>
+
+        {/* Quantization Options */}
+        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="flex items-center gap-2 mb-3">
+            <label className="text-sm font-medium text-gray-700">
+              Quantization
+            </label>
+            <Tooltip configKey="quantization">
+              <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
+            </Tooltip>
+          </div>
+          <div className="space-y-3">
+            <label className="flex items-start p-3 border-2 rounded-lg cursor-pointer transition-all hover:bg-white"
+              style={{
+                borderColor: quantization === 'none' ? '#3B82F6' : '#E5E7EB',
+                backgroundColor: quantization === 'none' ? '#EFF6FF' : 'transparent'
+              }}>
+              <input
+                type="radio"
+                name="quantization"
+                value="none"
+                checked={quantization === 'none'}
+                onChange={(e) => handleQuantizationChange(e.target.value as any)}
+                className="mt-1 mr-3"
+              />
+              <div className="flex-1">
+                <div className="font-medium text-gray-900">No Quantization (FP16/BF16)</div>
+                <div className="text-sm text-gray-600 mt-1">
+                  Full precision training. Best quality but requires more memory.
+                </div>
+              </div>
+            </label>
+            
+            <label className="flex items-start p-3 border-2 rounded-lg cursor-pointer transition-all hover:bg-white"
+              style={{
+                borderColor: quantization === '8bit' ? '#3B82F6' : '#E5E7EB',
+                backgroundColor: quantization === '8bit' ? '#EFF6FF' : 'transparent'
+              }}>
+              <input
+                type="radio"
+                name="quantization"
+                value="8bit"
+                checked={quantization === '8bit'}
+                onChange={(e) => handleQuantizationChange(e.target.value as any)}
+                className="mt-1 mr-3"
+              />
+              <div className="flex-1">
+                <div className="font-medium text-gray-900">8-bit Quantization</div>
+                <div className="text-sm text-gray-600 mt-1">
+                  Reduces memory by ~50% with minimal quality loss. Good balance.
+                </div>
+              </div>
+            </label>
+            
+            <label className="flex items-start p-3 border-2 rounded-lg cursor-pointer transition-all hover:bg-white"
+              style={{
+                borderColor: quantization === '4bit' ? '#3B82F6' : '#E5E7EB',
+                backgroundColor: quantization === '4bit' ? '#EFF6FF' : 'transparent'
+              }}>
+              <input
+                type="radio"
+                name="quantization"
+                value="4bit"
+                checked={quantization === '4bit'}
+                onChange={(e) => handleQuantizationChange(e.target.value as any)}
+                className="mt-1 mr-3"
+              />
+              <div className="flex-1">
+                <div className="font-medium text-gray-900">4-bit Quantization</div>
+                <div className="text-sm text-gray-600 mt-1">
+                  Reduces memory by ~75%. Enables training larger models on limited hardware.
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        {/* Gradient Checkpointing Toggle */}
+        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Gradient Checkpointing
+                </label>
+                <Tooltip configKey="gradient_checkpointing">
+                  <HelpCircle className="w-4 h-4 text-gray-400 cursor-help" />
+                </Tooltip>
+              </div>
+              <p className="text-sm text-gray-600 mb-2">
+                Trades computation time for memory savings. Reduces memory usage by ~30% but increases training time by ~20%.
+              </p>
+              {gradientCheckpointing && (
+                <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 px-3 py-2 rounded border border-green-200">
+                  <Leaf className="w-4 h-4" />
+                  <span>
+                    Estimated memory savings: {(smartConfig.estimated_memory_mb * 0.3 / 1024).toFixed(1)} GB
+                  </span>
+                </div>
+              )}
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer ml-4">
+              <input
+                type="checkbox"
+                checked={gradientCheckpointing}
+                onChange={(e) => handleGradientCheckpointingChange(e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Batch Size */}
@@ -418,7 +575,12 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
                   setPeftConfig(config);
                   // Update wizard state with PEFT config
                   onConfigUpdate(
-                    { ...smartConfig, peft: config },
+                    { 
+                      ...smartConfig, 
+                      peft: config,
+                      quantization,
+                      gradient_checkpointing: gradientCheckpointing,
+                    },
                     estimates!
                   );
                 }}

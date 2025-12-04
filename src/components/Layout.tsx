@@ -4,6 +4,7 @@ import { cn } from "../lib/utils";
 
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
+import { OfflineIndicator } from "./OfflineIndicator";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -93,6 +94,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </aside>
       )}
+
+      {/* Offline Indicator - Fixed position in bottom-right */}
+      <OfflineIndicator />
     </div>
   );
 };

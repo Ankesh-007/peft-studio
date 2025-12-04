@@ -938,8 +938,8 @@ Common issues and solutions for PEFT Studio.
 
 ### Contact Support
 
-- **GitHub Issues**: [Report bugs](https://github.com/your-org/peft-studio/issues)
-- **Discussions**: [Ask questions](https://github.com/your-org/peft-studio/discussions)
+- **GitHub Issues**: [Report bugs](https://github.com/Ankesh-007/peft-studio/issues)
+- **Discussions**: [Ask questions](https://github.com/Ankesh-007/peft-studio/discussions)
 - **Email**: support@peft-studio.com
 - **Discord**: [Join community](https://discord.gg/peft-studio)
 

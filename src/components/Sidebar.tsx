@@ -9,9 +9,10 @@ import {
   Settings,
   User,
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 
 import { cn } from "../lib/utils";
+import { MobileNav } from "./MobileNav";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -47,14 +48,10 @@ const navItems: NavItem[] = [
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
   const [activeItem, setActiveItem] = React.useState("dashboard");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  return (
-    <div
-      className={cn(
-        "bg-dark-bg-secondary border-r border-dark-border flex flex-col transition-all duration-300",
-        collapsed ? "w-[80px]" : "w-[240px]",
-      )}
-    >
+  const sidebarContent = (
+    <>
       {/* Logo Section */}
       <div className="h-[60px] flex items-center justify-between px-20 border-b border-dark-border">
         {!collapsed && (
@@ -161,7 +158,31 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
           )}
         </button>
       </div>
-    </div>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <div
+        className={cn(
+          "hidden md:flex bg-dark-bg-secondary border-r border-dark-border flex-col transition-all duration-300",
+          collapsed ? "w-[80px]" : "w-[240px]",
+        )}
+      >
+        {sidebarContent}
+      </div>
+
+      {/* Mobile Navigation */}
+      <MobileNav
+        isOpen={mobileMenuOpen}
+        onToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
+      >
+        <div className="flex flex-col h-full">
+          {sidebarContent}
+        </div>
+      </MobileNav>
+    </>
   );
 };
 

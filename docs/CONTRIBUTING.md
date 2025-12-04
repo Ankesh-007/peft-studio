@@ -7,7 +7,7 @@ Thank you for your interest in improving PEFT Studio documentation!
 ### Reporting Issues
 
 Found a problem in the docs?
-1. Check if already reported in [GitHub Issues](https://github.com/your-org/peft-studio/issues)
+1. Check if already reported in [GitHub Issues](https://github.com/Ankesh-007/peft-studio/issues)
 2. Create a new issue with:
    - Page/section with the problem
    - What's wrong or unclear
@@ -17,7 +17,7 @@ Found a problem in the docs?
 ### Suggesting Improvements
 
 Have an idea for better docs?
-1. Open a [GitHub Discussion](https://github.com/your-org/peft-studio/discussions)
+1. Open a [GitHub Discussion](https://github.com/Ankesh-007/peft-studio/discussions)
 2. Describe your suggestion
 3. Explain why it would help users
 4. Community can discuss and vote
@@ -252,6 +252,6 @@ Thank you for helping make PEFT Studio better! 🎉
 
 ## Questions?
 
-- **Documentation questions**: [GitHub Discussions](https://github.com/your-org/peft-studio/discussions)
+- **Documentation questions**: [GitHub Discussions](https://github.com/Ankesh-007/peft-studio/discussions)
 - **General questions**: support@peft-studio.com
 - **Chat with us**: [Discord](https://discord.gg/peft-studio)

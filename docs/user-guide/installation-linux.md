@@ -18,7 +18,7 @@ This guide provides step-by-step instructions for installing PEFT Studio on Linu
 
 ## Download
 
-1. Visit the [PEFT Studio Releases page](https://github.com/Ankesh-007/peft-studio/releases/latest)
+1. Visit the [PEFT Studio Releases page](https://github.com/Ankesh-007/peft-studioreleases/latest)
 2. Download the appropriate Linux installer:
    - **PEFT-Studio-{version}-x64.AppImage** - Universal format (recommended)
    - **PEFT-Studio-{version}-amd64.deb** - For Debian/Ubuntu
@@ -161,7 +161,7 @@ sudo pacman -S git nodejs npm python python-pip base-devel
 
 ```bash
 # Clone the repository
-git clone https://github.com/Ankesh-007/peft-studio.git
+git clone https://github.com/Ankesh-007/peft-studio
 cd peft-studio
 
 # Install Node.js dependencies
@@ -213,7 +213,7 @@ If your GPU isn't detected, see [GPU Not Detected](#gpu-not-detected) in Trouble
 
 ### AppImage
 
-1. Download the latest AppImage from the [releases page](https://github.com/Ankesh-007/peft-studio/releases/latest)
+1. Download the latest AppImage from the [releases page](https://github.com/Ankesh-007/peft-studioreleases/latest)
 2. Replace your old AppImage with the new one
 3. Make it executable: `chmod +x PEFT-Studio-*.AppImage`
 4. Run the new version
@@ -222,7 +222,7 @@ If your GPU isn't detected, see [GPU Not Detected](#gpu-not-detected) in Trouble
 
 ```bash
 # Download the latest .deb package
-wget https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-{version}-amd64.deb
+wget https://github.com/Ankesh-007/peft-studioreleases/latest/download/PEFT-Studio-{version}-amd64.deb
 
 # Install the update
 sudo dpkg -i PEFT-Studio-*.deb
@@ -467,7 +467,7 @@ To ensure your download isn't corrupted or tampered with:
 
 ```bash
 # Download the checksums file
-wget https://github.com/Ankesh-007/peft-studio/releases/latest/download/SHA256SUMS.txt
+wget https://github.com/Ankesh-007/peft-studioreleases/latest/download/SHA256SUMS.txt
 
 # Verify the AppImage
 sha256sum -c SHA256SUMS.txt --ignore-missing
@@ -526,15 +526,15 @@ If you're still having issues:
    - [FAQ](../reference/faq.md)
 
 2. **Search Existing Issues:**
-   - [GitHub Issues](https://github.com/Ankesh-007/peft-studio/issues)
+   - [GitHub Issues](https://github.com/Ankesh-007/peft-studioissues)
    - Someone may have already solved your problem
 
 3. **Ask for Help:**
-   - [GitHub Discussions](https://github.com/Ankesh-007/peft-studio/discussions)
+   - [GitHub Discussions](https://github.com/Ankesh-007/peft-studiodiscussions)
    - Provide details: Distribution, version, error messages, logs
 
 4. **Report a Bug:**
-   - [Open an issue](https://github.com/Ankesh-007/peft-studio/issues/new?template=bug_report.md)
+   - [Open an issue](https://github.com/Ankesh-007/peft-studioissues/new?template=bug_report.md)
    - Include: Distribution, version, installation method, error messages, logs
 
 ## Next Steps

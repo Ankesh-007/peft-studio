@@ -313,8 +313,6 @@ class TestOllamaConnector:
         connector._connected = True
         
         mock_response = create_mock_response(200)
-        mock_session.delAsyncMock()
-        mock_response.status = 200
         mock_session.delete = AsyncMock(return_value=mock_response)
         
         result = await connector.delete_model("custom-model")
@@ -328,8 +326,7 @@ class TestOllamaConnector:
         connector._session = mock_session
         connector._connected = True
         
-        mock_response = AsyncMock()
-        mock_response.status = 200
+        mock_response = create_mock_response(200)
         mock_session.post = AsyncMock(return_value=mock_response)
         
         result = await connector.pull_model("llama2:7b", stream=False)
@@ -343,8 +340,7 @@ class TestOllamaConnector:
         connector._session = mock_session
         connector._connected = True
         
-        mock_response = AsyncMock()
-        mock_response.status = 200
+        mock_response = create_mock_response(200)
         mock_session.post = AsyncMock(return_value=mock_response)
         
         result = await connector.push_model("custom-model", stream=False)
@@ -358,14 +354,18 @@ class TestOllamaConnector:
         connector._session = mock_session
         connector._connected = True
         
-        mock_response = AsyncMock()
-        mock_response.status = 200
-        mock_response.json = AsyncMock(return_value={
+        mock_response = create_mock_response(200, {
             "response": "Hello! How can I help you today?"
         })
         mock_session.post = AsyncMock(return_value=mock_response)
         
         response = await connector.generate(
+            model="llama2:7b",
+            prompt="Hello",
+            stream=False
+        )
+        
+        assert response == "Hello! How can I help you today?"
             model="llama2:7b",
             prompt="Hello",
             stream=False
