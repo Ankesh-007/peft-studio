@@ -2,7 +2,7 @@
  * Tests for test utilities to demonstrate their usage
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 
 import {
   createMockDataset,
@@ -160,7 +160,7 @@ describe("Test Utilities", () => {
 
     it("should simulate WebSocket connection", async () => {
       const ws = new MockWebSocket("ws://localhost:8000");
-      
+
       await new Promise<void>((resolve) => {
         ws.onopen = () => {
           expect(ws.readyState).toBe(WebSocket.OPEN);
@@ -171,7 +171,7 @@ describe("Test Utilities", () => {
 
     it("should simulate receiving messages", async () => {
       const ws = new MockWebSocket("ws://localhost:8000");
-      
+
       const messagePromise = new Promise<void>((resolve) => {
         ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
@@ -189,7 +189,7 @@ describe("Test Utilities", () => {
 
     it("should track sent messages", async () => {
       const ws = new MockWebSocket("ws://localhost:8000");
-      
+
       await new Promise<void>((resolve) => {
         ws.onopen = () => {
           ws.send(JSON.stringify({ action: "test" }));

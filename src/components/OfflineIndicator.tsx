@@ -39,22 +39,6 @@ export const OfflineIndicator: React.FC = () => {
   const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  useEffect(() => {
-    // Fetch initial status
-    fetchNetworkStatus();
-    fetchQueueStats();
-    fetchSyncStatus();
-
-    // Poll for updates every 10 seconds
-    const interval = setInterval(() => {
-      fetchNetworkStatus();
-      fetchQueueStats();
-      fetchSyncStatus();
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const fetchNetworkStatus = async () => {
     try {
       const response = await fetch('http://localhost:8000/api/offline/network-status');
@@ -85,6 +69,27 @@ export const OfflineIndicator: React.FC = () => {
     }
   };
 
+
+
+  useEffect(() => {
+    // Fetch initial status
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchNetworkStatus();
+    fetchQueueStats();
+    fetchSyncStatus();
+
+    // Poll for updates every 10 seconds
+    const interval = setInterval(() => {
+      fetchNetworkStatus();
+      fetchQueueStats();
+      fetchSyncStatus();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+
+
   const handleManualSync = async () => {
     try {
       const response = await fetch('http://localhost:8000/api/offline/sync', {
@@ -92,7 +97,7 @@ export const OfflineIndicator: React.FC = () => {
       });
       const result = await response.json();
       console.log('Sync result:', result);
-      
+
       // Refresh stats after sync
       fetchQueueStats();
       fetchSyncStatus();
@@ -142,7 +147,7 @@ export const OfflineIndicator: React.FC = () => {
             <span className="font-medium">Online</span>
           </>
         )}
-        
+
         {hasPendingOperations && (
           <span className="ml-2 px-2 py-0.5 bg-white bg-opacity-30 rounded-full text-xs">
             {queueStats.pending} queued
@@ -163,8 +168,8 @@ export const OfflineIndicator: React.FC = () => {
                   <Wifi className="w-5 h-5 text-green-500" />
                 )}
                 <span className="font-medium text-gray-900">
-                  {networkStatus.status === 'checking' ? 'Checking...' : 
-                   isOffline ? 'Offline' : 'Online'}
+                  {networkStatus.status === 'checking' ? 'Checking...' :
+                    isOffline ? 'Offline' : 'Online'}
                 </span>
               </div>
               <button
@@ -221,7 +226,7 @@ export const OfflineIndicator: React.FC = () => {
                     <RefreshCw className="w-4 h-4 text-blue-500 animate-spin" />
                   )}
                 </div>
-                
+
                 {!isOffline && hasPendingOperations && (
                   <button
                     onClick={handleManualSync}
@@ -238,7 +243,7 @@ export const OfflineIndicator: React.FC = () => {
                     {syncStatus.is_syncing ? 'Syncing...' : 'Sync Now'}
                   </button>
                 )}
-                
+
                 {isOffline && hasPendingOperations && (
                   <div className="text-xs text-gray-600 bg-yellow-50 p-2 rounded">
                     {queueStats.pending} operation(s) will sync when online

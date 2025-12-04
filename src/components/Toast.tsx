@@ -23,6 +23,15 @@ interface ToastProps {
 export const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
   const [isExiting, setIsExiting] = useState(false);
 
+  const handleDismiss = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+      onDismiss();
+    }, 300); // Match animation duration
+  };
+
+
+
   useEffect(() => {
     const duration = toast.duration ?? 5000;
     if (duration > 0) {
@@ -34,12 +43,7 @@ export const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
     }
   }, [toast.duration]);
 
-  const handleDismiss = () => {
-    setIsExiting(true);
-    setTimeout(() => {
-      onDismiss();
-    }, 300); // Match animation duration
-  };
+
 
   const getTypeStyles = (type: ToastType): string => {
     switch (type) {

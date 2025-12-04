@@ -160,13 +160,12 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
                 <button
                   onClick={() => handleActionClick(action, index)}
                   disabled={isExecutingFix || executedActions.has(index)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    executedActions.has(index)
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${executedActions.has(index)
                       ? "bg-green-100 text-green-700 cursor-not-allowed"
                       : action.automatic
                         ? "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
+                    }`}
                 >
                   {getActionButtonText(action, index)}
                 </button>
@@ -194,7 +193,7 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
       {error.auto_recoverable && (
         <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
           <p className="text-sm text-green-800">
-            ✓ This error can be automatically recovered. Click "Apply Fix" above
+            ✓ This error can be automatically recovered. Click &quot;Apply Fix&quot; above
             to try.
           </p>
         </div>

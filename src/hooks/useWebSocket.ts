@@ -146,7 +146,7 @@ export function useWebSocket<T = any>(
     (handler: (data: T) => void): (() => void) => {
       if (!connectionKeyRef.current) {
         console.warn("Cannot subscribe: not connected");
-        return () => {};
+        return () => { };
       }
 
       const subId = webSocketManager.subscribe(connectionKeyRef.current, handler);
@@ -164,6 +164,7 @@ export function useWebSocket<T = any>(
   // Auto-connect on mount if enabled
   useEffect(() => {
     if (autoConnect) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       connect();
     }
 

@@ -6,11 +6,6 @@ import GuidedTour from '../../components/onboarding/GuidedTour';
 import { useOnboarding } from '../../hooks/useOnboarding';
 import { renderHook, act } from '@testing-library/react';
 
-import GuidedTour from "../components/onboarding/GuidedTour";
-import SetupWizard from "../components/onboarding/SetupWizard";
-import WelcomeScreen from "../components/onboarding/WelcomeScreen";
-import { useOnboarding } from "../hooks/useOnboarding";
-
 describe("Onboarding Flow", () => {
   describe("WelcomeScreen", () => {
     it("should render welcome screen with feature overview", () => {

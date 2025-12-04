@@ -4,11 +4,6 @@ import ModelSelectionStep from '../../components/wizard/ModelSelectionStep';
 import SmartConfigurationStep from '../../components/wizard/SmartConfigurationStep';
 import { WizardState } from '../../types/wizard';
 
-import ModelSelectionStep from "../components/wizard/ModelSelectionStep";
-import SmartConfigurationStep from "../components/wizard/SmartConfigurationStep";
-
-import type { WizardState } from "../types/wizard";
-
 describe("Wizard Steps Integration", () => {
   const mockWizardState: WizardState = {
     currentStep: 3,
@@ -59,7 +54,7 @@ describe("Wizard Steps Integration", () => {
     const { container } = render(
       <ModelSelectionStep
         wizardState={mockWizardState}
-        onModelSelect={() => {}}
+        onModelSelect={() => { }}
       />,
     );
     expect(container).toBeTruthy();
@@ -87,7 +82,7 @@ describe("Wizard Steps Integration", () => {
     const { container } = render(
       <SmartConfigurationStep
         wizardState={wizardStateWithModel}
-        onConfigUpdate={() => {}}
+        onConfigUpdate={() => { }}
       />,
     );
     expect(container).toBeTruthy();

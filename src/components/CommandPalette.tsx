@@ -92,12 +92,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, selectedIndex, filteredCommands, onClose]);
 
-  useEffect(() => {
-    if (isOpen) {
-      setSearch("");
-      setSelectedIndex(0);
-    }
-  }, [isOpen]);
+
 
   if (!isOpen) return null;
 

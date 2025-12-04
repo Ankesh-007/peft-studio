@@ -19,7 +19,7 @@ export const SkeletonText: React.FC<{
         <div
           key={i}
           className="h-4 bg-dark-bg-tertiary rounded animate-pulse"
-          style={{ width: `${Math.random() * 30 + 70}%` }}
+          style={{ width: `${70 + (i * 10) % 30}%` }}
         />
       ))}
       <span className="sr-only">Loading...</span>

@@ -169,7 +169,7 @@ export class MockApiClient {
         );
         const match = endpoint.match(regex);
         if (match) {
-          return (params?: any) => handler(match[1], params);
+          return (params?: any) => (handler as any)(match[1], params);
         }
       }
     }
@@ -229,7 +229,7 @@ export const mockApi = new MockApiClient();
  * Setup fetch mock to use MockApiClient
  */
 export function setupFetchMock(): void {
-  global.fetch = vi.fn(async (url: string | URL, options?: RequestInit) => {
+  global.fetch = vi.fn(async (url: RequestInfo | URL, options?: RequestInit) => {
     const urlString = url.toString();
     const endpoint = urlString.replace(/^https?:\/\/[^/]+/, "");
 

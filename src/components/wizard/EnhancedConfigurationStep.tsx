@@ -17,17 +17,17 @@ interface EnhancedConfig {
   // Provider
   provider: ComputeProvider;
   resourceId?: string;
-  
+
   // Algorithm
   algorithm: PEFTAlgorithm;
-  
+
   // Quantization
   quantization: QuantizationType;
-  
+
   // Experiment Tracking
   experimentTracker: ExperimentTracker;
   projectName?: string;
-  
+
   // Core settings (from smart config)
   batchSize: number;
   gradientAccumulation: number;
@@ -49,7 +49,7 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
   const [electricityRate, setElectricityRate] = useState(0.12);
   const [smartConfig, setSmartConfig] = useState<any>(null);
   const [estimates, setEstimates] = useState<TrainingEstimates | null>(null);
-  
+
   // Enhanced configuration state
   const [enhancedConfig, setEnhancedConfig] = useState<EnhancedConfig>({
     provider: 'local',
@@ -62,7 +62,7 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
     epochs: 3,
     precision: 'fp16',
   });
-  
+
   const [availableProviders, setAvailableProviders] = useState<any[]>([]);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
@@ -78,12 +78,12 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
       // Fetch connected providers
       const response = await fetch('http://127.0.0.1:8000/api/platforms/connections');
       const data = await response.json();
-      
+
       // Always include local
       const providers = [
         { id: 'local', name: 'Local GPU', status: 'available', cost: 0 }
       ];
-      
+
       // Add connected cloud providers
       if (data.connections) {
         data.connections.forEach((conn: any) => {
@@ -97,7 +97,7 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
           }
         });
       }
-      
+
       setAvailableProviders(providers);
     } catch (error) {
       console.error('Error fetching providers:', error);
@@ -180,10 +180,10 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
       };
 
       setEstimates(newEstimates);
-      
+
       // Validate configuration
       validateConfiguration(enhancedConfig, configData);
-      
+
       // Notify parent
       onConfigUpdate({ ...configData, ...enhancedConfig }, newEstimates);
     } catch (error) {
@@ -195,32 +195,32 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
 
   const validateConfiguration = (config: EnhancedConfig, smartConfig: any) => {
     const errors: string[] = [];
-    
+
     // Validate provider selection
     if (!config.provider) {
       errors.push('Compute provider must be selected');
     }
-    
+
     // Validate algorithm selection
     if (!config.algorithm) {
       errors.push('PEFT algorithm must be selected');
     }
-    
+
     // Validate quantization compatibility
     if (config.quantization !== 'none' && config.algorithm === 'dora') {
       errors.push('DoRA is not compatible with quantization');
     }
-    
+
     // Validate experiment tracker project name
     if (config.experimentTracker !== 'none' && !config.projectName) {
       errors.push('Project name required for experiment tracking');
     }
-    
+
     // Validate memory requirements
     if (smartConfig && smartConfig.estimated_memory_mb > 24000 && config.provider === 'local') {
       errors.push('Configuration requires more memory than available on local GPU');
     }
-    
+
     setValidationErrors(errors);
   };
 
@@ -286,7 +286,7 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
         <h2 className="text-xl font-semibold text-blue-900 mb-2">Enhanced Training Configuration</h2>
         <p className="text-blue-800">
           Configure your training environment, algorithm, and tracking preferences.
-          We've calculated optimal settings, but you can customize as needed.
+          We&apos;ve calculated optimal settings, but you can customize as needed.
         </p>
       </div>
 
@@ -587,7 +587,7 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
         <div className="bg-green-50 border border-green-200 rounded-lg p-6">
           <h4 className="font-semibold text-green-900 mb-2">✓ Configuration Complete</h4>
           <p className="text-sm text-green-800">
-            Your training is configured and ready to launch. Click "Next" to review everything before starting.
+            Your training is configured and ready to launch. Click &quot;Next&quot; to review everything before starting.
           </p>
         </div>
       ) : (

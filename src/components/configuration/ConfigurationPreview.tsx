@@ -13,6 +13,20 @@ interface ConfigurationPreviewProps {
   compact?: boolean;
 }
 
+const InfoRow: React.FC<{ label: string; value: any; icon?: React.ReactNode }> = ({
+  label,
+  value,
+  icon,
+}) => (
+  <div className="flex items-start gap-3 py-2">
+    {icon && <div className="text-gray-400 mt-0.5">{icon}</div>}
+    <div className="flex-1 min-w-0">
+      <div className="text-sm font-medium text-gray-500">{label}</div>
+      <div className="text-sm text-gray-900 break-words">{value || 'N/A'}</div>
+    </div>
+  </div>
+);
+
 const ConfigurationPreview: React.FC<ConfigurationPreviewProps> = ({
   configuration,
   onClose,
@@ -27,20 +41,6 @@ const ConfigurationPreview: React.FC<ConfigurationPreviewProps> = ({
       return dateString;
     }
   };
-
-  const InfoRow: React.FC<{ label: string; value: any; icon?: React.ReactNode }> = ({
-    label,
-    value,
-    icon,
-  }) => (
-    <div className="flex items-start gap-3 py-2">
-      {icon && <div className="text-gray-400 mt-0.5">{icon}</div>}
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium text-gray-500">{label}</div>
-        <div className="text-sm text-gray-900 break-words">{value || 'N/A'}</div>
-      </div>
-    </div>
-  );
 
   return (
     <div className={compact ? '' : 'p-6'}>
@@ -97,7 +97,7 @@ const ConfigurationPreview: React.FC<ConfigurationPreviewProps> = ({
       {/* Configuration Section */}
       <div className={`${compact ? 'mb-4' : 'mb-6'}`}>
         <h4 className="text-lg font-semibold text-gray-900 mb-3">Training Configuration</h4>
-        
+
         {/* Model Settings */}
         <div className="bg-gray-50 rounded-lg p-4 mb-3">
           <h5 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">

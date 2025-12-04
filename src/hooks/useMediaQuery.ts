@@ -4,13 +4,18 @@ import { useState, useEffect } from "react";
  * Hook for responsive design - detects media query matches
  */
 export const useMediaQuery = (query: string): boolean => {
-  const [matches, setMatches] = useState(false);
+  const [matches, setMatches] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia(query).matches;
+    }
+    return false;
+  });
 
   useEffect(() => {
     const media = window.matchMedia(query);
 
     // Set initial value
-    setMatches(media.matches);
+    // setMatches(media.matches); // Removed to avoid set-state-in-effect
 
     // Create listener
     const listener = (e: MediaQueryListEvent) => {

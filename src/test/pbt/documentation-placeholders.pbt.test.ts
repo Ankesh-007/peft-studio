@@ -49,30 +49,30 @@ describe('Documentation Placeholder Replacement', () => {
         fc.constantFrom(...DOCUMENTATION_FILES),
         (filePath) => {
           const fullPath = path.join(process.cwd(), filePath);
-          
+
           // Skip if file doesn't exist
           if (!fs.existsSync(fullPath)) {
             return true;
           }
 
           const content = fs.readFileSync(fullPath, 'utf-8');
-          
+
           // Check that YOUR_USERNAME is not present
           const hasPlaceholder = content.includes('YOUR_USERNAME');
-          
+
           if (hasPlaceholder) {
             // Find all occurrences for better error reporting
             const lines = content.split('\n');
             const occurrences = lines
               .map((line, index) => ({ line: index + 1, content: line }))
               .filter(({ content }) => content.includes('YOUR_USERNAME'));
-            
+
             console.error(`\nFound YOUR_USERNAME placeholder in ${filePath}:`);
             occurrences.forEach(({ line, content }) => {
               console.error(`  Line ${line}: ${content.trim()}`);
             });
           }
-          
+
           return !hasPlaceholder;
         }
       ),
@@ -89,20 +89,20 @@ describe('Documentation Placeholder Replacement', () => {
         fc.constantFrom(...DOCUMENTATION_FILES),
         (filePath) => {
           const fullPath = path.join(process.cwd(), filePath);
-          
+
           // Skip if file doesn't exist
           if (!fs.existsSync(fullPath)) {
             return true;
           }
 
           const content = fs.readFileSync(fullPath, 'utf-8');
-          
+
           // Extract all GitHub usernames
           let match;
           while ((match = githubUsernamePattern.exec(content)) !== null) {
             usernames.add(match[1]);
           }
-          
+
           return true;
         }
       ),
@@ -112,7 +112,7 @@ describe('Documentation Placeholder Replacement', () => {
     // After checking all files, verify we have exactly one username
     expect(usernames.size).toBeGreaterThan(0);
     expect(usernames.size).toBeLessThanOrEqual(1);
-    
+
     // Verify it's not the placeholder
     const username = Array.from(usernames)[0];
     if (username) {
@@ -129,31 +129,31 @@ describe('Documentation Placeholder Replacement', () => {
         fc.constantFrom(...DOCUMENTATION_FILES),
         (filePath) => {
           const fullPath = path.join(process.cwd(), filePath);
-          
+
           // Skip if file doesn't exist
           if (!fs.existsSync(fullPath)) {
             return true;
           }
 
           const content = fs.readFileSync(fullPath, 'utf-8');
-          
+
           // Find all GitHub URLs
-          const githubUrls = content.match(/https:\/\/github\.com\/[^\s\)"\]]+/g) || [];
-          
+          const githubUrls = content.match(/https:\/\/github\.com\/[^\s)"\]]+/g) || [];
+
           // Check each URL is valid (not containing YOUR_USERNAME)
           for (const url of githubUrls) {
             if (url.includes('YOUR_USERNAME')) {
               console.error(`\nFound invalid URL in ${filePath}: ${url}`);
               return false;
             }
-            
+
             // Check it matches the valid pattern
             if (url.includes('peft-studio') && !validUrlPattern.test(url)) {
               console.error(`\nFound malformed URL in ${filePath}: ${url}`);
               return false;
             }
           }
-          
+
           return true;
         }
       ),
@@ -163,30 +163,30 @@ describe('Documentation Placeholder Replacement', () => {
 
   it('should have replaced placeholders in package.json', () => {
     const packageJsonPath = path.join(process.cwd(), 'package.json');
-    
+
     if (!fs.existsSync(packageJsonPath)) {
       console.warn('package.json not found, skipping test');
       return;
     }
 
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-    
+
     // Check repository field
     expect(packageJson.repository?.url).toBeDefined();
     expect(packageJson.repository?.url).not.toContain('YOUR_USERNAME');
-    
+
     // Check homepage field
     expect(packageJson.homepage).toBeDefined();
     expect(packageJson.homepage).not.toContain('YOUR_USERNAME');
-    
+
     // Check bugs field
     expect(packageJson.bugs?.url).toBeDefined();
     expect(packageJson.bugs?.url).not.toContain('YOUR_USERNAME');
-    
+
     // Check build.publish field
     expect(packageJson.build?.publish?.owner).toBeDefined();
     expect(packageJson.build?.publish?.owner).not.toBe('YOUR_USERNAME');
-    
+
     console.log(`✓ package.json has valid repository configuration`);
     console.log(`  Repository: ${packageJson.repository?.url}`);
     console.log(`  Homepage: ${packageJson.homepage}`);
@@ -196,18 +196,18 @@ describe('Documentation Placeholder Replacement', () => {
 
   it('should have replaced placeholders in electron main.js', () => {
     const mainJsPath = path.join(process.cwd(), 'electron/main.js');
-    
+
     if (!fs.existsSync(mainJsPath)) {
       console.warn('electron/main.js not found, skipping test');
       return;
     }
 
     const content = fs.readFileSync(mainJsPath, 'utf-8');
-    
+
     // Check for YOUR_USERNAME in autoUpdater configuration
     expect(content).not.toContain("owner: 'YOUR_USERNAME'");
     expect(content).not.toContain('owner: "YOUR_USERNAME"');
-    
+
     // Extract the owner value
     const ownerMatch = content.match(/owner:\s*['"]([^'"]+)['"]/);
     if (ownerMatch) {
@@ -219,21 +219,21 @@ describe('Documentation Placeholder Replacement', () => {
 
   it('should not have placeholder warning in README', () => {
     const readmePath = path.join(process.cwd(), 'README.md');
-    
+
     if (!fs.existsSync(readmePath)) {
       console.warn('README.md not found, skipping test');
       return;
     }
 
     const content = fs.readFileSync(readmePath, 'utf-8');
-    
+
     // Check that the warning about replacing YOUR_USERNAME is removed
     const warningPatterns = [
       /replace all instances of.*YOUR_USERNAME/i,
       /Before publishing.*YOUR_USERNAME/i,
       /\*\*Note\*\*:.*YOUR_USERNAME/i,
     ];
-    
+
     for (const pattern of warningPatterns) {
       const match = content.match(pattern);
       if (match) {
@@ -241,7 +241,7 @@ describe('Documentation Placeholder Replacement', () => {
       }
       expect(content).not.toMatch(pattern);
     }
-    
+
     console.log(`✓ README.md has no placeholder warnings`);
   });
 });

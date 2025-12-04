@@ -290,18 +290,20 @@ function computeMetrics(payload: ComputeMetricsPayload): Record<string, number> 
         result.mean = sum / data.length;
         break;
 
-      case 'median':
+      case 'median': {
         const mid = Math.floor(sorted.length / 2);
         result.median = sorted.length % 2 === 0
           ? (sorted[mid - 1] + sorted[mid]) / 2
           : sorted[mid];
         break;
+      }
 
-      case 'std':
+      case 'std': {
         const mean = sum / data.length;
         const variance = data.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / data.length;
         result.std = Math.sqrt(variance);
         break;
+      }
 
       case 'min':
         result.min = sorted[0];

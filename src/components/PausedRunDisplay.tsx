@@ -112,7 +112,7 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
               onClick={() => onStop(pausedRun.job_id)}
               className="btn-secondary flex items-center gap-8"
             >
-              <span>Stop & Save</span>
+              <span>Stop &amp; Save</span>
             </button>
           )}
         </div>
@@ -402,7 +402,7 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
             <p className="text-small text-dark-text-secondary">
               This training run has been paused and can be resumed at any time.
               All progress has been saved, and GPU resources have been released.
-              Click "Resume Training" to continue from where you left off.
+              Click &quot;Resume Training&quot; to continue from where you left off.
             </p>
           </div>
         </div>

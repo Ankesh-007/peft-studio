@@ -124,7 +124,7 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({
           Select Your Base Model
         </h2>
         <p className="text-blue-800 mb-3">
-          Choose a pre-trained model from HuggingFace to fine-tune. We'll show
+          Choose a pre-trained model from HuggingFace to fine-tune. We&apos;ll show
           you popular models and help you find the right one for your use case.
         </p>
         <div className="flex items-center gap-2">
@@ -181,11 +181,10 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({
               <button
                 key={filter.value}
                 onClick={() => setSelectedFilter(filter.value as any)}
-                className={`px-4 py-1.5 text-sm rounded-lg border transition-colors ${
-                  selectedFilter === filter.value
+                className={`px-4 py-1.5 text-sm rounded-lg border transition-colors ${selectedFilter === filter.value
                     ? "bg-blue-600 text-white border-blue-600"
                     : "bg-white text-gray-700 border-gray-300 hover:border-blue-300"
-                }`}
+                  }`}
               >
                 {filter.label}
               </button>
@@ -229,11 +228,10 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({
               <button
                 key={model.model_id}
                 onClick={() => onModelSelect(model)}
-                className={`text-left p-5 rounded-lg border-2 transition-all hover:shadow-lg ${
-                  isSelected
+                className={`text-left p-5 rounded-lg border-2 transition-all hover:shadow-lg ${isSelected
                     ? "border-blue-600 bg-blue-50 shadow-md"
                     : "border-gray-200 bg-white hover:border-blue-300"
-                }`}
+                  }`}
                 data-testid={`model-card-${model.model_id}`}
               >
                 {/* Header */}
@@ -332,7 +330,7 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({
           </h4>
           <p className="text-sm text-green-800 mb-3">
             This model will be fine-tuned using your {wizardState.profile?.name}{" "}
-            configuration. Click "Next" to review the smart configuration.
+            configuration. Click &quot;Next&quot; to review the smart configuration.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>

@@ -83,7 +83,7 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, onSkip }) => {
         <div className="space-y-24">
           <p className="text-body text-dark-text-secondary">
             We recommend downloading a sample dataset and model to explore PEFT
-            Studio's features.
+            Studio&apos;s features.
           </p>
 
           <div className="card bg-dark-bg-tertiary">
@@ -228,11 +228,10 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, onSkip }) => {
               <React.Fragment key={step.id}>
                 <div className="flex flex-col items-center">
                   <div
-                    className={`w-40 h-40 rounded-full flex items-center justify-center transition-all ${
-                      index <= currentStep
+                    className={`w-40 h-40 rounded-full flex items-center justify-center transition-all ${index <= currentStep
                         ? "bg-accent-primary text-white"
                         : "bg-dark-bg-tertiary text-dark-text-tertiary"
-                    }`}
+                      }`}
                   >
                     {index < currentStep ? (
                       <Check size={20} />
@@ -248,11 +247,10 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, onSkip }) => {
                 </div>
                 {index < steps.length - 1 && (
                   <div
-                    className={`flex-1 h-2 mx-8 rounded-full transition-all ${
-                      index < currentStep
+                    className={`flex-1 h-2 mx-8 rounded-full transition-all ${index < currentStep
                         ? "bg-accent-primary"
                         : "bg-dark-bg-tertiary"
-                    }`}
+                      }`}
                   />
                 )}
               </React.Fragment>

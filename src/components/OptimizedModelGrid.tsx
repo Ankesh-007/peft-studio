@@ -46,21 +46,20 @@ const ModelCard = memo<{
               onAddToComparison();
             }}
             disabled={isInComparison}
-            className={`ml-2 px-2 py-1 text-xs rounded ${
-              isInComparison
+            className={`ml-2 px-2 py-1 text-xs rounded ${isInComparison
                 ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                 : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-            }`}
+              }`}
           >
             {isInComparison ? 'Added' : 'Compare'}
           </button>
         )}
       </div>
-      
+
       <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
         by {model.author}
       </p>
-      
+
       <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
         {model.library_name && (
           <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded">
@@ -74,7 +73,7 @@ const ModelCard = memo<{
           <span>♥ {formatNumber(model.likes)}</span>
         )}
       </div>
-      
+
       {model.tags && model.tags.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1">
           {model.tags.slice(0, 3).map((tag, idx) => (
@@ -127,7 +126,7 @@ const ModelListItem = memo<{
             by {model.author}
           </p>
         </div>
-        
+
         <div className="flex items-center gap-4 ml-4">
           {model.downloads && (
             <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -135,7 +134,7 @@ const ModelListItem = memo<{
               <span className="ml-1">downloads</span>
             </div>
           )}
-          
+
           {onAddToComparison && (
             <button
               onClick={(e) => {
@@ -143,11 +142,10 @@ const ModelListItem = memo<{
                 onAddToComparison();
               }}
               disabled={isInComparison}
-              className={`px-3 py-1 text-sm rounded ${
-                isInComparison
+              className={`px-3 py-1 text-sm rounded ${isInComparison
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   : 'bg-blue-600 text-white hover:bg-blue-700'
-              }`}
+                }`}
             >
               {isInComparison ? 'Added' : 'Compare'}
             </button>
@@ -212,6 +210,7 @@ export const OptimizedModelGrid: React.FC<OptimizedModelGridProps> = memo(({
         });
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update container size on mount and resize
@@ -228,12 +227,12 @@ export const OptimizedModelGrid: React.FC<OptimizedModelGridProps> = memo(({
       const rowHeight = 200;
       const columnCount = Math.max(1, Math.floor(containerSize.width / columnWidth));
       const rowCount = Math.ceil(models.length / columnCount);
-      
+
       return { columnWidth, rowHeight, columnCount, rowCount };
     } else {
       const rowHeight = 80;
       const rowCount = models.length;
-      
+
       return { columnWidth: containerSize.width, rowHeight, columnCount: 1, rowCount };
     }
   }, [view, containerSize.width, models.length]);
@@ -243,7 +242,7 @@ export const OptimizedModelGrid: React.FC<OptimizedModelGridProps> = memo(({
     const index = view === 'grid'
       ? rowIndex * gridConfig.columnCount + columnIndex
       : rowIndex;
-    
+
     if (index >= models.length) {
       return <div style={style} />;
     }

@@ -88,12 +88,12 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
 
       const configData = await configResponse.json();
       setSmartConfig(configData);
-      
+
       // Set initial quantization from smart config
       if (configData.quantization && configData.quantization !== 'none') {
         setQuantization(configData.quantization);
       }
-      
+
       // Set initial gradient checkpointing
       setGradientCheckpointing(configData.gradient_checkpointing || false);
 
@@ -134,7 +134,7 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
       setLoading(false);
     }
   };
-  
+
   const handleQuantizationChange = (value: '4bit' | '8bit' | 'none') => {
     setQuantization(value);
     if (smartConfig && estimates) {
@@ -146,7 +146,7 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
       }, estimates);
     }
   };
-  
+
   const handleGradientCheckpointingChange = (enabled: boolean) => {
     setGradientCheckpointing(enabled);
     if (smartConfig && estimates) {
@@ -157,11 +157,11 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
         quantization,
         gradient_checkpointing: enabled,
         peft: peftConfig,
-        estimated_memory_mb: enabled 
-          ? smartConfig.estimated_memory_mb * 0.7 
+        estimated_memory_mb: enabled
+          ? smartConfig.estimated_memory_mb * 0.7
           : smartConfig.estimated_memory_mb / 0.7,
       };
-      
+
       onConfigUpdate(updatedConfig, estimates);
     }
   };
@@ -197,7 +197,7 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
           Smart Configuration Ready
         </h2>
         <p className="text-blue-800">
-          We've automatically calculated the optimal settings for your hardware
+          We&apos;ve automatically calculated the optimal settings for your hardware
           and dataset. Everything is ready to go, but you can adjust advanced
           settings if needed.
         </p>
@@ -335,7 +335,7 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
                 </div>
               </div>
             </label>
-            
+
             <label className="flex items-start p-3 border-2 rounded-lg cursor-pointer transition-all hover:bg-white"
               style={{
                 borderColor: quantization === '8bit' ? '#3B82F6' : '#E5E7EB',
@@ -356,7 +356,7 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
                 </div>
               </div>
             </label>
-            
+
             <label className="flex items-start p-3 border-2 rounded-lg cursor-pointer transition-all hover:bg-white"
               style={{
                 borderColor: quantization === '4bit' ? '#3B82F6' : '#E5E7EB',
@@ -575,8 +575,8 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
                   setPeftConfig(config);
                   // Update wizard state with PEFT config
                   onConfigUpdate(
-                    { 
-                      ...smartConfig, 
+                    {
+                      ...smartConfig,
                       peft: config,
                       quantization,
                       gradient_checkpointing: gradientCheckpointing,
@@ -680,7 +680,7 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
           ✓ Configuration Complete
         </h4>
         <p className="text-sm text-green-800">
-          Your training is configured and ready to launch. Click "Next" to
+          Your training is configured and ready to launch. Click &quot;Next&quot; to
           review everything before starting.
         </p>
       </div>

@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { expect } from "vitest";
+import { expect, vi } from "vitest";
 
 // ============================================================================
 // Custom Matchers
@@ -13,8 +13,8 @@ interface CustomMatchers<R = unknown> {
 }
 
 declare module "vitest" {
-  interface Assertion<T = any> extends CustomMatchers<T> {}
-  interface AsymmetricMatchersContaining extends CustomMatchers {}
+  interface Assertion<T = any> extends CustomMatchers<T> { }
+  interface AsymmetricMatchersContaining extends CustomMatchers { }
 }
 
 // Custom matcher: Check if number is within range
@@ -73,4 +73,17 @@ expect.extend({
           : `Expected object to have fields: ${missingFields.join(", ")}`,
     };
   },
+});
+// Mock lucide-react icons
+import React from 'react';
+
+// Mock lucide-react icons
+vi.mock("lucide-react", () => {
+  return new Proxy({}, {
+    get: (target, prop) => {
+      if (prop === '__esModule') return true;
+      // Return a component for any named export
+      return () => React.createElement('div', { 'data-testid': `icon-${String(prop).toLowerCase()}` });
+    }
+  });
 });

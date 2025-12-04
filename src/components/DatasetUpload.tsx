@@ -10,11 +10,40 @@ interface UploadState {
   error?: string;
 }
 
-const DatasetUpload: React.FC = () => {
+interface DatasetUploadProps {
+  onUpload?: (file: File) => void;
+}
+
+const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
   const [uploadState, setUploadState] = useState<UploadState>({
     status: "idle",
     progress: 0,
   });
+
+  const handleFileUpload = (file: File) => {
+    setUploadState({
+      status: "uploading",
+      progress: 0,
+      file,
+    });
+
+    // Simulate upload progress
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 10;
+      setUploadState((prev) => ({ ...prev, progress }));
+
+      if (progress >= 100) {
+        clearInterval(interval);
+        setUploadState((prev) => ({ ...prev, status: "completed" }));
+        if (onUpload) {
+          onUpload(file);
+        }
+      }
+    }, 200);
+  };
+
+
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -44,25 +73,7 @@ const DatasetUpload: React.FC = () => {
     [],
   );
 
-  const handleFileUpload = (file: File) => {
-    setUploadState({
-      status: "uploading",
-      progress: 0,
-      file,
-    });
 
-    // Simulate upload progress
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 10;
-      setUploadState((prev) => ({ ...prev, progress }));
-
-      if (progress >= 100) {
-        clearInterval(interval);
-        setUploadState((prev) => ({ ...prev, status: "completed" }));
-      }
-    }, 200);
-  };
 
   const handleReset = () => {
     setUploadState({ status: "idle", progress: 0 });
@@ -83,15 +94,15 @@ const DatasetUpload: React.FC = () => {
           "relative h-[400px] border-2 border-dashed rounded-2xl transition-all duration-200",
           "flex flex-col items-center justify-center",
           uploadState.status === "idle" &&
-            "border-[#3a3a3a] bg-gradient-radial from-[#151515] to-[#0a0a0a]",
+          "border-[#3a3a3a] bg-gradient-radial from-[#151515] to-[#0a0a0a]",
           uploadState.status === "dragover" &&
-            "border-accent-primary bg-accent-primary/5 scale-[1.02]",
+          "border-accent-primary bg-accent-primary/5 scale-[1.02]",
           uploadState.status === "uploading" &&
-            "border-accent-info bg-accent-info/5",
+          "border-accent-info bg-accent-info/5",
           uploadState.status === "completed" &&
-            "border-accent-success bg-accent-success/5",
+          "border-accent-success bg-accent-success/5",
           uploadState.status === "error" &&
-            "border-accent-error bg-accent-error/5",
+          "border-accent-error bg-accent-error/5",
         )}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}

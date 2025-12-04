@@ -42,6 +42,8 @@ export function useTrainingMonitor(jobId: string): UseTrainingMonitorResult {
   const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 5;
 
+  const connectRef = useRef<() => void>(() => { });
+
   const connect = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       return; // Already connected
@@ -97,7 +99,7 @@ export function useTrainingMonitor(jobId: string): UseTrainingMonitorResult {
           );
 
           reconnectTimeoutRef.current = setTimeout(() => {
-            connect();
+            connectRef.current();
           }, delay);
         } else {
           setError("Failed to connect after multiple attempts");
@@ -110,6 +112,10 @@ export function useTrainingMonitor(jobId: string): UseTrainingMonitorResult {
       setError("Failed to create WebSocket connection");
     }
   }, [jobId]);
+
+  useEffect(() => {
+    connectRef.current = connect;
+  }, [connect]);
 
   const disconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {

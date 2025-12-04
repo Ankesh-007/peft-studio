@@ -202,7 +202,7 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({
           Upload Your Training Data
         </h2>
         <p className="text-blue-800 mb-3">
-          Upload your dataset in CSV, JSON, JSONL, or plain text format. We'll
+          Upload your dataset in CSV, JSON, JSONL, or plain text format. We&apos;ll
           automatically validate it and show you a preview.
         </p>
         <div className="flex items-center gap-2">
@@ -222,10 +222,9 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({
           onDrop={handleDrop}
           className={`
             border-2 border-dashed rounded-lg p-12 text-center transition-colors
-            ${
-              isDragging
-                ? "border-blue-600 bg-blue-50"
-                : "border-gray-300 bg-white hover:border-gray-400"
+            ${isDragging
+              ? "border-blue-600 bg-blue-50"
+              : "border-gray-300 bg-white hover:border-gray-400"
             }
           `}
         >
@@ -351,7 +350,7 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({
           <h4 className="font-semibold text-green-900 mb-2">✓ Dataset Ready</h4>
           <p className="text-sm text-green-800">
             Your dataset has been validated and is ready for training. Click
-            "Next" to select a model.
+            &quot;Next&quot; to select a model.
           </p>
         </div>
       )}

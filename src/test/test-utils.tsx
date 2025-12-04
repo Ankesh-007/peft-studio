@@ -153,8 +153,9 @@ export function createMockErrorResponse(
 export function mockFetch(
   responses: Record<string, any> | ((url: string) => any),
 ): void {
-  global.fetch = vi.fn((url: string) => {
-    const data = typeof responses === "function" ? responses(url) : responses[url];
+  global.fetch = vi.fn((url: RequestInfo | URL) => {
+    const urlStr = url.toString();
+    const data = typeof responses === "function" ? responses(urlStr) : responses[urlStr];
 
     if (!data) {
       return Promise.resolve(createMockErrorResponse("Not found", 404));
@@ -168,7 +169,7 @@ export function mockFetch(
  * Mock fetch to reject with error
  */
 export function mockFetchError(error: Error): void {
-  global.fetch = vi.fn(() => Promise.reject(error));
+  global.fetch = vi.fn(() => Promise.reject(error)) as any;
 }
 
 /**
@@ -180,7 +181,7 @@ export function mockFetchTimeout(timeoutMs: number = 5000): void {
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error("Request timeout")), timeoutMs),
       ),
-  );
+  ) as any;
 }
 
 /**
@@ -280,7 +281,7 @@ export function setupMockLocalStorage(): void {
 /**
  * Suppress console errors during tests
  */
-export function suppressConsoleErrors(): void {
+export function suppressConsoleErrors(): () => void {
   const originalError = console.error;
   console.error = vi.fn();
 
@@ -292,7 +293,7 @@ export function suppressConsoleErrors(): void {
 /**
  * Suppress console warnings during tests
  */
-export function suppressConsoleWarnings(): void {
+export function suppressConsoleWarnings(): () => void {
   const originalWarn = console.warn;
   console.warn = vi.fn();
 

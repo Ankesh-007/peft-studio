@@ -18,6 +18,16 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({
   const [isVisible, setIsVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
 
+  const handleDismiss = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+      setIsVisible(false);
+      onDismiss();
+    }, 300); // Match animation duration
+  };
+
+
+
   useEffect(() => {
     if (autoHideDuration > 0 && error.severity !== ErrorSeverity.CRITICAL) {
       const timer = setTimeout(() => {
@@ -28,13 +38,7 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({
     }
   }, [autoHideDuration, error.severity]);
 
-  const handleDismiss = () => {
-    setIsExiting(true);
-    setTimeout(() => {
-      setIsVisible(false);
-      onDismiss();
-    }, 300); // Match animation duration
-  };
+
 
   const getSeverityStyles = (severity: ErrorSeverity): string => {
     switch (severity) {
@@ -72,9 +76,8 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({
 
   return (
     <div
-      className={`fixed bottom-4 right-4 max-w-md w-full shadow-lg rounded-lg border-2 overflow-hidden transition-all duration-300 ${
-        isExiting ? "opacity-0 translate-x-full" : "opacity-100 translate-x-0"
-      } ${getSeverityStyles(error.severity)}`}
+      className={`fixed bottom-4 right-4 max-w-md w-full shadow-lg rounded-lg border-2 overflow-hidden transition-all duration-300 ${isExiting ? "opacity-0 translate-x-full" : "opacity-100 translate-x-0"
+        } ${getSeverityStyles(error.severity)}`}
       role="alert"
       aria-live="assertive"
     >

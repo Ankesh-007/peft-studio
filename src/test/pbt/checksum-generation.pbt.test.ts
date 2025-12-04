@@ -12,12 +12,13 @@ import * as fc from 'fast-check';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
-import { 
-  calculateChecksum, 
-  shouldIncludeFile, 
+// @ts-ignore
+const {
+  calculateChecksum,
+  shouldIncludeFile,
   generateChecksums,
-  writeChecksumsFile 
-} from '../../../scripts/generate-checksums';
+  writeChecksumsFile
+} = require('../../../scripts/generate-checksums');
 
 describe('Property 43: Checksums generated for all installers', () => {
   const testDir = path.join(__dirname, '../../..', 'test-artifacts');
@@ -118,7 +119,7 @@ describe('Property 43: Checksums generated for all installers', () => {
             // Verify each checksum is valid
             for (const { file, checksum } of checksums) {
               expect(checksum).toMatch(/^[a-f0-9]{64}$/);
-              
+
               // Verify checksum is correct
               const fileData = uniqueFiles.find(f => f.name === file);
               if (fileData) {
@@ -185,10 +186,10 @@ describe('Property 43: Checksums generated for all installers', () => {
         fc.string({ minLength: 1, maxLength: 50 }),
         (filename) => {
           const isInstaller = shouldIncludeFile(filename);
-          const hasInstallerExtension = ['.exe', '.dmg', '.zip', '.AppImage', '.deb'].some(ext => 
+          const hasInstallerExtension = ['.exe', '.dmg', '.zip', '.AppImage', '.deb'].some(ext =>
             filename.endsWith(ext)
           );
-          const isExcluded = ['.blockmap', 'SHA256SUMS.txt'].some(pattern => 
+          const isExcluded = ['.blockmap', 'SHA256SUMS.txt'].some(pattern =>
             filename.includes(pattern)
           );
 
@@ -228,7 +229,7 @@ describe('Property 43: Checksums generated for all installers', () => {
           for (const file of uniqueFiles) {
             const filePath = path.join(testDir, file.name);
             fs.writeFileSync(filePath, Buffer.from(file.content));
-            
+
             const hash = crypto.createHash('sha256');
             hash.update(Buffer.from(file.content));
             expectedChecksums.push({

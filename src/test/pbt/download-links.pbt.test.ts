@@ -36,7 +36,7 @@ describe('Download Links', () => {
         fc.constantFrom(...DOCUMENTATION_FILES),
         (filePath) => {
           const fullPath = path.join(process.cwd(), filePath);
-          
+
           // Skip if file doesn't exist
           if (!fs.existsSync(fullPath)) {
             console.warn(`File not found: ${filePath}`);
@@ -44,20 +44,20 @@ describe('Download Links', () => {
           }
 
           const content = fs.readFileSync(fullPath, 'utf-8');
-          
+
           // Find PEFT Studio download/installer links (not external links like NVIDIA, badges, etc.)
-          const peftDownloadPattern = /\[.*?(?:Download|download|Release|release|Installer|installer).*?PEFT.*?\]\((https?:\/\/[^\)]+)\)/g;
-          const peftReleasesPattern = /\[.*?(?:releases page|Releases|releases)\]\((https?:\/\/[^\)]+)\)/g;
-          
+          const peftDownloadPattern = /\[.*?(?:Download|download|Release|release|Installer|installer).*?PEFT.*?\]\((https?:\/\/[^)]+)\)/g;
+          const peftReleasesPattern = /\[.*?(?:releases page|Releases|releases)\]\((https?:\/\/[^)]+)\)/g;
+
           let foundDownloadLink = false;
           let allLinksValid = true;
-          
+
           // Check PEFT-specific download links
           let match;
           while ((match = peftDownloadPattern.exec(content)) !== null) {
             foundDownloadLink = true;
             const url = match[1];
-            
+
             // Should point to GitHub releases
             if (!RELEASES_URL_PATTERN.test(url)) {
               console.error(`\nInvalid PEFT Studio download link in ${filePath}:`);
@@ -67,12 +67,12 @@ describe('Download Links', () => {
               allLinksValid = false;
             }
           }
-          
+
           // Check "releases page" links
           while ((match = peftReleasesPattern.exec(content)) !== null) {
             foundDownloadLink = true;
             const url = match[1];
-            
+
             // Should point to GitHub releases
             if (!RELEASES_URL_PATTERN.test(url)) {
               console.error(`\nInvalid releases page link in ${filePath}:`);
@@ -82,12 +82,12 @@ describe('Download Links', () => {
               allLinksValid = false;
             }
           }
-          
+
           // If we found download links, they should all be valid
           if (foundDownloadLink && !allLinksValid) {
             return false;
           }
-          
+
           return true;
         }
       ),
@@ -97,29 +97,29 @@ describe('Download Links', () => {
 
   it('should have prominent download link in README', () => {
     const readmePath = path.join(process.cwd(), 'README.md');
-    
+
     if (!fs.existsSync(readmePath)) {
       console.warn('README.md not found, skipping test');
       return;
     }
 
     const content = fs.readFileSync(readmePath, 'utf-8');
-    
+
     // Check for download section
     expect(content).toMatch(/##.*[Dd]ownload/);
-    
+
     // Check for releases link
     const hasReleasesLink = RELEASES_URL_PATTERN.test(content);
     expect(hasReleasesLink).toBe(true);
-    
+
     // Check for "latest" release link
     const hasLatestLink = LATEST_RELEASE_PATTERN.test(content);
     expect(hasLatestLink).toBe(true);
-    
+
     // Extract all releases URLs (including /latest)
-    const allReleasesUrls = content.match(/https:\/\/github\.com\/[a-zA-Z0-9-]+\/peft-studio\/releases[^\s\)"\]']*/g) || [];
+    const allReleasesUrls = content.match(/https:\/\/github\.com\/[a-zA-Z0-9-]+\/peft-studio\/releases[^\s)"\]']*/g) || [];
     console.log(`✓ README.md contains ${allReleasesUrls.length} releases links`);
-    
+
     // Verify at least one points to /latest
     const latestUrls = allReleasesUrls.filter(url => url.includes('/latest'));
     expect(latestUrls.length).toBeGreaterThan(0);
@@ -135,14 +135,14 @@ describe('Download Links', () => {
         fc.constantFrom(...DOCUMENTATION_FILES),
         (filePath) => {
           const fullPath = path.join(process.cwd(), filePath);
-          
+
           // Skip if file doesn't exist
           if (!fs.existsSync(fullPath)) {
             return true;
           }
 
           const content = fs.readFileSync(fullPath, 'utf-8');
-          
+
           // Extract all releases URLs
           const matches = content.match(RELEASES_URL_PATTERN) || [];
           matches.forEach(url => {
@@ -153,7 +153,7 @@ describe('Download Links', () => {
               baseUrls.add(baseUrl);
             }
           });
-          
+
           return true;
         }
       ),
@@ -162,7 +162,7 @@ describe('Download Links', () => {
 
     // All releases URLs should use the same base URL
     expect(baseUrls.size).toBeLessThanOrEqual(1);
-    
+
     if (baseUrls.size > 0) {
       const baseUrl = Array.from(baseUrls)[0];
       console.log(`✓ Consistent releases base URL: ${baseUrl}`);
@@ -182,7 +182,7 @@ describe('Download Links', () => {
         fc.constantFrom(...installationGuides),
         (filePath) => {
           const fullPath = path.join(process.cwd(), filePath);
-          
+
           // Skip if file doesn't exist
           if (!fs.existsSync(fullPath)) {
             console.warn(`Installation guide not found: ${filePath}`);
@@ -190,28 +190,28 @@ describe('Download Links', () => {
           }
 
           const content = fs.readFileSync(fullPath, 'utf-8');
-          
+
           // Check for download section
           const hasDownloadSection = /##.*[Dd]ownload/.test(content);
           if (!hasDownloadSection) {
             console.error(`\nMissing download section in ${filePath}`);
             return false;
           }
-          
+
           // Check for releases link
           const hasReleasesLink = RELEASES_URL_PATTERN.test(content);
           if (!hasReleasesLink) {
             console.error(`\nMissing releases link in ${filePath}`);
             return false;
           }
-          
+
           // Check for installation instructions
           const hasInstallationSteps = /##.*[Ii]nstallation/.test(content);
           if (!hasInstallationSteps) {
             console.error(`\nMissing installation section in ${filePath}`);
             return false;
           }
-          
+
           console.log(`✓ ${filePath} has complete download and installation instructions`);
           return true;
         }
@@ -232,28 +232,28 @@ describe('Download Links', () => {
         fc.constantFrom(...installationGuides),
         (filePath) => {
           const fullPath = path.join(process.cwd(), filePath);
-          
+
           // Skip if file doesn't exist
           if (!fs.existsSync(fullPath)) {
             return true;
           }
 
           const content = fs.readFileSync(fullPath, 'utf-8');
-          
+
           // Check for system requirements section
           const hasRequirements = /##.*[Ss]ystem [Rr]equirements/.test(content);
           if (!hasRequirements) {
             console.error(`\nMissing system requirements section in ${filePath}`);
             return false;
           }
-          
+
           // Check for minimum requirements
           const hasMinimum = /[Mm]inimum/.test(content);
           if (!hasMinimum) {
             console.error(`\nMissing minimum requirements in ${filePath}`);
             return false;
           }
-          
+
           console.log(`✓ ${filePath} has system requirements`);
           return true;
         }
@@ -274,21 +274,21 @@ describe('Download Links', () => {
         fc.constantFrom(...installationGuides),
         (filePath) => {
           const fullPath = path.join(process.cwd(), filePath);
-          
+
           // Skip if file doesn't exist
           if (!fs.existsSync(fullPath)) {
             return true;
           }
 
           const content = fs.readFileSync(fullPath, 'utf-8');
-          
+
           // Check for troubleshooting section
           const hasTroubleshooting = /##.*[Tt]roubleshooting/.test(content);
           if (!hasTroubleshooting) {
             console.error(`\nMissing troubleshooting section in ${filePath}`);
             return false;
           }
-          
+
           console.log(`✓ ${filePath} has troubleshooting section`);
           return true;
         }
@@ -299,26 +299,26 @@ describe('Download Links', () => {
 
   it('should have links to installation guides in README', () => {
     const readmePath = path.join(process.cwd(), 'README.md');
-    
+
     if (!fs.existsSync(readmePath)) {
       console.warn('README.md not found, skipping test');
       return;
     }
 
     const content = fs.readFileSync(readmePath, 'utf-8');
-    
+
     // Check for links to installation guides
     const installationGuideLinks = [
       /installation-windows\.md/,
       /installation-macos\.md/,
       /installation-linux\.md/,
     ];
-    
+
     for (const pattern of installationGuideLinks) {
       const hasLink = pattern.test(content);
       expect(hasLink).toBe(true);
     }
-    
+
     console.log(`✓ README.md links to all platform installation guides`);
   });
 
@@ -328,31 +328,31 @@ describe('Download Links', () => {
         fc.constantFrom(...DOCUMENTATION_FILES),
         (filePath) => {
           const fullPath = path.join(process.cwd(), filePath);
-          
+
           // Skip if file doesn't exist
           if (!fs.existsSync(fullPath)) {
             return true;
           }
 
           const content = fs.readFileSync(fullPath, 'utf-8');
-          
+
           // Find all GitHub releases URLs
           const releasesUrls = content.match(RELEASES_URL_PATTERN) || [];
-          
+
           for (const url of releasesUrls) {
             // Check URL format
-            const isValid = 
+            const isValid =
               url.startsWith('https://github.com/') &&
               url.includes('/peft-studio/releases') &&
               !url.includes(' ') &&
               !url.includes('\n');
-            
+
             if (!isValid) {
               console.error(`\nInvalid URL format in ${filePath}: ${url}`);
               return false;
             }
           }
-          
+
           return true;
         }
       ),

@@ -75,14 +75,14 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
 
   useEffect(() => {
     fetchComparison();
-    
+
     // Set up auto-refresh every 30 seconds for real-time pricing
     const interval = setInterval(() => {
       fetchComparison();
     }, 30000);
-    
+
     setRefreshInterval(interval as any);
-    
+
     return () => {
       if (refreshInterval) {
         clearInterval(refreshInterval);
@@ -114,7 +114,7 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
 
       const data = await response.json();
       setComparison(data);
-      
+
       // Auto-select recommended platform
       if (!selectedPlatform) {
         setSelectedPlatform(data.recommended_option.platform);
@@ -170,7 +170,7 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
 
   const getSortedEstimates = (estimates: PlatformEstimate[]) => {
     const sorted = [...estimates];
-    
+
     switch (sortBy) {
       case 'cost':
         sorted.sort((a, b) => a.total_cost_usd - b.total_cost_usd);
@@ -178,14 +178,15 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
       case 'performance':
         sorted.sort((a, b) => a.setup_time_minutes - b.setup_time_minutes);
         break;
-      case 'availability':
+      case 'availability': {
         const availabilityOrder = { high: 0, medium: 1, low: 2, unavailable: 3 };
-        sorted.sort((a, b) => 
+        sorted.sort((a, b) =>
           availabilityOrder[a.instance.availability] - availabilityOrder[b.instance.availability]
         );
         break;
+      }
     }
-    
+
     return sorted;
   };
 
@@ -253,32 +254,30 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
             {minMemoryGb && <span className="ml-3">Minimum GPU memory: <span className="font-semibold">{minMemoryGb} GB</span></span>}
           </p>
         </div>
-        
+
         <div className="flex items-center gap-3">
           {/* View Mode Toggle */}
           <div className="flex bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => setViewMode('table')}
-              className={`px-3 py-1 rounded ${
-                viewMode === 'table'
+              className={`px-3 py-1 rounded ${viewMode === 'table'
                   ? 'bg-white shadow text-gray-900'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
             >
               Table
             </button>
             <button
               onClick={() => setViewMode('cards')}
-              className={`px-3 py-1 rounded ${
-                viewMode === 'cards'
+              className={`px-3 py-1 rounded ${viewMode === 'cards'
                   ? 'bg-white shadow text-gray-900'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
             >
               Cards
             </button>
           </div>
-          
+
           {/* Sort By */}
           <select
             value={sortBy}
@@ -289,7 +288,7 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
             <option value="performance">Sort by Speed</option>
             <option value="availability">Sort by Availability</option>
           </select>
-          
+
           {/* Refresh Button */}
           <button
             onClick={fetchComparison}
@@ -317,8 +316,8 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
               {comparison.recommended_option.platform === comparison.cheapest_option.platform
                 ? '💰 Lowest cost option'
                 : comparison.recommended_option.platform === comparison.fastest_option.platform
-                ? '⚡ Fastest to start'
-                : '⚖️ Best balance of cost and convenience'}
+                  ? '⚡ Fastest to start'
+                  : '⚖️ Best balance of cost and convenience'}
             </p>
           </div>
         </div>
@@ -367,9 +366,8 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
                 {sortedEstimates.map((estimate, index) => (
                   <tr
                     key={index}
-                    className={`hover:bg-gray-50 transition cursor-pointer ${
-                      selectedPlatform === estimate.platform ? 'bg-blue-50' : ''
-                    }`}
+                    className={`hover:bg-gray-50 transition cursor-pointer ${selectedPlatform === estimate.platform ? 'bg-blue-50' : ''
+                      }`}
                     onClick={() => handleProviderSelect(estimate.platform, estimate.instance)}
                   >
                     <td className="px-4 py-4">
@@ -405,9 +403,8 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${
-                        getAvailabilityColor(estimate.instance.availability)
-                      }`}>
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getAvailabilityColor(estimate.instance.availability)
+                        }`}>
                         {getAvailabilityIcon(estimate.instance.availability)}
                         <span className="ml-1 capitalize">{estimate.instance.availability}</span>
                       </span>
@@ -421,11 +418,10 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
                           e.stopPropagation();
                           handleProviderSelect(estimate.platform, estimate.instance);
                         }}
-                        className={`px-3 py-1 rounded text-sm font-medium transition ${
-                          selectedPlatform === estimate.platform
+                        className={`px-3 py-1 rounded text-sm font-medium transition ${selectedPlatform === estimate.platform
                             ? 'bg-blue-600 text-white'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
+                          }`}
                       >
                         {selectedPlatform === estimate.platform ? 'Selected' : 'Select'}
                       </button>
@@ -444,11 +440,10 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
           {sortedEstimates.map((estimate, index) => (
             <div
               key={index}
-              className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                selectedPlatform === estimate.platform
+              className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedPlatform === estimate.platform
                   ? 'border-blue-500 bg-blue-50 shadow-lg ring-2 ring-blue-200'
                   : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
-              }`}
+                }`}
               onClick={() => handleProviderSelect(estimate.platform, estimate.instance)}
             >
               {/* Header */}
@@ -486,9 +481,8 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
 
               {/* Availability */}
               <div className="mb-3">
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${
-                  getAvailabilityColor(estimate.instance.availability)
-                }`}>
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getAvailabilityColor(estimate.instance.availability)
+                  }`}>
                   {getAvailabilityIcon(estimate.instance.availability)}
                   <span className="ml-2 capitalize">{estimate.instance.availability} availability</span>
                 </span>
@@ -547,7 +541,7 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
           {loading && <span className="animate-pulse">Updating prices...</span>}
           {!loading && <span>Prices updated {new Date().toLocaleTimeString()}</span>}
         </div>
-        
+
         <div className="flex gap-3">
           {onCancel && (
             <button
@@ -557,7 +551,7 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
               Cancel
             </button>
           )}
-          
+
           <button
             onClick={handleConfirm}
             disabled={!selectedPlatform || !selectedInstance}

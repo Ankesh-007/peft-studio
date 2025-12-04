@@ -1,0 +1,62 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.14 [39m[90mD:/Anti Gravity/peft-studio[39m
+
+(node:13872) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/Anti%20Gravity/peft-studio/postcss.config.js?t=1764868241430 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to D:\Anti Gravity\peft-studio\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [31mΓ¥»[39m src/test/unit/github-release-workflow.test.ts [2m([22m[2m5 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 498[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m Property 6: Version tags trigger workflow [33m 458[2mms[22m[39m
+     [32mΓ£ô[39m Property 7: Parallel platform builds[32m 4[2mms[22m[39m
+     [32mΓ£ô[39m Property 8: Built installers uploaded as assets[32m 5[2mms[22m[39m
+     [32mΓ£ô[39m Property 4: Release notes include installation instructions[32m 21[2mms[22m[39m
+[31m     [31m├ù[31m Property 24: Platform-specific instructions in notes[39m[32m 9[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 1 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/test/unit/github-release-workflow.test.ts > GitHub Release Notes Template Properties > Property 24: Platform-specific instructions in notes
+Error: Property failed after 1 tests
+{ seed: -1683968497, path: "0:0:0:0:0", endOnFailure: true }
+Counterexample: [{"major":0,"minor":0,"patch":0,"platform":"windows"}]
+Shrunk 4 time(s)
+Got AssertionError: expected '### Windows\r\n- **Installer:** `PEFTΓÇª' to contain 'installation wizard'
+    at D:/Anti Gravity/peft-studio/src/test/unit/github-release-workflow.test.ts:265:37
+    at Array.forEach (<anonymous>)
+    at D:/Anti Gravity/peft-studio/src/test/unit/github-release-workflow.test.ts:264:28
+    at Property.predicate (file:///D:/Anti%20Gravity/peft-studio/node_modules/fast-check/lib/esm/check/property/Property.js:14:54)
+    at Property.run (file:///D:/Anti%20Gravity/peft-studio/node_modules/fast-check/lib/esm/check/property/Property.generic.js:46:33)
+    at runIt (file:///D:/Anti%20Gravity/peft-studio/node_modules/fast-check/lib/esm/check/runner/Runner.js:18:30)
+    at check (file:///D:/Anti%20Gravity/peft-studio/node_modules/fast-check/lib/esm/check/runner/Runner.js:62:11)
+    at Module.assert (file:///D:/Anti%20Gravity/peft-studio/node_modules/fast-check/lib/esm/check/runner/Runner.js:65:17)
+    at D:/Anti Gravity/peft-studio/src/test/unit/github-release-workflow.test.ts:198:8
+    at file:///D:/Anti%20Gravity/peft-studio/node_modules/@vitest/runner/dist/index.js:145:11
+
+Hint: Enable verbose mode in order to have the list of all failing values encountered during the run
+ Γ¥» src/test/unit/github-release-workflow.test.ts:265:37
+    263|           // Verify platform-specific details are present
+    264|           checks.specifics.forEach(specific => {
+    265|             expect(platformSection).toContain(specific);
+       |                                     ^
+    266|           });
+    267| 
+ Γ¥» src/test/unit/github-release-workflow.test.ts:264:28
+ Γ¥» Property.predicate ../../Anti%20Gravity/peft-studio/node_modules/fast-check/lib/esm/check/property/Property.js:14:54
+ Γ¥» Property.run ../../Anti%20Gravity/peft-studio/node_modules/fast-check/lib/esm/check/property/Property.generic.js:46:33
+ Γ¥» runIt ../../Anti%20Gravity/peft-studio/node_modules/fast-check/lib/esm/check/runner/Runner.js:18:30
+ Γ¥» check ../../Anti%20Gravity/peft-studio/node_modules/fast-check/lib/esm/check/runner/Runner.js:62:11
+ Γ¥» Module.assert ../../Anti%20Gravity/peft-studio/node_modules/fast-check/lib/esm/check/runner/Runner.js:65:17
+ Γ¥» src/test/unit/github-release-workflow.test.ts:198:8
+ Γ¥» buildError ../../Anti%20Gravity/peft-studio/node_modules/fast-check/lib/esm/check/runner/utils/RunDetailsFormatter.js:126:15
+ Γ¥» throwIfFailed ../../Anti%20Gravity/peft-studio/node_modules/fast-check/lib/esm/check/runner/utils/RunDetailsFormatter.js:138:11
+ Γ¥» reportRunDetails ../../Anti%20Gravity/peft-studio/node_modules/fast-check/lib/esm/check/runner/utils/RunDetailsFormatter.js:151:16
+ Γ¥» Module.assert ../../Anti%20Gravity/peft-studio/node_modules/fast-check/lib/esm/check/runner/Runner.js:69:9
+ Γ¥» src/test/unit/github-release-workflow.test.ts:198:8
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 22:40:41
+[2m   Duration [22m 1.66s[2m (transform 65ms, setup 116ms, import 210ms, tests 498ms, environment 648ms)[22m
+

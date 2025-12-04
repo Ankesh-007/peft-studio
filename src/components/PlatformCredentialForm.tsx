@@ -161,16 +161,14 @@ export const PlatformCredentialForm: React.FC<PlatformCredentialFormProps> = ({
           {/* Test Result */}
           {testResult && (
             <div
-              className={`p-3 rounded-lg ${
-                testResult.success
+              className={`p-3 rounded-lg ${testResult.success
                   ? 'bg-green-50 border border-green-200'
                   : 'bg-red-50 border border-red-200'
-              }`}
+                }`}
             >
               <p
-                className={`text-sm ${
-                  testResult.success ? 'text-green-700' : 'text-red-700'
-                }`}
+                className={`text-sm ${testResult.success ? 'text-green-700' : 'text-red-700'
+                  }`}
               >
                 {testResult.success ? '✓' : '✗'} {testResult.message}
               </p>
@@ -181,7 +179,7 @@ export const PlatformCredentialForm: React.FC<PlatformCredentialFormProps> = ({
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <p className="text-xs text-blue-700">
               <strong>🔒 Security:</strong> Your credentials are encrypted and stored
-              securely in your system's keystore. They are never transmitted in plain text
+              securely in your system&apos;s keystore. They are never transmitted in plain text
               or logged.
             </p>
           </div>

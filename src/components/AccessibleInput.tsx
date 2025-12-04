@@ -33,7 +33,8 @@ export const AccessibleInput = forwardRef<
     },
     ref,
   ) => {
-    const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+    const [randomId] = React.useState(() => Math.random().toString(36).substr(2, 9));
+    const inputId = id || `input-${randomId}`;
     const errorId = `${inputId}-error`;
     const hintId = `${inputId}-hint`;
 
@@ -67,7 +68,7 @@ export const AccessibleInput = forwardRef<
               "input w-full",
               icon && "pl-40",
               error &&
-                "border-accent-error focus:border-accent-error focus:ring-accent-error",
+              "border-accent-error focus:border-accent-error focus:ring-accent-error",
               className,
             )}
             aria-invalid={!!error}

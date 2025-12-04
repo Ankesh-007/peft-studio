@@ -1,44 +1,60 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom";
 
-import PresetLibrary from "../components/PresetLibrary";
+import { PresetLibrary } from "../components/PresetLibrary";
+
+// Mock the API module
+vi.mock("../api/presets", () => ({
+  listPresets: vi.fn().mockResolvedValue([
+    {
+      id: "1",
+      name: "Default Preset",
+      description: "A default preset",
+      model_name: "Llama-2",
+      peft_method: "lora",
+      batch_size: 4,
+      learning_rate: 0.001,
+      tags: ["default"],
+      updated_at: "2024-01-01T00:00:00Z",
+      created_at: "2024-01-01T00:00:00Z",
+      config: {}
+    }
+  ]),
+  deletePreset: vi.fn().mockResolvedValue(undefined),
+  downloadPresetAsFile: vi.fn().mockResolvedValue(undefined),
+  uploadPresetFile: vi.fn().mockResolvedValue(undefined),
+}));
 
 describe("PresetLibrary", () => {
-  it("should render preset library component", () => {
-    render(<PresetLibrary onSelectPreset={() => {}} />);
-    expect(screen.getByText(/preset/i)).toBeInTheDocument();
+  it("should render preset library component", async () => {
+    render(<PresetLibrary onSelectPreset={() => { }} onClose={() => { }} />);
+    expect(screen.getByRole('heading', { name: /configuration presets/i })).toBeInTheDocument();
   });
 
-  it("should display available presets", () => {
-    render(<PresetLibrary onSelectPreset={() => {}} />);
-    // Component should render preset options
-    expect(screen.getByText(/preset/i)).toBeInTheDocument();
+  it("should display available presets", async () => {
+    render(<PresetLibrary onSelectPreset={() => { }} onClose={() => { }} />);
+    expect(screen.getByRole('heading', { name: /configuration presets/i })).toBeInTheDocument();
   });
 
-  it("should call onSelectPreset when preset is clicked", () => {
+  it("should call onSelectPreset when preset is clicked", async () => {
     const onSelectPreset = vi.fn();
-    render(<PresetLibrary onSelectPreset={onSelectPreset} />);
-    
-    // Smoke test - component renders
-    expect(screen.getByText(/preset/i)).toBeInTheDocument();
+    render(<PresetLibrary onSelectPreset={onSelectPreset} onClose={() => { }} />);
+    expect(screen.getByRole('heading', { name: /configuration presets/i })).toBeInTheDocument();
   });
 
-  it("should show preset details on hover or selection", () => {
-    render(<PresetLibrary onSelectPreset={() => {}} />);
-    // Component should render without crashing
-    expect(screen.getByText(/preset/i)).toBeInTheDocument();
+  it("should show preset details on hover or selection", async () => {
+    render(<PresetLibrary onSelectPreset={() => { }} onClose={() => { }} />);
+    expect(screen.getByRole('heading', { name: /configuration presets/i })).toBeInTheDocument();
   });
 
-  it("should filter presets by category", () => {
-    render(<PresetLibrary onSelectPreset={() => {}} />);
-    // Smoke test
-    expect(screen.getByText(/preset/i)).toBeInTheDocument();
+  it("should filter presets by category", async () => {
+    render(<PresetLibrary onSelectPreset={() => { }} onClose={() => { }} />);
+    expect(screen.getByRole('heading', { name: /configuration presets/i })).toBeInTheDocument();
   });
 
-  it("should display preset configuration preview", () => {
-    render(<PresetLibrary onSelectPreset={() => {}} />);
-    // Component renders successfully
-    expect(screen.getByText(/preset/i)).toBeInTheDocument();
+  it("should display preset configuration preview", async () => {
+    render(<PresetLibrary onSelectPreset={() => { }} onClose={() => { }} />);
+    expect(screen.getByRole('heading', { name: /configuration presets/i })).toBeInTheDocument();
   });
 });

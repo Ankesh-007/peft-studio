@@ -18,7 +18,7 @@ export function useRenderTime(componentName: string) {
   useEffect(() => {
     renderCount.current++;
     const renderTime = performance.now();
-    
+
     return () => {
       const duration = performance.now() - renderTime;
       performanceMonitor.measure(`${componentName}-render-${renderCount.current}`, () => duration);
@@ -104,17 +104,18 @@ export function usePerformanceStats(metricName?: string) {
  * Hook to detect slow renders
  */
 export function useSlowRenderDetection(threshold: number = 16.67) {
-  const lastRenderTime = useRef(performance.now());
+  const [initialTime] = useState(() => performance.now());
+  const lastRenderTime = useRef(initialTime);
   const [slowRenders, setSlowRenders] = useState(0);
 
   useEffect(() => {
     const renderDuration = performance.now() - lastRenderTime.current;
-    
+
     if (renderDuration > threshold) {
       setSlowRenders(prev => prev + 1);
       console.warn(`Slow render detected: ${renderDuration.toFixed(2)}ms`);
     }
-    
+
     lastRenderTime.current = performance.now();
   });
 
@@ -136,7 +137,7 @@ export function usePerformanceProfile(componentName: string, enabled: boolean = 
 
     return () => {
       const renderDuration = performance.now() - renderStart;
-      
+
       if (renderDuration > 16.67) {
         console.warn(`[${componentName}] Slow render #${renderCount.current}: ${renderDuration.toFixed(2)}ms`);
       }

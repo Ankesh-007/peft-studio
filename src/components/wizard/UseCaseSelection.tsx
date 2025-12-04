@@ -77,8 +77,8 @@ const UseCaseSelection: React.FC<UseCaseSelectionProps> = ({
           Welcome to the Training Wizard!
         </h2>
         <p className="text-blue-800">
-          Let's start by selecting what you want your model to do. Each use case
-          has been pre-configured with optimal settings, so you don't need to
+          Let&apos;s start by selecting what you want your model to do. Each use case
+          has been pre-configured with optimal settings, so you don&apos;t need to
           worry about technical details.
         </p>
       </div>
@@ -99,10 +99,9 @@ const UseCaseSelection: React.FC<UseCaseSelectionProps> = ({
               onClick={() => onProfileSelect(profile)}
               className={`
                 text-left p-6 rounded-lg border-2 transition-all hover:shadow-lg
-                ${
-                  wizardState.profile?.id === profile.id
-                    ? "border-blue-600 bg-blue-50 shadow-md"
-                    : "border-gray-200 bg-white hover:border-blue-300"
+                ${wizardState.profile?.id === profile.id
+                  ? "border-blue-600 bg-blue-50 shadow-md"
+                  : "border-gray-200 bg-white hover:border-blue-300"
                 }
               `}
               data-testid={`profile-card-${profile.id}`}
@@ -204,7 +203,7 @@ const UseCaseSelection: React.FC<UseCaseSelectionProps> = ({
           </h4>
           <p className="text-sm text-green-800 mb-3">
             Your training will be optimized for {wizardState.profile.use_case}{" "}
-            tasks. Click "Next" to continue with dataset upload.
+            tasks. Click &quot;Next&quot; to continue with dataset upload.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>

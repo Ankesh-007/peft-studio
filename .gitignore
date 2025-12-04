@@ -95,3 +95,7 @@ __pycache__/
 *_SUMMARY.md
 *_STATUS.md
 *_COMPLETE.md
+
+# Build logs
+tsc_output.txt
+lint_output.txt

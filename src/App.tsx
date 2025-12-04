@@ -50,12 +50,7 @@ function App() {
   } = useOnboarding();
 
   // Check backend availability after app is ready
-  useEffect(() => {
-    if (isAppReady) {
-      const backendStatus = sessionStorage.getItem('backendAvailable');
-      setIsBackendAvailable(backendStatus === 'true');
-    }
-  }, [isAppReady]);
+
 
   const handleStartupError = (error: Error) => {
     // Parse error and create StartupErrorInfo
@@ -148,7 +143,11 @@ function App() {
   if (!isAppReady) {
     return (
       <SplashScreen
-        onComplete={() => setIsAppReady(true)}
+        onComplete={() => {
+          const backendStatus = sessionStorage.getItem('backendAvailable');
+          setIsBackendAvailable(backendStatus === 'true');
+          setIsAppReady(true);
+        }}
         onError={handleStartupError}
       />
     );
@@ -182,77 +181,70 @@ function App() {
       <Suspense fallback={<LoadingFallback />}>
         {/* Show backend unavailable banner if needed */}
         {!isBackendAvailable && <BackendUnavailableBanner />}
-        
+
         {/* Navigation */}
         <div className="bg-white border-b px-6 py-3">
           <div className="flex gap-4">
             <button
               onClick={() => setCurrentView('dashboard')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                currentView === 'dashboard'
+              className={`px-4 py-2 rounded-lg transition-colors ${currentView === 'dashboard'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               Dashboard
             </button>
             <button
               onClick={() => setCurrentView('training')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                currentView === 'training'
+              className={`px-4 py-2 rounded-lg transition-colors ${currentView === 'training'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               Training
             </button>
             <button
               onClick={() => setCurrentView('deployment')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                currentView === 'deployment'
+              className={`px-4 py-2 rounded-lg transition-colors ${currentView === 'deployment'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               Deployments
             </button>
             <button
               onClick={() => setCurrentView('gradio-demos')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                currentView === 'gradio-demos'
+              className={`px-4 py-2 rounded-lg transition-colors ${currentView === 'gradio-demos'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               Gradio Demos
             </button>
             <button
               onClick={() => setCurrentView('inference')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                currentView === 'inference'
+              className={`px-4 py-2 rounded-lg transition-colors ${currentView === 'inference'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               Inference
             </button>
             <button
               onClick={() => setCurrentView('configurations')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                currentView === 'configurations'
+              className={`px-4 py-2 rounded-lg transition-colors ${currentView === 'configurations'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               Configurations
             </button>
             <button
               onClick={() => setCurrentView('logging')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                currentView === 'logging'
+              className={`px-4 py-2 rounded-lg transition-colors ${currentView === 'logging'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               Logging
             </button>
@@ -261,7 +253,7 @@ function App() {
 
         {/* Main Content */}
         {currentView === 'dashboard' && <Dashboard />}
-        
+
         {currentView === 'training' && (
           <TrainingWizard
             onComplete={(state) => {
@@ -271,17 +263,17 @@ function App() {
             onCancel={() => setCurrentView('dashboard')}
           />
         )}
-        
+
         {currentView === 'deployment' && <DeploymentManagement />}
-        
+
         {currentView === 'gradio-demos' && <GradioDemoGenerator />}
-        
+
         {currentView === 'inference' && <InferencePlayground />}
-        
+
         {currentView === 'configurations' && <ConfigurationManagement />}
-        
+
         {currentView === 'logging' && <LoggingDiagnostics />}
-        
+
         {/* Global Help Panel */}
         {isHelpOpen && (
           <ContextualHelpPanel
@@ -300,10 +292,10 @@ function App() {
           />
         )}
       </Suspense>
-      
+
       {/* Performance Profiler (development only) */}
       <PerformanceProfiler enabled={process.env.NODE_ENV === 'development'} />
-      
+
       {/* Auto-update notification */}
       <UpdateNotification />
     </Layout>

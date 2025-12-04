@@ -15,7 +15,7 @@ interface DownloadProgress {
   total: number;
 }
 
-type UpdateState = 
+type UpdateState =
   | 'checking'
   | 'available'
   | 'downloading'
@@ -89,7 +89,7 @@ export const UpdateNotification: React.FC = () => {
 
   const handleDownload = async () => {
     if (!window.api?.downloadUpdate) return;
-    
+
     try {
       setUpdateState('downloading');
       await window.api.downloadUpdate();
@@ -101,7 +101,7 @@ export const UpdateNotification: React.FC = () => {
 
   const handleInstall = async () => {
     if (!window.api?.installUpdate) return;
-    
+
     try {
       await window.api.installUpdate();
     } catch (err) {
@@ -112,7 +112,7 @@ export const UpdateNotification: React.FC = () => {
 
   const handleCheckForUpdates = async () => {
     if (!window.api?.checkForUpdates) return;
-    
+
     try {
       setUpdateState('checking');
       setError(null);
@@ -230,7 +230,7 @@ export const UpdateNotification: React.FC = () => {
                   <p className="text-xs mt-1">Current version: {currentVersion}</p>
                 )}
               </div>
-              
+
               {updateInfo.releaseNotes && (
                 <button
                   onClick={() => setShowReleaseNotes(!showReleaseNotes)}
@@ -239,7 +239,7 @@ export const UpdateNotification: React.FC = () => {
                   {showReleaseNotes ? 'Hide' : 'Show'} Release Notes
                 </button>
               )}
-              
+
               {showReleaseNotes && updateInfo.releaseNotes && (
                 <div className="bg-gray-50 dark:bg-gray-900 rounded p-3 text-sm text-gray-700 dark:text-gray-300 max-h-48 overflow-y-auto">
                   <pre className="whitespace-pre-wrap font-sans">
@@ -247,7 +247,7 @@ export const UpdateNotification: React.FC = () => {
                   </pre>
                 </div>
               )}
-              
+
               <button
                 onClick={handleDownload}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors"
@@ -302,30 +302,28 @@ export const UpdateNotification: React.FC = () => {
 
           {updateState === 'not-available' && (
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              You're running the latest version ({currentVersion})
+              You&apos;re running the latest version ({currentVersion})
             </p>
           )}
 
           {updateState === 'error' && (
             <>
-              <div className={`text-sm rounded p-3 ${
-                errorType === 'checksum-mismatch' 
-                  ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800' 
+              <div className={`text-sm rounded p-3 ${errorType === 'checksum-mismatch'
+                  ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
                   : ''
-              }`}>
-                <p className={`${
-                  errorType === 'checksum-mismatch' 
-                    ? 'text-red-700 dark:text-red-300 font-medium' 
-                    : 'text-red-600 dark:text-red-400'
                 }`}>
+                <p className={`${errorType === 'checksum-mismatch'
+                    ? 'text-red-700 dark:text-red-300 font-medium'
+                    : 'text-red-600 dark:text-red-400'
+                  }`}>
                   {error || 'An error occurred'}
                 </p>
                 {errorType === 'checksum-mismatch' && (
                   <p className="text-xs text-red-600 dark:text-red-400 mt-2">
                     For your security, this update will not be installed. You can download manually from{' '}
-                    <a 
-                      href="https://github.com/Ankesh-007/peft-studio/releases" 
-                      target="_blank" 
+                    <a
+                      href="https://github.com/Ankesh-007/peft-studio/releases"
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="underline hover:text-red-700 dark:hover:text-red-300"
                     >

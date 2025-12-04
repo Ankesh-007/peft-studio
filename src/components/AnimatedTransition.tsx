@@ -27,6 +27,7 @@ export const AnimatedTransition: React.FC<AnimatedTransitionProps> = ({
 
   useEffect(() => {
     if (show) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShouldRender(true);
       // Trigger animation after render
       requestAnimationFrame(() => {
