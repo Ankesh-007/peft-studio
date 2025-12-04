@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2024-12-04
+
+### Added
+- **Release Automation**: Comprehensive release workflow with automated build, validation, and GitHub release creation
+- **Release Scripts**: Node.js and PowerShell scripts for building, validating, and publishing releases
+- **Property-Based Testing**: Extensive PBT coverage for release scripts ensuring correctness across all scenarios
+- **Release Documentation**: Step-by-step guides, troubleshooting docs, and script reference documentation
+- **Checksum Generation**: Automated SHA256 checksum generation and validation for all release artifacts
+- **Repository Cleanup**: Automated cleanup scripts to maintain repository hygiene
+- **Metadata Management**: Scripts to update and validate repository metadata (package.json, README, etc.)
+- **UI Component Library**: New accessible components (Toast, Toggle, Slider, DatePicker, FileUpload, etc.)
+- **Accessibility Features**: ARIA labels, keyboard navigation, and screen reader support across all components
+- **WebSocket Support**: Real-time communication infrastructure with automatic reconnection
+- **Mobile Navigation**: Responsive mobile-friendly navigation component
+- **Code Editor Component**: Syntax-highlighted code editor with multiple language support
+- **Performance Utilities**: Caching, debouncing, and optimization helpers
+
+### Improved
+- **Documentation Structure**: Reorganized docs into user-guide, developer-guide, and reference sections
+- **Release Process**: Streamlined from manual to fully automated with validation at each step
+- **Build Configuration**: Enhanced electron-builder config with proper artifact naming and signing setup
+- **Testing Infrastructure**: Added vitest configs for unit, integration, and property-based tests
+- **Repository Professionalism**: Added comprehensive metadata, keywords, and professional documentation
+
+### Technical
+- **Release Validation**: Multi-stage validation (build artifacts, checksums, GitHub release, downloads)
+- **Dry-Run Testing**: All release scripts support dry-run mode for safe testing
+- **Error Recovery**: Comprehensive error handling with clear messages and recovery steps
+- **Cross-Platform Support**: Release automation works on Windows, macOS, and Linux
+- **GitHub Integration**: Automated release creation with proper asset uploads and release notes
+
 ## [1.0.1] - 2024-12-04
 
 ### Fixed
