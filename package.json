@@ -80,7 +80,7 @@
     "@axe-core/react": "^4.11.0",
     "@eslint/js": "^9.39.1",
     "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^14.1.2",
+    "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.5.1",
     "@types/node": "^22.10.1",
     "@types/react": "^18.3.12",
@@ -104,7 +104,7 @@
     "terser": "^5.44.1",
     "typescript": "^5.7.2",
     "vite": "^7.2.6",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.15"
   },
   "build": {
     "appId": "com.peftstudio.app",
