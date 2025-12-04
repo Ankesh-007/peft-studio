@@ -141,7 +141,6 @@
           ]
         }
       ],
-      "icon": "build/icon.ico",
       "publisherName": "PEFT Studio",
       "verifyUpdateCodeSignature": false,
       "sign": "./scripts/sign-windows.js",
@@ -150,8 +149,7 @@
         {
           "ext": "peft",
           "name": "PEFT Configuration",
-          "description": "PEFT Studio Configuration File",
-          "icon": "build/icon.ico"
+          "description": "PEFT Studio Configuration File"
         }
       ]
     },
@@ -172,7 +170,6 @@
           ]
         }
       ],
-      "icon": "build/icon.icns",
       "category": "public.app-category.developer-tools",
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
@@ -191,15 +188,12 @@
           "ext": "peft",
           "name": "PEFT Configuration",
           "description": "PEFT Studio Configuration File",
-          "icon": "build/icon.icns",
           "role": "Editor"
         }
       ]
     },
     "dmg": {
       "title": "${productName} ${version}",
-      "icon": "build/icon.icns",
-      "background": "build/dmg-background.png",
       "contents": [
         {
           "x": 130,
@@ -237,7 +231,6 @@
           ]
         }
       ],
-      "icon": "build/icon.png",
       "category": "Development",
       "maintainer": "PEFT Studio Contributors <peft-studio@example.com>",
       "vendor": "PEFT Studio",
@@ -286,9 +279,6 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "PEFT Studio",
-      "installerIcon": "build/icon.ico",
-      "uninstallerIcon": "build/icon.ico",
-      "installerHeaderIcon": "build/icon.ico",
       "deleteAppDataOnUninstall": false,
       "runAfterFinish": true,
       "menuCategory": true,
