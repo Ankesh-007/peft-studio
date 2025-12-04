@@ -24,7 +24,7 @@ pytest==7.4.3
 pytest-asyncio==0.21.1
 hypothesis==6.92.1
 # unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git
-xformers
+# xformers
 # triton
 trl
 semver==3.0.2
