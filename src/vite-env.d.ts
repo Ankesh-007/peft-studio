@@ -29,5 +29,6 @@ interface Window {
     onUpdateDownloadProgress: (callback: (data: { percent: number; bytesPerSecond: number; transferred: number; total: number }) => void) => void;
     onUpdateDownloaded: (callback: (data: { version: string; releaseNotes?: string }) => void) => void;
     onUpdateStatus: (callback: (data: { status: string; message?: string }) => void) => void;
+    onUpdateChecksumFailed: (callback: (data: { expected: string; actual: string; file: string }) => void) => void;
   };
 }
