@@ -33,13 +33,13 @@ def _get_torch():
 from connectors.base import PlatformConnector, JobStatus as ConnectorJobStatus
 from connectors.connector_manager import get_connector_manager
 
-from backend.services.quality_analysis_service import (
+from .quality_analysis_service import (
     analyze_training_quality,
     TrainingResult,
     QualityAnalysis,
     generate_quality_report
 )
-from backend.services.notification_service import (
+from .notification_service import (
     check_progress_milestone,
     create_error_notification,
     NotificationManager,

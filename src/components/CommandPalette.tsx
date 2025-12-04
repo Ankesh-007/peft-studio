@@ -110,6 +110,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
           <Search size={20} className="text-dark-text-tertiary" />
           <input
             type="text"
+            role="searchbox"
             placeholder="Type a command or search..."
             className="flex-1 bg-transparent text-body text-dark-text-primary placeholder:text-dark-text-tertiary outline-none"
             value={search}

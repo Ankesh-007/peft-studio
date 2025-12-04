@@ -366,12 +366,6 @@ class TestOllamaConnector:
         )
         
         assert response == "Hello! How can I help you today?"
-            model="llama2:7b",
-            prompt="Hello",
-            stream=False
-        )
-        
-        assert response == "Hello! How can I help you today?"
     
     @pytest.mark.asyncio
     async def test_upload_artifact(self, connector, mock_session, tmp_path):

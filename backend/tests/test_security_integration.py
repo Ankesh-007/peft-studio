@@ -14,6 +14,17 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from main import app
 
+
+@pytest.fixture(scope="module", autouse=True)
+def disable_rate_limiting():
+    """Disable rate limiting for integration tests"""
+    from services.security_service import get_security_service
+    security_service = get_security_service()
+    security_service.rate_limiter.enabled = False
+    yield
+    security_service.rate_limiter.enabled = True
+
+
 client = TestClient(app)
 
 

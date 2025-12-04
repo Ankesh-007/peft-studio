@@ -1,5 +1,54 @@
 import "@testing-library/jest-dom";
-import { expect, vi } from "vitest";
+
+import { expect, vi, beforeEach } from "vitest";
+
+// ============================================================================
+// Storage Mocks (for E2E tests)
+// ============================================================================
+
+// Mock localStorage and sessionStorage for jsdom environment
+class StorageMock {
+  private store: Record<string, string> = {};
+
+  clear() {
+    this.store = {};
+  }
+
+  getItem(key: string) {
+    return this.store[key] || null;
+  }
+
+  setItem(key: string, value: string) {
+    this.store[key] = String(value);
+  }
+
+  removeItem(key: string) {
+    delete this.store[key];
+  }
+
+  get length() {
+    return Object.keys(this.store).length;
+  }
+
+  key(index: number) {
+    const keys = Object.keys(this.store);
+    return keys[index] || null;
+  }
+}
+
+// Setup storage mocks before each test
+beforeEach(() => {
+  if (typeof window !== 'undefined') {
+    Object.defineProperty(window, 'localStorage', {
+      value: new StorageMock(),
+      writable: true,
+    });
+    Object.defineProperty(window, 'sessionStorage', {
+      value: new StorageMock(),
+      writable: true,
+    });
+  }
+});
 
 // ============================================================================
 // Custom Matchers

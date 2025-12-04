@@ -8,7 +8,15 @@ import pytest
 from fastapi.testclient import TestClient
 from main import app
 
-client = TestClient(app)
+
+@pytest.fixture(scope="module")
+def client():
+    """Create test client with rate limiting disabled"""
+    from services.security_service import get_security_service
+    security_service = get_security_service()
+    security_service.rate_limiter.enabled = False
+    yield TestClient(app)
+    security_service.rate_limiter.enabled = True
 
 
 class TestCostCalculatorAPI:

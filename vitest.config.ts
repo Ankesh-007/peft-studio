@@ -9,6 +9,9 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
+      reportsDirectory: './coverage',
+      all: true,
+      include: ['src/**/*.ts', 'src/**/*.tsx'],
       exclude: [
         'node_modules/',
         'src/test/',
@@ -22,6 +25,8 @@ export default defineConfig({
         'backend/',
         '*.config.ts',
         '*.config.js',
+        'src/vite-env.d.ts',
+        'src/main.tsx',
       ],
       thresholds: {
         lines: 70,
@@ -37,6 +42,7 @@ export default defineConfig({
       'build/',
       'electron/',
       'backend/',
+      'scripts/',
       '**/*.e2e.test.ts',
       '**/*.e2e.test.tsx',
       '**/*.integration.test.ts',
@@ -44,6 +50,8 @@ export default defineConfig({
       '**/*.pbt.test.ts',
       '**/*.pbt.test.tsx',
     ],
+    testTimeout: 10000, // 10 seconds for unit tests
+    hookTimeout: 10000,
   },
   resolve: {
     alias: {

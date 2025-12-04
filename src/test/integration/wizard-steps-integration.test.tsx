@@ -2,7 +2,7 @@ import { describe, test, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import ModelSelectionStep from '../../components/wizard/ModelSelectionStep';
 import SmartConfigurationStep from '../../components/wizard/SmartConfigurationStep';
-import { WizardState } from '../../types/wizard';
+import type { WizardState } from '../../types/wizard';
 
 describe("Wizard Steps Integration", () => {
   const mockWizardState: WizardState = {
