@@ -419,7 +419,8 @@
 - [x] 9. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 10. Publish first official release
+- [x] 10. Publish first official release
+
 
 
   - Update version to 1.0.0 (if not already)
