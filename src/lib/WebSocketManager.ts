@@ -140,7 +140,7 @@ export class WebSocketManager {
    */
   isConnected(connectionKey: string): boolean {
     const conn = this.connections.get(connectionKey);
-    return conn?.ws.readyState === WebSocket.OPEN ?? false;
+    return conn ? conn.ws.readyState === WebSocket.OPEN : false;
   }
 
   /**
