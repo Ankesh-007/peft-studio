@@ -74,8 +74,8 @@ Choose the installer for your platform from the [releases page](https://github.c
 #### 📥 Direct Download Links (v1.0.1)
 
 **Windows:**
-- [PEFT.Studio-Setup-1.0.1.exe](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT.Studio-Setup-1.0.1.exe) - NSIS Installer (Recommended)
-- [PEFT.Studio-Portable-1.0.1.exe](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT.Studio-Portable-1.0.1.exe) - Portable Version
+- [PEFT Studio-Setup-1.0.1.exe](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT%20Studio-Setup-1.0.1.exe) - NSIS Installer (Recommended)
+- [PEFT Studio-Portable-1.0.1.exe](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT%20Studio-Portable-1.0.1.exe) - Portable Version
 
 **macOS:** *(Coming Soon)*
 - Intel Mac DMG and ZIP
@@ -525,7 +525,7 @@ We welcome contributions! Please see our [Contributing Guidelines](docs/CONTRIBU
 
 ## 📊 Project Status
 
-**Current Version**: 1.0.0
+**Current Version**: 1.0.1
 
 ### Recent Improvements
 - ✅ Comprehensive documentation reorganization
@@ -583,6 +583,7 @@ We're here to help! If you encounter any issues or have questions:
 ## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
+
 - Code of Conduct
 - Development setup
 - Coding standards

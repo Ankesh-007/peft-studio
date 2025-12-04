@@ -99,3 +99,4 @@ __pycache__/
 # Build logs
 tsc_output.txt
 lint_output.txt
+test_output*.txt
