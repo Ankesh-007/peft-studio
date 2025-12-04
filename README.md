@@ -3,8 +3,12 @@
 > **Note**: Before publishing, replace all instances of `YOUR_USERNAME` with your actual GitHub username or organization name.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Downloads](https://img.shields.io/github/downloads/YOUR_USERNAME/peft-studio/total)](https://github.com/YOUR_USERNAME/peft-studio/releases)
+[![Release](https://img.shields.io/github/v/release/YOUR_USERNAME/peft-studio)](https://github.com/YOUR_USERNAME/peft-studio/releases/latest)
 
 Professional desktop application for Parameter-Efficient Fine-Tuning (PEFT) of Large Language Models.
+
+📦 **[Download Installers](https://github.com/YOUR_USERNAME/peft-studio/releases/latest)** | 📚 **[Documentation](docs/README.md)** | 🔨 **[Build Guide](docs/developer-guide/build-and-installers.md)**
 
 ## ✨ Features
 
@@ -50,21 +54,95 @@ Professional desktop application for Parameter-Efficient Fine-Tuning (PEFT) of L
 
 ### Download
 
-Pre-built installers are available for all major platforms. Download the appropriate version for your system:
+Pre-built installers will be available on the [**Releases Page**](https://github.com/YOUR_USERNAME/peft-studio/releases/latest) once the project is published to GitHub.
 
 #### Windows
-- **[PEFT-Studio-Setup-1.0.0.exe](https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/PEFT-Studio-Setup-1.0.0.exe)** - Standard installer (recommended)
-- **[PEFT-Studio-1.0.0-portable.exe](https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/PEFT-Studio-1.0.0-portable.exe)** - Portable version (no installation required)
+Currently available in the `release/` directory:
+- **PEFT Studio Setup 1.0.0.exe** - Standard installer with auto-update support (recommended)
+- **PEFT Studio 1.0.0.exe** - Portable version (no installation required)
+
+Once published to GitHub, download from the releases page.
+
+**Installation:**
+1. Download the installer
+2. Run the `.exe` file
+3. Follow the installation wizard
+4. Launch PEFT Studio from the Start Menu or Desktop shortcut
+
+**Note:** Windows may show a SmartScreen warning for unsigned applications. Click "More info" → "Run anyway" to proceed.
 
 #### macOS
-- **[PEFT-Studio-1.0.0.dmg](https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/PEFT-Studio-1.0.0.dmg)** - DMG installer (recommended)
-- **[PEFT-Studio-1.0.0-mac.zip](https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/PEFT-Studio-1.0.0-mac.zip)** - ZIP archive
+**Note:** macOS installers are not yet available. They will be built automatically via GitHub Actions when you create a release. For now, you can:
+- Clone the repository and run from source (see [Development Setup](#development-setup))
+- Build locally on a Mac using `npm run build:mac`
 
 #### Linux
-- **[PEFT-Studio-1.0.0.AppImage](https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/PEFT-Studio-1.0.0.AppImage)** - Universal AppImage (recommended)
-- **[peft-studio_1.0.0_amd64.deb](https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/peft-studio_1.0.0_amd64.deb)** - Debian/Ubuntu package
+**Note:** Linux installers are not yet available. They will be built automatically via GitHub Actions when you create a release. For now, you can:
+- Clone the repository and run from source (see [Development Setup](#development-setup))
+- Build locally using `npm run build:linux`
 
-All installers are built from the `release/` directory and are available on the [releases page](https://github.com/YOUR_USERNAME/peft-studio/releases).
+**Installation (AppImage):**
+```bash
+# Download the AppImage
+wget https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/PEFT-Studio-1.0.0.AppImage
+
+# Make it executable
+chmod +x PEFT-Studio-1.0.0.AppImage
+
+# Run it
+./PEFT-Studio-1.0.0.AppImage
+```
+
+**Installation (Debian/Ubuntu):**
+```bash
+# Download the .deb package
+wget https://github.com/YOUR_USERNAME/peft-studio/releases/download/v1.0.0/peft-studio_1.0.0_amd64.deb
+
+# Install it
+sudo dpkg -i peft-studio_1.0.0_amd64.deb
+
+# If there are dependency issues, run:
+sudo apt-get install -f
+```
+
+### Building Installers Locally
+
+If you want to build installers yourself:
+
+```bash
+# Install dependencies
+npm install
+
+# Build frontend
+npm run build:no-check
+
+# Build for your current platform
+npm run electron:build
+
+# Or build for specific platforms
+npm run package:win      # Windows
+npm run package:mac      # macOS (requires macOS)
+npm run package:linux    # Linux
+```
+
+**Note:** Cross-platform builds have limitations:
+- Windows installers can only be built on Windows
+- macOS installers can only be built on macOS
+- Linux installers can be built on Linux or macOS
+
+The installers will be created in the `release/` directory.
+
+### Automated Builds
+
+The project includes a GitHub Actions workflow that automatically builds installers for all platforms when you push a version tag:
+
+```bash
+# Create and push a version tag
+git tag v1.0.1
+git push origin v1.0.1
+```
+
+This will trigger the build workflow and create a new release with installers for Windows, macOS, and Linux.
 
 ### Prerequisites
 - **Node.js** 18+ (for frontend development)
