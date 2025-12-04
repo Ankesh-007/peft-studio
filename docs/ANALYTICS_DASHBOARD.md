@@ -379,5 +379,5 @@ curl -H "Authorization: token YOUR_TOKEN" \
 ---
 
 For questions or assistance with analytics, please:
-- [Open an issue](https://github.com/Ankesh-007/peft-studioissues/new)
-- [Start a discussion](https://github.com/Ankesh-007/peft-studiodiscussions)
+- [Open an issue](https://github.com/Ankesh-007/peft-studio/issues/new)
+- [Start a discussion](https://github.com/Ankesh-007/peft-studio/discussions)

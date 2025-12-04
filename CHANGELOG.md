@@ -228,8 +228,8 @@ For detailed instructions, see the [Quick Start Guide](docs/user-guide/quick-sta
 ### Support
 
 - **Documentation**: [docs/README.md](docs/README.md)
-- **Issues**: [GitHub Issues](https://github.com/Ankesh-007/peft-studioissues)
-- **Discussions**: [GitHub Discussions](https://github.com/Ankesh-007/peft-studiodiscussions)
+- **Issues**: [GitHub Issues](https://github.com/Ankesh-007/peft-studio/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Ankesh-007/peft-studio/discussions)
 - **Security**: See [SECURITY.md](SECURITY.md) for reporting vulnerabilities
 
 ---

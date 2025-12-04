@@ -358,15 +358,15 @@ If you're still having issues:
    - [FAQ](../reference/faq.md)
 
 2. **Search Existing Issues:**
-   - [GitHub Issues](https://github.com/Ankesh-007/peft-studioissues)
+   - [GitHub Issues](https://github.com/Ankesh-007/peft-studio/issues)
    - Someone may have already solved your problem
 
 3. **Ask for Help:**
-   - [GitHub Discussions](https://github.com/Ankesh-007/peft-studiodiscussions)
+   - [GitHub Discussions](https://github.com/Ankesh-007/peft-studio/discussions)
    - Provide details: macOS version, Mac model, error messages, logs
 
 4. **Report a Bug:**
-   - [Open an issue](https://github.com/Ankesh-007/peft-studioissues/new?template=bug_report.md)
+   - [Open an issue](https://github.com/Ankesh-007/peft-studio/issues/new?template=bug_report.md)
    - Include: macOS version, Mac model (Intel/Apple Silicon), error messages, logs
 
 ## Next Steps

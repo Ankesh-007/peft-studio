@@ -2,7 +2,7 @@
 
 This roadmap outlines the planned features and improvements for PEFT Studio. Items are organized by priority and timeframe, but dates are estimates and subject to change based on community feedback and contributions.
 
-> **Note**: This roadmap is a living document and will be updated regularly. Community input is welcome! Share your ideas in [GitHub Discussions](https://github.com/Ankesh-007/peft-studiodiscussions/categories/ideas).
+> **Note**: This roadmap is a living document and will be updated regularly. Community input is welcome! Share your ideas in [GitHub Discussions](https://github.com/Ankesh-007/peft-studio/discussions/categories/ideas).
 
 ## Legend
 
@@ -170,17 +170,17 @@ This roadmap outlines the planned features and improvements for PEFT Studio. Ite
 We welcome community input on our roadmap! Here's how you can help:
 
 ### 💬 Share Your Ideas
-- Open a discussion in [GitHub Discussions](https://github.com/Ankesh-007/peft-studiodiscussions/categories/ideas)
+- Open a discussion in [GitHub Discussions](https://github.com/Ankesh-007/peft-studio/discussions/categories/ideas)
 - Describe your use case and how the feature would help
 - Provide examples or mockups if possible
 
 ### 👍 Vote on Features
-- Browse existing feature requests in [Issues](https://github.com/Ankesh-007/peft-studioissues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
+- Browse existing feature requests in [Issues](https://github.com/Ankesh-007/peft-studio/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
 - Add 👍 reactions to features you'd like to see
 - Comment with your specific use case
 
 ### 🛠️ Contribute Code
-- Check [good first issue](https://github.com/Ankesh-007/peft-studioissues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) labels
+- Check [good first issue](https://github.com/Ankesh-007/peft-studio/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) labels
 - Read our [Contributing Guidelines](CONTRIBUTING.md)
 - Submit a pull request with your implementation
 
@@ -204,4 +204,4 @@ Last updated: December 2024
 
 ## Questions?
 
-Have questions about the roadmap or want to discuss priorities? Join the conversation in [GitHub Discussions](https://github.com/Ankesh-007/peft-studiodiscussions).
+Have questions about the roadmap or want to discuss priorities? Join the conversation in [GitHub Discussions](https://github.com/Ankesh-007/peft-studio/discussions).

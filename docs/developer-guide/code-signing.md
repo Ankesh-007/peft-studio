@@ -270,4 +270,4 @@ spctl -a -vv "PEFT Studio.app"
 If you encounter issues with code signing:
 1. Check the [Troubleshooting](#troubleshooting) section above
 2. Review the [electron-builder documentation](https://www.electron.build/code-signing)
-3. Open an issue on the [GitHub repository](https://github.com/Ankesh-007/peft-studioissues)
+3. Open an issue on the [GitHub repository](https://github.com/Ankesh-007/peft-studio/issues)

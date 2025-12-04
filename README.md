@@ -71,6 +71,22 @@ Choose the installer for your platform from the [releases page](https://github.c
 | **Linux** | AppImage | `PEFT-Studio-{version}-{arch}.AppImage` | Universal, no installation |
 | **Linux** | DEB Package | `PEFT-Studio-{version}-{arch}.deb` | For Debian/Ubuntu |
 
+#### 📥 Direct Download Links (v1.1.0)
+
+**Windows:**
+- [PEFT-Studio-Setup-1.1.0.exe](https://github.com/Ankesh-007/peft-studio/releases/download/v1.1.0/PEFT-Studio-Setup-1.1.0.exe) - NSIS Installer (Recommended)
+- [PEFT-Studio-Portable-1.1.0.exe](https://github.com/Ankesh-007/peft-studio/releases/download/v1.1.0/PEFT-Studio-Portable-1.1.0.exe) - Portable Version
+
+**macOS:**
+- [PEFT-Studio-1.1.0-x64.dmg](https://github.com/Ankesh-007/peft-studio/releases/download/v1.1.0/PEFT-Studio-1.1.0-x64.dmg) - Intel Mac DMG
+- [PEFT-Studio-1.1.0-arm64.dmg](https://github.com/Ankesh-007/peft-studio/releases/download/v1.1.0/PEFT-Studio-1.1.0-arm64.dmg) - Apple Silicon DMG
+- [PEFT-Studio-1.1.0-x64.zip](https://github.com/Ankesh-007/peft-studio/releases/download/v1.1.0/PEFT-Studio-1.1.0-x64.zip) - Intel Mac ZIP
+- [PEFT-Studio-1.1.0-arm64.zip](https://github.com/Ankesh-007/peft-studio/releases/download/v1.1.0/PEFT-Studio-1.1.0-arm64.zip) - Apple Silicon ZIP
+
+**Linux:**
+- [PEFT-Studio-1.1.0-x64.AppImage](https://github.com/Ankesh-007/peft-studio/releases/download/v1.1.0/PEFT-Studio-1.1.0-x64.AppImage) - AppImage (Universal)
+- [PEFT-Studio-1.1.0-amd64.deb](https://github.com/Ankesh-007/peft-studio/releases/download/v1.1.0/PEFT-Studio-1.1.0-amd64.deb) - Debian/Ubuntu Package
+
 ### 💻 System Requirements
 
 **Minimum Requirements:**
@@ -112,7 +128,7 @@ Detailed platform-specific installation instructions:
 #### Linux (AppImage)
 ```bash
 # Download the AppImage
-wget https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-{version}-x64.AppImage
+wget https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-1.1.0-x64.AppImage
 
 # Make it executable
 chmod +x PEFT-Studio-*.AppImage
@@ -124,7 +140,7 @@ chmod +x PEFT-Studio-*.AppImage
 #### Linux (Debian/Ubuntu)
 ```bash
 # Download the .deb package
-wget https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-{version}-amd64.deb
+wget https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-1.1.0-amd64.deb
 
 # Install it
 sudo dpkg -i PEFT-Studio-*.deb
@@ -455,7 +471,7 @@ Start with our comprehensive documentation:
 - **[Complete Documentation](docs/README.md)** - Full documentation index
 
 ### 🐛 Bug Reports
-Found a bug? Please [open an issue](https://github.com/Ankesh-007/peft-studioissues/new?template=bug_report.md) with:
+Found a bug? Please [open an issue](https://github.com/Ankesh-007/peft-studio/issues/new?template=bug_report.md) with:
 - Clear description of the problem
 - Steps to reproduce
 - Expected vs actual behavior
@@ -463,7 +479,7 @@ Found a bug? Please [open an issue](https://github.com/Ankesh-007/peft-studioiss
 - Relevant logs or screenshots
 
 ### 💡 Feature Requests
-Have an idea for improvement? [Submit a feature request](https://github.com/Ankesh-007/peft-studioissues/new?template=feature_request.md) describing:
+Have an idea for improvement? [Submit a feature request](https://github.com/Ankesh-007/peft-studio/issues/new?template=feature_request.md) describing:
 - The problem you're trying to solve
 - Your proposed solution
 - Any alternatives you've considered
@@ -471,7 +487,7 @@ Have an idea for improvement? [Submit a feature request](https://github.com/Anke
 
 ### ❓ Questions & Discussions
 For general questions, discussions, or community interaction:
-- **[GitHub Discussions](https://github.com/Ankesh-007/peft-studiodiscussions)** - Ask questions, share ideas, and connect with the community
+- **[GitHub Discussions](https://github.com/Ankesh-007/peft-studio/discussions)** - Ask questions, share ideas, and connect with the community
   - **Q&A** - Get help with using PEFT Studio
   - **Ideas** - Propose and discuss new features
   - **Show and Tell** - Share your fine-tuned models and success stories
@@ -541,24 +557,24 @@ See our [detailed roadmap](ROADMAP.md) for planned features and improvements.
 - 🔄 Custom connector marketplace (v1.3.0)
 - 🔄 Advanced training techniques (RLHF, DPO) (v2.0.0)
 
-Want to influence the roadmap? Share your ideas in [GitHub Discussions](https://github.com/Ankesh-007/peft-studiodiscussions/categories/ideas)!
+Want to influence the roadmap? Share your ideas in [GitHub Discussions](https://github.com/Ankesh-007/peft-studio/discussions/categories/ideas)!
 
 ## 🔗 Links
 
 - **Documentation**: [docs/README.md](docs/README.md)
 - **Quick Start**: [QUICKSTART.md](QUICKSTART.md)
 - **Development Guide**: [DEVELOPMENT.md](DEVELOPMENT.md)
-- **GitHub Issues**: [Report bugs or request features](https://github.com/Ankesh-007/peft-studioissues)
-- **Discussions**: [Community forum](https://github.com/Ankesh-007/peft-studiodiscussions)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/Ankesh-007/peft-studio/issues)
+- **Discussions**: [Community forum](https://github.com/Ankesh-007/peft-studio/discussions)
 
 ## 🆘 Getting Help
 
 We're here to help! If you encounter any issues or have questions:
 
-- **🐛 Bug Reports**: Found a bug? [Open an issue](https://github.com/Ankesh-007/peft-studioissues/new?template=bug_report.md) on GitHub
-- **💡 Feature Requests**: Have an idea? [Request a feature](https://github.com/Ankesh-007/peft-studioissues/new?template=feature_request.md)
-- **❓ Questions**: Need help? [Start a discussion](https://github.com/Ankesh-007/peft-studiodiscussions) or [ask a question](https://github.com/Ankesh-007/peft-studioissues/new?template=question.md)
-- **📚 Documentation**: Check out our [troubleshooting guide](https://github.com/Ankesh-007/peft-studioblob/main/docs/reference/troubleshooting.md) for common issues
+- **🐛 Bug Reports**: Found a bug? [Open an issue](https://github.com/Ankesh-007/peft-studio/issues/new?template=bug_report.md) on GitHub
+- **💡 Feature Requests**: Have an idea? [Request a feature](https://github.com/Ankesh-007/peft-studio/issues/new?template=feature_request.md)
+- **❓ Questions**: Need help? [Start a discussion](https://github.com/Ankesh-007/peft-studio/discussions) or [ask a question](https://github.com/Ankesh-007/peft-studio/issues/new?template=question.md)
+- **📚 Documentation**: Check out our [troubleshooting guide](https://github.com/Ankesh-007/peft-studio/blob/main/docs/reference/troubleshooting.md) for common issues
 
 ### Support Channels
 

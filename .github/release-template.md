@@ -74,9 +74,9 @@ Get-FileHash -Algorithm SHA256 <filename>
 
 ## Support
 
-- **Documentation:** [https://github.com/Ankesh-007/peft-studiodocs](https://github.com/Ankesh-007/peft-studiotree/main/docs)
-- **Report Issues:** [https://github.com/Ankesh-007/peft-studioissues](https://github.com/Ankesh-007/peft-studioissues)
-- **Discussions:** [https://github.com/Ankesh-007/peft-studiodiscussions](https://github.com/Ankesh-007/peft-studiodiscussions)
+- **Documentation:** [https://github.com/Ankesh-007/peft-studio/tree/main/docs](https://github.com/Ankesh-007/peft-studio/tree/main/docs)
+- **Report Issues:** [https://github.com/Ankesh-007/peft-studio/issues](https://github.com/Ankesh-007/peft-studio/issues)
+- **Discussions:** [https://github.com/Ankesh-007/peft-studio/discussions](https://github.com/Ankesh-007/peft-studio/discussions)
 
 ## Known Issues
 
@@ -85,8 +85,8 @@ Get-FileHash -Algorithm SHA256 <filename>
 
 ## Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](https://github.com/Ankesh-007/peft-studioblob/main/CONTRIBUTING.md) for guidelines.
+We welcome contributions! See [CONTRIBUTING.md](https://github.com/Ankesh-007/peft-studio/blob/main/CONTRIBUTING.md) for guidelines.
 
 ## License
 
-MIT License - see [LICENSE](https://github.com/Ankesh-007/peft-studioblob/main/LICENSE) for details.
+MIT License - see [LICENSE](https://github.com/Ankesh-007/peft-studio/blob/main/LICENSE) for details.
