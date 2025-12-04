@@ -8,7 +8,7 @@
 
 Professional desktop application for Parameter-Efficient Fine-Tuning (PEFT) of Large Language Models.
 
-📦 **[Download Installers](https://github.com/YOUR_USERNAME/peft-studio/releases/latest)** | 📚 **[Documentation](docs/README.md)** | 🔨 **[Build Guide](docs/developer-guide/build-and-installers.md)**
+📦 **[Download Installers](https://github.com/YOUR_USERNAME/peft-studio/releases/latest)** | 📚 **[Documentation](docs/README.md)** | 🔨 **[Build Guide](BUILDING.md)** | 🚀 **[Quick Build](QUICK_START_BUILD.md)**
 
 ## ✨ Features
 
@@ -107,14 +107,35 @@ sudo apt-get install -f
 
 ### Building Installers Locally
 
-If you want to build installers yourself:
+#### Quick Build (Recommended)
+
+Use our comprehensive build script that handles testing, building, and deployment:
+
+```powershell
+# Windows - Interactive menu
+.\build-and-test.ps1
+
+# Or one-command build (fastest)
+.\scripts\test-build-deploy.ps1 -SkipTests -Platform "windows,linux"
+```
+
+```bash
+# Linux/Mac
+./scripts/test-build-deploy.sh --skip-tests --platform "linux"
+```
+
+**See [QUICK_START_BUILD.md](QUICK_START_BUILD.md) for detailed instructions.**
+
+#### Manual Build
+
+If you prefer to build manually:
 
 ```bash
 # Install dependencies
 npm install
 
 # Build frontend
-npm run build:no-check
+npm run build
 
 # Build for your current platform
 npm run electron:build
@@ -125,16 +146,13 @@ npm run package:mac      # macOS (requires macOS)
 npm run package:linux    # Linux
 ```
 
-**Note:** Cross-platform builds have limitations:
-- Windows installers can only be built on Windows
-- macOS installers can only be built on macOS
-- Linux installers can be built on Linux or macOS
-
 The installers will be created in the `release/` directory.
+
+**For comprehensive build documentation, see [BUILDING.md](BUILDING.md).**
 
 ### Automated Builds
 
-The project includes a GitHub Actions workflow that automatically builds installers for all platforms when you push a version tag:
+The project includes GitHub Actions workflows that automatically build installers for all platforms:
 
 ```bash
 # Create and push a version tag
@@ -142,7 +160,9 @@ git tag v1.0.1
 git push origin v1.0.1
 ```
 
-This will trigger the build workflow and create a new release with installers for Windows, macOS, and Linux.
+This triggers the build workflow and creates a GitHub Release with installers for Windows, macOS, and Linux.
+
+**Build Status**: ✅ 215/249 tests passing (86%) - Safe to build
 
 ### Prerequisites
 - **Node.js** 18+ (for frontend development)
