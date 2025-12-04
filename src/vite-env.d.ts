@@ -41,4 +41,7 @@ interface Window {
     openLogFile: () => Promise<{ logPath: string }>;
     onBackendStatus: (callback: (data: any) => void) => void;
   };
+  electron?: {
+    invoke: (channel: string, ...args: any[]) => Promise<any>;
+  };
 }
