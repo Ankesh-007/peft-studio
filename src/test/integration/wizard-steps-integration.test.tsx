@@ -1,8 +1,8 @@
-import { describe, test, expect } from 'vitest';
-import { render } from '@testing-library/react';
-import ModelSelectionStep from '../../components/wizard/ModelSelectionStep';
-import SmartConfigurationStep from '../../components/wizard/SmartConfigurationStep';
-import type { WizardState } from '../../types/wizard';
+import { describe, test, expect } from "vitest";
+import { render } from "@testing-library/react";
+import ModelSelectionStep from "../../components/wizard/ModelSelectionStep";
+import SmartConfigurationStep from "../../components/wizard/SmartConfigurationStep";
+import type { WizardState } from "../../types/wizard";
 
 describe("Wizard Steps Integration", () => {
   const mockWizardState: WizardState = {
@@ -52,10 +52,7 @@ describe("Wizard Steps Integration", () => {
 
   test("ModelSelectionStep renders without crashing", () => {
     const { container } = render(
-      <ModelSelectionStep
-        wizardState={mockWizardState}
-        onModelSelect={() => { }}
-      />,
+      <ModelSelectionStep wizardState={mockWizardState} onModelSelect={() => {}} />
     );
     expect(container).toBeTruthy();
   });
@@ -80,10 +77,7 @@ describe("Wizard Steps Integration", () => {
     };
 
     const { container } = render(
-      <SmartConfigurationStep
-        wizardState={wizardStateWithModel}
-        onConfigUpdate={() => { }}
-      />,
+      <SmartConfigurationStep wizardState={wizardStateWithModel} onConfigUpdate={() => {}} />
     );
     expect(container).toBeTruthy();
   });

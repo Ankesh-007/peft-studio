@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Download, Monitor, Apple, Terminal } from 'lucide-react';
+import React, { useState } from "react";
+import { Download, Monitor, Apple, Terminal } from "lucide-react";
 
-type Platform = 'windows' | 'macos' | 'linux';
+type Platform = "windows" | "macos" | "linux";
 
 interface PlatformInstruction {
   icon: React.ReactNode;
@@ -11,40 +11,40 @@ interface PlatformInstruction {
 }
 
 export const InstallationGuide: React.FC = () => {
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform>('windows');
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform>("windows");
 
   const instructions: Record<Platform, PlatformInstruction> = {
     windows: {
       icon: <Monitor className="w-8 h-8" />,
-      title: 'Windows',
+      title: "Windows",
       steps: [
-        'Download PEFT-Studio-Setup.exe from releases',
-        'Run the installer',
-        'Follow the installation wizard',
-        'Launch PEFT Studio from the Start Menu',
+        "Download PEFT-Studio-Setup.exe from releases",
+        "Run the installer",
+        "Follow the installation wizard",
+        "Launch PEFT Studio from the Start Menu",
       ],
-      downloadFile: 'PEFT-Studio-Setup.exe',
+      downloadFile: "PEFT-Studio-Setup.exe",
     },
     macos: {
       icon: <Apple className="w-8 h-8" />,
-      title: 'macOS',
+      title: "macOS",
       steps: [
-        'Download PEFT-Studio.dmg from releases',
-        'Open the DMG file',
-        'Drag PEFT Studio to Applications',
-        'Launch from Applications folder',
+        "Download PEFT-Studio.dmg from releases",
+        "Open the DMG file",
+        "Drag PEFT Studio to Applications",
+        "Launch from Applications folder",
       ],
-      downloadFile: 'PEFT-Studio.dmg',
+      downloadFile: "PEFT-Studio.dmg",
     },
     linux: {
       icon: <Terminal className="w-8 h-8" />,
-      title: 'Linux',
+      title: "Linux",
       steps: [
-        'Download PEFT-Studio.AppImage from releases',
-        'Make it executable: chmod +x PEFT-Studio.AppImage',
-        'Run: ./PEFT-Studio.AppImage',
+        "Download PEFT-Studio.AppImage from releases",
+        "Make it executable: chmod +x PEFT-Studio.AppImage",
+        "Run: ./PEFT-Studio.AppImage",
       ],
-      downloadFile: 'PEFT-Studio.AppImage',
+      downloadFile: "PEFT-Studio.AppImage",
     },
   };
 
@@ -54,9 +54,7 @@ export const InstallationGuide: React.FC = () => {
     <div className="max-w-4xl mx-auto p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Installation Guide</h1>
-        <p className="text-gray-600">
-          Choose your platform and follow the installation steps
-        </p>
+        <p className="text-gray-600">Choose your platform and follow the installation steps</p>
       </div>
 
       {/* Platform Selector */}
@@ -67,8 +65,8 @@ export const InstallationGuide: React.FC = () => {
             onClick={() => setSelectedPlatform(platform)}
             className={`flex items-center gap-3 px-6 py-4 rounded-lg border-2 transition-all ${
               selectedPlatform === platform
-                ? 'border-blue-500 bg-blue-50 text-blue-700'
-                : 'border-gray-200 hover:border-gray-300 bg-white'
+                ? "border-blue-500 bg-blue-50 text-blue-700"
+                : "border-gray-200 hover:border-gray-300 bg-white"
             }`}
           >
             {instructions[platform].icon}
@@ -92,9 +90,9 @@ export const InstallationGuide: React.FC = () => {
               </div>
               <div className="flex-1 pt-1">
                 <p className="text-gray-800">{step}</p>
-                {step.includes('chmod') || step.includes('./') ? (
+                {step.includes("chmod") || step.includes("./") ? (
                   <code className="block mt-2 bg-gray-100 px-3 py-2 rounded text-sm font-mono">
-                    {step.split(': ')[1]}
+                    {step.split(": ")[1]}
                   </code>
                 ) : null}
               </div>

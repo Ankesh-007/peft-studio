@@ -6,14 +6,14 @@ import DatasetUpload from "../components/DatasetUpload";
 
 describe("DatasetUpload", () => {
   it("should render dataset upload component", () => {
-    render(<DatasetUpload onUpload={() => { }} />);
+    render(<DatasetUpload onUpload={() => {}} />);
     expect(screen.getByText(/upload/i)).toBeInTheDocument();
   });
 
   it("should accept file input", () => {
-    render(<DatasetUpload onUpload={() => { }} />);
-    const fileInput = screen.getByLabelText(/upload/i) ||
-      document.querySelector('input[type="file"]');
+    render(<DatasetUpload onUpload={() => {}} />);
+    const fileInput =
+      screen.getByLabelText(/upload/i) || document.querySelector('input[type="file"]');
     expect(fileInput).toBeInTheDocument();
   });
 
@@ -36,19 +36,19 @@ describe("DatasetUpload", () => {
   });
 
   it("should show file format requirements", () => {
-    render(<DatasetUpload onUpload={() => { }} />);
+    render(<DatasetUpload onUpload={() => {}} />);
     // Component should render without crashing
     expect(screen.getByText(/upload/i)).toBeInTheDocument();
   });
 
   it("should validate file format", () => {
-    render(<DatasetUpload onUpload={() => { }} />);
+    render(<DatasetUpload onUpload={() => {}} />);
     const fileInput = document.querySelector('input[type="file"]');
     expect(fileInput).toBeInTheDocument();
   });
 
   it("should display upload progress", () => {
-    render(<DatasetUpload onUpload={() => { }} />);
+    render(<DatasetUpload onUpload={() => {}} />);
     // Smoke test - component renders
     expect(screen.getByText(/upload/i)).toBeInTheDocument();
   });

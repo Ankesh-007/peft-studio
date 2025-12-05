@@ -36,8 +36,6 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({
     }
   }, [autoHideDuration, error.severity, handleDismiss]);
 
-
-
   const getSeverityStyles = (severity: ErrorSeverity): string => {
     switch (severity) {
       case ErrorSeverity.LOW:
@@ -74,8 +72,9 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({
 
   return (
     <div
-      className={`fixed bottom-4 right-4 max-w-md w-full shadow-lg rounded-lg border-2 overflow-hidden transition-all duration-300 ${isExiting ? "opacity-0 translate-x-full" : "opacity-100 translate-x-0"
-        } ${getSeverityStyles(error.severity)}`}
+      className={`fixed bottom-4 right-4 max-w-md w-full shadow-lg rounded-lg border-2 overflow-hidden transition-all duration-300 ${
+        isExiting ? "opacity-0 translate-x-full" : "opacity-100 translate-x-0"
+      } ${getSeverityStyles(error.severity)}`}
       role="alert"
       aria-live="assertive"
     >

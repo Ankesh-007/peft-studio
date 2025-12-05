@@ -4,16 +4,18 @@
  * Validates: Requirement 18.2 - Configuration preview before import
  */
 
-import React from 'react';
-import { X, Calendar, User, Tag, Cpu, Database, Zap } from 'lucide-react';
+import React from "react";
+import { X, Calendar, User, Tag, Cpu, Database, Zap } from "lucide-react";
+
+import type { SavedConfiguration } from "../ConfigurationManagement";
 
 interface ConfigurationPreviewProps {
-  configuration: Record<string, unknown>;
+  configuration: SavedConfiguration;
   onClose?: () => void;
   compact?: boolean;
 }
 
-const InfoRow: React.FC<{ label: string; value: unknown; icon?: React.ReactNode }> = ({
+const InfoRow: React.FC<{ label: string; value: React.ReactNode; icon?: React.ReactNode }> = ({
   label,
   value,
   icon,
@@ -22,7 +24,7 @@ const InfoRow: React.FC<{ label: string; value: unknown; icon?: React.ReactNode 
     {icon && <div className="text-gray-400 mt-0.5">{icon}</div>}
     <div className="flex-1 min-w-0">
       <div className="text-sm font-medium text-gray-500">{label}</div>
-      <div className="text-sm text-gray-900 break-words">{value || 'N/A'}</div>
+      <div className="text-sm text-gray-900 break-words">{value || "N/A"}</div>
     </div>
   </div>
 );
@@ -32,7 +34,8 @@ const ConfigurationPreview: React.FC<ConfigurationPreviewProps> = ({
   onClose,
   compact = false,
 }) => {
-  const { metadata, configuration: config } = configuration;
+  const { metadata, configuration: rawConfig } = configuration;
+  const config = rawConfig as Record<string, any>;
 
   const formatDate = (dateString: string) => {
     try {
@@ -43,7 +46,7 @@ const ConfigurationPreview: React.FC<ConfigurationPreviewProps> = ({
   };
 
   return (
-    <div className={compact ? '' : 'p-6'}>
+    <div className={compact ? "" : "p-6"}>
       {/* Header */}
       {!compact && (
         <div className="flex items-center justify-between mb-6">
@@ -60,12 +63,14 @@ const ConfigurationPreview: React.FC<ConfigurationPreviewProps> = ({
       )}
 
       {/* Metadata Section */}
-      <div className={`${compact ? 'mb-4' : 'mb-6'}`}>
+      <div className={`${compact ? "mb-4" : "mb-6"}`}>
         <h4 className="text-lg font-semibold text-gray-900 mb-3">Metadata</h4>
         <div className="bg-gray-50 rounded-lg p-4 space-y-1">
           <InfoRow label="Name" value={metadata?.name} />
           <InfoRow label="Description" value={metadata?.description} />
-          {metadata?.author && <InfoRow label="Author" value={metadata.author} icon={<User className="w-4 h-4" />} />}
+          {metadata?.author && (
+            <InfoRow label="Author" value={metadata.author} icon={<User className="w-4 h-4" />} />
+          )}
           {metadata?.created_at && (
             <InfoRow
               label="Created"
@@ -95,7 +100,7 @@ const ConfigurationPreview: React.FC<ConfigurationPreviewProps> = ({
       </div>
 
       {/* Configuration Section */}
-      <div className={`${compact ? 'mb-4' : 'mb-6'}`}>
+      <div className={`${compact ? "mb-4" : "mb-6"}`}>
         <h4 className="text-lg font-semibold text-gray-900 mb-3">Training Configuration</h4>
 
         {/* Model Settings */}
@@ -122,10 +127,7 @@ const ConfigurationPreview: React.FC<ConfigurationPreviewProps> = ({
             <InfoRow label="Rank" value={config?.rank} />
             <InfoRow label="Alpha" value={config?.alpha} />
             <InfoRow label="Dropout" value={config?.dropout} />
-            <InfoRow
-              label="Target Modules"
-              value={config?.target_modules?.join(', ')}
-            />
+            <InfoRow label="Target Modules" value={config?.target_modules?.join(", ")} />
           </div>
         </div>
 
@@ -137,10 +139,7 @@ const ConfigurationPreview: React.FC<ConfigurationPreviewProps> = ({
             <InfoRow label="Batch Size" value={config?.batch_size} />
             <InfoRow label="Epochs" value={config?.num_epochs} />
             <InfoRow label="Warmup Steps" value={config?.warmup_steps} />
-            <InfoRow
-              label="Gradient Accumulation"
-              value={config?.gradient_accumulation_steps}
-            />
+            <InfoRow label="Gradient Accumulation" value={config?.gradient_accumulation_steps} />
           </div>
         </div>
 

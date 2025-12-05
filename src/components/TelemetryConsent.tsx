@@ -1,13 +1,13 @@
 /**
  * Telemetry Consent Component
- * 
+ *
  * Provides UI for users to opt-in/opt-out of telemetry collection
  * and view what data is collected.
- * 
+ *
  * Requirements: 15.5
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface ConsentStatus {
   enabled: boolean;
@@ -29,11 +29,11 @@ export const TelemetryConsent: React.FC = () => {
 
   const fetchConsentStatus = async () => {
     try {
-      const response = await fetch('/api/telemetry/consent');
+      const response = await fetch("/api/telemetry/consent");
       const data = await response.json();
       setConsentStatus(data);
     } catch (error) {
-      console.error('Failed to fetch consent status:', error);
+      console.error("Failed to fetch consent status:", error);
     } finally {
       setLoading(false);
     }
@@ -42,10 +42,10 @@ export const TelemetryConsent: React.FC = () => {
   const updateConsent = async (enabled: boolean) => {
     setUpdating(true);
     try {
-      const response = await fetch('/api/telemetry/consent', {
-        method: 'POST',
+      const response = await fetch("/api/telemetry/consent", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ enabled }),
       });
@@ -54,7 +54,7 @@ export const TelemetryConsent: React.FC = () => {
         await fetchConsentStatus();
       }
     } catch (error) {
-      console.error('Failed to update consent:', error);
+      console.error("Failed to update consent:", error);
     } finally {
       setUpdating(false);
     }
@@ -87,20 +87,20 @@ export const TelemetryConsent: React.FC = () => {
       </div>
 
       {/* Current Status */}
-      <div className={`p-4 rounded-lg border-2 ${
-        consentStatus.enabled 
-          ? 'bg-green-50 border-green-200' 
-          : 'bg-gray-50 border-gray-200'
-      }`}>
+      <div
+        className={`p-4 rounded-lg border-2 ${
+          consentStatus.enabled ? "bg-green-50 border-green-200" : "bg-gray-50 border-gray-200"
+        }`}
+      >
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">
-              Telemetry is {consentStatus.enabled ? 'Enabled' : 'Disabled'}
+              Telemetry is {consentStatus.enabled ? "Enabled" : "Disabled"}
             </h3>
             <p className="text-sm text-gray-600 mt-1">
-              {consentStatus.enabled 
-                ? 'Thank you for helping us improve!' 
-                : 'You can enable telemetry to help us improve the application'}
+              {consentStatus.enabled
+                ? "Thank you for helping us improve!"
+                : "You can enable telemetry to help us improve the application"}
             </p>
           </div>
           <button
@@ -108,11 +108,11 @@ export const TelemetryConsent: React.FC = () => {
             disabled={updating}
             className={`px-6 py-2 rounded-lg font-medium transition-colors ${
               consentStatus.enabled
-                ? 'bg-red-600 hover:bg-red-700 text-white'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                ? "bg-red-600 hover:bg-red-700 text-white"
+                : "bg-blue-600 hover:bg-blue-700 text-white"
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            {updating ? 'Updating...' : consentStatus.enabled ? 'Disable' : 'Enable'}
+            {updating ? "Updating..." : consentStatus.enabled ? "Disable" : "Enable"}
           </button>
         </div>
       </div>
@@ -123,23 +123,16 @@ export const TelemetryConsent: React.FC = () => {
           onClick={() => setShowDetails(!showDetails)}
           className="w-full flex items-center justify-between text-left"
         >
-          <h3 className="text-lg font-semibold text-gray-900">
-            What data do we collect?
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900">What data do we collect?</h3>
           <svg
             className={`w-5 h-5 text-gray-500 transition-transform ${
-              showDetails ? 'transform rotate-180' : ''
+              showDetails ? "transform rotate-180" : ""
             }`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </button>
 
@@ -223,9 +216,9 @@ export const TelemetryConsent: React.FC = () => {
           <div className="text-sm text-blue-800">
             <p className="font-medium mb-1">Your Privacy Matters</p>
             <p>
-              All telemetry data is anonymized before collection. We never collect
-              personal information, API keys, or sensitive data. You can export or
-              delete your data at any time.
+              All telemetry data is anonymized before collection. We never collect personal
+              information, API keys, or sensitive data. You can export or delete your data at any
+              time.
             </p>
           </div>
         </div>
@@ -234,15 +227,13 @@ export const TelemetryConsent: React.FC = () => {
       {/* Anonymous ID */}
       {consentStatus.enabled && (
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-gray-900 mb-2">
-            Your Anonymous ID
-          </h4>
+          <h4 className="text-sm font-medium text-gray-900 mb-2">Your Anonymous ID</h4>
           <code className="text-xs text-gray-600 bg-white px-2 py-1 rounded border border-gray-300">
             {consentStatus.user_id}
           </code>
           <p className="text-xs text-gray-500 mt-2">
-            This ID is used to group your telemetry data and is not linked to any
-            personal information.
+            This ID is used to group your telemetry data and is not linked to any personal
+            information.
           </p>
         </div>
       )}

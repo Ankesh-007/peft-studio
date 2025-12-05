@@ -1,7 +1,7 @@
-import { Check, ChevronDown, X } from 'lucide-react';
-import React, { useState, useRef, useEffect } from 'react';
+import { Check, ChevronDown, X } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
 
-import { cn } from '../lib/utils';
+import { cn } from "../lib/utils";
 
 export interface MultiSelectOption {
   value: string;
@@ -19,7 +19,7 @@ export interface MultiSelectProps {
   maxSelected?: number;
   disabled?: boolean;
   error?: string;
-  'aria-label': string;
+  "aria-label": string;
   className?: string;
 }
 
@@ -27,27 +27,26 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   options,
   value,
   onChange,
-  placeholder = 'Select items...',
+  placeholder = "Select items...",
   searchable = true,
   maxSelected,
   disabled = false,
   error,
-  'aria-label': ariaLabel,
+  "aria-label": ariaLabel,
   className,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [focusedIndex, setFocusedIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const filteredOptions = searchable && searchQuery
-    ? options.filter(opt =>
-        opt.label.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : options;
+  const filteredOptions =
+    searchable && searchQuery
+      ? options.filter((opt) => opt.label.toLowerCase().includes(searchQuery.toLowerCase()))
+      : options;
 
-  const selectedOptions = options.filter(opt => value.includes(opt.value));
+  const selectedOptions = options.filter((opt) => value.includes(opt.value));
   const canSelectMore = !maxSelected || value.length < maxSelected;
 
   useEffect(() => {
@@ -57,8 +56,8 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -69,7 +68,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 
   const handleToggle = (optionValue: string) => {
     if (value.includes(optionValue)) {
-      onChange(value.filter(v => v !== optionValue));
+      onChange(value.filter((v) => v !== optionValue));
     } else if (canSelectMore) {
       onChange([...value, optionValue]);
     }
@@ -77,12 +76,12 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 
   const handleRemove = (optionValue: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    onChange(value.filter(v => v !== optionValue));
+    onChange(value.filter((v) => v !== optionValue));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) {
-      if (e.key === 'Enter' || e.key === ' ') {
+      if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         setIsOpen(true);
       }
@@ -90,21 +89,21 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     }
 
     switch (e.key) {
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
-        setFocusedIndex(prev => Math.min(prev + 1, filteredOptions.length - 1));
+        setFocusedIndex((prev) => Math.min(prev + 1, filteredOptions.length - 1));
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
-        setFocusedIndex(prev => Math.max(prev - 1, 0));
+        setFocusedIndex((prev) => Math.max(prev - 1, 0));
         break;
-      case 'Enter':
+      case "Enter":
         e.preventDefault();
         if (filteredOptions[focusedIndex]) {
           handleToggle(filteredOptions[focusedIndex].value);
         }
         break;
-      case 'Escape':
+      case "Escape":
         e.preventDefault();
         setIsOpen(false);
         break;
@@ -112,7 +111,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   };
 
   return (
-    <div ref={containerRef} className={cn('relative', className)}>
+    <div ref={containerRef} className={cn("relative", className)}>
       <div
         role="combobox"
         aria-label={ariaLabel}
@@ -124,17 +123,17 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         onKeyDown={handleKeyDown}
         className={cn(
-          'min-h-[42px] w-full px-3 py-2 border rounded-md cursor-pointer transition-colors',
-          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-          error ? 'border-red-500' : 'border-gray-300',
-          disabled && 'bg-gray-100 cursor-not-allowed opacity-50',
-          'flex flex-wrap gap-2 items-center'
+          "min-h-[42px] w-full px-3 py-2 border rounded-md cursor-pointer transition-colors",
+          "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+          error ? "border-red-500" : "border-gray-300",
+          disabled && "bg-gray-100 cursor-not-allowed opacity-50",
+          "flex flex-wrap gap-2 items-center"
         )}
       >
         {selectedOptions.length === 0 ? (
           <span className="text-gray-400">{placeholder}</span>
         ) : (
-          selectedOptions.map(opt => (
+          selectedOptions.map((opt) => (
             <span
               key={opt.value}
               className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm"
@@ -153,7 +152,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             </span>
           ))
         )}
-        <ChevronDown className={cn('w-4 h-4 text-gray-400 ml-auto', isOpen && 'rotate-180')} />
+        <ChevronDown className={cn("w-4 h-4 text-gray-400 ml-auto", isOpen && "rotate-180")} />
       </div>
 
       {isOpen && (
@@ -171,7 +170,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
               />
             </div>
           )}
-          
+
           <ul
             id="multiselect-listbox"
             role="listbox"
@@ -195,10 +194,10 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                     aria-disabled={isDisabled}
                     onClick={() => !isDisabled && handleToggle(option.value)}
                     className={cn(
-                      'px-3 py-2 cursor-pointer flex items-center justify-between',
-                      isFocused && 'bg-gray-100',
-                      isSelected && 'bg-blue-50',
-                      isDisabled && 'opacity-50 cursor-not-allowed'
+                      "px-3 py-2 cursor-pointer flex items-center justify-between",
+                      isFocused && "bg-gray-100",
+                      isSelected && "bg-blue-50",
+                      isDisabled && "opacity-50 cursor-not-allowed"
                     )}
                   >
                     <span>{option.label}</span>

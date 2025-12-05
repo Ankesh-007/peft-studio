@@ -6,7 +6,7 @@
  * Generate unique IDs for ARIA attributes
  */
 let idCounter = 0;
-export function generateId(prefix: string = 'id'): string {
+export function generateId(prefix: string = "id"): string {
   return `${prefix}-${++idCounter}`;
 }
 
@@ -38,14 +38,14 @@ export class FocusTrap {
     }
 
     // Add event listener for Tab key
-    this.element.addEventListener('keydown', this.handleKeyDown);
+    this.element.addEventListener("keydown", this.handleKeyDown);
   }
 
   /**
    * Deactivate the focus trap and restore previous focus
    */
   deactivate(): void {
-    this.element.removeEventListener('keydown', this.handleKeyDown);
+    this.element.removeEventListener("keydown", this.handleKeyDown);
 
     // Restore focus to the previously focused element
     if (this.previousFocus && this.previousFocus.focus) {
@@ -54,7 +54,7 @@ export class FocusTrap {
   }
 
   private handleKeyDown = (event: KeyboardEvent): void => {
-    if (event.key !== 'Tab') {
+    if (event.key !== "Tab") {
       return;
     }
 
@@ -78,13 +78,13 @@ export class FocusTrap {
 
   private getFocusableElements(): HTMLElement[] {
     const selector = [
-      'a[href]',
-      'button:not([disabled])',
-      'textarea:not([disabled])',
-      'input:not([disabled])',
-      'select:not([disabled])',
+      "a[href]",
+      "button:not([disabled])",
+      "textarea:not([disabled])",
+      "input:not([disabled])",
+      "select:not([disabled])",
       '[tabindex]:not([tabindex="-1"])',
-    ].join(', ');
+    ].join(", ");
 
     return Array.from(this.element.querySelectorAll(selector));
   }
@@ -93,7 +93,7 @@ export class FocusTrap {
 /**
  * React hook for focus trap
  */
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 export function useFocusTrap(isActive: boolean): React.RefObject<HTMLDivElement> {
   const ref = useRef<HTMLDivElement>(null);
@@ -123,18 +123,18 @@ export function useFocusTrap(isActive: boolean): React.RefObject<HTMLDivElement>
  */
 export function announceToScreenReader(
   message: string,
-  priority: 'polite' | 'assertive' = 'polite'
+  priority: "polite" | "assertive" = "polite"
 ): void {
   // Create or get the live region
-  let liveRegion = document.getElementById('screen-reader-announcements');
+  let liveRegion = document.getElementById("screen-reader-announcements");
 
   if (!liveRegion) {
-    liveRegion = document.createElement('div');
-    liveRegion.id = 'screen-reader-announcements';
-    liveRegion.setAttribute('role', 'status');
-    liveRegion.setAttribute('aria-live', priority);
-    liveRegion.setAttribute('aria-atomic', 'true');
-    liveRegion.className = 'sr-only';
+    liveRegion = document.createElement("div");
+    liveRegion.id = "screen-reader-announcements";
+    liveRegion.setAttribute("role", "status");
+    liveRegion.setAttribute("aria-live", priority);
+    liveRegion.setAttribute("aria-atomic", "true");
+    liveRegion.className = "sr-only";
     document.body.appendChild(liveRegion);
   }
 
@@ -144,7 +144,7 @@ export function announceToScreenReader(
   // Clear after a delay to allow for repeated announcements
   setTimeout(() => {
     if (liveRegion) {
-      liveRegion.textContent = '';
+      liveRegion.textContent = "";
     }
   }, 1000);
 }
@@ -154,11 +154,11 @@ export function announceToScreenReader(
  */
 export function isVisibleToScreenReader(element: HTMLElement): boolean {
   const style = window.getComputedStyle(element);
-  
+
   return (
-    style.display !== 'none' &&
-    style.visibility !== 'hidden' &&
-    element.getAttribute('aria-hidden') !== 'true' &&
+    style.display !== "none" &&
+    style.visibility !== "hidden" &&
+    element.getAttribute("aria-hidden") !== "true" &&
     parseFloat(style.opacity) > 0
   );
 }
@@ -168,36 +168,36 @@ export function isVisibleToScreenReader(element: HTMLElement): boolean {
  */
 export function getAccessibleName(element: HTMLElement): string {
   // Check aria-label
-  const ariaLabel = element.getAttribute('aria-label');
+  const ariaLabel = element.getAttribute("aria-label");
   if (ariaLabel) return ariaLabel;
 
   // Check aria-labelledby
-  const labelledBy = element.getAttribute('aria-labelledby');
+  const labelledBy = element.getAttribute("aria-labelledby");
   if (labelledBy) {
     const labelElement = document.getElementById(labelledBy);
-    if (labelElement) return labelElement.textContent || '';
+    if (labelElement) return labelElement.textContent || "";
   }
 
   // Check associated label
   if (element instanceof HTMLInputElement) {
     const labels = element.labels;
     if (labels && labels.length > 0) {
-      return labels[0].textContent || '';
+      return labels[0].textContent || "";
     }
   }
 
   // Check title attribute
-  const title = element.getAttribute('title');
+  const title = element.getAttribute("title");
   if (title) return title;
 
   // Check placeholder for inputs
   if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
-    const placeholder = element.getAttribute('placeholder');
+    const placeholder = element.getAttribute("placeholder");
     if (placeholder) return placeholder;
   }
 
   // Fallback to text content
-  return element.textContent || '';
+  return element.textContent || "";
 }
 
 /**
@@ -209,7 +209,7 @@ export function getAccessibleName(element: HTMLElement): string {
 export function getContrastRatio(foreground: string, background: string): number {
   const getLuminance = (color: string): number => {
     // Remove # if present
-    color = color.replace('#', '');
+    color = color.replace("#", "");
 
     // Convert to RGB
     const r = parseInt(color.substr(0, 2), 16) / 255;
@@ -217,7 +217,7 @@ export function getContrastRatio(foreground: string, background: string): number
     const b = parseInt(color.substr(4, 2), 16) / 255;
 
     // Calculate relative luminance
-    const [rs, gs, bs] = [r, g, b].map(c => {
+    const [rs, gs, bs] = [r, g, b].map((c) => {
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
 
@@ -239,12 +239,12 @@ export function getContrastRatio(foreground: string, background: string): number
 export function meetsContrastRequirement(
   foreground: string,
   background: string,
-  level: 'AA' | 'AAA' = 'AA',
+  level: "AA" | "AAA" = "AA",
   isLargeText: boolean = false
 ): boolean {
   const ratio = getContrastRatio(foreground, background);
 
-  if (level === 'AAA') {
+  if (level === "AAA") {
     return isLargeText ? ratio >= 4.5 : ratio >= 7;
   }
 
@@ -256,7 +256,7 @@ export function meetsContrastRequirement(
  * React hook for managing ARIA live regions
  */
 export function useAriaLive() {
-  const announce = (message: string, priority: 'polite' | 'assertive' = 'polite') => {
+  const announce = (message: string, priority: "polite" | "assertive" = "polite") => {
     announceToScreenReader(message, priority);
   };
 
@@ -274,24 +274,24 @@ export function useKeyboardNavigation<T = unknown>(
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     switch (event.key) {
-      case 'ArrowDown':
+      case "ArrowDown":
         event.preventDefault();
-        setSelectedIndex(prev => Math.min(prev + 1, items.length - 1));
+        setSelectedIndex((prev) => Math.min(prev + 1, items.length - 1));
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         event.preventDefault();
-        setSelectedIndex(prev => Math.max(prev - 1, 0));
+        setSelectedIndex((prev) => Math.max(prev - 1, 0));
         break;
-      case 'Enter':
-      case ' ':
+      case "Enter":
+      case " ":
         event.preventDefault();
         onSelect(items[selectedIndex], selectedIndex);
         break;
-      case 'Home':
+      case "Home":
         event.preventDefault();
         setSelectedIndex(0);
         break;
-      case 'End':
+      case "End":
         event.preventDefault();
         setSelectedIndex(items.length - 1);
         break;
@@ -302,4 +302,4 @@ export function useKeyboardNavigation<T = unknown>(
 }
 
 // Add React import at the top
-import React from 'react';
+import React from "react";

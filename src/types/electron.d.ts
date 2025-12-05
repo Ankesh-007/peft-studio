@@ -149,10 +149,19 @@ interface ElectronAPI {
 
   // Auto-update events
   onUpdateAvailable: (callback: (data: UpdateInfo) => void) => void;
-  onUpdateDownloadProgress: (callback: (data: { percent: number; bytesPerSecond: number; transferred: number; total: number }) => void) => void;
+  onUpdateDownloadProgress: (
+    callback: (data: {
+      percent: number;
+      bytesPerSecond: number;
+      transferred: number;
+      total: number;
+    }) => void
+  ) => void;
   onUpdateDownloaded: (callback: (data: UpdateInfo) => void) => void;
   onUpdateStatus: (callback: (data: { status: string; message?: string }) => void) => void;
-  onUpdateChecksumFailed: (callback: (data: { expected: string; actual: string; file: string }) => void) => void;
+  onUpdateChecksumFailed: (
+    callback: (data: { expected: string; actual: string; file: string }) => void
+  ) => void;
 
   // Backend management operations
   getBackendStatus: () => Promise<BackendStatus>;

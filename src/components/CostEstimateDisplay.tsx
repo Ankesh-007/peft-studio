@@ -56,23 +56,20 @@ export const CostEstimateDisplay: React.FC<CostEstimateDisplayProps> = ({
       setError(null);
 
       try {
-        const response = await fetch(
-          "http://localhost:8000/api/cost/estimate",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              training_time_hours: trainingTimeHours,
-              gpu_name: gpuName,
-              num_gpus: numGpus,
-              electricity_rate_per_kwh: electricityRate,
-              region: region,
-              utilization: utilization,
-            }),
+        const response = await fetch("http://localhost:8000/api/cost/estimate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+          body: JSON.stringify({
+            training_time_hours: trainingTimeHours,
+            gpu_name: gpuName,
+            num_gpus: numGpus,
+            electricity_rate_per_kwh: electricityRate,
+            region: region,
+            utilization: utilization,
+          }),
+        });
 
         if (!response.ok) {
           throw new Error("Failed to fetch cost estimates");
@@ -134,9 +131,7 @@ export const CostEstimateDisplay: React.FC<CostEstimateDisplayProps> = ({
           <div className="estimate-icon">⚡</div>
           <div className="estimate-content">
             <div className="estimate-label">GPU Hours</div>
-            <div className="estimate-value">
-              {estimates.formatted.gpu_hours}
-            </div>
+            <div className="estimate-value">{estimates.formatted.gpu_hours}</div>
           </div>
         </div>
 
@@ -144,12 +139,8 @@ export const CostEstimateDisplay: React.FC<CostEstimateDisplayProps> = ({
           <div className="estimate-icon">💰</div>
           <div className="estimate-content">
             <div className="estimate-label">Electricity Cost</div>
-            <div className="estimate-value">
-              {estimates.formatted.electricity_cost}
-            </div>
-            <div className="estimate-detail">
-              at {estimates.formatted.electricity_rate}
-            </div>
+            <div className="estimate-value">{estimates.formatted.electricity_cost}</div>
+            <div className="estimate-detail">at {estimates.formatted.electricity_rate}</div>
           </div>
         </div>
 
@@ -157,12 +148,8 @@ export const CostEstimateDisplay: React.FC<CostEstimateDisplayProps> = ({
           <div className="estimate-icon">🌱</div>
           <div className="estimate-content">
             <div className="estimate-label">Carbon Footprint</div>
-            <div className="estimate-value">
-              {estimates.formatted.carbon_footprint}
-            </div>
-            <div className="estimate-detail">
-              {estimates.formatted.carbon_intensity}
-            </div>
+            <div className="estimate-value">{estimates.formatted.carbon_footprint}</div>
+            <div className="estimate-detail">{estimates.formatted.carbon_intensity}</div>
           </div>
         </div>
 
@@ -170,9 +157,7 @@ export const CostEstimateDisplay: React.FC<CostEstimateDisplayProps> = ({
           <div className="estimate-icon">🔋</div>
           <div className="estimate-content">
             <div className="estimate-label">Energy Consumption</div>
-            <div className="estimate-value">
-              {estimates.formatted.energy_consumption}
-            </div>
+            <div className="estimate-value">{estimates.formatted.energy_consumption}</div>
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { formatError } from "../api/errors";
 import ErrorDisplay from "./ErrorDisplay";
 
 import type { FormattedError } from "../types/error";
+import { ErrorCategory, ErrorSeverity } from "../types/error";
 import type { ErrorInfo, ReactNode } from "react";
 
 interface Props {
@@ -52,10 +53,8 @@ export class ErrorBoundary extends Component<Props, State> {
       this.setState({
         formattedError: {
           title: "Application Error",
-          what_happened:
-            error.message || "An unexpected error occurred in the application.",
-          why_it_happened:
-            "The application encountered an issue it wasn't prepared for.",
+          what_happened: error.message || "An unexpected error occurred in the application.",
+          why_it_happened: "The application encountered an issue it wasn't prepared for.",
           actions: [
             {
               description: "Reload the page to try again",
@@ -68,8 +67,8 @@ export class ErrorBoundary extends Component<Props, State> {
               action_type: "manual_step",
             },
           ],
-          category: "system" as const,
-          severity: "high" as const,
+          category: ErrorCategory.SYSTEM,
+          severity: ErrorSeverity.HIGH,
           help_link: "https://docs.peftstudio.ai/troubleshooting",
           auto_recoverable: false,
         },
@@ -106,10 +105,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
       if (this.state.formattedError) {
         if (this.props.fallback) {
-          return this.props.fallback(
-            this.state.formattedError,
-            this.handleReset,
-          );
+          return this.props.fallback(this.state.formattedError, this.handleReset);
         }
 
         return (

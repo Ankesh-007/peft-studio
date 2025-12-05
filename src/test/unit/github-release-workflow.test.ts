@@ -10,7 +10,7 @@ import * as yaml from "yaml";
  */
 
 // Helper to load and parse the workflow file
-function loadWorkflowConfig(): Record<string, unknown> {
+function loadWorkflowConfig(): any {
   const workflowPath = path.join(process.cwd(), ".github/workflows/release.yml");
   const workflowContent = fs.readFileSync(workflowPath, "utf-8");
   return yaml.parse(workflowContent);
@@ -20,7 +20,7 @@ describe("GitHub Release Workflow Properties", () => {
   /**
    * Feature: github-releases-installer, Property 6: Version tags trigger workflow
    * Validates: Requirements 2.1
-   * 
+   *
    * For any valid version tag pushed to the repository, the release workflow should be automatically triggered
    */
   test("Property 6: Version tags trigger workflow", () => {
@@ -59,7 +59,7 @@ describe("GitHub Release Workflow Properties", () => {
   /**
    * Feature: github-releases-installer, Property 7: Parallel platform builds
    * Validates: Requirements 2.2
-   * 
+   *
    * For any release workflow execution, Windows, macOS, and Linux builds should run in parallel
    */
   test("Property 7: Parallel platform builds", () => {
@@ -90,7 +90,7 @@ describe("GitHub Release Workflow Properties", () => {
   /**
    * Feature: github-releases-installer, Property 8: Built installers uploaded as assets
    * Validates: Requirements 2.3
-   * 
+   *
    * For any successfully built installer, it should be uploaded as a release asset to GitHub
    */
   test("Property 8: Built installers uploaded as assets", () => {
@@ -111,19 +111,19 @@ describe("GitHub Release Workflow Properties", () => {
     expect(steps).toBeDefined();
 
     // Should have steps to download artifacts from each platform
-    const downloadSteps = steps.filter((step: Record<string, unknown>) =>
-      step.uses && step.uses.includes("download-artifact")
+    const downloadSteps = steps.filter(
+      (step: any) => step.uses && step.uses.includes("download-artifact")
     );
     expect(downloadSteps.length).toBeGreaterThanOrEqual(3); // Windows, macOS, Linux
 
     // Should have steps to upload release assets
-    const uploadSteps = steps.filter((step: Record<string, unknown>) =>
-      step.uses && step.uses.includes("upload-release-asset")
+    const uploadSteps = steps.filter(
+      (step: any) => step.uses && step.uses.includes("upload-release-asset")
     );
     expect(uploadSteps.length).toBeGreaterThanOrEqual(6); // At least 2 per platform
 
     // Verify each upload step has required fields
-    uploadSteps.forEach((step: Record<string, unknown>) => {
+    uploadSteps.forEach((step: any) => {
       expect(step.with).toBeDefined();
       expect(step.with.upload_url).toBeDefined();
       expect(step.with.asset_path).toBeDefined();
@@ -143,7 +143,7 @@ describe("GitHub Release Notes Template Properties", () => {
   /**
    * Feature: github-releases-installer, Property 4: Release notes include installation instructions
    * Validates: Requirements 1.4
-   * 
+   *
    * For any published release, the release notes should contain installation instructions
    */
   test("Property 4: Release notes include installation instructions", () => {
@@ -191,7 +191,7 @@ describe("GitHub Release Notes Template Properties", () => {
   /**
    * Feature: github-releases-installer, Property 24: Platform-specific instructions in notes
    * Validates: Requirements 6.1
-   * 
+   *
    * For any release notes, they should contain platform-specific installation instructions
    */
   test("Property 24: Platform-specific instructions in notes", () => {
@@ -201,7 +201,7 @@ describe("GitHub Release Notes Template Properties", () => {
           major: fc.integer({ min: 0, max: 99 }),
           minor: fc.integer({ min: 0, max: 99 }),
           patch: fc.integer({ min: 0, max: 99 }),
-          platform: fc.constantFrom("windows", "macos", "linux")
+          platform: fc.constantFrom("windows", "macos", "linux"),
         }),
         ({ major, minor, patch, platform }) => {
           const version = `${major}.${minor}.${patch}`;
@@ -216,30 +216,16 @@ describe("GitHub Release Notes Template Properties", () => {
           const platformChecks: Record<string, { header: string; specifics: string[] }> = {
             windows: {
               header: "### Windows",
-              specifics: [
-                ".exe",
-                "installation wizard",
-                "Start Menu",
-                "security warning"
-              ]
+              specifics: [".exe", "installation wizard", "Start Menu", "security warning"],
             },
             macos: {
               header: "### macOS",
-              specifics: [
-                ".dmg",
-                "Applications folder",
-                "Right-click"
-              ]
+              specifics: [".dmg", "Applications folder", "Right-click"],
             },
             linux: {
               header: "### Linux",
-              specifics: [
-                "AppImage",
-                "chmod +x",
-                ".deb",
-                "dpkg"
-              ]
-            }
+              specifics: ["AppImage", "chmod +x", ".deb", "dpkg"],
+            },
           };
 
           const checks = platformChecks[platform];
@@ -275,7 +261,7 @@ describe("GitHub Release Notes Template Properties", () => {
           expect(platformSection.length).toBeGreaterThan(100); // Has substantial content
 
           // Verify platform-specific details are present
-          checks.specifics.forEach(specific => {
+          checks.specifics.forEach((specific) => {
             expect(platformSection).toContain(specific);
           });
 

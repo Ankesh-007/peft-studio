@@ -14,51 +14,50 @@ interface GuidedTourProps {
   onSkip: () => void;
 }
 
-const GuidedTour: React.FC<GuidedTourProps> = ({
-  isActive,
-  onComplete,
-  onSkip,
-}) => {
+const GuidedTour: React.FC<GuidedTourProps> = ({ isActive, onComplete, onSkip }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
 
-  const tourSteps: TourStep[] = React.useMemo(() => [
-    {
-      target: '[data-tour="dashboard"]',
-      title: "Dashboard Overview",
-      description:
-        "This is your main dashboard where you can see all your training runs, models, and system resources at a glance.",
-      position: "bottom",
-    },
-    {
-      target: '[data-tour="start-training"]',
-      title: "Start Training",
-      description:
-        "Click here to launch the Training Wizard. It will guide you through the entire process of fine-tuning a model.",
-      position: "left",
-    },
-    {
-      target: '[data-tour="quick-actions"]',
-      title: "Quick Actions",
-      description:
-        "Access common tasks quickly: upload datasets, start training, test models, or browse the model library.",
-      position: "left",
-    },
-    {
-      target: '[data-tour="training-runs"]',
-      title: "Training Runs",
-      description:
-        "Monitor all your training runs here. See progress, status, and quickly access running or completed trainings.",
-      position: "top",
-    },
-    {
-      target: '[data-tour="system-resources"]',
-      title: "System Resources",
-      description:
-        "Keep an eye on your GPU, CPU, and RAM usage. PEFT Studio automatically optimizes based on available resources.",
-      position: "top",
-    },
-  ], []);
+  const tourSteps: TourStep[] = React.useMemo(
+    () => [
+      {
+        target: '[data-tour="dashboard"]',
+        title: "Dashboard Overview",
+        description:
+          "This is your main dashboard where you can see all your training runs, models, and system resources at a glance.",
+        position: "bottom",
+      },
+      {
+        target: '[data-tour="start-training"]',
+        title: "Start Training",
+        description:
+          "Click here to launch the Training Wizard. It will guide you through the entire process of fine-tuning a model.",
+        position: "left",
+      },
+      {
+        target: '[data-tour="quick-actions"]',
+        title: "Quick Actions",
+        description:
+          "Access common tasks quickly: upload datasets, start training, test models, or browse the model library.",
+        position: "left",
+      },
+      {
+        target: '[data-tour="training-runs"]',
+        title: "Training Runs",
+        description:
+          "Monitor all your training runs here. See progress, status, and quickly access running or completed trainings.",
+        position: "top",
+      },
+      {
+        target: '[data-tour="system-resources"]',
+        title: "System Resources",
+        description:
+          "Keep an eye on your GPU, CPU, and RAM usage. PEFT Studio automatically optimizes based on available resources.",
+        position: "top",
+      },
+    ],
+    []
+  );
 
   useEffect(() => {
     if (!isActive) return;
@@ -141,8 +140,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({
           top: `${tooltipPosition.top}px`,
           left: `${tooltipPosition.left}px`,
           transform:
-            currentStepData.position === "bottom" ||
-            currentStepData.position === "top"
+            currentStepData.position === "bottom" || currentStepData.position === "top"
               ? "translateX(-50%)"
               : currentStepData.position === "left"
                 ? "translateX(-100%)"
@@ -171,9 +169,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({
           </div>
 
           {/* Content */}
-          <p className="text-body text-dark-text-secondary mb-24">
-            {currentStepData.description}
-          </p>
+          <p className="text-body text-dark-text-secondary mb-24">{currentStepData.description}</p>
 
           {/* Progress Dots */}
           <div className="flex items-center gap-8 mb-24">

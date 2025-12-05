@@ -6,7 +6,7 @@ interface ToastContextType {
     type: ToastType,
     title: string,
     message?: string,
-    options?: Partial<Omit<ToastData, "id" | "type" | "title" | "message">>,
+    options?: Partial<Omit<ToastData, "id" | "type" | "title" | "message">>
   ) => string;
   success: (title: string, message?: string) => string;
   error: (title: string, message?: string) => string;
@@ -27,10 +27,7 @@ interface ToastProviderProps {
  * Toast notification context provider.
  * Provides a centralized way to display toast notifications throughout the app.
  */
-export const ToastProvider: React.FC<ToastProviderProps> = ({
-  children,
-  maxToasts = 5,
-}) => {
+export const ToastProvider: React.FC<ToastProviderProps> = ({ children, maxToasts = 5 }) => {
   const [toasts, setToasts] = useState<ToastData[]>([]);
 
   const showToast = useCallback(
@@ -38,7 +35,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
       type: ToastType,
       title: string,
       message?: string,
-      options?: Partial<Omit<ToastData, "id" | "type" | "title" | "message">>,
+      options?: Partial<Omit<ToastData, "id" | "type" | "title" | "message">>
     ): string => {
       const id = `toast-${Date.now()}-${Math.random()}`;
       const newToast: ToastData = {
@@ -58,35 +55,35 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
 
       return id;
     },
-    [maxToasts],
+    [maxToasts]
   );
 
   const success = useCallback(
     (title: string, message?: string): string => {
       return showToast("success", title, message);
     },
-    [showToast],
+    [showToast]
   );
 
   const error = useCallback(
     (title: string, message?: string): string => {
       return showToast("error", title, message, { duration: 0 }); // Errors don't auto-dismiss
     },
-    [showToast],
+    [showToast]
   );
 
   const warning = useCallback(
     (title: string, message?: string): string => {
       return showToast("warning", title, message, { duration: 7000 });
     },
-    [showToast],
+    [showToast]
   );
 
   const info = useCallback(
     (title: string, message?: string): string => {
       return showToast("info", title, message);
     },
-    [showToast],
+    [showToast]
   );
 
   const dismissToast = useCallback((id: string) => {
@@ -119,11 +116,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
       >
         <div className="pointer-events-auto space-y-8">
           {toasts.map((toast) => (
-            <Toast
-              key={toast.id}
-              toast={toast}
-              onDismiss={() => dismissToast(toast.id)}
-            />
+            <Toast key={toast.id} toast={toast} onDismiss={() => dismissToast(toast.id)} />
           ))}
         </div>
       </div>

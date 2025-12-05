@@ -12,16 +12,18 @@ describe("InferencePlayground", () => {
 
   it("should have input field for prompts", () => {
     render(<InferencePlayground />);
-    const input = screen.getByRole("textbox") || 
-                  document.querySelector('textarea') ||
-                  document.querySelector('input[type="text"]');
+    const input =
+      screen.getByRole("textbox") ||
+      document.querySelector("textarea") ||
+      document.querySelector('input[type="text"]');
     expect(input).toBeInTheDocument();
   });
 
   it("should have generate button", () => {
     render(<InferencePlayground />);
-    const generateButton = screen.getByRole("button", { name: /generate/i }) ||
-                          screen.getByRole("button", { name: /run/i });
+    const generateButton =
+      screen.getByRole("button", { name: /generate/i }) ||
+      screen.getByRole("button", { name: /run/i });
     expect(generateButton).toBeInTheDocument();
   });
 

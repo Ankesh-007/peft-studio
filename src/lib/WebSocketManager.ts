@@ -171,7 +171,7 @@ export class WebSocketManager {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        
+
         // Broadcast to all subscribers
         connection.subscriptions.forEach((sub) => {
           try {
@@ -191,7 +191,7 @@ export class WebSocketManager {
 
     ws.onclose = () => {
       console.log(`WebSocket closed: ${url}`);
-      
+
       // Clear ping timer
       const pingTimer = this.pingTimers.get(key);
       if (pingTimer) {
@@ -218,11 +218,11 @@ export class WebSocketManager {
     connection.reconnectAttempts += 1;
     const delay = Math.min(
       this.baseReconnectDelay * Math.pow(2, connection.reconnectAttempts - 1),
-      this.maxReconnectDelay,
+      this.maxReconnectDelay
     );
 
     console.log(
-      `Reconnecting to ${connection.url} in ${delay}ms (attempt ${connection.reconnectAttempts}/${this.maxReconnectAttempts})`,
+      `Reconnecting to ${connection.url} in ${delay}ms (attempt ${connection.reconnectAttempts}/${this.maxReconnectAttempts})`
     );
 
     connection.reconnectTimeout = setTimeout(() => {

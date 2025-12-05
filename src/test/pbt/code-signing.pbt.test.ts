@@ -1,22 +1,22 @@
 /**
  * Property-Based Tests for Code Signing
- * 
+ *
  * These tests verify that code signing behaves correctly across various
  * configurations and credential scenarios.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import * as fc from 'fast-check';
-import * as fs from 'fs';
-import * as path from 'path';
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import * as fc from "fast-check";
+import * as fs from "fs";
+import * as path from "path";
 
 /**
  * **Feature: github-releases-installer, Property 29: Windows code signing when configured**
- * 
+ *
  * For any Windows build with code signing configured, the executable should be signed with a certificate
  * **Validates: Requirements 7.1**
  */
-describe('Property 29: Windows code signing when configured', () => {
+describe("Property 29: Windows code signing when configured", () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
@@ -29,17 +29,17 @@ describe('Property 29: Windows code signing when configured', () => {
     process.env = originalEnv;
   });
 
-  it('should sign Windows executable when CSC_LINK and CSC_KEY_PASSWORD are provided', async () => {
+  it("should sign Windows executable when CSC_LINK and CSC_KEY_PASSWORD are provided", async () => {
     await fc.assert(
       fc.asyncProperty(
         // Generate random certificate paths and passwords
         fc.record({
           certPath: fc.oneof(
-            fc.constant('C:\\certs\\test.pfx'),
-            fc.constant('/tmp/test.p12'),
+            fc.constant("C:\\certs\\test.pfx"),
+            fc.constant("/tmp/test.p12"),
             fc.string({ minLength: 500, maxLength: 1000 }) // Simulate base64
           ),
-          password: fc.string({ minLength: 8, maxLength: 32 })
+          password: fc.string({ minLength: 8, maxLength: 32 }),
         }),
         async ({ certPath, password }) => {
           // Set up environment
@@ -47,12 +47,12 @@ describe('Property 29: Windows code signing when configured', () => {
           process.env.CSC_KEY_PASSWORD = password;
 
           // Import the signing script
-          const signWindows = await import('../../../scripts/sign-windows.js') as any;
+          const signWindows = (await import("../../../scripts/sign-windows.js")) as any;
 
           // Mock configuration
           const config = {
-            path: 'test.exe',
-            platform: 'win32'
+            path: "test.exe",
+            platform: "win32",
           };
 
           // Call the signing function
@@ -68,12 +68,12 @@ describe('Property 29: Windows code signing when configured', () => {
     );
   });
 
-  it('should create signing status file when credentials are configured', async () => {
+  it("should create signing status file when credentials are configured", async () => {
     await fc.assert(
       fc.asyncProperty(
         fc.record({
-          certPath: fc.string({ minLength: 10, maxLength: 100 }).filter(s => s.trim().length > 0),
-          password: fc.string({ minLength: 8, maxLength: 32 }).filter(s => s.trim().length > 0)
+          certPath: fc.string({ minLength: 10, maxLength: 100 }).filter((s) => s.trim().length > 0),
+          password: fc.string({ minLength: 8, maxLength: 32 }).filter((s) => s.trim().length > 0),
         }),
         async ({ certPath, password }) => {
           // Set up environment
@@ -81,13 +81,13 @@ describe('Property 29: Windows code signing when configured', () => {
           process.env.CSC_KEY_PASSWORD = password;
 
           // Clean up any existing status file
-          const statusFile = path.join(process.cwd(), 'build', 'signing-status.txt');
+          const statusFile = path.join(process.cwd(), "build", "signing-status.txt");
           if (fs.existsSync(statusFile)) {
             fs.unlinkSync(statusFile);
           }
 
           // Import and run the signing script
-          const signWindows = await import('../../../scripts/sign-windows.js') as any;
+          const signWindows = (await import("../../../scripts/sign-windows.js")) as any;
           await signWindows.default({});
 
           // Verify that when non-empty credentials are provided, the function completes
@@ -100,29 +100,29 @@ describe('Property 29: Windows code signing when configured', () => {
     );
   });
 
-  it('should handle missing credentials gracefully', async () => {
+  it("should handle missing credentials gracefully", async () => {
     await fc.assert(
       fc.asyncProperty(
         fc.record({
           hasCert: fc.boolean(),
-          hasPassword: fc.boolean()
+          hasPassword: fc.boolean(),
         }),
         async ({ hasCert, hasPassword }) => {
           // Set up environment with potentially missing credentials
           if (hasCert) {
-            process.env.CSC_LINK = 'test.pfx';
+            process.env.CSC_LINK = "test.pfx";
           } else {
             delete process.env.CSC_LINK;
           }
 
           if (hasPassword) {
-            process.env.CSC_KEY_PASSWORD = 'password123';
+            process.env.CSC_KEY_PASSWORD = "password123";
           } else {
             delete process.env.CSC_KEY_PASSWORD;
           }
 
           // Import the signing script
-          const signWindows = await import('../../../scripts/sign-windows.js') as any;
+          const signWindows = (await import("../../../scripts/sign-windows.js")) as any;
 
           // Should not throw an error even with missing credentials
           await expect(signWindows.default({})).resolves.not.toThrow();
@@ -138,25 +138,25 @@ describe('Property 29: Windows code signing when configured', () => {
     );
   });
 
-  it('should validate certificate format correctly', async () => {
+  it("should validate certificate format correctly", async () => {
     await fc.assert(
       fc.asyncProperty(
         fc.oneof(
           // Valid certificate formats
-          fc.constant('data:application/x-pkcs12;base64,MIIKe...'),
+          fc.constant("data:application/x-pkcs12;base64,MIIKe..."),
           fc.string({ minLength: 500, maxLength: 2000 }), // Base64 encoded
-          fc.constant('C:\\certs\\valid.pfx'),
-          fc.constant('/path/to/cert.p12'),
+          fc.constant("C:\\certs\\valid.pfx"),
+          fc.constant("/path/to/cert.p12"),
           // Invalid formats
-          fc.constant(''),
-          fc.constant('invalid'),
+          fc.constant(""),
+          fc.constant("invalid"),
           fc.string({ minLength: 1, maxLength: 10 })
         ),
         async (certPath) => {
           process.env.CSC_LINK = certPath;
-          process.env.CSC_KEY_PASSWORD = 'password';
+          process.env.CSC_KEY_PASSWORD = "password";
 
-          const signWindows = await import('../../../scripts/sign-windows.js') as any;
+          const signWindows = (await import("../../../scripts/sign-windows.js")) as any;
 
           // Should handle all certificate formats without throwing
           await expect(signWindows.default({})).resolves.not.toThrow();
@@ -170,7 +170,7 @@ describe('Property 29: Windows code signing when configured', () => {
 /**
  * Property test for macOS code signing
  */
-describe('macOS Code Signing Properties', () => {
+describe("macOS Code Signing Properties", () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
@@ -181,7 +181,7 @@ describe('macOS Code Signing Properties', () => {
     process.env = originalEnv;
   });
 
-  it('should handle macOS signing credentials correctly', async () => {
+  it("should handle macOS signing credentials correctly", async () => {
     await fc.assert(
       fc.asyncProperty(
         fc.record({
@@ -189,7 +189,7 @@ describe('macOS Code Signing Properties', () => {
           password: fc.string({ minLength: 8, maxLength: 32 }),
           appleId: fc.emailAddress(),
           applePassword: fc.string({ minLength: 16, maxLength: 16 }),
-          teamId: fc.string({ minLength: 10, maxLength: 10 })
+          teamId: fc.string({ minLength: 10, maxLength: 10 }),
         }),
         async ({ certPath, password, appleId, applePassword, teamId }) => {
           // Set up environment
@@ -200,7 +200,7 @@ describe('macOS Code Signing Properties', () => {
           process.env.APPLE_TEAM_ID = teamId;
 
           // Import the signing script
-          const signMacos = await import('../../../scripts/sign-macos.js') as any;
+          const signMacos = (await import("../../../scripts/sign-macos.js")) as any;
 
           // Should not throw an error
           await expect(signMacos.default({})).resolves.not.toThrow();
@@ -214,39 +214,39 @@ describe('macOS Code Signing Properties', () => {
     );
   });
 
-  it('should handle partial notarization credentials', async () => {
+  it("should handle partial notarization credentials", async () => {
     await fc.assert(
       fc.asyncProperty(
         fc.record({
           hasAppleId: fc.boolean(),
           hasPassword: fc.boolean(),
-          hasTeamId: fc.boolean()
+          hasTeamId: fc.boolean(),
         }),
         async ({ hasAppleId, hasPassword, hasTeamId }) => {
           // Set up signing credentials (always present for this test)
-          process.env.CSC_LINK = 'test.p12';
-          process.env.CSC_KEY_PASSWORD = 'password';
+          process.env.CSC_LINK = "test.p12";
+          process.env.CSC_KEY_PASSWORD = "password";
 
           // Set up notarization credentials conditionally
           if (hasAppleId) {
-            process.env.APPLE_ID = 'test@example.com';
+            process.env.APPLE_ID = "test@example.com";
           } else {
             delete process.env.APPLE_ID;
           }
 
           if (hasPassword) {
-            process.env.APPLE_ID_PASSWORD = 'abcd-efgh-ijkl-mnop';
+            process.env.APPLE_ID_PASSWORD = "abcd-efgh-ijkl-mnop";
           } else {
             delete process.env.APPLE_ID_PASSWORD;
           }
 
           if (hasTeamId) {
-            process.env.APPLE_TEAM_ID = 'TEAM123456';
+            process.env.APPLE_TEAM_ID = "TEAM123456";
           } else {
             delete process.env.APPLE_TEAM_ID;
           }
 
-          const signMacos = await import('../../../scripts/sign-macos.js') as any;
+          const signMacos = (await import("../../../scripts/sign-macos.js")) as any;
 
           // Should handle partial credentials gracefully
           await expect(signMacos.default({})).resolves.not.toThrow();
@@ -268,7 +268,7 @@ describe('macOS Code Signing Properties', () => {
 /**
  * Cross-platform signing properties
  */
-describe('Cross-Platform Code Signing Properties', () => {
+describe("Cross-Platform Code Signing Properties", () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
@@ -279,7 +279,7 @@ describe('Cross-Platform Code Signing Properties', () => {
     process.env = originalEnv;
   });
 
-  it('should handle environment variable combinations without errors', async () => {
+  it("should handle environment variable combinations without errors", async () => {
     await fc.assert(
       fc.asyncProperty(
         fc.record({
@@ -287,7 +287,7 @@ describe('Cross-Platform Code Signing Properties', () => {
           cscPassword: fc.option(fc.string({ minLength: 5, maxLength: 50 }), { nil: undefined }),
           appleId: fc.option(fc.emailAddress(), { nil: undefined }),
           applePassword: fc.option(fc.string({ minLength: 16, maxLength: 16 }), { nil: undefined }),
-          teamId: fc.option(fc.string({ minLength: 10, maxLength: 10 }), { nil: undefined })
+          teamId: fc.option(fc.string({ minLength: 10, maxLength: 10 }), { nil: undefined }),
         }),
         async ({ cscLink, cscPassword, appleId, applePassword, teamId }) => {
           // Set up environment with various combinations
@@ -307,8 +307,8 @@ describe('Cross-Platform Code Signing Properties', () => {
           else delete process.env.APPLE_TEAM_ID;
 
           // Both signing scripts should handle any combination gracefully
-          const signWindows = await import('../../../scripts/sign-windows.js') as any;
-          const signMacos = await import('../../../scripts/sign-macos.js') as any;
+          const signWindows = (await import("../../../scripts/sign-windows.js")) as any;
+          const signMacos = (await import("../../../scripts/sign-macos.js")) as any;
 
           await expect(signWindows.default({})).resolves.not.toThrow();
           await expect(signMacos.default({})).resolves.not.toThrow();

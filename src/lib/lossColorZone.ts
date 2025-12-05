@@ -20,7 +20,7 @@ export function getLossColorZone(
   currentLoss: number,
   previousLoss: number | null = null,
   goodThreshold: number = 1.0,
-  acceptableThreshold: number = 2.0,
+  acceptableThreshold: number = 2.0
 ): LossColorResult {
   // Handle invalid inputs
   if (currentLoss < 0 || isNaN(currentLoss) || !isFinite(currentLoss)) {

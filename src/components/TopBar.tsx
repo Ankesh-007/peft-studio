@@ -28,10 +28,7 @@ const TopBar: React.FC<TopBarProps> = ({ onToggleRightPanel }) => {
 
   return (
     <>
-      <CommandPalette
-        isOpen={commandPaletteOpen}
-        onClose={() => setCommandPaletteOpen(false)}
-      />
+      <CommandPalette isOpen={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} />
       <div className="h-[56px] bg-dark-bg-secondary/80 backdrop-blur-lg border-b border-dark-border px-24 flex items-center justify-between sticky top-0 z-50">
         {/* Left: Breadcrumb */}
         <div className="flex items-center gap-8 text-small">
@@ -45,14 +42,11 @@ const TopBar: React.FC<TopBarProps> = ({ onToggleRightPanel }) => {
           <div
             className={cn(
               "relative flex items-center cursor-pointer",
-              searchFocused && "ring-1 ring-accent-primary rounded-lg",
+              searchFocused && "ring-1 ring-accent-primary rounded-lg"
             )}
             onClick={() => setCommandPaletteOpen(true)}
           >
-            <Search
-              size={16}
-              className="absolute left-12 text-dark-text-tertiary"
-            />
+            <Search size={16} className="absolute left-12 text-dark-text-tertiary" />
             <input
               type="text"
               placeholder="Search datasets, models, or runs..."

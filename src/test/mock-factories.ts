@@ -17,9 +17,7 @@ import type {
 // Optimization Profile Factory
 // ============================================================================
 
-export function createMockProfile(
-  overrides?: Partial<OptimizationProfile>,
-): OptimizationProfile {
+export function createMockProfile(overrides?: Partial<OptimizationProfile>): OptimizationProfile {
   return {
     id: "test-profile",
     name: "Test Profile",
@@ -101,9 +99,7 @@ export function createMockModel(overrides?: Partial<ModelInfo>): ModelInfo {
 // Training Config Factory
 // ============================================================================
 
-export function createMockTrainingConfig(
-  overrides?: Partial<TrainingConfig>,
-): TrainingConfig {
+export function createMockTrainingConfig(overrides?: Partial<TrainingConfig>): TrainingConfig {
   return {
     modelName: "test-model",
     modelPath: "/models/test-model",
@@ -138,9 +134,7 @@ export function createMockTrainingConfig(
 // Training Estimates Factory
 // ============================================================================
 
-export function createMockEstimates(
-  overrides?: Partial<TrainingEstimates>,
-): TrainingEstimates {
+export function createMockEstimates(overrides?: Partial<TrainingEstimates>): TrainingEstimates {
   return {
     duration: {
       min: 60,
@@ -166,9 +160,7 @@ export function createMockEstimates(
 // Validation Result Factory
 // ============================================================================
 
-export function createMockValidation(
-  overrides?: Partial<ValidationResult>,
-): ValidationResult {
+export function createMockValidation(overrides?: Partial<ValidationResult>): ValidationResult {
   return {
     field: "test_field",
     level: "warning",
@@ -183,9 +175,7 @@ export function createMockValidation(
 // Wizard State Factory
 // ============================================================================
 
-export function createMockWizardState(
-  overrides?: Partial<WizardState>,
-): WizardState {
+export function createMockWizardState(overrides?: Partial<WizardState>): WizardState {
   return {
     currentStep: 0,
     profile: null,
@@ -202,9 +192,7 @@ export function createMockWizardState(
 // Configuration Preset Factory
 // ============================================================================
 
-export function createMockPreset(
-  overrides?: Partial<ConfigurationPreset>,
-): ConfigurationPreset {
+export function createMockPreset(overrides?: Partial<ConfigurationPreset>): ConfigurationPreset {
   return {
     id: "test-preset",
     name: "Test Preset",
@@ -259,9 +247,7 @@ export interface TrainingRun {
   current_loss?: number;
 }
 
-export function createMockTrainingRun(
-  overrides?: Partial<TrainingRun>,
-): TrainingRun {
+export function createMockTrainingRun(overrides?: Partial<TrainingRun>): TrainingRun {
   return {
     id: 1,
     name: "test-training-run",
@@ -301,9 +287,7 @@ export interface PausedRun {
   dataset_name: string;
 }
 
-export function createMockPausedRun(
-  overrides?: Partial<PausedRun>,
-): PausedRun {
+export function createMockPausedRun(overrides?: Partial<PausedRun>): PausedRun {
   return {
     job_id: "test_job_123",
     state: "paused",
@@ -347,9 +331,7 @@ export interface HardwareInfo {
   };
 }
 
-export function createMockHardwareInfo(
-  overrides?: Partial<HardwareInfo>,
-): HardwareInfo {
+export function createMockHardwareInfo(overrides?: Partial<HardwareInfo>): HardwareInfo {
   return {
     gpus: [
       {
@@ -378,10 +360,7 @@ export function createMockHardwareInfo(
 /**
  * Create multiple mock items using a factory
  */
-export function createMockBatch<T>(
-  factory: (index: number) => T,
-  count: number,
-): T[] {
+export function createMockBatch<T>(factory: (index: number) => T, count: number): T[] {
   return Array.from({ length: count }, (_, i) => factory(i));
 }
 

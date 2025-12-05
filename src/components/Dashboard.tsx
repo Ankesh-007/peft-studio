@@ -1,9 +1,29 @@
-import { useState, useEffect, memo } from 'react';
-import { Brain, Zap, Database, Clock, TrendingUp, Upload, Play, MessageSquare, Search } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { cn, formatNumber, getTimeGreeting } from '../lib/utils';
-import { SkeletonCard } from './LoadingStates';
-import { useIsMobile } from '../hooks/useMediaQuery';
+import { useState, useEffect, memo } from "react";
+import {
+  Brain,
+  Zap,
+  Database,
+  Clock,
+  TrendingUp,
+  Upload,
+  Play,
+  MessageSquare,
+  Search,
+} from "lucide-react";
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { cn, formatNumber, getTimeGreeting } from "../lib/utils";
+import { SkeletonCard } from "./LoadingStates";
+import { useIsMobile } from "../hooks/useMediaQuery";
 
 const Dashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -154,12 +174,7 @@ const Dashboard: React.FC = () => {
         </p>
 
         {/* Stats Grid */}
-        <div
-          className={cn(
-            "grid gap-16",
-            isMobile ? "grid-cols-1" : "grid-cols-2 md:grid-cols-4",
-          )}
-        >
+        <div className={cn("grid gap-16", isMobile ? "grid-cols-1" : "grid-cols-2 md:grid-cols-4")}>
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
@@ -173,33 +188,23 @@ const Dashboard: React.FC = () => {
                   <div
                     className={cn(
                       "w-40 h-40 rounded-full flex items-center justify-center",
-                      `bg-${stat.color}/10`,
+                      `bg-${stat.color}/10`
                     )}
                     role="img"
                     aria-label={stat.label}
                   >
-                    <Icon
-                      size={20}
-                      className={`text-${stat.color}`}
-                      aria-hidden="true"
-                    />
+                    <Icon size={20} className={`text-${stat.color}`} aria-hidden="true" />
                   </div>
                   <div
                     className="flex items-center gap-4 text-tiny text-accent-success"
                     role="status"
                   >
                     <TrendingUp size={12} aria-hidden="true" />
-                    <span aria-label={`Trend: ${stat.trend}`}>
-                      {stat.trend}
-                    </span>
+                    <span aria-label={`Trend: ${stat.trend}`}>{stat.trend}</span>
                   </div>
                 </div>
-                <div className="text-display mb-4">
-                  {formatNumber(stat.value)}
-                </div>
-                <div className="text-small text-dark-text-tertiary">
-                  {stat.label}
-                </div>
+                <div className="text-display mb-4">{formatNumber(stat.value)}</div>
+                <div className="text-small text-dark-text-tertiary">{stat.label}</div>
               </article>
             );
           })}
@@ -229,14 +234,12 @@ const Dashboard: React.FC = () => {
                       className={cn(
                         "w-8 h-8 rounded-full",
                         getStatusColor(run.status),
-                        run.status === "running" && "animate-pulse",
+                        run.status === "running" && "animate-pulse"
                       )}
                     ></div>
                     <span className="text-body font-medium">{run.name}</span>
                   </div>
-                  <span className="text-tiny text-dark-text-tertiary capitalize">
-                    {run.status}
-                  </span>
+                  <span className="text-tiny text-dark-text-tertiary capitalize">{run.status}</span>
                 </div>
 
                 <div className="flex items-center gap-16 text-small text-dark-text-secondary mb-12">
@@ -312,11 +315,7 @@ const Dashboard: React.FC = () => {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
-              <XAxis
-                dataKey="step"
-                stroke="#71717a"
-                style={{ fontSize: "12px" }}
-              />
+              <XAxis dataKey="step" stroke="#71717a" style={{ fontSize: "12px" }} />
               <YAxis stroke="#71717a" style={{ fontSize: "12px" }} />
               <Tooltip
                 contentStyle={{
@@ -344,17 +343,8 @@ const Dashboard: React.FC = () => {
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={gpuData} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
-              <XAxis
-                type="number"
-                stroke="#71717a"
-                style={{ fontSize: "12px" }}
-              />
-              <YAxis
-                dataKey="name"
-                type="category"
-                stroke="#71717a"
-                style={{ fontSize: "12px" }}
-              />
+              <XAxis type="number" stroke="#71717a" style={{ fontSize: "12px" }} />
+              <YAxis dataKey="name" type="category" stroke="#71717a" style={{ fontSize: "12px" }} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "#111111",

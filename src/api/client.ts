@@ -7,10 +7,7 @@ class APIClient {
     this.baseURL = baseURL;
   }
 
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {},
-  ): Promise<T> {
+  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
     const response = await fetch(url, {
       ...options,
@@ -59,15 +56,15 @@ class APIClient {
   }
 
   async searchModels(query: string, task?: string, limit?: number) {
-    return this.request('/api/models/search', {
-      method: 'POST',
+    return this.request("/api/models/search", {
+      method: "POST",
       body: JSON.stringify({ query, task, limit: limit || 20 }),
     });
   }
 
   async searchMultiRegistry(query?: string, task?: string, registries?: string[], limit?: number) {
-    return this.request('/api/models/search/multi-registry', {
-      method: 'POST',
+    return this.request("/api/models/search/multi-registry", {
+      method: "POST",
       body: JSON.stringify({ query, task, registries, limit: limit || 20 }),
     });
   }
@@ -76,7 +73,7 @@ class APIClient {
     return this.request(`/api/models/${encodeURIComponent(modelId)}`);
   }
 
-  async getPopularModels(task: string = 'text-generation', limit: number = 10) {
+  async getPopularModels(task: string = "text-generation", limit: number = 10) {
     return this.request(`/api/models/popular/${task}?limit=${limit}`);
   }
 
@@ -88,19 +85,19 @@ class APIClient {
   }
 
   async getCachedModels() {
-    return this.request('/api/models/cache');
+    return this.request("/api/models/cache");
   }
 
   async clearModelCache(modelId?: string) {
-    const endpoint = modelId 
+    const endpoint = modelId
       ? `/api/models/cache/${encodeURIComponent(modelId)}`
-      : '/api/models/cache';
-    return this.request(endpoint, { method: 'DELETE' });
+      : "/api/models/cache";
+    return this.request(endpoint, { method: "DELETE" });
   }
 
   async checkModelCompatibility(modelId: string, gpuMemoryGb: number) {
-    return this.request('/api/models/compatibility', {
-      method: 'POST',
+    return this.request("/api/models/compatibility", {
+      method: "POST",
       body: JSON.stringify({ model_id: modelId, gpu_memory_gb: gpuMemoryGb }),
     });
   }
@@ -158,11 +155,7 @@ class APIClient {
     });
   }
 
-  async validateProfileCompatibility(
-    profileId: string,
-    gpuMemoryGb: number,
-    datasetSize: number,
-  ) {
+  async validateProfileCompatibility(profileId: string, gpuMemoryGb: number, datasetSize: number) {
     return this.request("/api/profiles/validate-compatibility", {
       method: "POST",
       body: JSON.stringify({

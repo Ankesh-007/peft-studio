@@ -53,7 +53,7 @@ describe("Training Flow Integration", () => {
 
     // Try to proceed without completing required fields
     const nextButton = screen.getByRole("button", { name: /next/i });
-    
+
     // Button should exist
     expect(nextButton).toBeInTheDocument();
   });

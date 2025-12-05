@@ -11,31 +11,20 @@ import ErrorDisplay from "./ErrorDisplay";
  */
 export const ErrorHandlingDemo: React.FC = () => {
   const { showError: showGlobalError } = useError();
-  const {
-    error: localError,
-    handleError: handleLocalError,
-    clearError,
-  } = useErrorHandler();
+  const { error: localError, handleError: handleLocalError, clearError } = useErrorHandler();
   const [selectedErrorType, setSelectedErrorType] = useState<string>("memory");
 
   const errorExamples = {
     memory: new Error("CUDA out of memory"),
-    file: new Error(
-      "FileNotFoundError: No such file or directory: /path/to/dataset.csv",
-    ),
-    connection: new Error(
-      "ConnectionError: Failed to connect to HuggingFace Hub",
-    ),
-    permission: new Error(
-      "PermissionError: Permission denied when writing checkpoint",
-    ),
+    file: new Error("FileNotFoundError: No such file or directory: /path/to/dataset.csv"),
+    connection: new Error("ConnectionError: Failed to connect to HuggingFace Hub"),
+    permission: new Error("PermissionError: Permission denied when writing checkpoint"),
     disk: new Error("OSError: [Errno 28] No space left on device"),
     generic: new Error("An unexpected error occurred during training"),
   };
 
   const handleTriggerGlobalError = () => {
-    const error =
-      errorExamples[selectedErrorType as keyof typeof errorExamples];
+    const error = errorExamples[selectedErrorType as keyof typeof errorExamples];
     showGlobalError(error, {
       component: "ErrorHandlingDemo",
       action: "trigger_global",
@@ -43,8 +32,7 @@ export const ErrorHandlingDemo: React.FC = () => {
   };
 
   const handleTriggerLocalError = () => {
-    const error =
-      errorExamples[selectedErrorType as keyof typeof errorExamples];
+    const error = errorExamples[selectedErrorType as keyof typeof errorExamples];
     handleLocalError(error, {
       component: "ErrorHandlingDemo",
       action: "trigger_local",
@@ -56,15 +44,13 @@ export const ErrorHandlingDemo: React.FC = () => {
       <div className="bg-white rounded-lg shadow-md p-6">
         <h1 className="text-2xl font-bold mb-4">Error Handling System Demo</h1>
         <p className="text-gray-600 mb-6">
-          This demo shows how the error handling system formats errors into
-          plain language with actionable suggestions.
+          This demo shows how the error handling system formats errors into plain language with
+          actionable suggestions.
         </p>
 
         {/* Error Type Selection */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Select Error Type:
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Select Error Type:</label>
           <select
             value={selectedErrorType}
             onChange={(e) => setSelectedErrorType(e.target.value)}
@@ -97,9 +83,7 @@ export const ErrorHandlingDemo: React.FC = () => {
 
         {/* Features List */}
         <div className="mt-8 p-4 bg-blue-50 rounded-md">
-          <h3 className="font-semibold text-blue-900 mb-2">
-            Features Demonstrated:
-          </h3>
+          <h3 className="font-semibold text-blue-900 mb-2">Features Demonstrated:</h3>
           <ul className="list-disc list-inside space-y-1 text-blue-800 text-sm">
             <li>Plain-language error messages (no stack traces)</li>
             <li>2-3 actionable suggestions per error</li>
@@ -115,11 +99,7 @@ export const ErrorHandlingDemo: React.FC = () => {
       {/* Local Error Display */}
       {localError && (
         <div className="animate-fadeIn">
-          <ErrorDisplay
-            error={localError}
-            onDismiss={clearError}
-            context={{ demo: true }}
-          />
+          <ErrorDisplay error={localError} onDismiss={clearError} context={{ demo: true }} />
         </div>
       )}
 
@@ -129,9 +109,7 @@ export const ErrorHandlingDemo: React.FC = () => {
 
         <div className="space-y-4">
           <div>
-            <h3 className="font-semibold mb-2">
-              1. Using Global Error Context:
-            </h3>
+            <h3 className="font-semibold mb-2">1. Using Global Error Context:</h3>
             <pre className="bg-gray-800 text-gray-100 p-4 rounded-md overflow-x-auto text-sm">
               {`import { useError } from '../lib/ErrorContext';
 
@@ -150,9 +128,7 @@ function MyComponent() {
           </div>
 
           <div>
-            <h3 className="font-semibold mb-2">
-              2. Using Local Error Handler:
-            </h3>
+            <h3 className="font-semibold mb-2">2. Using Local Error Handler:</h3>
             <pre className="bg-gray-800 text-gray-100 p-4 rounded-md overflow-x-auto text-sm">
               {`import useErrorHandler from '../lib/useErrorHandler';
 

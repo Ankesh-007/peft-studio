@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import WelcomeScreen from '../../components/onboarding/WelcomeScreen';
-import SetupWizard from '../../components/onboarding/SetupWizard';
-import GuidedTour from '../../components/onboarding/GuidedTour';
-import { useOnboarding } from '../../hooks/useOnboarding';
-import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import WelcomeScreen from "../../components/onboarding/WelcomeScreen";
+import SetupWizard from "../../components/onboarding/SetupWizard";
+import GuidedTour from "../../components/onboarding/GuidedTour";
+import { useOnboarding } from "../../hooks/useOnboarding";
+import { renderHook, act } from "@testing-library/react";
 
 describe("Onboarding Flow", () => {
   describe("WelcomeScreen", () => {
@@ -58,9 +58,7 @@ describe("Onboarding Flow", () => {
 
       // Check for step titles
       expect(screen.getByText("Hardware Detection")).toBeInTheDocument();
-      expect(
-        screen.getByText("Let's check your system capabilities"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Let's check your system capabilities")).toBeInTheDocument();
     });
 
     it("should navigate through setup steps", async () => {
@@ -79,11 +77,9 @@ describe("Onboarding Flow", () => {
       // Should automatically move to next step after detection
       await waitFor(
         () => {
-          expect(
-            screen.getByText("Sample Dataset & Model"),
-          ).toBeInTheDocument();
+          expect(screen.getByText("Sample Dataset & Model")).toBeInTheDocument();
         },
-        { timeout: 1000 },
+        { timeout: 1000 }
       );
     });
 
@@ -117,7 +113,7 @@ describe("Onboarding Flow", () => {
       const onSkip = vi.fn();
 
       const { container } = render(
-        <GuidedTour isActive={false} onComplete={onComplete} onSkip={onSkip} />,
+        <GuidedTour isActive={false} onComplete={onComplete} onSkip={onSkip} />
       );
 
       expect(container.firstChild).toBeNull();
@@ -127,9 +123,7 @@ describe("Onboarding Flow", () => {
       const onComplete = vi.fn();
       const onSkip = vi.fn();
 
-      render(
-        <GuidedTour isActive={true} onComplete={onComplete} onSkip={onSkip} />,
-      );
+      render(<GuidedTour isActive={true} onComplete={onComplete} onSkip={onSkip} />);
 
       // Check for tour content
       expect(screen.getByText(/Step 1 of 5/)).toBeInTheDocument();
@@ -140,9 +134,7 @@ describe("Onboarding Flow", () => {
       const onComplete = vi.fn();
       const onSkip = vi.fn();
 
-      render(
-        <GuidedTour isActive={true} onComplete={onComplete} onSkip={onSkip} />,
-      );
+      render(<GuidedTour isActive={true} onComplete={onComplete} onSkip={onSkip} />);
 
       // Start on first step
       expect(screen.getByText("Dashboard Overview")).toBeInTheDocument();
@@ -160,9 +152,7 @@ describe("Onboarding Flow", () => {
       const onComplete = vi.fn();
       const onSkip = vi.fn();
 
-      render(
-        <GuidedTour isActive={true} onComplete={onComplete} onSkip={onSkip} />,
-      );
+      render(<GuidedTour isActive={true} onComplete={onComplete} onSkip={onSkip} />);
 
       // Navigate to last step
       const nextButton = screen.getByText("Next");
@@ -275,9 +265,7 @@ describe("Onboarding Flow", () => {
       expect(result.current.state.hasCompletedWelcome).toBe(false);
       expect(result.current.state.hasCompletedSetup).toBe(false);
       expect(result.current.state.isFirstVisit).toBe(true);
-      expect(localStorage.removeItem).toHaveBeenCalledWith(
-        "peft-studio-onboarding",
-      );
+      expect(localStorage.removeItem).toHaveBeenCalledWith("peft-studio-onboarding");
     });
   });
 

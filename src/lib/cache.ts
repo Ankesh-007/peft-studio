@@ -18,7 +18,7 @@ class Cache {
    */
   get<T>(key: string): T | null {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return null;
     }
@@ -64,8 +64,8 @@ class Cache {
    * Remove all cache entries matching a pattern
    */
   invalidatePattern(pattern: string | RegExp): void {
-    const regex = typeof pattern === 'string' ? new RegExp(pattern) : pattern;
-    
+    const regex = typeof pattern === "string" ? new RegExp(pattern) : pattern;
+
     for (const key of this.cache.keys()) {
       if (regex.test(key)) {
         this.cache.delete(key);
@@ -95,7 +95,7 @@ class Cache {
    */
   cleanup(): void {
     const now = Date.now();
-    
+
     for (const [key, entry] of this.cache.entries()) {
       const age = now - entry.timestamp;
       if (age > entry.ttl) {
@@ -109,7 +109,7 @@ class Cache {
 export const cache = new Cache();
 
 // Run cleanup every minute
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   setInterval(() => cache.cleanup(), 60 * 1000);
 }
 
@@ -126,7 +126,7 @@ export async function fetchWithCache<T>(
   ttl?: number
 ): Promise<T> {
   const cacheKey = `${url}:${JSON.stringify(options || {})}`;
-  
+
   // Check cache first
   const cached = cache.get<T>(cacheKey);
   if (cached !== null) {
@@ -135,23 +135,23 @@ export async function fetchWithCache<T>(
 
   // Fetch fresh data
   const response = await fetch(url, options);
-  
+
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
   const data = await response.json();
-  
+
   // Cache the response
   cache.set(cacheKey, data, ttl);
-  
+
   return data;
 }
 
 /**
  * React hook for cached API calls
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export function useCachedFetch<T>(
   url: string | null,
@@ -181,7 +181,7 @@ export function useCachedFetch<T>(
         const result = await fetchWithCache<T>(url, options, ttl);
         setData(result);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Unknown error'));
+        setError(err instanceof Error ? err : new Error("Unknown error"));
       } finally {
         setLoading(false);
       }
@@ -194,7 +194,7 @@ export function useCachedFetch<T>(
     // Invalidate cache and trigger refetch
     if (url) {
       cache.invalidate(`${url}:${JSON.stringify(options || {})}`);
-      setRefetchTrigger(prev => prev + 1);
+      setRefetchTrigger((prev) => prev + 1);
     }
   };
 

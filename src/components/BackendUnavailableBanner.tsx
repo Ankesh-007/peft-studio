@@ -1,5 +1,5 @@
-import React from 'react';
-import { AlertTriangle, ExternalLink, RefreshCw } from 'lucide-react';
+import React from "react";
+import { AlertTriangle, ExternalLink, RefreshCw } from "lucide-react";
 
 export const BackendUnavailableBanner: React.FC = () => {
   const handleRefresh = () => {
@@ -7,7 +7,7 @@ export const BackendUnavailableBanner: React.FC = () => {
   };
 
   const handleOpenDocs = () => {
-    window.open('https://github.com/Ankesh-007/peft-studio#-quick-installation', '_blank');
+    window.open("https://github.com/Ankesh-007/peft-studio#-quick-installation", "_blank");
   };
 
   return (
@@ -21,7 +21,8 @@ export const BackendUnavailableBanner: React.FC = () => {
             <p className="ml-3 font-medium text-yellow-800">
               <span className="md:hidden">Backend service unavailable</span>
               <span className="hidden md:inline">
-                Backend service is not running. Training and model management features are unavailable.
+                Backend service is not running. Training and model management features are
+                unavailable.
               </span>
             </p>
           </div>
@@ -47,8 +48,23 @@ export const BackendUnavailableBanner: React.FC = () => {
         <div className="mt-2 text-sm text-yellow-700">
           <p className="font-semibold">To enable full functionality:</p>
           <ol className="list-decimal list-inside mt-1 space-y-1">
-            <li>Install Python 3.10 or higher from <a href="https://www.python.org/downloads/" target="_blank" rel="noopener noreferrer" className="underline hover:text-yellow-900">python.org</a></li>
-            <li>Install dependencies: <code className="bg-yellow-100 px-2 py-0.5 rounded">pip install -r backend/requirements.txt</code></li>
+            <li>
+              Install Python 3.10 or higher from{" "}
+              <a
+                href="https://www.python.org/downloads/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-yellow-900"
+              >
+                python.org
+              </a>
+            </li>
+            <li>
+              Install dependencies:{" "}
+              <code className="bg-yellow-100 px-2 py-0.5 rounded">
+                pip install -r backend/requirements.txt
+              </code>
+            </li>
             <li>Restart the application</li>
           </ol>
         </div>

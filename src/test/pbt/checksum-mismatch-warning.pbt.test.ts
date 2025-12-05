@@ -1,24 +1,24 @@
 /**
  * Property-Based Tests for Checksum Mismatch Warnings
- * 
+ *
  * **Feature: github-releases-installer, Property 47: Checksum mismatch warning**
  * **Validates: Requirements 10.5**
- * 
+ *
  * Tests that checksum mismatches trigger appropriate warnings and prevent installation.
  */
 
-import { describe, it, expect } from 'vitest';
-import * as fc from 'fast-check';
-import * as crypto from 'crypto';
+import { describe, it, expect } from "vitest";
+import * as fc from "fast-check";
+import * as crypto from "crypto";
 
-describe('Property 47: Checksum mismatch warning', () => {
+describe("Property 47: Checksum mismatch warning", () => {
   /**
    * Helper function to calculate SHA256 checksum
    */
   function calculateSHA256(data: Buffer): string {
-    const hash = crypto.createHash('sha256');
+    const hash = crypto.createHash("sha256");
     hash.update(data);
-    return hash.digest('hex');
+    return hash.digest("hex");
   }
 
   /**
@@ -35,22 +35,23 @@ describe('Property 47: Checksum mismatch warning', () => {
     if (!verified) {
       return {
         verified: false,
-        warning: '⚠️ Checksum mismatch! DO NOT install this file. The file may be corrupted or tampered with.',
-        shouldInstall: false
+        warning:
+          "⚠️ Checksum mismatch! DO NOT install this file. The file may be corrupted or tampered with.",
+        shouldInstall: false,
       };
     }
 
     return {
       verified: true,
       warning: null,
-      shouldInstall: true
+      shouldInstall: true,
     };
   }
 
   /**
    * Property: For any mismatched checksum, a warning should be generated
    */
-  it('should generate warning for any checksum mismatch', () => {
+  it("should generate warning for any checksum mismatch", () => {
     fc.assert(
       fc.property(
         fc.uint8Array({ minLength: 100, maxLength: 5000 }),
@@ -73,12 +74,12 @@ describe('Property 47: Checksum mismatch warning', () => {
 
           // Should not be verified
           expect(result.verified).toBe(false);
-          
+
           // Should have a warning
           expect(result.warning).toBeTruthy();
-          expect(result.warning).toContain('Checksum mismatch');
-          expect(result.warning).toContain('DO NOT install');
-          
+          expect(result.warning).toContain("Checksum mismatch");
+          expect(result.warning).toContain("DO NOT install");
+
           // Should not allow installation
           expect(result.shouldInstall).toBe(false);
         }
@@ -90,27 +91,24 @@ describe('Property 47: Checksum mismatch warning', () => {
   /**
    * Property: For any valid checksum, no warning should be generated
    */
-  it('should not generate warning for matching checksums', () => {
+  it("should not generate warning for matching checksums", () => {
     fc.assert(
-      fc.property(
-        fc.uint8Array({ minLength: 100, maxLength: 5000 }),
-        (content) => {
-          const data = Buffer.from(content);
-          const checksum = calculateSHA256(data);
+      fc.property(fc.uint8Array({ minLength: 100, maxLength: 5000 }), (content) => {
+        const data = Buffer.from(content);
+        const checksum = calculateSHA256(data);
 
-          // Verify with warning
-          const result = verifyWithWarning(data, checksum);
+        // Verify with warning
+        const result = verifyWithWarning(data, checksum);
 
-          // Should be verified
-          expect(result.verified).toBe(true);
-          
-          // Should not have a warning
-          expect(result.warning).toBeNull();
-          
-          // Should allow installation
-          expect(result.shouldInstall).toBe(true);
-        }
-      ),
+        // Should be verified
+        expect(result.verified).toBe(true);
+
+        // Should not have a warning
+        expect(result.warning).toBeNull();
+
+        // Should allow installation
+        expect(result.shouldInstall).toBe(true);
+      }),
       { numRuns: 100 }
     );
   });
@@ -118,7 +116,7 @@ describe('Property 47: Checksum mismatch warning', () => {
   /**
    * Property: Warning message should always indicate security risk
    */
-  it('should include security warning in mismatch message', () => {
+  it("should include security warning in mismatch message", () => {
     fc.assert(
       fc.property(
         fc.uint8Array({ minLength: 100, maxLength: 5000 }),
@@ -126,7 +124,7 @@ describe('Property 47: Checksum mismatch warning', () => {
         (content, wrongChecksum) => {
           const data = Buffer.from(content);
           const actualChecksum = calculateSHA256(data);
-          
+
           // Skip if by chance the checksums match
           fc.pre(actualChecksum !== wrongChecksum);
 
@@ -136,14 +134,14 @@ describe('Property 47: Checksum mismatch warning', () => {
           // Warning should mention security implications
           expect(result.warning).toBeTruthy();
           const warning = result.warning!.toLowerCase();
-          
+
           // Should contain security-related keywords
-          const hasSecurityKeywords = 
-            warning.includes('corrupt') ||
-            warning.includes('tamper') ||
-            warning.includes('do not install') ||
-            warning.includes('mismatch');
-          
+          const hasSecurityKeywords =
+            warning.includes("corrupt") ||
+            warning.includes("tamper") ||
+            warning.includes("do not install") ||
+            warning.includes("mismatch");
+
           expect(hasSecurityKeywords).toBe(true);
         }
       ),
@@ -154,7 +152,7 @@ describe('Property 47: Checksum mismatch warning', () => {
   /**
    * Property: Installation should be blocked for any checksum mismatch
    */
-  it('should block installation for any checksum mismatch', () => {
+  it("should block installation for any checksum mismatch", () => {
     fc.assert(
       fc.property(
         fc.uint8Array({ minLength: 100, maxLength: 5000 }),
@@ -185,7 +183,7 @@ describe('Property 47: Checksum mismatch warning', () => {
   /**
    * Property: Truncated files should trigger mismatch warning
    */
-  it('should warn about truncated files', () => {
+  it("should warn about truncated files", () => {
     fc.assert(
       fc.property(
         fc.uint8Array({ minLength: 200, maxLength: 5000 }),
@@ -214,7 +212,7 @@ describe('Property 47: Checksum mismatch warning', () => {
   /**
    * Property: Even minor corruption should trigger warning
    */
-  it('should warn about single byte corruption', () => {
+  it("should warn about single byte corruption", () => {
     fc.assert(
       fc.property(
         fc.uint8Array({ minLength: 100, maxLength: 5000 }),
@@ -244,7 +242,7 @@ describe('Property 47: Checksum mismatch warning', () => {
   /**
    * Property: Warning should be consistent for the same mismatch
    */
-  it('should generate consistent warnings for same mismatch', () => {
+  it("should generate consistent warnings for same mismatch", () => {
     fc.assert(
       fc.property(
         fc.uint8Array({ minLength: 100, maxLength: 5000 }),
@@ -252,7 +250,7 @@ describe('Property 47: Checksum mismatch warning', () => {
         (content, wrongChecksum) => {
           const data = Buffer.from(content);
           const actualChecksum = calculateSHA256(data);
-          
+
           // Skip if checksums match
           fc.pre(actualChecksum !== wrongChecksum);
 
@@ -277,29 +275,26 @@ describe('Property 47: Checksum mismatch warning', () => {
   /**
    * Property: Empty files should trigger mismatch for non-empty checksums
    */
-  it('should detect empty file corruption', () => {
+  it("should detect empty file corruption", () => {
     fc.assert(
-      fc.property(
-        fc.uint8Array({ minLength: 100, maxLength: 5000 }),
-        (content) => {
-          // Skip empty content
-          fc.pre(content.length > 0);
+      fc.property(fc.uint8Array({ minLength: 100, maxLength: 5000 }), (content) => {
+        // Skip empty content
+        fc.pre(content.length > 0);
 
-          const originalData = Buffer.from(content);
-          const originalChecksum = calculateSHA256(originalData);
+        const originalData = Buffer.from(content);
+        const originalChecksum = calculateSHA256(originalData);
 
-          // Create empty file
-          const emptyData = Buffer.from([]);
+        // Create empty file
+        const emptyData = Buffer.from([]);
 
-          // Verify with warning
-          const result = verifyWithWarning(emptyData, originalChecksum);
+        // Verify with warning
+        const result = verifyWithWarning(emptyData, originalChecksum);
 
-          // Should generate warning
-          expect(result.verified).toBe(false);
-          expect(result.warning).toBeTruthy();
-          expect(result.shouldInstall).toBe(false);
-        }
-      ),
+        // Should generate warning
+        expect(result.verified).toBe(false);
+        expect(result.warning).toBeTruthy();
+        expect(result.shouldInstall).toBe(false);
+      }),
       { numRuns: 100 }
     );
   });

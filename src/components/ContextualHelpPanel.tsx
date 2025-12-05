@@ -18,9 +18,7 @@ export const ContextualHelpPanel: React.FC<ContextualHelpPanelProps> = ({
   onClose,
   currentContext,
 }) => {
-  const [activeTab, setActiveTab] = useState<"tooltips" | "shortcuts" | "docs">(
-    "tooltips",
-  );
+  const [activeTab, setActiveTab] = useState<"tooltips" | "shortcuts" | "docs">("tooltips");
 
   if (!isOpen) return null;
 
@@ -36,9 +34,7 @@ export const ContextualHelpPanel: React.FC<ContextualHelpPanelProps> = ({
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center gap-2">
             <HelpCircle className="w-6 h-6 text-blue-600" />
-            <h2 className="text-2xl font-bold text-gray-900">
-              Help & Documentation
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900">Help & Documentation</h2>
           </div>
           <button
             onClick={onClose}
@@ -107,16 +103,11 @@ export const ContextualHelpPanel: React.FC<ContextualHelpPanelProps> = ({
                     className="p-4 bg-gray-50 rounded-lg border border-gray-200"
                     data-testid={`help-item-${key}`}
                   >
-                    <h3 className="font-semibold text-gray-900 mb-2">
-                      {tooltip.title}
-                    </h3>
-                    <p className="text-sm text-gray-700 mb-2">
-                      {tooltip.description}
-                    </p>
+                    <h3 className="font-semibold text-gray-900 mb-2">{tooltip.title}</h3>
+                    <p className="text-sm text-gray-700 mb-2">{tooltip.description}</p>
                     {tooltip.example && (
                       <div className="text-xs text-gray-600 bg-white p-2 rounded border border-gray-200">
-                        <span className="font-medium">Example:</span>{" "}
-                        {tooltip.example}
+                        <span className="font-medium">Example:</span> {tooltip.example}
                       </div>
                     )}
                   </div>
@@ -129,8 +120,7 @@ export const ContextualHelpPanel: React.FC<ContextualHelpPanelProps> = ({
             <div className="space-y-6">
               <div className="mb-4">
                 <p className="text-gray-600">
-                  Use these keyboard shortcuts to navigate PEFT Studio more
-                  efficiently
+                  Use these keyboard shortcuts to navigate PEFT Studio more efficiently
                 </p>
               </div>
 
@@ -138,34 +128,17 @@ export const ContextualHelpPanel: React.FC<ContextualHelpPanelProps> = ({
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-3">General</h3>
                   <div className="space-y-2">
-                    <ShortcutItem
-                      keys={["Ctrl", "/"]}
-                      description="Open command palette"
-                    />
-                    <ShortcutItem
-                      keys={["Ctrl", "H"]}
-                      description="Toggle this help panel"
-                    />
-                    <ShortcutItem
-                      keys={["Esc"]}
-                      description="Close dialogs and panels"
-                    />
+                    <ShortcutItem keys={["Ctrl", "/"]} description="Open command palette" />
+                    <ShortcutItem keys={["Ctrl", "H"]} description="Toggle this help panel" />
+                    <ShortcutItem keys={["Esc"]} description="Close dialogs and panels" />
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-3">
-                    Training Wizard
-                  </h3>
+                  <h3 className="font-semibold text-gray-900 mb-3">Training Wizard</h3>
                   <div className="space-y-2">
-                    <ShortcutItem
-                      keys={["Ctrl", "N"]}
-                      description="Start new training wizard"
-                    />
-                    <ShortcutItem
-                      keys={["Ctrl", "Enter"]}
-                      description="Proceed to next step"
-                    />
+                    <ShortcutItem keys={["Ctrl", "N"]} description="Start new training wizard" />
+                    <ShortcutItem keys={["Ctrl", "Enter"]} description="Proceed to next step" />
                     <ShortcutItem
                       keys={["Ctrl", "Backspace"]}
                       description="Go back to previous step"
@@ -174,46 +147,21 @@ export const ContextualHelpPanel: React.FC<ContextualHelpPanelProps> = ({
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-3">
-                    Training Monitor
-                  </h3>
+                  <h3 className="font-semibold text-gray-900 mb-3">Training Monitor</h3>
                   <div className="space-y-2">
-                    <ShortcutItem
-                      keys={["Space"]}
-                      description="Pause/Resume training"
-                    />
-                    <ShortcutItem
-                      keys={["Ctrl", "S"]}
-                      description="Save checkpoint"
-                    />
-                    <ShortcutItem
-                      keys={["Ctrl", "Q"]}
-                      description="Stop training"
-                    />
+                    <ShortcutItem keys={["Space"]} description="Pause/Resume training" />
+                    <ShortcutItem keys={["Ctrl", "S"]} description="Save checkpoint" />
+                    <ShortcutItem keys={["Ctrl", "Q"]} description="Stop training" />
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-3">
-                    Navigation
-                  </h3>
+                  <h3 className="font-semibold text-gray-900 mb-3">Navigation</h3>
                   <div className="space-y-2">
-                    <ShortcutItem
-                      keys={["Ctrl", "1"]}
-                      description="Go to Dashboard"
-                    />
-                    <ShortcutItem
-                      keys={["Ctrl", "2"]}
-                      description="Go to Training Wizard"
-                    />
-                    <ShortcutItem
-                      keys={["Ctrl", "3"]}
-                      description="Go to Inference Playground"
-                    />
-                    <ShortcutItem
-                      keys={["Ctrl", "4"]}
-                      description="Go to Preset Library"
-                    />
+                    <ShortcutItem keys={["Ctrl", "1"]} description="Go to Dashboard" />
+                    <ShortcutItem keys={["Ctrl", "2"]} description="Go to Training Wizard" />
+                    <ShortcutItem keys={["Ctrl", "3"]} description="Go to Inference Playground" />
+                    <ShortcutItem keys={["Ctrl", "4"]} description="Go to Preset Library" />
                   </div>
                 </div>
               </div>
@@ -223,9 +171,7 @@ export const ContextualHelpPanel: React.FC<ContextualHelpPanelProps> = ({
           {activeTab === "docs" && (
             <div className="space-y-4">
               <div className="mb-4">
-                <p className="text-gray-600">
-                  Access comprehensive documentation and resources
-                </p>
+                <p className="text-gray-600">Access comprehensive documentation and resources</p>
               </div>
 
               <div className="space-y-3">
@@ -288,9 +234,7 @@ export const ContextualHelpPanel: React.FC<ContextualHelpPanelProps> = ({
         <div className="p-4 border-t border-gray-200 bg-gray-50">
           <p className="text-sm text-gray-600 text-center">
             Press{" "}
-            <kbd className="px-2 py-1 bg-white border border-gray-300 rounded text-xs">
-              Ctrl+H
-            </kbd>{" "}
+            <kbd className="px-2 py-1 bg-white border border-gray-300 rounded text-xs">Ctrl+H</kbd>{" "}
             to toggle this help panel
           </p>
         </div>
@@ -336,9 +280,7 @@ const DocLink: React.FC<DocLinkProps> = ({ title, description, url }) => (
   >
     <div className="flex items-start justify-between">
       <div className="flex-1">
-        <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 mb-1">
-          {title}
-        </h3>
+        <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 mb-1">{title}</h3>
         <p className="text-sm text-gray-600">{description}</p>
       </div>
       <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-blue-600 ml-2 flex-shrink-0" />

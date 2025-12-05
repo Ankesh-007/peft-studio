@@ -1,16 +1,16 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { UpdateNotification } from '../../components/UpdateNotification';
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { UpdateNotification } from "../../components/UpdateNotification";
 
-describe('UpdateNotification', () => {
+describe("UpdateNotification", () => {
   let mockApi: any;
 
   beforeEach(() => {
     vi.useFakeTimers();
-    
+
     // Mock window.api
     mockApi = {
-      getAppVersion: vi.fn().mockResolvedValue({ version: '1.0.0' }),
+      getAppVersion: vi.fn().mockResolvedValue({ version: "1.0.0" }),
       checkForUpdates: vi.fn().mockResolvedValue({ success: true }),
       downloadUpdate: vi.fn().mockResolvedValue({ success: true }),
       installUpdate: vi.fn().mockResolvedValue({ success: true }),
@@ -24,23 +24,23 @@ describe('UpdateNotification', () => {
   });
 
   afterEach(() => {
-    vi.restoreAllTimers();
+    vi.useRealTimers();
     vi.clearAllMocks();
   });
 
-  it('should render check for updates button initially', () => {
+  it("should render check for updates button initially", () => {
     render(<UpdateNotification />);
-    expect(screen.getByText('Check for Updates')).toBeInTheDocument();
+    expect(screen.getByText("Check for Updates")).toBeInTheDocument();
   });
 
-  it('should call getAppVersion on mount', async () => {
+  it("should call getAppVersion on mount", async () => {
     render(<UpdateNotification />);
     await waitFor(() => {
       expect(mockApi.getAppVersion).toHaveBeenCalled();
     });
   });
 
-  it('should register update event listeners on mount', () => {
+  it("should register update event listeners on mount", () => {
     render(<UpdateNotification />);
     expect(mockApi.onUpdateAvailable).toHaveBeenCalled();
     expect(mockApi.onUpdateDownloadProgress).toHaveBeenCalled();
@@ -48,71 +48,71 @@ describe('UpdateNotification', () => {
     expect(mockApi.onUpdateStatus).toHaveBeenCalled();
   });
 
-  it('should show checking state when checking for updates', async () => {
+  it("should show checking state when checking for updates", async () => {
     render(<UpdateNotification />);
-    
-    const checkButton = screen.getByText('Check for Updates');
+
+    const checkButton = screen.getByText("Check for Updates");
     fireEvent.click(checkButton);
 
     await waitFor(() => {
-      expect(screen.getByText('Checking for Updates')).toBeInTheDocument();
+      expect(screen.getByText("Checking for Updates")).toBeInTheDocument();
     });
   });
 
-  it('should show update available notification', async () => {
+  it("should show update available notification", async () => {
     render(<UpdateNotification />);
 
     // Simulate update available event
     const updateAvailableCallback = mockApi.onUpdateAvailable.mock.calls[0][0];
     updateAvailableCallback({
-      version: '1.0.1',
-      releaseNotes: 'Bug fixes and improvements',
-      releaseDate: '2024-01-01'
+      version: "1.0.1",
+      releaseNotes: "Bug fixes and improvements",
+      releaseDate: "2024-01-01",
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Update Available')).toBeInTheDocument();
-      expect(screen.getByText('Version 1.0.1 is available')).toBeInTheDocument();
+      expect(screen.getByText("Update Available")).toBeInTheDocument();
+      expect(screen.getByText("Version 1.0.1 is available")).toBeInTheDocument();
     });
   });
 
-  it('should show release notes when button clicked', async () => {
+  it("should show release notes when button clicked", async () => {
     render(<UpdateNotification />);
 
     // Simulate update available event
     const updateAvailableCallback = mockApi.onUpdateAvailable.mock.calls[0][0];
     updateAvailableCallback({
-      version: '1.0.1',
-      releaseNotes: 'Bug fixes and improvements',
+      version: "1.0.1",
+      releaseNotes: "Bug fixes and improvements",
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Show Release Notes')).toBeInTheDocument();
+      expect(screen.getByText("Show Release Notes")).toBeInTheDocument();
     });
 
-    const showNotesButton = screen.getByText('Show Release Notes');
+    const showNotesButton = screen.getByText("Show Release Notes");
     fireEvent.click(showNotesButton);
 
     await waitFor(() => {
-      expect(screen.getByText('Bug fixes and improvements')).toBeInTheDocument();
-      expect(screen.getByText('Hide Release Notes')).toBeInTheDocument();
+      expect(screen.getByText("Bug fixes and improvements")).toBeInTheDocument();
+      expect(screen.getByText("Hide Release Notes")).toBeInTheDocument();
     });
   });
 
-  it('should call downloadUpdate when download button clicked', async () => {
+  it("should call downloadUpdate when download button clicked", async () => {
     render(<UpdateNotification />);
 
     // Simulate update available event
     const updateAvailableCallback = mockApi.onUpdateAvailable.mock.calls[0][0];
     updateAvailableCallback({
-      version: '1.0.1',
+      version: "1.0.1",
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Download Update')).toBeInTheDocument();
+      expect(screen.getByText("Download Update")).toBeInTheDocument();
     });
 
-    const downloadButton = screen.getByText('Download Update');
+    const downloadButton = screen.getByText("Download Update");
     fireEvent.click(downloadButton);
 
     await waitFor(() => {
@@ -120,7 +120,7 @@ describe('UpdateNotification', () => {
     });
   });
 
-  it('should show download progress', async () => {
+  it("should show download progress", async () => {
     render(<UpdateNotification />);
 
     // Simulate download progress event
@@ -129,46 +129,46 @@ describe('UpdateNotification', () => {
       percent: 45,
       bytesPerSecond: 2500000,
       transferred: 45000000,
-      total: 100000000
+      total: 100000000,
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Downloading Update')).toBeInTheDocument();
-      expect(screen.getByText('45%')).toBeInTheDocument();
+      expect(screen.getByText("Downloading Update")).toBeInTheDocument();
+      expect(screen.getByText("45%")).toBeInTheDocument();
     });
   });
 
-  it('should show update downloaded notification', async () => {
+  it("should show update downloaded notification", async () => {
     render(<UpdateNotification />);
 
     // Simulate update downloaded event
     const downloadedCallback = mockApi.onUpdateDownloaded.mock.calls[0][0];
     downloadedCallback({
-      version: '1.0.1',
-      releaseNotes: 'Bug fixes'
+      version: "1.0.1",
+      releaseNotes: "Bug fixes",
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Update Ready')).toBeInTheDocument();
+      expect(screen.getByText("Update Ready")).toBeInTheDocument();
       expect(screen.getByText(/Version 1.0.1 has been downloaded/)).toBeInTheDocument();
-      expect(screen.getByText('Install and Restart')).toBeInTheDocument();
+      expect(screen.getByText("Install and Restart")).toBeInTheDocument();
     });
   });
 
-  it('should call installUpdate when install button clicked', async () => {
+  it("should call installUpdate when install button clicked", async () => {
     render(<UpdateNotification />);
 
     // Simulate update downloaded event
     const downloadedCallback = mockApi.onUpdateDownloaded.mock.calls[0][0];
     downloadedCallback({
-      version: '1.0.1',
+      version: "1.0.1",
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Install and Restart')).toBeInTheDocument();
+      expect(screen.getByText("Install and Restart")).toBeInTheDocument();
     });
 
-    const installButton = screen.getByText('Install and Restart');
+    const installButton = screen.getByText("Install and Restart");
     fireEvent.click(installButton);
 
     await waitFor(() => {
@@ -176,122 +176,143 @@ describe('UpdateNotification', () => {
     });
   });
 
-  it('should show error state', async () => {
+  it("should show error state", async () => {
     render(<UpdateNotification />);
 
     // Simulate error event
     const statusCallback = mockApi.onUpdateStatus.mock.calls[0][0];
     statusCallback({
-      status: 'error',
-      message: 'Network error'
+      status: "error",
+      message: "Network error",
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Update Error')).toBeInTheDocument();
-      expect(screen.getByText('Network error')).toBeInTheDocument();
-      expect(screen.getByText('Try Again')).toBeInTheDocument();
+      expect(screen.getByText("Update Error")).toBeInTheDocument();
+      expect(screen.getByText("Network error")).toBeInTheDocument();
+      expect(screen.getByText("Try Again")).toBeInTheDocument();
     });
   });
 
-  it('should show not available state and auto-dismiss', async () => {
+  it("should show not available state and auto-dismiss", async () => {
     render(<UpdateNotification />);
 
     // Simulate not available event
     const statusCallback = mockApi.onUpdateStatus.mock.calls[0][0];
     statusCallback({
-      status: 'not-available'
+      status: "not-available",
     });
 
     await vi.advanceTimersByTimeAsync(100);
 
-    await waitFor(() => {
-      expect(screen.getByText('Up to Date')).toBeInTheDocument();
-    }, { timeout: 500 });
+    await waitFor(
+      () => {
+        expect(screen.getByText("Up to Date")).toBeInTheDocument();
+      },
+      { timeout: 500 }
+    );
 
     // Fast-forward time and run pending timers
     await vi.advanceTimersByTimeAsync(3000);
 
-    await waitFor(() => {
-      expect(screen.queryByText('Up to Date')).not.toBeInTheDocument();
-    }, { timeout: 500 });
+    await waitFor(
+      () => {
+        expect(screen.queryByText("Up to Date")).not.toBeInTheDocument();
+      },
+      { timeout: 500 }
+    );
   });
 
-  it('should dismiss notification when X button clicked', async () => {
+  it("should dismiss notification when X button clicked", async () => {
     render(<UpdateNotification />);
 
     // Simulate update available event
     const updateAvailableCallback = mockApi.onUpdateAvailable.mock.calls[0][0];
     updateAvailableCallback({
-      version: '1.0.1',
+      version: "1.0.1",
     });
 
     await vi.advanceTimersByTimeAsync(100);
 
-    await waitFor(() => {
-      expect(screen.getByText('Update Available')).toBeInTheDocument();
-    }, { timeout: 500 });
+    await waitFor(
+      () => {
+        expect(screen.getByText("Update Available")).toBeInTheDocument();
+      },
+      { timeout: 500 }
+    );
 
     // Find and click the X button - it's the last button in the notification
-    const buttons = screen.getAllByRole('button');
+    const buttons = screen.getAllByRole("button");
     const dismissButton = buttons[buttons.length - 1]; // X button is the last one
     fireEvent.click(dismissButton);
 
     await vi.advanceTimersByTimeAsync(100);
 
-    await waitFor(() => {
-      expect(screen.queryByText('Update Available')).not.toBeInTheDocument();
-    }, { timeout: 500 });
+    await waitFor(
+      () => {
+        expect(screen.queryByText("Update Available")).not.toBeInTheDocument();
+      },
+      { timeout: 500 }
+    );
   });
 
-  it('should format bytes correctly', async () => {
+  it("should format bytes correctly", async () => {
     render(<UpdateNotification />);
 
     // Simulate download progress with various byte sizes
     const progressCallback = mockApi.onUpdateDownloadProgress.mock.calls[0][0];
-    
+
     // Test MB formatting
     progressCallback({
       percent: 50,
       bytesPerSecond: 2500000,
       transferred: 50000000,
-      total: 100000000
+      total: 100000000,
     });
 
     await vi.advanceTimersByTimeAsync(100);
 
-    await waitFor(() => {
-      // Check that MB formatting is present (multiple elements expected)
-      const mbElements = screen.getAllByText(/MB/);
-      expect(mbElements.length).toBeGreaterThan(0);
-    }, { timeout: 500 });
+    await waitFor(
+      () => {
+        // Check that MB formatting is present (multiple elements expected)
+        const mbElements = screen.getAllByText(/MB/);
+        expect(mbElements.length).toBeGreaterThan(0);
+      },
+      { timeout: 500 }
+    );
   });
 
-  it('should handle missing window.api gracefully', () => {
+  it("should handle missing window.api gracefully", () => {
     (window as any).api = undefined;
-    
+
     expect(() => render(<UpdateNotification />)).not.toThrow();
   });
 
-  it('should show current version in update available notification', async () => {
+  it("should show current version in update available notification", async () => {
     render(<UpdateNotification />);
 
     await vi.advanceTimersByTimeAsync(100);
 
     // Wait for version to load
-    await waitFor(() => {
-      expect(mockApi.getAppVersion).toHaveBeenCalled();
-    }, { timeout: 500 });
+    await waitFor(
+      () => {
+        expect(mockApi.getAppVersion).toHaveBeenCalled();
+      },
+      { timeout: 500 }
+    );
 
     // Simulate update available event
     const updateAvailableCallback = mockApi.onUpdateAvailable.mock.calls[0][0];
     updateAvailableCallback({
-      version: '1.0.1',
+      version: "1.0.1",
     });
 
     await vi.advanceTimersByTimeAsync(100);
 
-    await waitFor(() => {
-      expect(screen.getByText('Current version: 1.0.0')).toBeInTheDocument();
-    }, { timeout: 500 });
+    await waitFor(
+      () => {
+        expect(screen.getByText("Current version: 1.0.0")).toBeInTheDocument();
+      },
+      { timeout: 500 }
+    );
   });
 });

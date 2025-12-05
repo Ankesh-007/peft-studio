@@ -1,8 +1,8 @@
 /**
  * Worker Pool Manager
- * 
+ *
  * Manages a pool of Web Workers for efficient task distribution.
- * 
+ *
  * Requirements: 14.3
  */
 
@@ -14,7 +14,7 @@ import {
   WorkerStatus,
   WorkerInfo,
   WorkerMessageType,
-} from './types';
+} from "./types";
 
 interface ManagedWorker {
   id: string;
@@ -40,7 +40,7 @@ export class WorkerPool {
       maxWorkers: config.maxWorkers || navigator.hardwareConcurrency || 4,
       idleTimeout: config.idleTimeout || 30000, // 30 seconds
       taskTimeout: config.taskTimeout || 60000, // 60 seconds
-      workerScript: config.workerScript || '/src/workers/worker.ts',
+      workerScript: config.workerScript || "/src/workers/worker.ts",
     };
 
     // Initialize with one worker
@@ -66,8 +66,8 @@ export class WorkerPool {
         timeout: timeout || this.config.taskTimeout,
       };
 
-      this.pendingTasks.set(task.id, task);
-      this.taskQueue.push(task);
+      this.pendingTasks.set(task.id, task as any);
+      this.taskQueue.push(task as any);
       this.processQueue();
 
       // Set timeout
@@ -133,12 +133,9 @@ export class WorkerPool {
    */
   private createWorker(): ManagedWorker {
     const id = `worker-${this.nextWorkerId++}`;
-    
+
     // Create worker with module type
-    const worker = new Worker(
-      new URL('./worker.ts', import.meta.url),
-      { type: 'module' }
-    );
+    const worker = new Worker(new URL("./worker.ts", import.meta.url), { type: "module" });
 
     const managedWorker: ManagedWorker = {
       id,
@@ -152,17 +149,17 @@ export class WorkerPool {
     };
 
     // Handle messages from worker
-    worker.addEventListener('message', (event: MessageEvent<WorkerResponse>) => {
+    worker.addEventListener("message", (event: MessageEvent<WorkerResponse>) => {
       this.handleWorkerResponse(managedWorker, event.data);
     });
 
     // Handle errors
-    worker.addEventListener('error', (event: ErrorEvent) => {
+    worker.addEventListener("error", (event: ErrorEvent) => {
       this.handleWorkerError(managedWorker, event);
     });
 
     // Handle message errors
-    worker.addEventListener('messageerror', (event: MessageEvent) => {
+    worker.addEventListener("messageerror", (event: MessageEvent) => {
       console.error(`Worker ${id} message error:`, event);
       managedWorker.status = WorkerStatus.ERROR;
     });
@@ -178,7 +175,7 @@ export class WorkerPool {
    */
   private handleWorkerResponse(managedWorker: ManagedWorker, response: WorkerResponse) {
     const task = this.pendingTasks.get(response.id);
-    
+
     if (!task) {
       console.warn(`Received response for unknown task: ${response.id}`);
       return;
@@ -189,7 +186,7 @@ export class WorkerPool {
     if (response.success) {
       task.resolve(response.result);
     } else {
-      task.reject(new Error(response.error || 'Worker task failed'));
+      task.reject(new Error(response.error || "Worker task failed"));
     }
 
     // Update worker status
@@ -269,7 +266,7 @@ export class WorkerPool {
    */
   getStats() {
     const workers = Array.from(this.workers.values());
-    
+
     return {
       totalWorkers: workers.length,
       idleWorkers: workers.filter((w) => w.status === WorkerStatus.IDLE).length,
@@ -301,7 +298,7 @@ export class WorkerPool {
   destroy() {
     // Reject all pending tasks
     for (const task of this.pendingTasks.values()) {
-      task.reject(new Error('Worker pool destroyed'));
+      task.reject(new Error("Worker pool destroyed"));
     }
     this.pendingTasks.clear();
 
@@ -313,7 +310,7 @@ export class WorkerPool {
       this.terminateWorker(managedWorker);
     }
 
-    console.log('Worker pool destroyed');
+    console.log("Worker pool destroyed");
   }
 
   /**

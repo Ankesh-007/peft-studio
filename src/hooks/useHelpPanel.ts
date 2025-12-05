@@ -5,9 +5,7 @@ import { useState, useEffect } from "react";
  */
 export function useHelpPanel() {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [currentContext, setCurrentContext] = useState<string | undefined>(
-    undefined,
-  );
+  const [currentContext, setCurrentContext] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

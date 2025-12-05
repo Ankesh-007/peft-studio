@@ -42,11 +42,7 @@ interface PausedRunDisplayProps {
   onStop?: (jobId: string) => void;
 }
 
-const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
-  pausedRun,
-  onResume,
-  onStop,
-}) => {
+const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({ pausedRun, onResume, onStop }) => {
   const formatTimestamp = (isoString: string) => {
     const date = new Date(isoString);
     return date.toLocaleString();
@@ -62,19 +58,13 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
 
   const getAverageGPUUtilization = () => {
     if (!pausedRun.resource_usage.gpu_utilization.length) return 0;
-    const sum = pausedRun.resource_usage.gpu_utilization.reduce(
-      (a, b) => a + b,
-      0,
-    );
+    const sum = pausedRun.resource_usage.gpu_utilization.reduce((a, b) => a + b, 0);
     return sum / pausedRun.resource_usage.gpu_utilization.length;
   };
 
   const getAverageGPUMemory = () => {
     if (!pausedRun.resource_usage.gpu_memory_used.length) return 0;
-    const sum = pausedRun.resource_usage.gpu_memory_used.reduce(
-      (a, b) => a + b,
-      0,
-    );
+    const sum = pausedRun.resource_usage.gpu_memory_used.reduce((a, b) => a + b, 0);
     return sum / pausedRun.resource_usage.gpu_memory_used.length;
   };
 
@@ -93,9 +83,7 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
                 PAUSED
               </span>
             </div>
-            <p className="text-body text-dark-text-secondary">
-              Job ID: {pausedRun.job_id}
-            </p>
+            <p className="text-body text-dark-text-secondary">Job ID: {pausedRun.job_id}</p>
           </div>
         </div>
 
@@ -123,13 +111,9 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
         <div className="card bg-dark-bg-tertiary">
           <div className="flex items-center gap-12 mb-12">
             <Clock size={20} className="text-accent-primary" />
-            <span className="text-small text-dark-text-secondary">
-              Elapsed Time
-            </span>
+            <span className="text-small text-dark-text-secondary">Elapsed Time</span>
           </div>
-          <div className="text-h2 font-bold">
-            {formatDuration(pausedRun.elapsed_time)}
-          </div>
+          <div className="text-h2 font-bold">{formatDuration(pausedRun.elapsed_time)}</div>
           <div className="text-tiny text-dark-text-tertiary mt-4">
             Since {formatTimestamp(pausedRun.started_at)}
           </div>
@@ -138,28 +122,20 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
         <div className="card bg-dark-bg-tertiary">
           <div className="flex items-center gap-12 mb-12">
             <Zap size={20} className="text-accent-info" />
-            <span className="text-small text-dark-text-secondary">
-              Remaining Time
-            </span>
+            <span className="text-small text-dark-text-secondary">Remaining Time</span>
           </div>
           <div className="text-h2 font-bold">
             {formatDuration(pausedRun.remaining_time_estimate)}
           </div>
-          <div className="text-tiny text-dark-text-tertiary mt-4">
-            Estimated
-          </div>
+          <div className="text-tiny text-dark-text-tertiary mt-4">Estimated</div>
         </div>
 
         <div className="card bg-dark-bg-tertiary">
           <div className="flex items-center gap-12 mb-12">
             <Calendar size={20} className="text-accent-warning" />
-            <span className="text-small text-dark-text-secondary">
-              Paused At
-            </span>
+            <span className="text-small text-dark-text-secondary">Paused At</span>
           </div>
-          <div className="text-body font-medium">
-            {formatTimestamp(pausedRun.paused_at)}
-          </div>
+          <div className="text-body font-medium">{formatTimestamp(pausedRun.paused_at)}</div>
           <div className="text-tiny text-dark-text-tertiary mt-4">
             {new Date(pausedRun.paused_at).toLocaleDateString()}
           </div>
@@ -172,21 +148,15 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
         <div className="grid grid-cols-3 gap-16">
           <div className="flex items-center justify-between p-16 bg-dark-bg-tertiary rounded-lg">
             <div>
-              <div className="text-small text-dark-text-secondary mb-4">
-                Current Step
-              </div>
-              <div className="text-h2 font-bold">
-                {pausedRun.current_step.toLocaleString()}
-              </div>
+              <div className="text-small text-dark-text-secondary mb-4">Current Step</div>
+              <div className="text-h2 font-bold">{pausedRun.current_step.toLocaleString()}</div>
             </div>
             <TrendingUp size={24} className="text-accent-primary opacity-50" />
           </div>
 
           <div className="flex items-center justify-between p-16 bg-dark-bg-tertiary rounded-lg">
             <div>
-              <div className="text-small text-dark-text-secondary mb-4">
-                Current Epoch
-              </div>
+              <div className="text-small text-dark-text-secondary mb-4">Current Epoch</div>
               <div className="text-h2 font-bold">{pausedRun.current_epoch}</div>
             </div>
             <TrendingUp size={24} className="text-accent-info opacity-50" />
@@ -194,12 +164,8 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
 
           <div className="flex items-center justify-between p-16 bg-dark-bg-tertiary rounded-lg">
             <div>
-              <div className="text-small text-dark-text-secondary mb-4">
-                Current Loss
-              </div>
-              <div className="text-h2 font-bold">
-                {pausedRun.current_loss.toFixed(4)}
-              </div>
+              <div className="text-small text-dark-text-secondary mb-4">Current Loss</div>
+              <div className="text-h2 font-bold">{pausedRun.current_loss.toFixed(4)}</div>
             </div>
             <TrendingUp size={24} className="text-accent-success opacity-50" />
           </div>
@@ -222,12 +188,8 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
                 {pausedRun.resource_usage.gpu_utilization.map((util, index) => (
                   <div key={index}>
                     <div className="flex items-center justify-between mb-4">
-                      <span className="text-small text-dark-text-secondary">
-                        GPU {index}
-                      </span>
-                      <span className="text-small font-medium">
-                        {util.toFixed(1)}%
-                      </span>
+                      <span className="text-small text-dark-text-secondary">GPU {index}</span>
+                      <span className="text-small font-medium">{util.toFixed(1)}%</span>
                     </div>
                     <div className="h-8 bg-dark-bg-primary rounded-full overflow-hidden">
                       <div
@@ -237,7 +199,7 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
                             ? "bg-accent-error"
                             : util > 70
                               ? "bg-accent-warning"
-                              : "bg-accent-success",
+                              : "bg-accent-success"
                         )}
                         style={{ width: `${util}%` }}
                       />
@@ -246,9 +208,7 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
                 ))}
                 <div className="pt-12 border-t border-dark-border">
                   <div className="flex items-center justify-between">
-                    <span className="text-small text-dark-text-secondary">
-                      Average
-                    </span>
+                    <span className="text-small text-dark-text-secondary">Average</span>
                     <span className="text-body font-bold">
                       {getAverageGPUUtilization().toFixed(1)}%
                     </span>
@@ -256,9 +216,7 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="text-small text-dark-text-tertiary">
-                No GPU data available
-              </div>
+              <div className="text-small text-dark-text-tertiary">No GPU data available</div>
             )}
           </div>
 
@@ -271,33 +229,25 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
 
             {pausedRun.resource_usage.gpu_memory_used.length > 0 ? (
               <div className="space-y-12">
-                {pausedRun.resource_usage.gpu_memory_used.map(
-                  (memory, index) => (
-                    <div key={index}>
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-small text-dark-text-secondary">
-                          GPU {index}
-                        </span>
-                        <span className="text-small font-medium">
-                          {formatBytes(memory)}
-                        </span>
-                      </div>
-                      <div className="h-8 bg-dark-bg-primary rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-accent-info to-accent-primary transition-all"
-                          style={{
-                            width: `${Math.min((memory / (80 * 1024 * 1024 * 1024)) * 100, 100)}%`,
-                          }}
-                        />
-                      </div>
+                {pausedRun.resource_usage.gpu_memory_used.map((memory, index) => (
+                  <div key={index}>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-small text-dark-text-secondary">GPU {index}</span>
+                      <span className="text-small font-medium">{formatBytes(memory)}</span>
                     </div>
-                  ),
-                )}
+                    <div className="h-8 bg-dark-bg-primary rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-accent-info to-accent-primary transition-all"
+                        style={{
+                          width: `${Math.min((memory / (80 * 1024 * 1024 * 1024)) * 100, 100)}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
                 <div className="pt-12 border-t border-dark-border">
                   <div className="flex items-center justify-between">
-                    <span className="text-small text-dark-text-secondary">
-                      Average
-                    </span>
+                    <span className="text-small text-dark-text-secondary">Average</span>
                     <span className="text-body font-bold">
                       {formatBytes(getAverageGPUMemory())}
                     </span>
@@ -305,9 +255,7 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="text-small text-dark-text-tertiary">
-                No GPU memory data available
-              </div>
+              <div className="text-small text-dark-text-tertiary">No GPU memory data available</div>
             )}
           </div>
 
@@ -330,7 +278,7 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
                     ? "bg-accent-error"
                     : pausedRun.resource_usage.cpu_utilization > 70
                       ? "bg-accent-warning"
-                      : "bg-accent-success",
+                      : "bg-accent-success"
                 )}
                 style={{
                   width: `${pausedRun.resource_usage.cpu_utilization}%`,
@@ -369,22 +317,14 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
           <div className="grid grid-cols-2 gap-16">
             {pausedRun.model_name && (
               <div>
-                <div className="text-small text-dark-text-secondary mb-4">
-                  Model
-                </div>
-                <div className="text-body font-medium">
-                  {pausedRun.model_name}
-                </div>
+                <div className="text-small text-dark-text-secondary mb-4">Model</div>
+                <div className="text-body font-medium">{pausedRun.model_name}</div>
               </div>
             )}
             {pausedRun.dataset_name && (
               <div>
-                <div className="text-small text-dark-text-secondary mb-4">
-                  Dataset
-                </div>
-                <div className="text-body font-medium">
-                  {pausedRun.dataset_name}
-                </div>
+                <div className="text-small text-dark-text-secondary mb-4">Dataset</div>
+                <div className="text-body font-medium">{pausedRun.dataset_name}</div>
               </div>
             )}
           </div>
@@ -396,13 +336,11 @@ const PausedRunDisplay: React.FC<PausedRunDisplayProps> = ({
         <div className="flex items-start gap-12">
           <div className="text-accent-info mt-2">ℹ️</div>
           <div>
-            <div className="text-body font-medium text-accent-info mb-4">
-              Training Paused
-            </div>
+            <div className="text-body font-medium text-accent-info mb-4">Training Paused</div>
             <p className="text-small text-dark-text-secondary">
-              This training run has been paused and can be resumed at any time.
-              All progress has been saved, and GPU resources have been released.
-              Click &quot;Resume Training&quot; to continue from where you left off.
+              This training run has been paused and can be resumed at any time. All progress has
+              been saved, and GPU resources have been released. Click &quot;Resume Training&quot; to
+              continue from where you left off.
             </p>
           </div>
         </div>

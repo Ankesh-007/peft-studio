@@ -1,9 +1,9 @@
 /**
  * Performance Utilities
- * 
+ *
  * Utilities for performance monitoring, profiling, and optimization.
  * Implements requestAnimationFrame for smooth animations and performance tracking.
- * 
+ *
  * Requirements: 14.3
  */
 
@@ -18,18 +18,18 @@ export class PerformanceMonitor {
 
   private initializeObservers() {
     // Monitor long tasks
-    if ('PerformanceObserver' in window) {
+    if ("PerformanceObserver" in window) {
       try {
         const longTaskObserver = new PerformanceObserver((list) => {
           for (const entry of list.getEntries()) {
-            console.warn('Long task detected:', {
+            console.warn("Long task detected:", {
               duration: entry.duration,
               startTime: entry.startTime,
-              name: entry.name
+              name: entry.name,
             });
           }
         });
-        longTaskObserver.observe({ entryTypes: ['longtask'] });
+        longTaskObserver.observe({ entryTypes: ["longtask"] });
         this.observers.push(longTaskObserver);
       } catch {
         // longtask not supported in all browsers
@@ -39,15 +39,19 @@ export class PerformanceMonitor {
       try {
         const layoutShiftObserver = new PerformanceObserver((list) => {
           for (const entry of list.getEntries()) {
-            const cls = entry as PerformanceEntry & { value: number; sources: unknown[]; hadRecentInput: boolean };
+            const cls = entry as PerformanceEntry & {
+              value: number;
+              sources: unknown[];
+              hadRecentInput: boolean;
+            };
             if (cls.hadRecentInput) continue;
-            console.warn('Layout shift detected:', {
+            console.warn("Layout shift detected:", {
               value: cls.value,
-              sources: cls.sources
+              sources: cls.sources,
             });
           }
         });
-        layoutShiftObserver.observe({ entryTypes: ['layout-shift'] });
+        layoutShiftObserver.observe({ entryTypes: ["layout-shift"] });
         this.observers.push(layoutShiftObserver);
       } catch {
         // layout-shift not supported in all browsers
@@ -62,13 +66,14 @@ export class PerformanceMonitor {
     const start = performance.now();
     const result = fn();
     const duration = performance.now() - start;
-    
+
     this.recordMetric(name, duration);
-    
-    if (duration > 16.67) { // More than one frame (60fps)
+
+    if (duration > 16.67) {
+      // More than one frame (60fps)
       console.warn(`Slow operation: ${name} took ${duration.toFixed(2)}ms`);
     }
-    
+
     return result;
   }
 
@@ -79,13 +84,13 @@ export class PerformanceMonitor {
     const start = performance.now();
     const result = await fn();
     const duration = performance.now() - start;
-    
+
     this.recordMetric(name, duration);
-    
+
     if (duration > 100) {
       console.warn(`Slow async operation: ${name} took ${duration.toFixed(2)}ms`);
     }
-    
+
     return result;
   }
 
@@ -95,7 +100,7 @@ export class PerformanceMonitor {
     }
     const metrics = this.metrics.get(name)!;
     metrics.push(duration);
-    
+
     // Keep only last 100 measurements
     if (metrics.length > 100) {
       metrics.shift();
@@ -113,7 +118,7 @@ export class PerformanceMonitor {
 
     const sorted = [...metrics].sort((a, b) => a - b);
     const sum = metrics.reduce((a, b) => a + b, 0);
-    
+
     return {
       count: metrics.length,
       avg: sum / metrics.length,
@@ -121,7 +126,7 @@ export class PerformanceMonitor {
       max: sorted[sorted.length - 1],
       p50: sorted[Math.floor(sorted.length * 0.5)],
       p95: sorted[Math.floor(sorted.length * 0.95)],
-      p99: sorted[Math.floor(sorted.length * 0.99)]
+      p99: sorted[Math.floor(sorted.length * 0.99)],
     };
   }
 
@@ -147,7 +152,7 @@ export class PerformanceMonitor {
    * Cleanup observers
    */
   destroy() {
-    this.observers.forEach(observer => observer.disconnect());
+    this.observers.forEach((observer) => observer.disconnect());
     this.observers = [];
   }
 }
@@ -167,7 +172,7 @@ export class AnimationScheduler {
    */
   schedule(callback: (timestamp: number) => void): () => void {
     this.callbacks.add(callback);
-    
+
     if (!this.rafId) {
       this.rafId = requestAnimationFrame(this.tick);
     }
@@ -184,11 +189,11 @@ export class AnimationScheduler {
 
   private tick = (timestamp: number) => {
     // Execute all callbacks
-    this.callbacks.forEach(callback => {
+    this.callbacks.forEach((callback) => {
       try {
         callback(timestamp);
       } catch (error) {
-        console.error('Animation callback error:', error);
+        console.error("Animation callback error:", error);
       }
     });
 
@@ -227,7 +232,7 @@ export function throttleRAF<T extends (...args: any[]) => void>(
 
   return (...args: Parameters<T>) => {
     lastArgs = args;
-    
+
     if (rafId === null) {
       rafId = requestAnimationFrame(() => {
         if (lastArgs) {
@@ -254,7 +259,7 @@ export function debounceRAF<T extends (...args: any[]) => void>(
 
   const tick = () => {
     frameCount++;
-    
+
     if (frameCount >= frames) {
       if (lastArgs) {
         callback(...lastArgs);
@@ -270,7 +275,7 @@ export function debounceRAF<T extends (...args: any[]) => void>(
   return (...args: Parameters<T>) => {
     lastArgs = args;
     frameCount = 0;
-    
+
     if (rafId === null) {
       rafId = requestAnimationFrame(tick);
     }
@@ -293,14 +298,13 @@ export function smoothScroll(
     const tick = (currentTime: number) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       // Easing function (ease-in-out)
-      const eased = progress < 0.5
-        ? 2 * progress * progress
-        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-      
+      const eased =
+        progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
       element.scrollTop = startY + distance * eased;
-      
+
       if (progress < 1) {
         requestAnimationFrame(tick);
       } else {
@@ -346,21 +350,21 @@ export class DOMBatcher {
 
   private flush() {
     // Execute all reads first
-    this.readCallbacks.forEach(callback => {
+    this.readCallbacks.forEach((callback) => {
       try {
         callback();
       } catch (error) {
-        console.error('DOM read error:', error);
+        console.error("DOM read error:", error);
       }
     });
     this.readCallbacks.clear();
 
     // Then execute all writes
-    this.writeCallbacks.forEach(callback => {
+    this.writeCallbacks.forEach((callback) => {
       try {
         callback();
       } catch (error) {
-        console.error('DOM write error:', error);
+        console.error("DOM write error:", error);
       }
     });
     this.writeCallbacks.clear();
@@ -388,15 +392,15 @@ export class FPSCounter {
 
   private tick = (timestamp: number) => {
     this.frames.push(timestamp);
-    
+
     // Keep only last second of frames
     const oneSecondAgo = timestamp - 1000;
-    this.frames = this.frames.filter(t => t > oneSecondAgo);
-    
+    this.frames = this.frames.filter((t) => t > oneSecondAgo);
+
     if (this.callback) {
       this.callback(this.frames.length);
     }
-    
+
     this.rafId = requestAnimationFrame(this.tick);
   };
 
@@ -414,13 +418,17 @@ export class FPSCounter {
  * Memory usage tracker
  */
 export function getMemoryUsage() {
-  if ('memory' in performance) {
-    const memory = (performance as Performance & { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
+  if ("memory" in performance) {
+    const memory = (
+      performance as Performance & {
+        memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number };
+      }
+    ).memory;
     return {
       usedJSHeapSize: memory.usedJSHeapSize,
       totalJSHeapSize: memory.totalJSHeapSize,
       jsHeapSizeLimit: memory.jsHeapSizeLimit,
-      usedPercent: (memory.usedJSHeapSize / memory.jsHeapSizeLimit) * 100
+      usedPercent: (memory.usedJSHeapSize / memory.jsHeapSizeLimit) * 100,
     };
   }
   return null;
@@ -430,30 +438,30 @@ export function getMemoryUsage() {
  * Log performance metrics to console
  */
 export function logPerformanceMetrics() {
-  console.group('Performance Metrics');
-  
+  console.group("Performance Metrics");
+
   // Navigation timing
   if (performance.timing) {
     const timing = performance.timing;
-    console.log('Page Load:', timing.loadEventEnd - timing.navigationStart, 'ms');
-    console.log('DOM Ready:', timing.domContentLoadedEventEnd - timing.navigationStart, 'ms');
+    console.log("Page Load:", timing.loadEventEnd - timing.navigationStart, "ms");
+    console.log("DOM Ready:", timing.domContentLoadedEventEnd - timing.navigationStart, "ms");
   }
 
   // Memory usage
   const memory = getMemoryUsage();
   if (memory) {
-    console.log('Memory Usage:', {
+    console.log("Memory Usage:", {
       used: `${(memory.usedJSHeapSize / 1024 / 1024).toFixed(2)} MB`,
       total: `${(memory.totalJSHeapSize / 1024 / 1024).toFixed(2)} MB`,
       limit: `${(memory.jsHeapSizeLimit / 1024 / 1024).toFixed(2)} MB`,
-      percent: `${memory.usedPercent.toFixed(2)}%`
+      percent: `${memory.usedPercent.toFixed(2)}%`,
     });
   }
 
   // Custom metrics
   const stats = performanceMonitor.getAllStats();
   if (Object.keys(stats).length > 0) {
-    console.log('Custom Metrics:', stats);
+    console.log("Custom Metrics:", stats);
   }
 
   console.groupEnd();

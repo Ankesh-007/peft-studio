@@ -6,7 +6,7 @@
 
 Professional desktop application for Parameter-Efficient Fine-Tuning (PEFT) of Large Language Models.
 
-📦 **[Download Installers](https://github.com/Ankesh-007/peft-studio/releases/latest)** | 📚 **[Documentation](docs/README.md)** | 🔨 **[Build Guide](BUILDING.md)** | 🚀 **[Quick Start](QUICKSTART.md)**
+📦 **[Download Installers](https://github.com/Ankesh-007/peft-studio/releases/latest)** | 📚 **[Documentation](docs/README.md)** | 🔨 **[Build Guide](docs/BUILDING.md)** | 🚀 **[Quick Start](docs/QUICKSTART.md)**
 
 ## ✨ Features
 
@@ -168,7 +168,7 @@ Use our comprehensive build script that handles testing, building, and deploymen
 ./scripts/test-build-deploy.sh --skip-tests --platform "linux"
 ```
 
-**See [BUILDING.md](BUILDING.md) for detailed build instructions.**
+**See [BUILDING.md](docs/BUILDING.md) for detailed build instructions.**
 
 #### Manual Build
 
@@ -192,7 +192,7 @@ npm run package:linux    # Linux
 
 The installers will be created in the `release/` directory.
 
-**For comprehensive build documentation, see [BUILDING.md](BUILDING.md).**
+**For comprehensive build documentation, see [BUILDING.md](docs/BUILDING.md).**
 
 ### Automated Builds
 
@@ -438,13 +438,13 @@ npm run build:mac    # macOS
 npm run build:linux  # Linux
 ```
 
-For detailed development instructions, see [DEVELOPMENT.md](DEVELOPMENT.md).
+For detailed development instructions, see [DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
 ### Creating Releases
 
 For maintainers creating releases:
 
-- **[Release Guide](RELEASE_GUIDE.md)** - Quick reference for creating releases
+- **[Release Guide](docs/RELEASE_GUIDE.md)** - Quick reference for creating releases
 - **[Complete Release Process](docs/developer-guide/release-process.md)** - Full release workflow documentation
 - **[Step-by-Step Guide](docs/developer-guide/release-step-by-step.md)** - Detailed release instructions
 - **[Scripts Reference](docs/developer-guide/release-scripts-reference.md)** - All release script options
@@ -492,7 +492,7 @@ For general questions, discussions, or community interaction:
   - **General** - Everything else related to PEFT Studio
 
 ### 🔒 Security Issues
-Found a security vulnerability? Please **do not** open a public issue. Instead, see our [Security Policy](SECURITY.md) for responsible disclosure instructions.
+Found a security vulnerability? Please **do not** open a public issue. Instead, see our [Security Policy](docs/SECURITY.md) for responsible disclosure instructions.
 
 ### 📧 Direct Support
 For private inquiries or partnership opportunities, you can reach out through:
@@ -541,7 +541,7 @@ We welcome contributions! Please see our [Contributing Guidelines](docs/CONTRIBU
 
 ### Roadmap
 
-See our [detailed roadmap](ROADMAP.md) for planned features and improvements.
+See our [detailed roadmap](docs/ROADMAP.md) for planned features and improvements.
 
 **Coming in v1.1.0 (Q1 2025):**
 - 🔄 Enhanced model comparison tools with side-by-side analysis
@@ -560,8 +560,8 @@ Want to influence the roadmap? Share your ideas in [GitHub Discussions](https://
 ## 🔗 Links
 
 - **Documentation**: [docs/README.md](docs/README.md)
-- **Quick Start**: [QUICKSTART.md](QUICKSTART.md)
-- **Development Guide**: [DEVELOPMENT.md](DEVELOPMENT.md)
+- **Quick Start**: [QUICKSTART.md](docs/QUICKSTART.md)
+- **Development Guide**: [DEVELOPMENT.md](docs/DEVELOPMENT.md)
 - **GitHub Issues**: [Report bugs or request features](https://github.com/Ankesh-007/peft-studio/issues)
 - **Discussions**: [Community forum](https://github.com/Ankesh-007/peft-studio/discussions)
 

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Download, X, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Download, X, AlertCircle, CheckCircle, Loader2 } from "lucide-react";
 
 interface UpdateInfo {
   version: string;
@@ -16,12 +16,12 @@ interface DownloadProgress {
 }
 
 type UpdateState =
-  | 'checking'
-  | 'available'
-  | 'downloading'
-  | 'downloaded'
-  | 'not-available'
-  | 'error'
+  | "checking"
+  | "available"
+  | "downloading"
+  | "downloaded"
+  | "not-available"
+  | "error"
   | null;
 
 export const UpdateNotification: React.FC = () => {
@@ -31,7 +31,7 @@ export const UpdateNotification: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [errorType, setErrorType] = useState<string | null>(null);
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
-  const [currentVersion, setCurrentVersion] = useState<string>('');
+  const [currentVersion, setCurrentVersion] = useState<string>("");
 
   useEffect(() => {
     // Get current app version
@@ -44,33 +44,33 @@ export const UpdateNotification: React.FC = () => {
     // Listen for update events
     if (window.api?.onUpdateAvailable) {
       window.api.onUpdateAvailable((info: UpdateInfo) => {
-        setUpdateState('available');
+        setUpdateState("available");
         setUpdateInfo(info);
       });
     }
 
     if (window.api?.onUpdateDownloadProgress) {
       window.api.onUpdateDownloadProgress((progress: DownloadProgress) => {
-        setUpdateState('downloading');
+        setUpdateState("downloading");
         setDownloadProgress(progress);
       });
     }
 
     if (window.api?.onUpdateDownloaded) {
       window.api.onUpdateDownloaded((info: UpdateInfo) => {
-        setUpdateState('downloaded');
+        setUpdateState("downloaded");
         setUpdateInfo(info);
       });
     }
 
     if (window.api?.onUpdateStatus) {
       window.api.onUpdateStatus((data: { status: string; message?: string; type?: string }) => {
-        if (data.status === 'error') {
-          setUpdateState('error');
-          setError(data.message || 'An error occurred while checking for updates');
+        if (data.status === "error") {
+          setUpdateState("error");
+          setError(data.message || "An error occurred while checking for updates");
           setErrorType(data.type || null);
-        } else if (data.status === 'not-available') {
-          setUpdateState('not-available');
+        } else if (data.status === "not-available") {
+          setUpdateState("not-available");
           // Auto-hide after 3 seconds
           setTimeout(() => setUpdateState(null), 3000);
         }
@@ -79,11 +79,15 @@ export const UpdateNotification: React.FC = () => {
 
     // Listen for checksum verification failures
     if (window.api?.onUpdateChecksumFailed) {
-      window.api.onUpdateChecksumFailed((data: { expected: string; actual: string; file: string }) => {
-        setUpdateState('error');
-        setError(`Checksum verification failed for ${data.file}. Expected: ${data.expected}, Got: ${data.actual}`);
-        setErrorType('checksum-mismatch');
-      });
+      window.api.onUpdateChecksumFailed(
+        (data: { expected: string; actual: string; file: string }) => {
+          setUpdateState("error");
+          setError(
+            `Checksum verification failed for ${data.file}. Expected: ${data.expected}, Got: ${data.actual}`
+          );
+          setErrorType("checksum-mismatch");
+        }
+      );
     }
   }, []);
 
@@ -91,11 +95,11 @@ export const UpdateNotification: React.FC = () => {
     if (!window.api?.downloadUpdate) return;
 
     try {
-      setUpdateState('downloading');
+      setUpdateState("downloading");
       await window.api.downloadUpdate();
     } catch {
-      setError('Failed to download update');
-      setUpdateState('error');
+      setError("Failed to download update");
+      setUpdateState("error");
     }
   };
 
@@ -105,8 +109,8 @@ export const UpdateNotification: React.FC = () => {
     try {
       await window.api.installUpdate();
     } catch {
-      setError('Failed to install update');
-      setUpdateState('error');
+      setError("Failed to install update");
+      setUpdateState("error");
     }
   };
 
@@ -114,12 +118,12 @@ export const UpdateNotification: React.FC = () => {
     if (!window.api?.checkForUpdates) return;
 
     try {
-      setUpdateState('checking');
+      setUpdateState("checking");
       setError(null);
       await window.api.checkForUpdates();
     } catch {
-      setError('Failed to check for updates');
-      setUpdateState('error');
+      setError("Failed to check for updates");
+      setUpdateState("error");
     }
   };
 
@@ -129,15 +133,15 @@ export const UpdateNotification: React.FC = () => {
   };
 
   const formatBytes = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   };
 
   const formatSpeed = (bytesPerSecond: number): string => {
-    return formatBytes(bytesPerSecond) + '/s';
+    return formatBytes(bytesPerSecond) + "/s";
   };
 
   if (!updateState) {
@@ -157,7 +161,7 @@ export const UpdateNotification: React.FC = () => {
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
-            {updateState === 'checking' && (
+            {updateState === "checking" && (
               <>
                 <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />
                 <h3 className="font-semibold text-gray-900 dark:text-white">
@@ -165,44 +169,34 @@ export const UpdateNotification: React.FC = () => {
                 </h3>
               </>
             )}
-            {updateState === 'available' && (
+            {updateState === "available" && (
               <>
                 <Download className="w-5 h-5 text-blue-500" />
-                <h3 className="font-semibold text-gray-900 dark:text-white">
-                  Update Available
-                </h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Update Available</h3>
               </>
             )}
-            {updateState === 'downloading' && (
+            {updateState === "downloading" && (
               <>
                 <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />
-                <h3 className="font-semibold text-gray-900 dark:text-white">
-                  Downloading Update
-                </h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Downloading Update</h3>
               </>
             )}
-            {updateState === 'downloaded' && (
+            {updateState === "downloaded" && (
               <>
                 <CheckCircle className="w-5 h-5 text-green-500" />
-                <h3 className="font-semibold text-gray-900 dark:text-white">
-                  Update Ready
-                </h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Update Ready</h3>
               </>
             )}
-            {updateState === 'not-available' && (
+            {updateState === "not-available" && (
               <>
                 <CheckCircle className="w-5 h-5 text-green-500" />
-                <h3 className="font-semibold text-gray-900 dark:text-white">
-                  Up to Date
-                </h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Up to Date</h3>
               </>
             )}
-            {updateState === 'error' && (
+            {updateState === "error" && (
               <>
                 <AlertCircle className="w-5 h-5 text-red-500" />
-                <h3 className="font-semibold text-gray-900 dark:text-white">
-                  Update Error
-                </h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Update Error</h3>
               </>
             )}
           </div>
@@ -216,13 +210,11 @@ export const UpdateNotification: React.FC = () => {
 
         {/* Content */}
         <div className="space-y-3">
-          {updateState === 'checking' && (
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Checking for new versions...
-            </p>
+          {updateState === "checking" && (
+            <p className="text-sm text-gray-600 dark:text-gray-400">Checking for new versions...</p>
           )}
 
-          {updateState === 'available' && updateInfo && (
+          {updateState === "available" && updateInfo && (
             <>
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 <p>Version {updateInfo.version} is available</p>
@@ -236,15 +228,13 @@ export const UpdateNotification: React.FC = () => {
                   onClick={() => setShowReleaseNotes(!showReleaseNotes)}
                   className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                 >
-                  {showReleaseNotes ? 'Hide' : 'Show'} Release Notes
+                  {showReleaseNotes ? "Hide" : "Show"} Release Notes
                 </button>
               )}
 
               {showReleaseNotes && updateInfo.releaseNotes && (
                 <div className="bg-gray-50 dark:bg-gray-900 rounded p-3 text-sm text-gray-700 dark:text-gray-300 max-h-48 overflow-y-auto">
-                  <pre className="whitespace-pre-wrap font-sans">
-                    {updateInfo.releaseNotes}
-                  </pre>
+                  <pre className="whitespace-pre-wrap font-sans">{updateInfo.releaseNotes}</pre>
                 </div>
               )}
 
@@ -257,7 +247,7 @@ export const UpdateNotification: React.FC = () => {
             </>
           )}
 
-          {updateState === 'downloading' && downloadProgress && (
+          {updateState === "downloading" && downloadProgress && (
             <>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
@@ -278,7 +268,7 @@ export const UpdateNotification: React.FC = () => {
             </>
           )}
 
-          {updateState === 'downloaded' && updateInfo && (
+          {updateState === "downloaded" && updateInfo && (
             <>
               <div className="space-y-2">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -300,27 +290,34 @@ export const UpdateNotification: React.FC = () => {
             </>
           )}
 
-          {updateState === 'not-available' && (
+          {updateState === "not-available" && (
             <p className="text-sm text-gray-600 dark:text-gray-400">
               You&apos;re running the latest version ({currentVersion})
             </p>
           )}
 
-          {updateState === 'error' && (
+          {updateState === "error" && (
             <>
-              <div className={`text-sm rounded p-3 ${errorType === 'checksum-mismatch'
-                  ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
-                  : ''
-                }`}>
-                <p className={`${errorType === 'checksum-mismatch'
-                    ? 'text-red-700 dark:text-red-300 font-medium'
-                    : 'text-red-600 dark:text-red-400'
-                  }`}>
-                  {error || 'An error occurred'}
+              <div
+                className={`text-sm rounded p-3 ${
+                  errorType === "checksum-mismatch"
+                    ? "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+                    : ""
+                }`}
+              >
+                <p
+                  className={`${
+                    errorType === "checksum-mismatch"
+                      ? "text-red-700 dark:text-red-300 font-medium"
+                      : "text-red-600 dark:text-red-400"
+                  }`}
+                >
+                  {error || "An error occurred"}
                 </p>
-                {errorType === 'checksum-mismatch' && (
+                {errorType === "checksum-mismatch" && (
                   <p className="text-xs text-red-600 dark:text-red-400 mt-2">
-                    For your security, this update will not be installed. You can download manually from{' '}
+                    For your security, this update will not be installed. You can download manually
+                    from{" "}
                     <a
                       href="https://github.com/Ankesh-007/peft-studio/releases"
                       target="_blank"
@@ -328,11 +325,12 @@ export const UpdateNotification: React.FC = () => {
                       className="underline hover:text-red-700 dark:hover:text-red-300"
                     >
                       GitHub Releases
-                    </a>.
+                    </a>
+                    .
                   </p>
                 )}
               </div>
-              {errorType !== 'checksum-mismatch' && (
+              {errorType !== "checksum-mismatch" && (
                 <button
                   onClick={handleCheckForUpdates}
                   className="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded transition-colors"

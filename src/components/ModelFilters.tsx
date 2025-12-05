@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ModelSearchFilters } from '../types/model';
+import React, { useState } from "react";
+import { ModelSearchFilters } from "../types/model";
 
 interface ModelFiltersProps {
   filters: ModelSearchFilters;
@@ -27,8 +27,8 @@ const ModelFilters: React.FC<ModelFiltersProps> = ({ filters, onFiltersChange })
 
   const clearFilters = () => {
     const defaultFilters: ModelSearchFilters = {
-      task: 'text-generation',
-      sort: 'downloads',
+      task: "text-generation",
+      sort: "downloads",
     };
     setLocalFilters(defaultFilters);
     onFiltersChange(defaultFilters);
@@ -52,7 +52,7 @@ const ModelFilters: React.FC<ModelFiltersProps> = ({ filters, onFiltersChange })
           Registry
         </label>
         <div className="space-y-2">
-          {['HuggingFace', 'Civitai', 'Ollama'].map((registry) => (
+          {["HuggingFace", "Civitai", "Ollama"].map((registry) => (
             <label key={registry} className="flex items-center">
               <input
                 type="checkbox"
@@ -63,7 +63,10 @@ const ModelFilters: React.FC<ModelFiltersProps> = ({ filters, onFiltersChange })
                   const newRegistries = e.target.checked
                     ? [...current, registryLower]
                     : current.filter((r) => r !== registryLower);
-                  handleFilterChange('registries', newRegistries.length > 0 ? newRegistries : undefined);
+                  handleFilterChange(
+                    "registries",
+                    newRegistries.length > 0 ? newRegistries : undefined
+                  );
                 }}
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
@@ -79,8 +82,8 @@ const ModelFilters: React.FC<ModelFiltersProps> = ({ filters, onFiltersChange })
           Sort By
         </label>
         <select
-          value={localFilters.sort || 'downloads'}
-          onChange={(e) => handleFilterChange('sort', e.target.value)}
+          value={localFilters.sort || "downloads"}
+          onChange={(e) => handleFilterChange("sort", e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
                    bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
         >
@@ -96,8 +99,8 @@ const ModelFilters: React.FC<ModelFiltersProps> = ({ filters, onFiltersChange })
           Library
         </label>
         <select
-          value={localFilters.library || ''}
-          onChange={(e) => handleFilterChange('library', e.target.value || undefined)}
+          value={localFilters.library || ""}
+          onChange={(e) => handleFilterChange("library", e.target.value || undefined)}
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
                    bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
         >
@@ -118,8 +121,8 @@ const ModelFilters: React.FC<ModelFiltersProps> = ({ filters, onFiltersChange })
             onClick={() => handleParameterRangeChange(undefined, 1_000_000_000)}
             className={`w-full px-3 py-2 text-sm rounded-lg border transition-colors ${
               localFilters.maxParameters === 1_000_000_000
-                ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300'
-                : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                ? "bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300"
+                : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
             }`}
           >
             &lt; 1B
@@ -127,9 +130,10 @@ const ModelFilters: React.FC<ModelFiltersProps> = ({ filters, onFiltersChange })
           <button
             onClick={() => handleParameterRangeChange(1_000_000_000, 7_000_000_000)}
             className={`w-full px-3 py-2 text-sm rounded-lg border transition-colors ${
-              localFilters.minParameters === 1_000_000_000 && localFilters.maxParameters === 7_000_000_000
-                ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300'
-                : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+              localFilters.minParameters === 1_000_000_000 &&
+              localFilters.maxParameters === 7_000_000_000
+                ? "bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300"
+                : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
             }`}
           >
             1B - 7B
@@ -137,9 +141,10 @@ const ModelFilters: React.FC<ModelFiltersProps> = ({ filters, onFiltersChange })
           <button
             onClick={() => handleParameterRangeChange(7_000_000_000, 13_000_000_000)}
             className={`w-full px-3 py-2 text-sm rounded-lg border transition-colors ${
-              localFilters.minParameters === 7_000_000_000 && localFilters.maxParameters === 13_000_000_000
-                ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300'
-                : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+              localFilters.minParameters === 7_000_000_000 &&
+              localFilters.maxParameters === 13_000_000_000
+                ? "bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300"
+                : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
             }`}
           >
             7B - 13B
@@ -148,8 +153,8 @@ const ModelFilters: React.FC<ModelFiltersProps> = ({ filters, onFiltersChange })
             onClick={() => handleParameterRangeChange(13_000_000_000, undefined)}
             className={`w-full px-3 py-2 text-sm rounded-lg border transition-colors ${
               localFilters.minParameters === 13_000_000_000 && !localFilters.maxParameters
-                ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300'
-                : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                ? "bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300"
+                : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
             }`}
           >
             &gt; 13B
@@ -163,7 +168,7 @@ const ModelFilters: React.FC<ModelFiltersProps> = ({ filters, onFiltersChange })
           Architecture
         </label>
         <div className="space-y-2">
-          {['Llama', 'Mistral', 'GPT', 'Falcon', 'MPT'].map((arch) => (
+          {["Llama", "Mistral", "GPT", "Falcon", "MPT"].map((arch) => (
             <label key={arch} className="flex items-center">
               <input
                 type="checkbox"
@@ -173,7 +178,7 @@ const ModelFilters: React.FC<ModelFiltersProps> = ({ filters, onFiltersChange })
                   const newArchs = e.target.checked
                     ? [...current, arch]
                     : current.filter((a) => a !== arch);
-                  handleFilterChange('architectures', newArchs.length > 0 ? newArchs : undefined);
+                  handleFilterChange("architectures", newArchs.length > 0 ? newArchs : undefined);
                 }}
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
@@ -189,7 +194,7 @@ const ModelFilters: React.FC<ModelFiltersProps> = ({ filters, onFiltersChange })
           License
         </label>
         <div className="space-y-2">
-          {['apache-2.0', 'mit', 'cc-by-4.0', 'llama2', 'other'].map((license) => (
+          {["apache-2.0", "mit", "cc-by-4.0", "llama2", "other"].map((license) => (
             <label key={license} className="flex items-center">
               <input
                 type="checkbox"

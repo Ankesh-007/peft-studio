@@ -3,9 +3,9 @@
  * Provides pagination controls for large datasets
  */
 
-import React from 'react';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { cn } from '../lib/utils';
+import React from "react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { cn } from "../lib/utils";
 
 interface PaginationProps {
   currentPage: number;
@@ -53,7 +53,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       pages.push(1);
 
       if (currentPage > 3) {
-        pages.push('...');
+        pages.push("...");
       }
 
       const start = Math.max(2, currentPage - 1);
@@ -64,7 +64,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       }
 
       if (currentPage < totalPages - 2) {
-        pages.push('...');
+        pages.push("...");
       }
 
       pages.push(totalPages);
@@ -76,7 +76,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   return (
     <div
       className={cn(
-        'flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200',
+        "flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200",
         className
       )}
       role="navigation"
@@ -118,8 +118,8 @@ export const Pagination: React.FC<PaginationProps> = ({
           onClick={() => handlePageChange(1)}
           disabled={currentPage === 1}
           className={cn(
-            'p-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500'
+            "p-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed",
+            "focus:outline-none focus:ring-2 focus:ring-blue-500"
           )}
           aria-label="Go to first page"
         >
@@ -131,8 +131,8 @@ export const Pagination: React.FC<PaginationProps> = ({
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
           className={cn(
-            'p-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500'
+            "p-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed",
+            "focus:outline-none focus:ring-2 focus:ring-blue-500"
           )}
           aria-label="Go to previous page"
         >
@@ -142,7 +142,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         {/* Page numbers */}
         <div className="flex items-center gap-1">
           {getPageNumbers().map((page, index) => {
-            if (page === '...') {
+            if (page === "...") {
               return (
                 <span key={`ellipsis-${index}`} className="px-3 py-1 text-gray-500">
                   ...
@@ -155,14 +155,14 @@ export const Pagination: React.FC<PaginationProps> = ({
                 key={page}
                 onClick={() => handlePageChange(page as number)}
                 className={cn(
-                  'px-3 py-1 rounded text-sm font-medium transition-colors',
-                  'focus:outline-none focus:ring-2 focus:ring-blue-500',
+                  "px-3 py-1 rounded text-sm font-medium transition-colors",
+                  "focus:outline-none focus:ring-2 focus:ring-blue-500",
                   currentPage === page
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-700 hover:bg-gray-100"
                 )}
                 aria-label={`Go to page ${page}`}
-                aria-current={currentPage === page ? 'page' : undefined}
+                aria-current={currentPage === page ? "page" : undefined}
               >
                 {page}
               </button>
@@ -175,8 +175,8 @@ export const Pagination: React.FC<PaginationProps> = ({
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
           className={cn(
-            'p-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500'
+            "p-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed",
+            "focus:outline-none focus:ring-2 focus:ring-blue-500"
           )}
           aria-label="Go to next page"
         >
@@ -188,8 +188,8 @@ export const Pagination: React.FC<PaginationProps> = ({
           onClick={() => handlePageChange(totalPages)}
           disabled={currentPage === totalPages}
           className={cn(
-            'p-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500'
+            "p-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed",
+            "focus:outline-none focus:ring-2 focus:ring-blue-500"
           )}
           aria-label="Go to last page"
         >

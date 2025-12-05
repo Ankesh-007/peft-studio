@@ -1,17 +1,17 @@
 /**
  * Logging and Diagnostics UI
- * 
+ *
  * Comprehensive logging and diagnostics interface with:
  * - Log viewer with filtering
  * - Log search functionality
  * - Diagnostic report generator
  * - Debug mode toggle
  * - Log export functionality
- * 
+ *
  * Validates: Requirements 19.1, 19.2, 19.3, 19.4, 19.5
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Search,
   Filter,
@@ -27,8 +27,8 @@ import {
   ChevronDown,
   ChevronUp,
   Copy,
-  Check
-} from 'lucide-react';
+  Check,
+} from "lucide-react";
 
 // Types
 interface LogEntry {
@@ -36,7 +36,7 @@ interface LogEntry {
   error_message: string;
   stack_trace: string;
   error_type: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   context?: Record<string, unknown>;
   recent_actions?: string[];
   system_state: {
@@ -76,9 +76,9 @@ const LoggingDiagnostics: React.FC = () => {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [filteredLogs, setFilteredLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [severityFilter, setSeverityFilter] = useState<string>('');
-  const [errorTypeFilter, setErrorTypeFilter] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [severityFilter, setSeverityFilter] = useState<string>("");
+  const [errorTypeFilter, setErrorTypeFilter] = useState<string>("");
   const [expandedLogs, setExpandedLogs] = useState<Set<number>>(new Set());
   const [debugMode, setDebugMode] = useState(false);
   const [stats, setStats] = useState<LogStats | null>(null);
@@ -90,16 +90,16 @@ const LoggingDiagnostics: React.FC = () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (severityFilter) params.append('severity', severityFilter);
-      if (errorTypeFilter) params.append('error_type', errorTypeFilter);
-      params.append('limit', '100');
+      if (severityFilter) params.append("severity", severityFilter);
+      if (errorTypeFilter) params.append("error_type", errorTypeFilter);
+      params.append("limit", "100");
 
       const response = await fetch(`http://localhost:8000/api/logging/logs?${params}`);
       const data = await response.json();
       setLogs(data.logs || []);
       setFilteredLogs(data.logs || []);
     } catch (error) {
-      console.error('Failed to fetch logs:', error);
+      console.error("Failed to fetch logs:", error);
     } finally {
       setLoading(false);
     }
@@ -108,22 +108,22 @@ const LoggingDiagnostics: React.FC = () => {
   // Fetch stats
   const fetchStats = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/logging/stats');
+      const response = await fetch("http://localhost:8000/api/logging/stats");
       const data = await response.json();
       setStats(data);
     } catch (error) {
-      console.error('Failed to fetch stats:', error);
+      console.error("Failed to fetch stats:", error);
     }
   };
 
   // Fetch debug mode status
   const fetchDebugMode = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/logging/debug-mode');
+      const response = await fetch("http://localhost:8000/api/logging/debug-mode");
       const data = await response.json();
       setDebugMode(data.enabled);
     } catch (error) {
-      console.error('Failed to fetch debug mode:', error);
+      console.error("Failed to fetch debug mode:", error);
     }
   };
 
@@ -142,11 +142,12 @@ const LoggingDiagnostics: React.FC = () => {
     }
 
     const query = searchQuery.toLowerCase();
-    const filtered = logs.filter(log => 
-      log.error_message.toLowerCase().includes(query) ||
-      log.stack_trace.toLowerCase().includes(query) ||
-      log.error_type.toLowerCase().includes(query) ||
-      (log.context && JSON.stringify(log.context).toLowerCase().includes(query))
+    const filtered = logs.filter(
+      (log) =>
+        log.error_message.toLowerCase().includes(query) ||
+        log.stack_trace.toLowerCase().includes(query) ||
+        log.error_type.toLowerCase().includes(query) ||
+        (log.context && JSON.stringify(log.context).toLowerCase().includes(query))
     );
     setFilteredLogs(filtered);
   }, [searchQuery, logs]);
@@ -166,21 +167,23 @@ const LoggingDiagnostics: React.FC = () => {
   const generateDiagnosticReport = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/logging/diagnostic-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({})
+      const response = await fetch("http://localhost:8000/api/logging/diagnostic-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
       });
       const report: DiagnosticReport = await response.json();
-      
+
       // Download the report
       const downloadUrl = `http://localhost:8000${report.download_url}`;
-      window.open(downloadUrl, '_blank');
-      
-      alert(`Diagnostic report generated successfully!\nReport ID: ${report.report_id}\nErrors: ${report.error_count}`);
+      window.open(downloadUrl, "_blank");
+
+      alert(
+        `Diagnostic report generated successfully!\nReport ID: ${report.report_id}\nErrors: ${report.error_count}`
+      );
     } catch (error) {
-      console.error('Failed to generate diagnostic report:', error);
-      alert('Failed to generate diagnostic report');
+      console.error("Failed to generate diagnostic report:", error);
+      alert("Failed to generate diagnostic report");
     } finally {
       setLoading(false);
     }
@@ -190,17 +193,17 @@ const LoggingDiagnostics: React.FC = () => {
   const exportLogs = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/logging/export', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({})
+      const response = await fetch("http://localhost:8000/api/logging/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
       });
       const data = await response.json();
-      
+
       alert(`Logs exported successfully!\nFile: ${data.filepath}\nLogs: ${data.log_count}`);
     } catch (error) {
-      console.error('Failed to export logs:', error);
-      alert('Failed to export logs');
+      console.error("Failed to export logs:", error);
+      alert("Failed to export logs");
     } finally {
       setLoading(false);
     }
@@ -208,22 +211,22 @@ const LoggingDiagnostics: React.FC = () => {
 
   // Clear logs
   const clearLogs = async () => {
-    if (!confirm('Are you sure you want to clear all logs? This action cannot be undone.')) {
+    if (!confirm("Are you sure you want to clear all logs? This action cannot be undone.")) {
       return;
     }
 
     setLoading(true);
     try {
-      await fetch('http://localhost:8000/api/logging/logs', {
-        method: 'DELETE'
+      await fetch("http://localhost:8000/api/logging/logs", {
+        method: "DELETE",
       });
       setLogs([]);
       setFilteredLogs([]);
       fetchStats();
-      alert('All logs cleared successfully');
+      alert("All logs cleared successfully");
     } catch (error) {
-      console.error('Failed to clear logs:', error);
-      alert('Failed to clear logs');
+      console.error("Failed to clear logs:", error);
+      alert("Failed to clear logs");
     } finally {
       setLoading(false);
     }
@@ -233,16 +236,16 @@ const LoggingDiagnostics: React.FC = () => {
   const toggleDebugMode = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/logging/debug-mode', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enabled: !debugMode })
+      const response = await fetch("http://localhost:8000/api/logging/debug-mode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enabled: !debugMode }),
       });
       const data = await response.json();
       setDebugMode(data.enabled);
     } catch (error) {
-      console.error('Failed to toggle debug mode:', error);
-      alert('Failed to toggle debug mode');
+      console.error("Failed to toggle debug mode:", error);
+      alert("Failed to toggle debug mode");
     } finally {
       setLoading(false);
     }
@@ -255,29 +258,37 @@ const LoggingDiagnostics: React.FC = () => {
       setCopiedIndex(index);
       setTimeout(() => setCopiedIndex(null), 2000);
     } catch (error) {
-      console.error('Failed to copy:', error);
+      console.error("Failed to copy:", error);
     }
   };
 
   // Get severity icon and color
   const getSeverityDisplay = (severity: string) => {
     switch (severity) {
-      case 'critical':
-        return { icon: <XCircle className="w-5 h-5" />, color: 'text-red-600', bg: 'bg-red-50' };
-      case 'high':
-        return { icon: <AlertCircle className="w-5 h-5" />, color: 'text-orange-600', bg: 'bg-orange-50' };
-      case 'medium':
-        return { icon: <AlertTriangle className="w-5 h-5" />, color: 'text-yellow-600', bg: 'bg-yellow-50' };
-      case 'low':
-        return { icon: <Info className="w-5 h-5" />, color: 'text-blue-600', bg: 'bg-blue-50' };
+      case "critical":
+        return { icon: <XCircle className="w-5 h-5" />, color: "text-red-600", bg: "bg-red-50" };
+      case "high":
+        return {
+          icon: <AlertCircle className="w-5 h-5" />,
+          color: "text-orange-600",
+          bg: "bg-orange-50",
+        };
+      case "medium":
+        return {
+          icon: <AlertTriangle className="w-5 h-5" />,
+          color: "text-yellow-600",
+          bg: "bg-yellow-50",
+        };
+      case "low":
+        return { icon: <Info className="w-5 h-5" />, color: "text-blue-600", bg: "bg-blue-50" };
       default:
-        return { icon: <Info className="w-5 h-5" />, color: 'text-gray-600', bg: 'bg-gray-50' };
+        return { icon: <Info className="w-5 h-5" />, color: "text-gray-600", bg: "bg-gray-50" };
     }
   };
 
   // Get unique error types
   const errorTypes = useMemo(() => {
-    const types = new Set(logs.map(log => log.error_type));
+    const types = new Set(logs.map((log) => log.error_type));
     return Array.from(types).sort();
   }, [logs]);
 
@@ -346,21 +357,24 @@ const LoggingDiagnostics: React.FC = () => {
             disabled={loading}
             className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
               debugMode
-                ? 'bg-green-600 text-white hover:bg-green-700'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? "bg-green-600 text-white hover:bg-green-700"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
             <Settings className="w-4 h-4" />
-            Debug Mode {debugMode ? 'ON' : 'OFF'}
+            Debug Mode {debugMode ? "ON" : "OFF"}
           </button>
 
           {/* Refresh */}
           <button
-            onClick={() => { fetchLogs(); fetchStats(); }}
+            onClick={() => {
+              fetchLogs();
+              fetchStats();
+            }}
             disabled={loading}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
           </button>
 
@@ -401,7 +415,10 @@ const LoggingDiagnostics: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Severity Filter */}
               <div>
-                <label htmlFor="severity-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="severity-filter"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Severity
                 </label>
                 <select
@@ -420,7 +437,10 @@ const LoggingDiagnostics: React.FC = () => {
 
               {/* Error Type Filter */}
               <div>
-                <label htmlFor="error-type-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="error-type-filter"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Error Type
                 </label>
                 <select
@@ -430,8 +450,10 @@ const LoggingDiagnostics: React.FC = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">All Types</option>
-                  {errorTypes.map(type => (
-                    <option key={type} value={type}>{type}</option>
+                  {errorTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -453,8 +475,8 @@ const LoggingDiagnostics: React.FC = () => {
             <p className="text-gray-600 text-lg mb-2">No logs found</p>
             <p className="text-gray-500 text-sm">
               {searchQuery || severityFilter || errorTypeFilter
-                ? 'Try adjusting your filters or search query'
-                : 'Error logs will appear here when they occur'}
+                ? "Try adjusting your filters or search query"
+                : "Error logs will appear here when they occur"}
             </p>
           </div>
         ) : (
@@ -541,7 +563,10 @@ const LoggingDiagnostics: React.FC = () => {
                         </div>
                         <div className="bg-gray-50 p-2 rounded">
                           <div className="text-xs text-gray-600">Platform</div>
-                          <div className="text-sm font-medium truncate" title={log.system_state.platform}>
+                          <div
+                            className="text-sm font-medium truncate"
+                            title={log.system_state.platform}
+                          >
                             {log.system_state.platform}
                           </div>
                         </div>
@@ -593,7 +618,7 @@ const LoggingDiagnostics: React.FC = () => {
       {filteredLogs.length > 0 && (
         <div className="mt-4 text-center text-sm text-gray-600">
           Showing {filteredLogs.length} of {logs.length} logs
-          {(searchQuery || severityFilter || errorTypeFilter) && ' (filtered)'}
+          {(searchQuery || severityFilter || errorTypeFilter) && " (filtered)"}
         </div>
       )}
     </div>

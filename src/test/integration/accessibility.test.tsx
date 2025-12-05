@@ -1,11 +1,11 @@
-import { describe, it, expect, vi, beforeAll } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import TrainingWizard from '../../components/TrainingWizard';
-import Layout from '../../components/Layout';
-import Dashboard from '../../components/Dashboard';
-import { AccessibleButton } from '../../components/AccessibleButton';
-import { AccessibleInput } from '../../components/AccessibleInput';
+import { describe, it, expect, vi, beforeAll } from "vitest";
+import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import TrainingWizard from "../../components/TrainingWizard";
+import Layout from "../../components/Layout";
+import Dashboard from "../../components/Dashboard";
+import { AccessibleButton } from "../../components/AccessibleButton";
+import { AccessibleInput } from "../../components/AccessibleInput";
 
 // Mock window.matchMedia for responsive design tests
 beforeAll(() => {
@@ -28,11 +28,9 @@ describe("Accessibility Tests", () => {
   describe("TrainingWizard", () => {
     it("should have proper ARIA labels on navigation", () => {
       render(<TrainingWizard />);
+      expect(screen.getByRole("region", { name: /training wizard/i })).toBeInTheDocument();
       expect(
-        screen.getByRole("region", { name: /training wizard/i }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole("navigation", { name: /training wizard progress/i }),
+        screen.getByRole("navigation", { name: /training wizard progress/i })
       ).toBeInTheDocument();
     });
 
@@ -61,7 +59,7 @@ describe("Accessibility Tests", () => {
       render(
         <Layout>
           <div>Test content</div>
-        </Layout>,
+        </Layout>
       );
       const skipLink = screen.getByText(/skip to main content/i);
       expect(skipLink).toHaveAttribute("href", "#main-content");
@@ -71,18 +69,16 @@ describe("Accessibility Tests", () => {
       render(
         <Layout>
           <div>Test content</div>
-        </Layout>,
+        </Layout>
       );
-      expect(
-        screen.getByRole("main", { name: /main content/i }),
-      ).toBeInTheDocument();
+      expect(screen.getByRole("main", { name: /main content/i })).toBeInTheDocument();
     });
 
     it("should have accessible help panel close button", () => {
       render(
         <Layout>
           <div>Test content</div>
-        </Layout>,
+        </Layout>
       );
       // Help panel is initially closed, so we just verify the structure exists
       expect(screen.getByRole("main")).toBeInTheDocument();
@@ -91,12 +87,8 @@ describe("Accessibility Tests", () => {
 
   describe("AccessibleButton", () => {
     it("should have proper aria-label when provided", () => {
-      render(
-        <AccessibleButton ariaLabel="Custom label">Click</AccessibleButton>,
-      );
-      expect(
-        screen.getByRole("button", { name: /custom label/i }),
-      ).toBeInTheDocument();
+      render(<AccessibleButton ariaLabel="Custom label">Click</AccessibleButton>);
+      expect(screen.getByRole("button", { name: /custom label/i })).toBeInTheDocument();
     });
 
     it("should indicate loading state with aria-busy", () => {
@@ -139,9 +131,7 @@ describe("Accessibility Tests", () => {
       const input = screen.getByLabelText(/password/i);
       const hintId = input.getAttribute("aria-describedby");
       expect(hintId).toBeTruthy();
-      expect(document.getElementById(hintId!)).toHaveTextContent(
-        /must be 8 characters/i,
-      );
+      expect(document.getElementById(hintId!)).toHaveTextContent(/must be 8 characters/i);
     });
   });
 
@@ -152,7 +142,7 @@ describe("Accessibility Tests", () => {
           <AccessibleButton>First</AccessibleButton>
           <AccessibleButton>Second</AccessibleButton>
           <AccessibleButton>Third</AccessibleButton>
-        </div>,
+        </div>
       );
 
       const buttons = screen.getAllByRole("button");
@@ -189,7 +179,7 @@ describe("Accessibility Tests", () => {
       render(
         <Layout>
           <Dashboard />
-        </Layout>,
+        </Layout>
       );
 
       // Check for semantic landmarks
@@ -198,9 +188,7 @@ describe("Accessibility Tests", () => {
 
     it("should provide text alternatives for icons", () => {
       render(<AccessibleButton ariaLabel="Delete item">🗑️</AccessibleButton>);
-      expect(
-        screen.getByRole("button", { name: /delete item/i }),
-      ).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /delete item/i })).toBeInTheDocument();
     });
   });
 
@@ -225,7 +213,7 @@ describe("Accessibility Tests", () => {
       const { container } = render(
         <Layout>
           <div>Test content</div>
-        </Layout>,
+        </Layout>
       );
       expect(container).toBeInTheDocument();
     });

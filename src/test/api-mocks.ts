@@ -76,8 +76,7 @@ export const mockApiEndpoints = {
     ],
     total: 2,
   }),
-  "/api/training/runs/:id": (id: string) =>
-    createMockTrainingRun({ id: parseInt(id) }),
+  "/api/training/runs/:id": (id: string) => createMockTrainingRun({ id: parseInt(id) }),
   "/api/training/runs/:id/pause": () => ({ success: true }),
   "/api/training/runs/:id/resume": () => ({ success: true }),
   "/api/training/runs/:id/stop": () => ({ success: true }),
@@ -106,8 +105,7 @@ export const mockApiEndpoints = {
 
 export class MockApiClient {
   private handlers: Map<string, (params?: any) => any> = new Map();
-  private callLog: Array<{ endpoint: string; params?: any; timestamp: number }> =
-    [];
+  private callLog: Array<{ endpoint: string; params?: any; timestamp: number }> = [];
 
   constructor() {
     this.setupDefaultHandlers();
@@ -164,9 +162,7 @@ export class MockApiClient {
     // Try pattern matching for parameterized routes
     for (const [pattern, handler] of this.handlers.entries()) {
       if (pattern.includes(":")) {
-        const regex = new RegExp(
-          "^" + pattern.replace(/:[^/]+/g, "([^/]+)") + "$",
-        );
+        const regex = new RegExp("^" + pattern.replace(/:[^/]+/g, "([^/]+)") + "$");
         const match = endpoint.match(regex);
         if (match) {
           return (params?: any) => (handler as any)(match[1], params);
@@ -240,13 +236,10 @@ export function setupFetchMock(): void {
         headers: { "Content-Type": "application/json" },
       });
     } catch (error) {
-      return new Response(
-        JSON.stringify({ error: (error as Error).message }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        },
-      );
+      return new Response(JSON.stringify({ error: (error as Error).message }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
     }
   });
 }
@@ -306,7 +299,7 @@ export class MockWebSocket {
       this.onmessage(
         new MessageEvent("message", {
           data: JSON.stringify(data),
-        }),
+        })
       );
     }
   }
@@ -354,8 +347,7 @@ export class MockEventSource {
   public onmessage: ((event: MessageEvent) => void) | null = null;
   public onerror: ((event: Event) => void) | null = null;
 
-  private listeners: Map<string, Array<(event: MessageEvent) => void>> =
-    new Map();
+  private listeners: Map<string, Array<(event: MessageEvent) => void>> = new Map();
 
   constructor(url: string) {
     this.url = url;
@@ -368,20 +360,14 @@ export class MockEventSource {
     }, 0);
   }
 
-  addEventListener(
-    type: string,
-    listener: (event: MessageEvent) => void,
-  ): void {
+  addEventListener(type: string, listener: (event: MessageEvent) => void): void {
     if (!this.listeners.has(type)) {
       this.listeners.set(type, []);
     }
     this.listeners.get(type)!.push(listener);
   }
 
-  removeEventListener(
-    type: string,
-    listener: (event: MessageEvent) => void,
-  ): void {
+  removeEventListener(type: string, listener: (event: MessageEvent) => void): void {
     const listeners = this.listeners.get(type);
     if (listeners) {
       const index = listeners.indexOf(listener);

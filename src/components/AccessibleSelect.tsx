@@ -7,8 +7,10 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
-export interface AccessibleSelectProps
-  extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "onChange"> {
+export interface AccessibleSelectProps extends Omit<
+  React.SelectHTMLAttributes<HTMLSelectElement>,
+  "onChange"
+> {
   options: SelectOption[];
   value?: string;
   onChange?: (value: string) => void;
@@ -23,10 +25,7 @@ export interface AccessibleSelectProps
 /**
  * Accessible select component with search capability and keyboard navigation
  */
-export const AccessibleSelect = forwardRef<
-  HTMLSelectElement,
-  AccessibleSelectProps
->(
+export const AccessibleSelect = forwardRef<HTMLSelectElement, AccessibleSelectProps>(
   (
     {
       options,
@@ -42,7 +41,7 @@ export const AccessibleSelect = forwardRef<
       disabled,
       ...props
     },
-    ref,
+    ref
   ) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
@@ -53,26 +52,20 @@ export const AccessibleSelect = forwardRef<
     const selectedOption = options.find((opt) => opt.value === value);
 
     const filteredOptions = searchable
-      ? options.filter((opt) =>
-          opt.label.toLowerCase().includes(searchQuery.toLowerCase()),
-        )
+      ? options.filter((opt) => opt.label.toLowerCase().includes(searchQuery.toLowerCase()))
       : options;
 
     // Close dropdown when clicking outside
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
-        if (
-          containerRef.current &&
-          !containerRef.current.contains(event.target as Node)
-        ) {
+        if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
           setIsOpen(false);
           setSearchQuery("");
         }
       };
 
       document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     // Focus search input when dropdown opens
@@ -172,13 +165,9 @@ export const AccessibleSelect = forwardRef<
           className={cn(
             "flex w-full items-center justify-between rounded-lg border px-12 py-8 text-left text-body transition-all duration-150",
             "focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2 focus:ring-offset-dark-bg-primary",
-            error
-              ? "border-accent-error"
-              : "border-dark-border hover:border-dark-border-hover",
-            disabled
-              ? "cursor-not-allowed opacity-50"
-              : "cursor-pointer bg-dark-bg-secondary",
-            isOpen && "ring-2 ring-accent-primary",
+            error ? "border-accent-error" : "border-dark-border hover:border-dark-border-hover",
+            disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer bg-dark-bg-secondary",
+            isOpen && "ring-2 ring-accent-primary"
           )}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
@@ -186,29 +175,20 @@ export const AccessibleSelect = forwardRef<
           aria-label={!label ? ariaLabel : undefined}
         >
           <span
-            className={cn(
-              selectedOption
-                ? "text-dark-text-primary"
-                : "text-dark-text-tertiary",
-            )}
+            className={cn(selectedOption ? "text-dark-text-primary" : "text-dark-text-tertiary")}
           >
             {selectedOption?.label || placeholder}
           </span>
           <svg
             className={cn(
               "h-16 w-16 text-dark-text-secondary transition-transform duration-200",
-              isOpen && "rotate-180",
+              isOpen && "rotate-180"
             )}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </button>
 
@@ -217,7 +197,7 @@ export const AccessibleSelect = forwardRef<
           <div
             className={cn(
               "absolute z-50 mt-4 w-full rounded-lg border border-dark-border bg-dark-bg-secondary shadow-lg",
-              "max-h-[240px] overflow-auto",
+              "max-h-[240px] overflow-auto"
             )}
             role="listbox"
             aria-labelledby={label ? `${props.id}-label` : undefined}
@@ -232,7 +212,7 @@ export const AccessibleSelect = forwardRef<
                   placeholder="Search..."
                   className={cn(
                     "w-full rounded border border-dark-border bg-dark-bg-primary px-8 py-6 text-small",
-                    "focus:outline-none focus:ring-2 focus:ring-accent-primary",
+                    "focus:outline-none focus:ring-2 focus:ring-accent-primary"
                   )}
                   onClick={(e) => e.stopPropagation()}
                 />
@@ -257,7 +237,7 @@ export const AccessibleSelect = forwardRef<
                       ? "cursor-not-allowed opacity-50"
                       : "cursor-pointer hover:bg-dark-bg-tertiary",
                     option.value === value && "bg-accent-primary/10 text-accent-primary",
-                    index === focusedIndex && "bg-dark-bg-tertiary",
+                    index === focusedIndex && "bg-dark-bg-tertiary"
                   )}
                   role="option"
                   aria-selected={option.value === value}
@@ -275,7 +255,7 @@ export const AccessibleSelect = forwardRef<
           <p
             className={cn(
               "mt-4 text-small",
-              error ? "text-accent-error" : "text-dark-text-tertiary",
+              error ? "text-accent-error" : "text-dark-text-tertiary"
             )}
             id={`${props.id}-description`}
             role={error ? "alert" : undefined}
@@ -285,7 +265,7 @@ export const AccessibleSelect = forwardRef<
         )}
       </div>
     );
-  },
+  }
 );
 
 AccessibleSelect.displayName = "AccessibleSelect";

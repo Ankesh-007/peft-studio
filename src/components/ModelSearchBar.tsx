@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ModelSearchFilters } from '../types/model';
+import React, { useState, useEffect } from "react";
+import { ModelSearchFilters } from "../types/model";
 
 interface ModelSearchBarProps {
   onSearch: (filters: ModelSearchFilters) => void;
@@ -7,8 +7,8 @@ interface ModelSearchBarProps {
 }
 
 const ModelSearchBar: React.FC<ModelSearchBarProps> = ({ onSearch, initialFilters }) => {
-  const [query, setQuery] = useState(initialFilters?.query || '');
-  const [task, setTask] = useState(initialFilters?.task || 'text-generation');
+  const [query, setQuery] = useState(initialFilters?.query || "");
+  const [task, setTask] = useState(initialFilters?.task || "text-generation");
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {

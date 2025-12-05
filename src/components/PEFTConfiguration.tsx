@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { AlertCircle, Info, CheckCircle, TrendingUp } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { AlertCircle, Info, CheckCircle, TrendingUp } from "lucide-react";
 
 interface ParameterDefinition {
   name: string;
@@ -44,21 +44,26 @@ interface PEFTConfigurationProps {
 const PEFTConfiguration: React.FC<PEFTConfigurationProps> = ({
   onConfigChange,
   initialConfig,
-  disabled = false
+  disabled = false,
 }) => {
   const [algorithms, setAlgorithms] = useState<AlgorithmInfo[]>([]);
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<string>(
-    initialConfig?.algorithm || 'lora'
+    initialConfig?.algorithm || "lora"
   );
   const [config, setConfig] = useState<PEFTConfig>({
-    algorithm: initialConfig?.algorithm || 'lora',
+    algorithm: initialConfig?.algorithm || "lora",
     r: initialConfig?.r || 8,
     lora_alpha: initialConfig?.lora_alpha || 16,
     lora_dropout: initialConfig?.lora_dropout || 0.1,
     target_modules: initialConfig?.target_modules || [
-      'q_proj', 'k_proj', 'v_proj', 'o_proj',
-      'gate_proj', 'up_proj', 'down_proj'
-    ]
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj",
+    ],
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,16 +74,16 @@ const PEFTConfiguration: React.FC<PEFTConfigurationProps> = ({
     const fetchAlgorithms = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8000/api/peft/algorithms');
+        const response = await fetch("http://localhost:8000/api/peft/algorithms");
         if (!response.ok) {
-          throw new Error('Failed to fetch PEFT algorithms');
+          throw new Error("Failed to fetch PEFT algorithms");
         }
         const data = await response.json();
         setAlgorithms(data.algorithms);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
-        console.error('Error fetching algorithms:', err);
+        setError(err instanceof Error ? err.message : "Unknown error");
+        console.error("Error fetching algorithms:", err);
       } finally {
         setLoading(false);
       }
@@ -94,33 +99,33 @@ const PEFTConfiguration: React.FC<PEFTConfigurationProps> = ({
 
   const handleAlgorithmChange = (algorithmId: string) => {
     setSelectedAlgorithm(algorithmId);
-    setConfig(prev => ({ ...prev, algorithm: algorithmId }));
+    setConfig((prev) => ({ ...prev, algorithm: algorithmId }));
   };
 
   const handleParameterChange = (paramName: string, value: unknown) => {
-    setConfig(prev => ({ ...prev, [paramName]: value }));
+    setConfig((prev) => ({ ...prev, [paramName]: value }));
   };
 
   const getEfficiencyBadge = (efficiency: string) => {
     const colors = {
-      'very high': 'bg-green-100 text-green-800',
-      'high': 'bg-blue-100 text-blue-800',
-      'medium': 'bg-yellow-100 text-yellow-800',
-      'low': 'bg-red-100 text-red-800'
+      "very high": "bg-green-100 text-green-800",
+      high: "bg-blue-100 text-blue-800",
+      medium: "bg-yellow-100 text-yellow-800",
+      low: "bg-red-100 text-red-800",
     };
     return colors[efficiency as keyof typeof colors] || colors.medium;
   };
 
   const getSpeedBadge = (speed: string) => {
     const colors = {
-      'fast': 'bg-green-100 text-green-800',
-      'medium': 'bg-yellow-100 text-yellow-800',
-      'slow': 'bg-red-100 text-red-800'
+      fast: "bg-green-100 text-green-800",
+      medium: "bg-yellow-100 text-yellow-800",
+      slow: "bg-red-100 text-red-800",
     };
     return colors[speed as keyof typeof colors] || colors.medium;
   };
 
-  const selectedAlgoInfo = algorithms.find(a => a.id === selectedAlgorithm);
+  const selectedAlgoInfo = algorithms.find((a) => a.id === selectedAlgorithm);
 
   if (loading) {
     return (
@@ -149,9 +154,7 @@ const PEFTConfiguration: React.FC<PEFTConfigurationProps> = ({
     <div className="space-y-6">
       {/* Algorithm Selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          PEFT Algorithm
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">PEFT Algorithm</label>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {algorithms.map((algo) => (
             <button
@@ -161,11 +164,12 @@ const PEFTConfiguration: React.FC<PEFTConfigurationProps> = ({
               onClick={() => handleAlgorithmChange(algo.id)}
               className={`
                 relative p-4 rounded-lg border-2 text-left transition-all
-                ${selectedAlgorithm === algo.id
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 bg-white hover:border-gray-300'
+                ${
+                  selectedAlgorithm === algo.id
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-200 bg-white hover:border-gray-300"
                 }
-                ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
               `}
             >
               <div className="flex items-start justify-between mb-2">
@@ -177,13 +181,13 @@ const PEFTConfiguration: React.FC<PEFTConfigurationProps> = ({
                     </span>
                   )}
                 </div>
-                {selectedAlgorithm === algo.id && (
-                  <CheckCircle className="h-5 w-5 text-blue-600" />
-                )}
+                {selectedAlgorithm === algo.id && <CheckCircle className="h-5 w-5 text-blue-600" />}
               </div>
               <p className="text-sm text-gray-600 mb-3">{algo.description}</p>
               <div className="flex gap-2">
-                <span className={`px-2 py-1 text-xs rounded ${getEfficiencyBadge(algo.memory_efficiency)}`}>
+                <span
+                  className={`px-2 py-1 text-xs rounded ${getEfficiencyBadge(algo.memory_efficiency)}`}
+                >
                   {algo.memory_efficiency} memory
                 </span>
                 <span className={`px-2 py-1 text-xs rounded ${getSpeedBadge(algo.training_speed)}`}>
@@ -208,7 +212,7 @@ const PEFTConfiguration: React.FC<PEFTConfigurationProps> = ({
               className="text-sm text-blue-600 hover:text-blue-700 flex items-center"
             >
               <Info className="h-4 w-4 mr-1" />
-              {showDetails ? 'Hide' : 'Show'} Details
+              {showDetails ? "Hide" : "Show"} Details
             </button>
           </div>
 
@@ -274,7 +278,7 @@ const PEFTConfiguration: React.FC<PEFTConfigurationProps> = ({
       {selectedAlgoInfo && (
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">Parameters</h3>
-          
+
           {selectedAlgoInfo.parameters.map((param) => (
             <div key={param.name} className="space-y-2">
               <div className="flex items-center justify-between">
@@ -287,35 +291,42 @@ const PEFTConfiguration: React.FC<PEFTConfigurationProps> = ({
                   </span>
                 )}
               </div>
-              
+
               <div className="relative group">
-                {param.type === 'int' || param.type === 'float' ? (
+                {param.type === "int" || param.type === "float" ? (
                   <input
                     type="number"
                     disabled={disabled}
                     value={config[param.name as keyof PEFTConfig] as number}
-                    onChange={(e) => handleParameterChange(
-                      param.name,
-                      param.type === 'int' ? parseInt(e.target.value) : parseFloat(e.target.value)
-                    )}
+                    onChange={(e) =>
+                      handleParameterChange(
+                        param.name,
+                        param.type === "int" ? parseInt(e.target.value) : parseFloat(e.target.value)
+                      )
+                    }
                     min={param.min_value}
                     max={param.max_value}
-                    step={param.type === 'float' ? 0.01 : 1}
+                    step={param.type === "float" ? 0.01 : 1}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                   />
-                ) : param.type === 'list' ? (
+                ) : param.type === "list" ? (
                   <input
                     type="text"
                     disabled={disabled}
-                    value={(config[param.name as keyof PEFTConfig] as string[]).join(', ')}
-                    onChange={(e) => handleParameterChange(
-                      param.name,
-                      e.target.value.split(',').map(s => s.trim()).filter(s => s)
-                    )}
+                    value={(config[param.name as keyof PEFTConfig] as string[]).join(", ")}
+                    onChange={(e) =>
+                      handleParameterChange(
+                        param.name,
+                        e.target.value
+                          .split(",")
+                          .map((s) => s.trim())
+                          .filter((s) => s)
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                   />
                 ) : null}
-                
+
                 {/* Tooltip */}
                 <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block z-10 w-full max-w-xs">
                   <div className="bg-gray-900 text-white text-xs rounded-lg p-3 shadow-lg">
@@ -328,7 +339,7 @@ const PEFTConfiguration: React.FC<PEFTConfigurationProps> = ({
                   </div>
                 </div>
               </div>
-              
+
               <p className="text-xs text-gray-500">{param.description}</p>
             </div>
           ))}
@@ -342,8 +353,8 @@ const PEFTConfiguration: React.FC<PEFTConfigurationProps> = ({
             <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
             <div className="ml-3">
               <p className="text-sm text-yellow-800">
-                High rank value (r={config.r}) may increase training time and memory usage.
-                Consider using a lower value (4-32) for most models.
+                High rank value (r={config.r}) may increase training time and memory usage. Consider
+                using a lower value (4-32) for most models.
               </p>
             </div>
           </div>
@@ -356,7 +367,8 @@ const PEFTConfiguration: React.FC<PEFTConfigurationProps> = ({
             <Info className="h-5 w-5 text-blue-600 mt-0.5" />
             <div className="ml-3">
               <p className="text-sm text-blue-800">
-                LoRA Alpha is typically set to 2x the rank value. Current: {config.lora_alpha}, Suggested: {config.r * 2}
+                LoRA Alpha is typically set to 2x the rank value. Current: {config.lora_alpha},
+                Suggested: {config.r * 2}
               </p>
             </div>
           </div>

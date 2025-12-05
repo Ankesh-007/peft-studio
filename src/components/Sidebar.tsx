@@ -82,7 +82,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
               className={cn(
                 "nav-item w-full",
                 isActive && "nav-item-active",
-                collapsed && "justify-center",
+                collapsed && "justify-center"
               )}
               title={collapsed ? item.label : undefined}
             >
@@ -90,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
                 size={20}
                 className={cn(
                   "transition-colors",
-                  isActive ? "text-accent-primary" : "text-dark-text-tertiary",
+                  isActive ? "text-accent-primary" : "text-dark-text-tertiary"
                 )}
               />
               {!collapsed && <span className="text-body">{item.label}</span>}
@@ -104,9 +104,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
         {/* System Status */}
         {!collapsed && (
           <div className="px-8 py-12 bg-dark-bg-tertiary rounded-lg">
-            <p className="text-tiny text-dark-text-tertiary mb-8">
-              System Status
-            </p>
+            <p className="text-tiny text-dark-text-tertiary mb-8">System Status</p>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between text-tiny mb-2">
@@ -131,9 +129,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
         )}
 
         {/* Settings Button */}
-        <button
-          className={cn("nav-item w-full", collapsed && "justify-center")}
-        >
+        <button className={cn("nav-item w-full", collapsed && "justify-center")}>
           <Settings size={20} className="text-dark-text-tertiary" />
           {!collapsed && <span className="text-body">Settings</span>}
         </button>
@@ -142,7 +138,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
         <button
           className={cn(
             "flex items-center gap-12 w-full p-8 rounded-lg hover:bg-dark-bg-tertiary transition-all",
-            collapsed && "justify-center",
+            collapsed && "justify-center"
           )}
         >
           <div className="w-32 h-32 bg-gradient-to-br from-accent-primary to-accent-info rounded-full flex items-center justify-center">
@@ -151,9 +147,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
           {!collapsed && (
             <div className="flex-1 text-left">
               <p className="text-small font-medium">User</p>
-              <p className="text-tiny text-dark-text-tertiary">
-                user@email.com
-              </p>
+              <p className="text-tiny text-dark-text-tertiary">user@email.com</p>
             </div>
           )}
         </button>
@@ -167,20 +161,15 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
       <div
         className={cn(
           "hidden md:flex bg-dark-bg-secondary border-r border-dark-border flex-col transition-all duration-300",
-          collapsed ? "w-[80px]" : "w-[240px]",
+          collapsed ? "w-[80px]" : "w-[240px]"
         )}
       >
         {sidebarContent}
       </div>
 
       {/* Mobile Navigation */}
-      <MobileNav
-        isOpen={mobileMenuOpen}
-        onToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
-      >
-        <div className="flex flex-col h-full">
-          {sidebarContent}
-        </div>
+      <MobileNav isOpen={mobileMenuOpen} onToggle={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        <div className="flex flex-col h-full">{sidebarContent}</div>
       </MobileNav>
     </>
   );

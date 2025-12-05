@@ -10,8 +10,7 @@ export const tooltipConfig: TooltipConfig = {
     title: "Use Case",
     description:
       "The type of task you want your model to perform. Each use case has optimized settings for that specific purpose.",
-    example:
-      'Choose "Chatbot" for conversational AI or "Code Generation" for programming tasks.',
+    example: 'Choose "Chatbot" for conversational AI or "Code Generation" for programming tasks.',
   },
 
   // LoRA Settings
@@ -37,8 +36,7 @@ export const tooltipConfig: TooltipConfig = {
     title: "Target Modules",
     description:
       "LoRA target modules specify which parts of the model to train. More modules = better results but slower training.",
-    example:
-      "Common: q_proj, v_proj for basic training; add more for complex tasks.",
+    example: "Common: q_proj, v_proj for basic training; add more for complex tasks.",
   },
 
   // Training Hyperparameters
@@ -116,36 +114,28 @@ export const tooltipConfig: TooltipConfig = {
   // Hardware Requirements
   min_gpu_memory: {
     title: "Minimum GPU Memory",
-    description:
-      "The absolute minimum GPU memory needed to run this configuration.",
-    example:
-      "Typical requirements: 8GB for 7B models, 16GB for 13B models, 24GB+ for 30B+ models.",
+    description: "The absolute minimum GPU memory needed to run this configuration.",
+    example: "Typical requirements: 8GB for 7B models, 16GB for 13B models, 24GB+ for 30B+ models.",
   },
   recommended_gpu_memory: {
     title: "Recommended GPU Memory",
     description: "GPU memory for optimal performance and stability.",
-    example:
-      "Recommended: 16GB for 7B models, 24GB for 13B models, 40GB+ for 30B+ models.",
+    example: "Recommended: 16GB for 7B models, 24GB for 13B models, 40GB+ for 30B+ models.",
   },
   min_dataset_size: {
     title: "Minimum Dataset Size",
-    description:
-      "Minimum number of training examples needed for this use case.",
-    example:
-      "Typical minimums: 100-500 examples for simple tasks, 1000+ for complex tasks.",
+    description: "Minimum number of training examples needed for this use case.",
+    example: "Typical minimums: 100-500 examples for simple tasks, 1000+ for complex tasks.",
   },
   recommended_dataset_size: {
     title: "Recommended Dataset Size",
     description: "Ideal number of training examples for best results.",
-    example:
-      "Recommended: 1000-5000 examples for most tasks, 10000+ for production quality.",
+    example: "Recommended: 1000-5000 examples for most tasks, 10000+ for production quality.",
   },
   estimated_time: {
     title: "Estimated Training Time",
-    description:
-      "Approximate time per epoch based on typical hardware and model size.",
-    example:
-      "Typical times: 10-30 minutes per epoch on RTX 3090, 5-15 minutes on A100.",
+    description: "Approximate time per epoch based on typical hardware and model size.",
+    example: "Typical times: 10-30 minutes per epoch on RTX 3090, 5-15 minutes on A100.",
   },
 
   // Dataset Settings
@@ -159,8 +149,7 @@ export const tooltipConfig: TooltipConfig = {
     title: "Dataset Validation",
     description:
       "Automatic checks to ensure your data is properly formatted and ready for training.",
-    example:
-      "Common checks: 100+ examples minimum, consistent field names, no empty entries.",
+    example: "Common checks: 100+ examples minimum, consistent field names, no empty entries.",
   },
 
   // Model Selection
@@ -175,13 +164,11 @@ export const tooltipConfig: TooltipConfig = {
     title: "Model Size",
     description:
       "Number of parameters in the model. Larger models are more capable but require more resources.",
-    example:
-      "Common sizes: 3B (fast), 7B (balanced), 13B (capable), 70B+ (best quality).",
+    example: "Common sizes: 3B (fast), 7B (balanced), 13B (capable), 70B+ (best quality).",
   },
   model_architecture: {
     title: "Model Architecture",
-    description:
-      "The underlying structure of the model (e.g., Llama, Mistral, GPT).",
+    description: "The underlying structure of the model (e.g., Llama, Mistral, GPT).",
     example:
       "Common architectures: Llama-2 (60% of users), Mistral (25%), GPT-style (10%), others (5%).",
   },
@@ -191,42 +178,32 @@ export const tooltipConfig: TooltipConfig = {
     title: "Training Estimates",
     description:
       "Predicted time, cost, and resource usage for your training run. These are estimates and may vary by ±20%.",
-    example:
-      "Typical range: 30 minutes to 4 hours depending on model size and dataset.",
+    example: "Typical range: 30 minutes to 4 hours depending on model size and dataset.",
   },
   training_duration: {
     title: "Training Duration",
-    description:
-      "Estimated time to complete training based on your configuration and hardware.",
-    example:
-      "Typical durations: 1-3 hours for 7B models, 3-8 hours for 13B models (3 epochs).",
+    description: "Estimated time to complete training based on your configuration and hardware.",
+    example: "Typical durations: 1-3 hours for 7B models, 3-8 hours for 13B models (3 epochs).",
   },
   gpu_hours: {
     title: "GPU Hours",
-    description:
-      "Total GPU time required for training. Useful for estimating cloud costs.",
+    description: "Total GPU time required for training. Useful for estimating cloud costs.",
     example: "Multiply by your cloud provider's hourly rate.",
   },
   electricity_cost: {
     title: "Electricity Cost",
-    description:
-      "Estimated electricity cost based on your GPU power consumption and local rates.",
-    example:
-      "Typical cost: $0.50-$2.00 per training run at $0.12/kWh electricity rate.",
+    description: "Estimated electricity cost based on your GPU power consumption and local rates.",
+    example: "Typical cost: $0.50-$2.00 per training run at $0.12/kWh electricity rate.",
   },
   carbon_footprint: {
     title: "Carbon Footprint",
-    description:
-      "Estimated CO2 emissions from the electricity used during training.",
-    example:
-      "Typical range: 0.5-5 kg CO2 depending on training duration and local energy mix.",
+    description: "Estimated CO2 emissions from the electricity used during training.",
+    example: "Typical range: 0.5-5 kg CO2 depending on training duration and local energy mix.",
   },
   memory_usage: {
     title: "Memory Usage",
-    description:
-      "Estimated GPU memory required for training with this configuration.",
-    example:
-      "Typical usage: 6-8GB for 7B models, 12-16GB for 13B models with LoRA.",
+    description: "Estimated GPU memory required for training with this configuration.",
+    example: "Typical usage: 6-8GB for 7B models, 12-16GB for 13B models with LoRA.",
   },
   epochs: {
     title: "Training Epochs",
@@ -240,8 +217,7 @@ export const tooltipConfig: TooltipConfig = {
     title: "Optimizer",
     description:
       "Algorithm used to update model weights. AdamW is the standard for LLM fine-tuning.",
-    example:
-      "Use AdamW (default) for 99% of cases, SGD only for specific research needs.",
+    example: "Use AdamW (default) for 99% of cases, SGD only for specific research needs.",
   },
   save_steps: {
     title: "Save Checkpoint Every N Steps",

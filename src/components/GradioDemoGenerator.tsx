@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Play, Square, ExternalLink, Code, Copy, Check, Trash2, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Play, Square, ExternalLink, Code, Copy, Check, Trash2, RefreshCw } from "lucide-react";
 
 interface DemoConfig {
   demo_id: string;
@@ -40,30 +40,30 @@ const GradioDemoGenerator: React.FC = () => {
   const [demos, setDemos] = useState<DemoInfo[]>([]);
   const [selectedDemo, setSelectedDemo] = useState<DemoInfo | null>(null);
   const [showConfigForm, setShowConfigForm] = useState(false);
-  const [generatedCode, setGeneratedCode] = useState<string>('');
-  const [embedCode, setEmbedCode] = useState<string>('');
+  const [generatedCode, setGeneratedCode] = useState<string>("");
+  const [embedCode, setEmbedCode] = useState<string>("");
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedEmbed, setCopiedEmbed] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
 
   // Form state
   const [config, setConfig] = useState<DemoConfig>({
     demo_id: `demo_${Date.now()}`,
-    model_id: '',
-    model_path: '',
-    title: 'My Fine-Tuned Model Demo',
-    description: 'Interactive demo for my fine-tuned model',
-    input_type: 'textbox',
-    input_label: 'Input',
-    input_placeholder: 'Enter your prompt here...',
-    output_type: 'textbox',
-    output_label: 'Output',
+    model_id: "",
+    model_path: "",
+    title: "My Fine-Tuned Model Demo",
+    description: "Interactive demo for my fine-tuned model",
+    input_type: "textbox",
+    input_label: "Input",
+    input_placeholder: "Enter your prompt here...",
+    output_type: "textbox",
+    output_label: "Output",
     max_tokens: 512,
     temperature: 0.7,
     top_p: 0.9,
     top_k: 50,
-    server_name: '127.0.0.1',
+    server_name: "127.0.0.1",
     server_port: 7860,
     share: false,
     use_local_model: true,
@@ -75,42 +75,42 @@ const GradioDemoGenerator: React.FC = () => {
 
   const loadDemos = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/gradio-demos/');
+      const response = await fetch("http://localhost:8000/api/gradio-demos/");
       if (response.ok) {
         const data = await response.json();
         // Handle both array and object responses
         setDemos(Array.isArray(data) ? data : []);
       }
     } catch (err) {
-      console.error('Failed to load demos:', err);
+      console.error("Failed to load demos:", err);
       setDemos([]);
     }
   };
 
   const createDemo = async () => {
     setLoading(true);
-    setError('');
-    
+    setError("");
+
     try {
-      const response = await fetch('http://localhost:8000/api/gradio-demos/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("http://localhost:8000/api/gradio-demos/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(config),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create demo');
+        throw new Error("Failed to create demo");
       }
 
       const demo = await response.json();
       setDemos([...demos, demo]);
       setSelectedDemo(demo);
       setShowConfigForm(false);
-      
+
       // Generate code preview
       await loadDemoCode(demo.demo_id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create demo');
+      setError(err instanceof Error ? err.message : "Failed to create demo");
     } finally {
       setLoading(false);
     }
@@ -118,27 +118,27 @@ const GradioDemoGenerator: React.FC = () => {
 
   const launchDemo = async (demoId: string) => {
     setLoading(true);
-    setError('');
-    
+    setError("");
+
     try {
       const response = await fetch(`http://localhost:8000/api/gradio-demos/${demoId}/launch`, {
-        method: 'POST',
+        method: "POST",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to launch demo');
+        throw new Error("Failed to launch demo");
       }
 
       const demo = await response.json();
-      setDemos(demos.map(d => d.demo_id === demoId ? demo : d));
+      setDemos(demos.map((d) => (d.demo_id === demoId ? demo : d)));
       setSelectedDemo(demo);
-      
+
       // Load embed code if public URL is available
       if (demo.public_url) {
         await loadEmbedCode(demoId);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to launch demo');
+      setError(err instanceof Error ? err.message : "Failed to launch demo");
     } finally {
       setLoading(false);
     }
@@ -146,54 +146,54 @@ const GradioDemoGenerator: React.FC = () => {
 
   const stopDemo = async (demoId: string) => {
     setLoading(true);
-    setError('');
-    
+    setError("");
+
     try {
       const response = await fetch(`http://localhost:8000/api/gradio-demos/${demoId}/stop`, {
-        method: 'POST',
+        method: "POST",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to stop demo');
+        throw new Error("Failed to stop demo");
       }
 
       const demo = await response.json();
-      setDemos(demos.map(d => d.demo_id === demoId ? demo : d));
+      setDemos(demos.map((d) => (d.demo_id === demoId ? demo : d)));
       if (selectedDemo?.demo_id === demoId) {
         setSelectedDemo(demo);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to stop demo');
+      setError(err instanceof Error ? err.message : "Failed to stop demo");
     } finally {
       setLoading(false);
     }
   };
 
   const deleteDemo = async (demoId: string) => {
-    if (!confirm('Are you sure you want to delete this demo?')) {
+    if (!confirm("Are you sure you want to delete this demo?")) {
       return;
     }
 
     setLoading(true);
-    setError('');
-    
+    setError("");
+
     try {
       const response = await fetch(`http://localhost:8000/api/gradio-demos/${demoId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete demo');
+        throw new Error("Failed to delete demo");
       }
 
-      setDemos(demos.filter(d => d.demo_id !== demoId));
+      setDemos(demos.filter((d) => d.demo_id !== demoId));
       if (selectedDemo?.demo_id === demoId) {
         setSelectedDemo(null);
-        setGeneratedCode('');
-        setEmbedCode('');
+        setGeneratedCode("");
+        setEmbedCode("");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete demo');
+      setError(err instanceof Error ? err.message : "Failed to delete demo");
     } finally {
       setLoading(false);
     }
@@ -207,7 +207,7 @@ const GradioDemoGenerator: React.FC = () => {
         setGeneratedCode(data.code);
       }
     } catch (err) {
-      console.error('Failed to load demo code:', err);
+      console.error("Failed to load demo code:", err);
     }
   };
 
@@ -219,16 +219,16 @@ const GradioDemoGenerator: React.FC = () => {
         setEmbedCode(data.embed_code);
       }
     } catch (err) {
-      console.error('Failed to load embed code:', err);
+      console.error("Failed to load embed code:", err);
       // If embed code fails (e.g., no public URL), just clear it
-      setEmbedCode('');
+      setEmbedCode("");
     }
   };
 
-  const copyToClipboard = async (text: string, type: 'code' | 'embed') => {
+  const copyToClipboard = async (text: string, type: "code" | "embed") => {
     try {
       await navigator.clipboard.writeText(text);
-      if (type === 'code') {
+      if (type === "code") {
         setCopiedCode(true);
         setTimeout(() => setCopiedCode(false), 2000);
       } else {
@@ -236,20 +236,20 @@ const GradioDemoGenerator: React.FC = () => {
         setTimeout(() => setCopiedEmbed(false), 2000);
       }
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error("Failed to copy:", err);
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'running':
-        return 'text-green-600 bg-green-100';
-      case 'stopped':
-        return 'text-gray-600 bg-gray-100';
-      case 'error':
-        return 'text-red-600 bg-red-100';
+      case "running":
+        return "text-green-600 bg-green-100";
+      case "stopped":
+        return "text-gray-600 bg-gray-100";
+      case "error":
+        return "text-red-600 bg-red-100";
       default:
-        return 'text-blue-600 bg-blue-100';
+        return "text-blue-600 bg-blue-100";
     }
   };
 
@@ -300,13 +300,15 @@ const GradioDemoGenerator: React.FC = () => {
                     }}
                     className={`p-3 border rounded-lg cursor-pointer transition-colors ${
                       selectedDemo?.demo_id === demo.demo_id
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <span className="font-medium truncate">{demo.demo_id}</span>
-                      <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(demo.status)}`}>
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full ${getStatusColor(demo.status)}`}
+                      >
                         {demo.status}
                       </span>
                     </div>
@@ -327,9 +329,9 @@ const GradioDemoGenerator: React.FC = () => {
               {/* Control Panel */}
               <div className="bg-white rounded-lg shadow-md p-4">
                 <h2 className="text-xl font-semibold mb-4">Demo Controls</h2>
-                
+
                 <div className="flex flex-wrap gap-3">
-                  {selectedDemo.status === 'created' && (
+                  {selectedDemo.status === "created" && (
                     <button
                       onClick={() => launchDemo(selectedDemo.demo_id)}
                       disabled={loading}
@@ -339,8 +341,8 @@ const GradioDemoGenerator: React.FC = () => {
                       Launch Demo
                     </button>
                   )}
-                  
-                  {selectedDemo.status === 'running' && (
+
+                  {selectedDemo.status === "running" && (
                     <>
                       <button
                         onClick={() => stopDemo(selectedDemo.demo_id)}
@@ -350,7 +352,7 @@ const GradioDemoGenerator: React.FC = () => {
                         <Square size={16} />
                         Stop Demo
                       </button>
-                      
+
                       {selectedDemo.local_url && (
                         <a
                           href={selectedDemo.local_url}
@@ -364,7 +366,7 @@ const GradioDemoGenerator: React.FC = () => {
                       )}
                     </>
                   )}
-                  
+
                   <button
                     onClick={() => loadDemos()}
                     disabled={loading}
@@ -373,7 +375,7 @@ const GradioDemoGenerator: React.FC = () => {
                     <RefreshCw size={16} />
                     Refresh
                   </button>
-                  
+
                   <button
                     onClick={() => deleteDemo(selectedDemo.demo_id)}
                     disabled={loading}
@@ -414,11 +416,11 @@ const GradioDemoGenerator: React.FC = () => {
                       Generated Code
                     </h3>
                     <button
-                      onClick={() => copyToClipboard(generatedCode, 'code')}
+                      onClick={() => copyToClipboard(generatedCode, "code")}
                       className="flex items-center gap-2 px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
                     >
                       {copiedCode ? <Check size={16} /> : <Copy size={16} />}
-                      {copiedCode ? 'Copied!' : 'Copy'}
+                      {copiedCode ? "Copied!" : "Copy"}
                     </button>
                   </div>
                   <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto text-sm">
@@ -436,11 +438,11 @@ const GradioDemoGenerator: React.FC = () => {
                       Embeddable Code
                     </h3>
                     <button
-                      onClick={() => copyToClipboard(embedCode, 'embed')}
+                      onClick={() => copyToClipboard(embedCode, "embed")}
                       className="flex items-center gap-2 px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
                     >
                       {copiedEmbed ? <Check size={16} /> : <Copy size={16} />}
-                      {copiedEmbed ? 'Copied!' : 'Copy'}
+                      {copiedEmbed ? "Copied!" : "Copy"}
                     </button>
                   </div>
                   <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto text-sm">
@@ -468,7 +470,7 @@ const GradioDemoGenerator: React.FC = () => {
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <h2 className="text-2xl font-bold mb-4">Create New Demo</h2>
-              
+
               <div className="space-y-4">
                 {/* Basic Info */}
                 <div>
@@ -561,7 +563,9 @@ const GradioDemoGenerator: React.FC = () => {
                     <input
                       type="number"
                       value={config.max_tokens}
-                      onChange={(e) => setConfig({ ...config, max_tokens: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setConfig({ ...config, max_tokens: parseInt(e.target.value) })
+                      }
                       className="w-full px-3 py-2 border rounded-lg"
                     />
                   </div>
@@ -572,7 +576,9 @@ const GradioDemoGenerator: React.FC = () => {
                       type="number"
                       step="0.1"
                       value={config.temperature}
-                      onChange={(e) => setConfig({ ...config, temperature: parseFloat(e.target.value) })}
+                      onChange={(e) =>
+                        setConfig({ ...config, temperature: parseFloat(e.target.value) })
+                      }
                       className="w-full px-3 py-2 border rounded-lg"
                     />
                   </div>
@@ -606,7 +612,9 @@ const GradioDemoGenerator: React.FC = () => {
                     <input
                       type="number"
                       value={config.server_port}
-                      onChange={(e) => setConfig({ ...config, server_port: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setConfig({ ...config, server_port: parseInt(e.target.value) })
+                      }
                       className="w-full px-3 py-2 border rounded-lg"
                     />
                   </div>
@@ -643,7 +651,7 @@ const GradioDemoGenerator: React.FC = () => {
                       <label className="block text-sm font-medium mb-1">API Endpoint</label>
                       <input
                         type="text"
-                        value={config.api_endpoint || ''}
+                        value={config.api_endpoint || ""}
                         onChange={(e) => setConfig({ ...config, api_endpoint: e.target.value })}
                         placeholder="https://api.example.com/v1/generate"
                         className="w-full px-3 py-2 border rounded-lg"
@@ -654,7 +662,7 @@ const GradioDemoGenerator: React.FC = () => {
                       <label className="block text-sm font-medium mb-1">API Key</label>
                       <input
                         type="password"
-                        value={config.api_key || ''}
+                        value={config.api_key || ""}
                         onChange={(e) => setConfig({ ...config, api_key: e.target.value })}
                         placeholder="Your API key"
                         className="w-full px-3 py-2 border rounded-lg"
@@ -670,7 +678,7 @@ const GradioDemoGenerator: React.FC = () => {
                   disabled={loading || !config.model_id || !config.model_path}
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
-                  {loading ? 'Creating...' : 'Create Demo'}
+                  {loading ? "Creating..." : "Create Demo"}
                 </button>
                 <button
                   onClick={() => setShowConfigForm(false)}

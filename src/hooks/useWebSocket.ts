@@ -58,7 +58,7 @@ export interface UseWebSocketResult<T = unknown> {
 
 /**
  * Hook for managing WebSocket connections
- * 
+ *
  * @example
  * ```tsx
  * const { data, isConnected, send } = useWebSocket<TrainingMetrics>(
@@ -72,7 +72,7 @@ export interface UseWebSocketResult<T = unknown> {
  */
 export function useWebSocket<T = unknown>(
   url: string,
-  options: UseWebSocketOptions = {},
+  options: UseWebSocketOptions = {}
 ): UseWebSocketResult<T> {
   const { autoConnect = true, onConnectionChange, onError } = options;
 
@@ -91,8 +91,8 @@ export function useWebSocket<T = unknown>(
       connectionKeyRef.current = key;
 
       // Subscribe to messages
-      const subId = webSocketManager.subscribe(key, (message: T) => {
-        setData(message);
+      const subId = webSocketManager.subscribe(key, (message: any) => {
+        setData(message as T);
         setError(null);
       });
       subscriptionIdRef.current = subId;
@@ -123,10 +123,7 @@ export function useWebSocket<T = unknown>(
 
     // Unsubscribe and disconnect
     if (connectionKeyRef.current && subscriptionIdRef.current) {
-      webSocketManager.unsubscribe(
-        connectionKeyRef.current,
-        subscriptionIdRef.current,
-      );
+      webSocketManager.unsubscribe(connectionKeyRef.current, subscriptionIdRef.current);
       subscriptionIdRef.current = null;
       connectionKeyRef.current = null;
     }
@@ -142,24 +139,21 @@ export function useWebSocket<T = unknown>(
     }
   }, []);
 
-  const subscribe = useCallback(
-    (handler: (data: T) => void): (() => void) => {
-      if (!connectionKeyRef.current) {
-        console.warn("Cannot subscribe: not connected");
-        return () => { };
+  const subscribe = useCallback((handler: (data: T) => void): (() => void) => {
+    if (!connectionKeyRef.current) {
+      console.warn("Cannot subscribe: not connected");
+      return () => { };
+    }
+
+    const subId = webSocketManager.subscribe(connectionKeyRef.current, handler as any);
+
+    // Return unsubscribe function
+    return () => {
+      if (connectionKeyRef.current) {
+        webSocketManager.unsubscribe(connectionKeyRef.current, subId);
       }
-
-      const subId = webSocketManager.subscribe(connectionKeyRef.current, handler);
-
-      // Return unsubscribe function
-      return () => {
-        if (connectionKeyRef.current) {
-          webSocketManager.unsubscribe(connectionKeyRef.current, subId);
-        }
-      };
-    },
-    [],
-  );
+    };
+  }, []);
 
   // Auto-connect on mount if enabled
   useEffect(() => {

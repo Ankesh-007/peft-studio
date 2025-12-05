@@ -16,7 +16,7 @@ export const useKeyboardNavigation = (
     onArrowRight?: () => void;
     onTab?: (shiftKey: boolean) => void;
     enabled?: boolean;
-  } = {},
+  } = {}
 ) => {
   const { enabled = true } = options;
 
@@ -69,7 +69,7 @@ export const useKeyboardNavigation = (
           break;
       }
     },
-    [enabled, options],
+    [enabled, options]
   );
 
   useEffect(() => {
@@ -86,10 +86,7 @@ export const useKeyboardNavigation = (
 /**
  * Hook for managing focus trap within a modal or dialog
  */
-export const useFocusTrap = (
-  containerRef: RefObject<HTMLElement>,
-  enabled: boolean = true,
-) => {
+export const useFocusTrap = (containerRef: RefObject<HTMLElement>, enabled: boolean = true) => {
   useEffect(() => {
     if (!enabled) return;
 
@@ -97,7 +94,7 @@ export const useFocusTrap = (
     if (!container) return;
 
     const focusableElements = container.querySelectorAll<HTMLElement>(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
 
     const firstElement = focusableElements[0];
@@ -137,7 +134,7 @@ export const useRovingTabIndex = (
   options: {
     orientation?: "horizontal" | "vertical";
     loop?: boolean;
-  } = {},
+  } = {}
 ) => {
   const { orientation = "vertical", loop = true } = options;
 
@@ -151,7 +148,7 @@ export const useRovingTabIndex = (
       });
       items[index].focus();
     },
-    [itemsRef],
+    [itemsRef]
   );
 
   const handleKeyDown = useCallback(
@@ -185,7 +182,7 @@ export const useRovingTabIndex = (
 
       focusItem(nextIndex);
     },
-    [itemsRef, orientation, loop, focusItem],
+    [itemsRef, orientation, loop, focusItem]
   );
 
   return { focusItem, handleKeyDown };

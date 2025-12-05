@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { CheckCircle, XCircle, AlertCircle, RefreshCw, Info } from 'lucide-react';
+import React, { useEffect, useState, useCallback } from "react";
+import { CheckCircle, XCircle, AlertCircle, RefreshCw, Info } from "lucide-react";
 
 interface DependencyCheck {
   name: string;
@@ -23,10 +23,7 @@ interface DependencyStatusProps {
   onError?: (error: string) => void;
 }
 
-export const DependencyStatus: React.FC<DependencyStatusProps> = ({
-  onComplete,
-  onError,
-}) => {
+export const DependencyStatus: React.FC<DependencyStatusProps> = ({ onComplete, onError }) => {
   const [report, setReport] = useState<DependencyReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +33,7 @@ export const DependencyStatus: React.FC<DependencyStatusProps> = ({
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:8000/api/dependencies/check', {
+      const response = await fetch("http://localhost:8000/api/dependencies/check", {
         signal: AbortSignal.timeout(10000),
       });
 
@@ -58,14 +55,11 @@ export const DependencyStatus: React.FC<DependencyStatusProps> = ({
           (check) => check.required && (!check.installed || check.error)
         );
         if (failedRequired.length > 0 && onError) {
-          onError(
-            `Missing required dependencies: ${failedRequired.map((c) => c.name).join(', ')}`
-          );
+          onError(`Missing required dependencies: ${failedRequired.map((c) => c.name).join(", ")}`);
         }
       }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to check dependencies';
+      const errorMessage = err instanceof Error ? err.message : "Failed to check dependencies";
       setError(errorMessage);
       if (onError) {
         onError(errorMessage);
@@ -90,9 +84,9 @@ export const DependencyStatus: React.FC<DependencyStatusProps> = ({
   };
 
   const getStatusColor = (check: DependencyCheck) => {
-    if (!check.installed) return 'border-red-500 bg-red-500/10';
-    if (check.error) return 'border-yellow-500 bg-yellow-500/10';
-    return 'border-green-500 bg-green-500/10';
+    if (!check.installed) return "border-red-500 bg-red-500/10";
+    if (check.error) return "border-yellow-500 bg-yellow-500/10";
+    return "border-green-500 bg-green-500/10";
   };
 
   if (loading && !report) {
@@ -104,9 +98,7 @@ export const DependencyStatus: React.FC<DependencyStatusProps> = ({
               <span className="text-4xl font-bold text-blue-600">PS</span>
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-white mb-4">
-            Checking Dependencies
-          </h2>
+          <h2 className="text-2xl font-bold text-white mb-4">Checking Dependencies</h2>
           <div className="flex justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
           </div>
@@ -123,9 +115,7 @@ export const DependencyStatus: React.FC<DependencyStatusProps> = ({
             <div className="flex items-start gap-4">
               <XCircle className="w-8 h-8 text-red-400 flex-shrink-0 mt-1" />
               <div className="flex-1">
-                <h2 className="text-xl font-bold text-white mb-2">
-                  Connection Error
-                </h2>
+                <h2 className="text-xl font-bold text-white mb-2">Connection Error</h2>
                 <p className="text-red-200 mb-4">{error}</p>
                 <button
                   onClick={checkDependencies}
@@ -154,20 +144,16 @@ export const DependencyStatus: React.FC<DependencyStatusProps> = ({
               <span className="text-3xl font-bold text-blue-600">PS</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Dependency Verification
-          </h1>
-          <p className="text-blue-200">
-            Checking system requirements for PEFT Studio
-          </p>
+          <h1 className="text-3xl font-bold text-white mb-2">Dependency Verification</h1>
+          <p className="text-blue-200">Checking system requirements for PEFT Studio</p>
         </div>
 
         {/* Overall Status */}
         <div
           className={`mb-6 p-4 rounded-lg border-2 ${
             report.all_passed
-              ? 'bg-green-500/20 border-green-500'
-              : 'bg-yellow-500/20 border-yellow-500'
+              ? "bg-green-500/20 border-green-500"
+              : "bg-yellow-500/20 border-yellow-500"
           }`}
         >
           <div className="flex items-center gap-3">
@@ -179,8 +165,8 @@ export const DependencyStatus: React.FC<DependencyStatusProps> = ({
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-white">
                 {report.all_passed
-                  ? 'All Required Dependencies Met'
-                  : 'Some Dependencies Need Attention'}
+                  ? "All Required Dependencies Met"
+                  : "Some Dependencies Need Attention"}
               </h3>
               {!report.all_passed && (
                 <p className="text-sm text-gray-200 mt-1">
@@ -193,15 +179,10 @@ export const DependencyStatus: React.FC<DependencyStatusProps> = ({
 
         {/* Dependency Checks */}
         <div className="bg-white/10 rounded-lg p-6 mb-6 backdrop-blur-sm">
-          <h3 className="text-lg font-semibold text-white mb-4">
-            Dependency Status
-          </h3>
+          <h3 className="text-lg font-semibold text-white mb-4">Dependency Status</h3>
           <div className="space-y-3">
             {report.checks.map((check, index) => (
-              <div
-                key={index}
-                className={`p-4 rounded-lg border-2 ${getStatusColor(check)}`}
-              >
+              <div key={index} className={`p-4 rounded-lg border-2 ${getStatusColor(check)}`}>
                 <div className="flex items-start gap-3">
                   {getStatusIcon(check)}
                   <div className="flex-1 min-w-0">
@@ -224,7 +205,7 @@ export const DependencyStatus: React.FC<DependencyStatusProps> = ({
                         Version: {check.version}
                         {check.expected_version && (
                           <span className="text-gray-400">
-                            {' '}
+                            {" "}
                             (expected: {check.expected_version})
                           </span>
                         )}
@@ -232,9 +213,7 @@ export const DependencyStatus: React.FC<DependencyStatusProps> = ({
                     )}
 
                     {check.error && (
-                      <p className="text-sm text-yellow-200 mb-2">
-                        ⚠️ {check.error}
-                      </p>
+                      <p className="text-sm text-yellow-200 mb-2">⚠️ {check.error}</p>
                     )}
 
                     {check.fix_instructions && (
@@ -242,9 +221,7 @@ export const DependencyStatus: React.FC<DependencyStatusProps> = ({
                         <div className="flex items-start gap-2">
                           <Info className="w-4 h-4 text-blue-300 flex-shrink-0 mt-0.5" />
                           <div className="flex-1">
-                            <p className="text-xs font-semibold text-blue-200 mb-1">
-                              How to fix:
-                            </p>
+                            <p className="text-xs font-semibold text-blue-200 mb-1">How to fix:</p>
                             <p className="text-xs text-gray-300 whitespace-pre-line">
                               {check.fix_instructions}
                             </p>
@@ -284,8 +261,8 @@ export const DependencyStatus: React.FC<DependencyStatusProps> = ({
             disabled={loading}
             className="px-6 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 text-white rounded-lg transition-colors flex items-center gap-2 font-semibold"
           >
-            <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-            {loading ? 'Checking...' : 'Retry Check'}
+            <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
+            {loading ? "Checking..." : "Retry Check"}
           </button>
 
           {report.all_passed && (

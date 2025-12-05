@@ -1,19 +1,19 @@
 /// <reference types="vite/client" />
 
 // Import types from electron.d.ts
-type TrainingConfig = import('./types/electron').TrainingConfig;
-type TrainingResult = import('./types/electron').TrainingResult;
-type TrainingProgress = import('./types/electron').TrainingProgress;
-type DatasetInfo = import('./types/electron').DatasetInfo;
-type ModelInfo = import('./types/electron').ModelInfo;
-type InferenceConfig = import('./types/electron').InferenceConfig;
-type InferenceResult = import('./types/electron').InferenceResult;
-type SystemInfo = import('./types/electron').SystemInfo;
-type NotificationOptions = import('./types/electron').NotificationOptions;
-type UpdateInfo = import('./types/electron').UpdateInfo;
-type UpdateResult = import('./types/electron').UpdateResult;
-type BackendStatus = import('./types/electron').BackendStatus;
-type BackendHealth = import('./types/electron').BackendHealth;
+type TrainingConfig = import("./types/electron").TrainingConfig;
+type TrainingResult = import("./types/electron").TrainingResult;
+type TrainingProgress = import("./types/electron").TrainingProgress;
+type DatasetInfo = import("./types/electron").DatasetInfo;
+type ModelInfo = import("./types/electron").ModelInfo;
+type InferenceConfig = import("./types/electron").InferenceConfig;
+type InferenceResult = import("./types/electron").InferenceResult;
+type SystemInfo = import("./types/electron").SystemInfo;
+type NotificationOptions = import("./types/electron").NotificationOptions;
+type UpdateInfo = import("./types/electron").UpdateInfo;
+type UpdateResult = import("./types/electron").UpdateResult;
+type BackendStatus = import("./types/electron").BackendStatus;
+type BackendHealth = import("./types/electron").BackendHealth;
 
 interface Window {
   api: {
@@ -41,10 +41,19 @@ interface Window {
     installUpdate: () => Promise<UpdateResult>;
     getAppVersion: () => Promise<{ version: string }>;
     onUpdateAvailable: (callback: (data: UpdateInfo & { releaseDate?: string }) => void) => void;
-    onUpdateDownloadProgress: (callback: (data: { percent: number; bytesPerSecond: number; transferred: number; total: number }) => void) => void;
+    onUpdateDownloadProgress: (
+      callback: (data: {
+        percent: number;
+        bytesPerSecond: number;
+        transferred: number;
+        total: number;
+      }) => void
+    ) => void;
     onUpdateDownloaded: (callback: (data: UpdateInfo) => void) => void;
     onUpdateStatus: (callback: (data: { status: string; message?: string }) => void) => void;
-    onUpdateChecksumFailed: (callback: (data: { expected: string; actual: string; file: string }) => void) => void;
+    onUpdateChecksumFailed: (
+      callback: (data: { expected: string; actual: string; file: string }) => void
+    ) => void;
     // Backend management methods
     getBackendStatus: () => Promise<BackendStatus>;
     restartBackend: () => Promise<BackendStatus>;

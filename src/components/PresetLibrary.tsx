@@ -7,12 +7,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 
-import {
-  listPresets,
-  deletePreset,
-  downloadPresetAsFile,
-  uploadPresetFile,
-} from "../api/presets";
+import { listPresets, deletePreset, downloadPresetAsFile, uploadPresetFile } from "../api/presets";
 
 import type { ConfigurationPreset } from "../types/wizard";
 
@@ -21,14 +16,9 @@ interface PresetLibraryProps {
   onClose: () => void;
 }
 
-export const PresetLibrary: React.FC<PresetLibraryProps> = ({
-  onSelectPreset,
-  onClose,
-}) => {
+export const PresetLibrary: React.FC<PresetLibraryProps> = ({ onSelectPreset, onClose }) => {
   const [presets, setPresets] = useState<ConfigurationPreset[]>([]);
-  const [filteredPresets, setFilteredPresets] = useState<ConfigurationPreset[]>(
-    [],
-  );
+  const [filteredPresets, setFilteredPresets] = useState<ConfigurationPreset[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,15 +54,13 @@ export const PresetLibrary: React.FC<PresetLibraryProps> = ({
       filtered = filtered.filter(
         (preset) =>
           preset.name.toLowerCase().includes(term) ||
-          preset.description.toLowerCase().includes(term),
+          preset.description.toLowerCase().includes(term)
       );
     }
 
     // Apply tag filter
     if (selectedTags.length > 0) {
-      filtered = filtered.filter((preset) =>
-        selectedTags.some((tag) => preset.tags.includes(tag)),
-      );
+      filtered = filtered.filter((preset) => selectedTags.some((tag) => preset.tags.includes(tag)));
     }
 
     setFilteredPresets(filtered);
@@ -127,7 +115,7 @@ export const PresetLibrary: React.FC<PresetLibraryProps> = ({
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
   };
 
@@ -144,19 +132,9 @@ export const PresetLibrary: React.FC<PresetLibraryProps> = ({
       <div className="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-          <h2 className="text-2xl font-semibold text-gray-900">
-            Configuration Presets
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+          <h2 className="text-2xl font-semibold text-gray-900">Configuration Presets</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -183,12 +161,7 @@ export const PresetLibrary: React.FC<PresetLibraryProps> = ({
 
             {/* Import Button */}
             <label className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer flex items-center gap-2">
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -197,21 +170,14 @@ export const PresetLibrary: React.FC<PresetLibraryProps> = ({
                 />
               </svg>
               Import
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleImport}
-                className="hidden"
-              />
+              <input type="file" accept=".json" onChange={handleImport} className="hidden" />
             </label>
           </div>
 
           {/* Tag Filter */}
           {allTags.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              <span className="text-sm text-gray-600 py-1">
-                Filter by tags:
-              </span>
+              <span className="text-sm text-gray-600 py-1">Filter by tags:</span>
               {allTags.map((tag) => (
                 <button
                   key={tag}
@@ -255,15 +221,11 @@ export const PresetLibrary: React.FC<PresetLibraryProps> = ({
                   className="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow"
                 >
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900 flex-1">
-                      {preset.name}
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900 flex-1">{preset.name}</h3>
                   </div>
 
                   {preset.description && (
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                      {preset.description}
-                    </p>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{preset.description}</p>
                   )}
 
                   <div className="space-y-2 mb-3 text-sm text-gray-700">
@@ -275,9 +237,7 @@ export const PresetLibrary: React.FC<PresetLibraryProps> = ({
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Method:</span>
-                      <span className="font-medium">
-                        {preset.peft_method.toUpperCase()}
-                      </span>
+                      <span className="font-medium">{preset.peft_method.toUpperCase()}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Batch Size:</span>
@@ -285,9 +245,7 @@ export const PresetLibrary: React.FC<PresetLibraryProps> = ({
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Learning Rate:</span>
-                      <span className="font-medium">
-                        {preset.learning_rate}
-                      </span>
+                      <span className="font-medium">{preset.learning_rate}</span>
                     </div>
                   </div>
 

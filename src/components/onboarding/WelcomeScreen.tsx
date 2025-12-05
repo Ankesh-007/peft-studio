@@ -6,23 +6,18 @@ interface WelcomeScreenProps {
   onSkip: () => void;
 }
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
-  onGetStarted,
-  onSkip,
-}) => {
+const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onGetStarted, onSkip }) => {
   const features = [
     {
       icon: Brain,
       title: "Smart Configuration",
-      description:
-        "Automatically optimizes settings based on your hardware and dataset",
+      description: "Automatically optimizes settings based on your hardware and dataset",
       color: "text-accent-primary",
     },
     {
       icon: Zap,
       title: "Real-Time Monitoring",
-      description:
-        "Watch your model train with live metrics and visual feedback",
+      description: "Watch your model train with live metrics and visual feedback",
       color: "text-accent-success",
     },
     {
@@ -34,8 +29,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
     {
       icon: Sparkles,
       title: "One-Click Export",
-      description:
-        "Deploy to HuggingFace, Ollama, and more with a single click",
+      description: "Deploy to HuggingFace, Ollama, and more with a single click",
       color: "text-accent-info",
     },
   ];
@@ -72,9 +66,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                   </div>
                   <div>
                     <h3 className="text-h3 mb-8">{feature.title}</h3>
-                    <p className="text-body text-dark-text-secondary">
-                      {feature.description}
-                    </p>
+                    <p className="text-body text-dark-text-secondary">{feature.description}</p>
                   </div>
                 </div>
               </div>
@@ -87,15 +79,9 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
           className="flex items-center justify-center gap-16 animate-fade-in"
           style={{ animationDelay: "400ms" }}
         >
-          <button
-            onClick={onGetStarted}
-            className="btn btn-primary btn-lg group"
-          >
+          <button onClick={onGetStarted} className="btn btn-primary btn-lg group">
             Get Started
-            <ArrowRight
-              size={20}
-              className="ml-8 group-hover:translate-x-4 transition-transform"
-            />
+            <ArrowRight size={20} className="ml-8 group-hover:translate-x-4 transition-transform" />
           </button>
           <button onClick={onSkip} className="btn btn-secondary btn-lg">
             Skip Tour

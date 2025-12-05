@@ -15,24 +15,8 @@ export interface AccessibleInputProps extends React.InputHTMLAttributes<HTMLInpu
 /**
  * Accessible input component with proper labels and error handling
  */
-export const AccessibleInput = forwardRef<
-  HTMLInputElement,
-  AccessibleInputProps
->(
-  (
-    {
-      label,
-      error,
-      hint,
-      required,
-      icon,
-      fullWidth = false,
-      className,
-      id,
-      ...props
-    },
-    ref,
-  ) => {
+export const AccessibleInput = forwardRef<HTMLInputElement, AccessibleInputProps>(
+  ({ label, error, hint, required, icon, fullWidth = false, className, id, ...props }, ref) => {
     const [randomId] = React.useState(() => Math.random().toString(36).substr(2, 9));
     const inputId = id || `input-${randomId}`;
     const errorId = `${inputId}-error`;
@@ -41,10 +25,7 @@ export const AccessibleInput = forwardRef<
     return (
       <div className={cn("space-y-2", fullWidth && "w-full")}>
         {label && (
-          <label
-            htmlFor={inputId}
-            className="block text-small font-medium text-dark-text-primary"
-          >
+          <label htmlFor={inputId} className="block text-small font-medium text-dark-text-primary">
             {label}
             {required && (
               <span className="text-accent-error ml-1" aria-label="required">
@@ -67,9 +48,8 @@ export const AccessibleInput = forwardRef<
             className={cn(
               "input w-full",
               icon && "pl-40",
-              error &&
-              "border-accent-error focus:border-accent-error focus:ring-accent-error",
-              className,
+              error && "border-accent-error focus:border-accent-error focus:ring-accent-error",
+              className
             )}
             aria-invalid={!!error}
             aria-describedby={cn(error && errorId, hint && hintId)}
@@ -102,7 +82,7 @@ export const AccessibleInput = forwardRef<
         )}
       </div>
     );
-  },
+  }
 );
 
 AccessibleInput.displayName = "AccessibleInput";

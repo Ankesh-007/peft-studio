@@ -20,30 +20,31 @@ const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
     progress: 0,
   });
 
-  const handleFileUpload = useCallback((file: File) => {
-    setUploadState({
-      status: "uploading",
-      progress: 0,
-      file,
-    });
+  const handleFileUpload = useCallback(
+    (file: File) => {
+      setUploadState({
+        status: "uploading",
+        progress: 0,
+        file,
+      });
 
-    // Simulate upload progress
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 10;
-      setUploadState((prev) => ({ ...prev, progress }));
+      // Simulate upload progress
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 10;
+        setUploadState((prev) => ({ ...prev, progress }));
 
-      if (progress >= 100) {
-        clearInterval(interval);
-        setUploadState((prev) => ({ ...prev, status: "completed" }));
-        if (onUpload) {
-          onUpload(file);
+        if (progress >= 100) {
+          clearInterval(interval);
+          setUploadState((prev) => ({ ...prev, status: "completed" }));
+          if (onUpload) {
+            onUpload(file);
+          }
         }
-      }
-    }, 200);
-  }, [onUpload]);
-
-
+      }, 200);
+    },
+    [onUpload]
+  );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -55,13 +56,16 @@ const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
     setUploadState((prev) => ({ ...prev, status: "idle" }));
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      handleFileUpload(file);
-    }
-  }, [handleFileUpload]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        handleFileUpload(file);
+      }
+    },
+    [handleFileUpload]
+  );
 
   const handleFileSelect = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,10 +74,8 @@ const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
         handleFileUpload(file);
       }
     },
-    [handleFileUpload],
+    [handleFileUpload]
   );
-
-
 
   const handleReset = () => {
     setUploadState({ status: "idle", progress: 0 });
@@ -94,15 +96,12 @@ const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
           "relative h-[400px] border-2 border-dashed rounded-2xl transition-all duration-200",
           "flex flex-col items-center justify-center",
           uploadState.status === "idle" &&
-          "border-[#3a3a3a] bg-gradient-radial from-[#151515] to-[#0a0a0a]",
+            "border-[#3a3a3a] bg-gradient-radial from-[#151515] to-[#0a0a0a]",
           uploadState.status === "dragover" &&
-          "border-accent-primary bg-accent-primary/5 scale-[1.02]",
-          uploadState.status === "uploading" &&
-          "border-accent-info bg-accent-info/5",
-          uploadState.status === "completed" &&
-          "border-accent-success bg-accent-success/5",
-          uploadState.status === "error" &&
-          "border-accent-error bg-accent-error/5",
+            "border-accent-primary bg-accent-primary/5 scale-[1.02]",
+          uploadState.status === "uploading" && "border-accent-info bg-accent-info/5",
+          uploadState.status === "completed" && "border-accent-success bg-accent-success/5",
+          uploadState.status === "error" && "border-accent-error bg-accent-error/5"
         )}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -111,10 +110,7 @@ const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
         {/* Idle State */}
         {uploadState.status === "idle" && (
           <div className="text-center">
-            <Upload
-              size={64}
-              className="text-dark-text-tertiary mx-auto mb-16"
-            />
+            <Upload size={64} className="text-dark-text-tertiary mx-auto mb-16" />
             <h2 className="text-h2 mb-8">Upload Your Dataset</h2>
             <p className="text-body text-dark-text-secondary mb-16">
               Drag and drop files here, or click to browse
@@ -131,19 +127,14 @@ const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
               />
               Choose File
             </label>
-            <p className="text-tiny text-dark-text-tertiary mt-12">
-              Max 500MB per file
-            </p>
+            <p className="text-tiny text-dark-text-tertiary mt-12">Max 500MB per file</p>
           </div>
         )}
 
         {/* Drag Over State */}
         {uploadState.status === "dragover" && (
           <div className="text-center">
-            <Upload
-              size={64}
-              className="text-accent-primary mx-auto mb-16 animate-bounce"
-            />
+            <Upload size={64} className="text-accent-primary mx-auto mb-16 animate-bounce" />
             <h2 className="text-h2 text-accent-primary">Drop to upload</h2>
           </div>
         )}
@@ -155,9 +146,7 @@ const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
               <Loader2 size={48} className="text-accent-info animate-spin" />
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-8">
-                  <span className="text-body font-medium">
-                    {uploadState.file.name}
-                  </span>
+                  <span className="text-body font-medium">{uploadState.file.name}</span>
                   <button
                     onClick={handleReset}
                     className="text-dark-text-tertiary hover:text-dark-text-primary"
@@ -174,9 +163,7 @@ const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
             <div className="space-y-8">
               <div className="flex justify-between text-small">
                 <span className="text-dark-text-secondary">Progress</span>
-                <span className="text-accent-info font-medium">
-                  {uploadState.progress}%
-                </span>
+                <span className="text-accent-info font-medium">{uploadState.progress}%</span>
               </div>
               <div className="h-8 bg-dark-bg-primary rounded-full overflow-hidden">
                 <div
@@ -203,9 +190,7 @@ const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
               <div className="flex items-start gap-16">
                 <FileText size={40} className="text-accent-primary" />
                 <div className="flex-1">
-                  <h3 className="text-body font-medium mb-4">
-                    {uploadState.file.name}
-                  </h3>
+                  <h3 className="text-body font-medium mb-4">{uploadState.file.name}</h3>
                   <p className="text-small text-dark-text-secondary mb-8">
                     {formatBytes(uploadState.file.size)}
                   </p>
@@ -231,9 +216,7 @@ const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
 
       {/* Alternative Import Options */}
       <div>
-        <p className="text-small text-dark-text-tertiary mb-12">
-          Or import from:
-        </p>
+        <p className="text-small text-dark-text-tertiary mb-12">Or import from:</p>
         <div className="grid grid-cols-3 gap-12">
           <button className="btn-ghost justify-center py-16">
             <span>🤗 Hugging Face</span>

@@ -38,16 +38,16 @@ class StorageMock {
 
 // Setup storage mocks before each test
 beforeEach(() => {
-  if (typeof window !== 'undefined') {
-    Object.defineProperty(window, 'localStorage', {
+  if (typeof window !== "undefined") {
+    Object.defineProperty(window, "localStorage", {
       value: new StorageMock(),
       writable: true,
     });
-    Object.defineProperty(window, 'sessionStorage', {
+    Object.defineProperty(window, "sessionStorage", {
       value: new StorageMock(),
       writable: true,
     });
-    
+
     // Mock window.alert since JSDOM doesn't implement it
     if (!window.alert) {
       window.alert = vi.fn();
@@ -67,8 +67,8 @@ interface CustomMatchers<R = unknown> {
 }
 
 declare module "vitest" {
-  interface Assertion<T = any> extends CustomMatchers<T> { }
-  interface AsymmetricMatchersContaining extends CustomMatchers { }
+  interface Assertion<T = any> extends CustomMatchers<T> {}
+  interface AsymmetricMatchersContaining extends CustomMatchers {}
 }
 
 // Custom matcher: Check if number is within range
@@ -129,15 +129,19 @@ expect.extend({
   },
 });
 // Mock lucide-react icons
-import React from 'react';
+import React from "react";
 
 // Mock lucide-react icons
 vi.mock("lucide-react", () => {
-  return new Proxy({}, {
-    get: (target, prop) => {
-      if (prop === '__esModule') return true;
-      // Return a component for any named export
-      return () => React.createElement('div', { 'data-testid': `icon-${String(prop).toLowerCase()}` });
+  return new Proxy(
+    {},
+    {
+      get: (target, prop) => {
+        if (prop === "__esModule") return true;
+        // Return a component for any named export
+        return () =>
+          React.createElement("div", { "data-testid": `icon-${String(prop).toLowerCase()}` });
+      },
     }
-  });
+  );
 });

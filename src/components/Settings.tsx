@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Settings as SettingsIcon,
   Palette,
@@ -12,15 +12,15 @@ import {
   Save,
   Check,
   X,
-  AlertCircle
-} from 'lucide-react';
-import { cn } from '../lib/utils';
+  AlertCircle,
+} from "lucide-react";
+import { cn } from "../lib/utils";
 
 interface Settings {
   appearance: {
-    theme: 'dark' | 'light' | 'auto';
+    theme: "dark" | "light" | "auto";
     accentColor: string;
-    fontSize: 'small' | 'medium' | 'large';
+    fontSize: "small" | "medium" | "large";
     compactMode: boolean;
   };
   notifications: {
@@ -60,38 +60,44 @@ interface Settings {
   };
 }
 
-type TabId = 'appearance' | 'notifications' | 'providers' | 'dataRetention' | 'training' | 'advanced';
+type TabId =
+  | "appearance"
+  | "notifications"
+  | "providers"
+  | "dataRetention"
+  | "training"
+  | "advanced";
 
 const SettingsComponent: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<TabId>('appearance');
+  const [activeTab, setActiveTab] = useState<TabId>("appearance");
   const [settings, setSettings] = useState<Settings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const tabs = [
-    { id: 'appearance' as TabId, label: 'Appearance', icon: Palette },
-    { id: 'notifications' as TabId, label: 'Notifications', icon: Bell },
-    { id: 'providers' as TabId, label: 'Default Providers', icon: Cloud },
-    { id: 'dataRetention' as TabId, label: 'Data Retention', icon: Database },
-    { id: 'training' as TabId, label: 'Training', icon: Code },
-    { id: 'advanced' as TabId, label: 'Advanced', icon: SettingsIcon },
+    { id: "appearance" as TabId, label: "Appearance", icon: Palette },
+    { id: "notifications" as TabId, label: "Notifications", icon: Bell },
+    { id: "providers" as TabId, label: "Default Providers", icon: Cloud },
+    { id: "dataRetention" as TabId, label: "Data Retention", icon: Database },
+    { id: "training" as TabId, label: "Training", icon: Code },
+    { id: "advanced" as TabId, label: "Advanced", icon: SettingsIcon },
   ];
 
-  const showMessage = useCallback((type: 'success' | 'error', text: string) => {
+  const showMessage = useCallback((type: "success" | "error", text: string) => {
     setMessage({ type, text });
   }, []);
 
   const loadSettings = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/settings');
+      const response = await fetch("http://localhost:8000/api/settings");
       const data = await response.json();
       if (data.success) {
         setSettings(data.settings);
       }
     } catch (error) {
-      console.error('Error loading settings:', error);
-      showMessage('error', 'Failed to load settings');
+      console.error("Error loading settings:", error);
+      showMessage("error", "Failed to load settings");
     } finally {
       setLoading(false);
     }
@@ -114,34 +120,34 @@ const SettingsComponent: React.FC = () => {
       ...settings,
       [category]: {
         ...settings[category as keyof Settings],
-        [key]: value
-      }
+        [key]: value,
+      },
     });
   };
 
   const saveSettings = async () => {
     if (!settings) return;
-    
+
     setSaving(true);
     try {
-      const response = await fetch('http://localhost:8000/api/settings/category', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("http://localhost:8000/api/settings/category", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           category: activeTab,
-          values: settings[activeTab]
-        })
+          values: settings[activeTab],
+        }),
       });
-      
+
       const data = await response.json();
       if (data.success) {
-        showMessage('success', 'Settings saved successfully');
+        showMessage("success", "Settings saved successfully");
       } else {
-        showMessage('error', 'Failed to save settings');
+        showMessage("error", "Failed to save settings");
       }
     } catch (error) {
-      console.error('Error saving settings:', error);
-      showMessage('error', 'Failed to save settings');
+      console.error("Error saving settings:", error);
+      showMessage("error", "Failed to save settings");
     } finally {
       setSaving(false);
     }
@@ -149,82 +155,85 @@ const SettingsComponent: React.FC = () => {
 
   const resetCategory = async () => {
     if (!confirm(`Reset ${activeTab} settings to defaults?`)) return;
-    
+
     try {
-      const response = await fetch(`http://localhost:8000/api/settings/reset?category=${activeTab}`, {
-        method: 'POST'
-      });
-      
+      const response = await fetch(
+        `http://localhost:8000/api/settings/reset?category=${activeTab}`,
+        {
+          method: "POST",
+        }
+      );
+
       const data = await response.json();
       if (data.success) {
         setSettings(data.settings);
-        showMessage('success', 'Settings reset to defaults');
+        showMessage("success", "Settings reset to defaults");
       }
     } catch (error) {
-      console.error('Error resetting settings:', error);
-      showMessage('error', 'Failed to reset settings');
+      console.error("Error resetting settings:", error);
+      showMessage("error", "Failed to reset settings");
     }
   };
 
   const exportSettings = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/settings/export/json');
+      const response = await fetch("http://localhost:8000/api/settings/export/json");
       const data = await response.json();
-      
+
       if (data.success) {
-        const blob = new Blob([data.settings_json], { type: 'application/json' });
+        const blob = new Blob([data.settings_json], { type: "application/json" });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
-        a.download = `peft-studio-settings-${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `peft-studio-settings-${new Date().toISOString().split("T")[0]}.json`;
         a.click();
         URL.revokeObjectURL(url);
-        showMessage('success', 'Settings exported successfully');
+        showMessage("success", "Settings exported successfully");
       }
     } catch (error) {
-      console.error('Error exporting settings:', error);
-      showMessage('error', 'Failed to export settings');
+      console.error("Error exporting settings:", error);
+      showMessage("error", "Failed to export settings");
     }
   };
 
   const importSettings = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    
+
     try {
       const text = await file.text();
-      const response = await fetch('http://localhost:8000/api/settings/import', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ settings_json: text })
+      const response = await fetch("http://localhost:8000/api/settings/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ settings_json: text }),
       });
-      
+
       const data = await response.json();
       if (data.success) {
         setSettings(data.settings);
-        showMessage('success', 'Settings imported successfully');
+        showMessage("success", "Settings imported successfully");
       } else {
-        showMessage('error', 'Failed to import settings');
+        showMessage("error", "Failed to import settings");
       }
     } catch (error) {
-      console.error('Error importing settings:', error);
-      showMessage('error', 'Failed to import settings');
+      console.error("Error importing settings:", error);
+      showMessage("error", "Failed to import settings");
     }
-    
+
     // Reset file input
-    event.target.value = '';
+    event.target.value = "";
   };
 
   const renderAppearanceTab = () => {
     if (!settings) return null;
-    
+
     return (
       <div className="space-y-6">
         <div>
           <label className="block text-sm font-medium mb-2">Theme</label>
           <select
             value={settings.appearance.theme}
-            onChange={(e) => updateSetting('appearance', 'theme', e.target.value)}
+            onChange={(e) => updateSetting("appearance", "theme", e.target.value)}
             className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
           >
             <option value="dark">Dark</option>
@@ -237,7 +246,7 @@ const SettingsComponent: React.FC = () => {
           <label className="block text-sm font-medium mb-2">Accent Color</label>
           <select
             value={settings.appearance.accentColor}
-            onChange={(e) => updateSetting('appearance', 'accentColor', e.target.value)}
+            onChange={(e) => updateSetting("appearance", "accentColor", e.target.value)}
             className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
           >
             <option value="blue">Blue</option>
@@ -251,7 +260,7 @@ const SettingsComponent: React.FC = () => {
           <label className="block text-sm font-medium mb-2">Font Size</label>
           <select
             value={settings.appearance.fontSize}
-            onChange={(e) => updateSetting('appearance', 'fontSize', e.target.value)}
+            onChange={(e) => updateSetting("appearance", "fontSize", e.target.value)}
             className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
           >
             <option value="small">Small</option>
@@ -268,7 +277,7 @@ const SettingsComponent: React.FC = () => {
           <input
             type="checkbox"
             checked={settings.appearance.compactMode}
-            onChange={(e) => updateSetting('appearance', 'compactMode', e.target.checked)}
+            onChange={(e) => updateSetting("appearance", "compactMode", e.target.checked)}
             className="w-4 h-4"
           />
         </div>
@@ -278,15 +287,35 @@ const SettingsComponent: React.FC = () => {
 
   const renderNotificationsTab = () => {
     if (!settings) return null;
-    
+
     const notificationOptions = [
-      { key: 'enabled', label: 'Enable Notifications', description: 'Master switch for all notifications' },
-      { key: 'trainingComplete', label: 'Training Complete', description: 'Notify when training finishes' },
-      { key: 'trainingFailed', label: 'Training Failed', description: 'Notify when training fails' },
-      { key: 'deploymentReady', label: 'Deployment Ready', description: 'Notify when deployment is ready' },
-      { key: 'systemUpdates', label: 'System Updates', description: 'Notify about app updates' },
-      { key: 'soundEnabled', label: 'Sound', description: 'Play sound with notifications' },
-      { key: 'desktopNotifications', label: 'Desktop Notifications', description: 'Show system notifications' },
+      {
+        key: "enabled",
+        label: "Enable Notifications",
+        description: "Master switch for all notifications",
+      },
+      {
+        key: "trainingComplete",
+        label: "Training Complete",
+        description: "Notify when training finishes",
+      },
+      {
+        key: "trainingFailed",
+        label: "Training Failed",
+        description: "Notify when training fails",
+      },
+      {
+        key: "deploymentReady",
+        label: "Deployment Ready",
+        description: "Notify when deployment is ready",
+      },
+      { key: "systemUpdates", label: "System Updates", description: "Notify about app updates" },
+      { key: "soundEnabled", label: "Sound", description: "Play sound with notifications" },
+      {
+        key: "desktopNotifications",
+        label: "Desktop Notifications",
+        description: "Show system notifications",
+      },
     ];
 
     return (
@@ -299,8 +328,10 @@ const SettingsComponent: React.FC = () => {
             </div>
             <input
               type="checkbox"
-              checked={settings.notifications[option.key as keyof typeof settings.notifications] as boolean}
-              onChange={(e) => updateSetting('notifications', option.key, e.target.checked)}
+              checked={
+                settings.notifications[option.key as keyof typeof settings.notifications] as boolean
+              }
+              onChange={(e) => updateSetting("notifications", option.key, e.target.checked)}
               className="w-4 h-4"
             />
           </div>
@@ -311,14 +342,14 @@ const SettingsComponent: React.FC = () => {
 
   const renderProvidersTab = () => {
     if (!settings) return null;
-    
+
     return (
       <div className="space-y-6">
         <div>
           <label className="block text-sm font-medium mb-2">Default Compute Provider</label>
           <select
             value={settings.providers.defaultCompute}
-            onChange={(e) => updateSetting('providers', 'defaultCompute', e.target.value)}
+            onChange={(e) => updateSetting("providers", "defaultCompute", e.target.value)}
             className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
           >
             <option value="local">Local GPU</option>
@@ -332,7 +363,7 @@ const SettingsComponent: React.FC = () => {
           <label className="block text-sm font-medium mb-2">Default Model Registry</label>
           <select
             value={settings.providers.defaultRegistry}
-            onChange={(e) => updateSetting('providers', 'defaultRegistry', e.target.value)}
+            onChange={(e) => updateSetting("providers", "defaultRegistry", e.target.value)}
             className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
           >
             <option value="huggingface">HuggingFace</option>
@@ -344,8 +375,8 @@ const SettingsComponent: React.FC = () => {
         <div>
           <label className="block text-sm font-medium mb-2">Default Experiment Tracker</label>
           <select
-            value={settings.providers.defaultTracker || ''}
-            onChange={(e) => updateSetting('providers', 'defaultTracker', e.target.value || null)}
+            value={settings.providers.defaultTracker || ""}
+            onChange={(e) => updateSetting("providers", "defaultTracker", e.target.value || null)}
             className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
           >
             <option value="">None</option>
@@ -363,7 +394,7 @@ const SettingsComponent: React.FC = () => {
           <input
             type="checkbox"
             checked={settings.providers.autoSelectCheapest}
-            onChange={(e) => updateSetting('providers', 'autoSelectCheapest', e.target.checked)}
+            onChange={(e) => updateSetting("providers", "autoSelectCheapest", e.target.checked)}
             className="w-4 h-4"
           />
         </div>
@@ -372,7 +403,7 @@ const SettingsComponent: React.FC = () => {
           <label className="block text-sm font-medium mb-2">Preferred Region</label>
           <select
             value={settings.providers.preferredRegion}
-            onChange={(e) => updateSetting('providers', 'preferredRegion', e.target.value)}
+            onChange={(e) => updateSetting("providers", "preferredRegion", e.target.value)}
             className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
           >
             <option value="us-east">US East</option>
@@ -387,7 +418,7 @@ const SettingsComponent: React.FC = () => {
 
   const renderDataRetentionTab = () => {
     if (!settings) return null;
-    
+
     return (
       <div className="space-y-6">
         <div>
@@ -396,7 +427,7 @@ const SettingsComponent: React.FC = () => {
             type="number"
             min="1"
             value={settings.dataRetention.keepLogs}
-            onChange={(e) => updateSetting('dataRetention', 'keepLogs', parseInt(e.target.value))}
+            onChange={(e) => updateSetting("dataRetention", "keepLogs", parseInt(e.target.value))}
             className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
           />
           <p className="text-sm text-gray-500 mt-1">Logs older than this will be deleted</p>
@@ -408,7 +439,9 @@ const SettingsComponent: React.FC = () => {
             type="number"
             min="1"
             value={settings.dataRetention.keepCheckpoints}
-            onChange={(e) => updateSetting('dataRetention', 'keepCheckpoints', parseInt(e.target.value))}
+            onChange={(e) =>
+              updateSetting("dataRetention", "keepCheckpoints", parseInt(e.target.value))
+            }
             className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
           />
           <p className="text-sm text-gray-500 mt-1">Checkpoints older than this will be deleted</p>
@@ -420,7 +453,9 @@ const SettingsComponent: React.FC = () => {
             type="number"
             min="1"
             value={settings.dataRetention.keepFailedRuns}
-            onChange={(e) => updateSetting('dataRetention', 'keepFailedRuns', parseInt(e.target.value))}
+            onChange={(e) =>
+              updateSetting("dataRetention", "keepFailedRuns", parseInt(e.target.value))
+            }
             className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
           />
           <p className="text-sm text-gray-500 mt-1">Failed runs older than this will be deleted</p>
@@ -433,7 +468,9 @@ const SettingsComponent: React.FC = () => {
             min="100"
             step="100"
             value={settings.dataRetention.maxCacheSize}
-            onChange={(e) => updateSetting('dataRetention', 'maxCacheSize', parseInt(e.target.value))}
+            onChange={(e) =>
+              updateSetting("dataRetention", "maxCacheSize", parseInt(e.target.value))
+            }
             className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
           />
           <p className="text-sm text-gray-500 mt-1">Maximum size for cached data</p>
@@ -447,7 +484,7 @@ const SettingsComponent: React.FC = () => {
           <input
             type="checkbox"
             checked={settings.dataRetention.autoCleanup}
-            onChange={(e) => updateSetting('dataRetention', 'autoCleanup', e.target.checked)}
+            onChange={(e) => updateSetting("dataRetention", "autoCleanup", e.target.checked)}
             className="w-4 h-4"
           />
         </div>
@@ -457,7 +494,7 @@ const SettingsComponent: React.FC = () => {
 
   const renderTrainingTab = () => {
     if (!settings) return null;
-    
+
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -468,7 +505,7 @@ const SettingsComponent: React.FC = () => {
           <input
             type="checkbox"
             checked={settings.training.autoSaveCheckpoints}
-            onChange={(e) => updateSetting('training', 'autoSaveCheckpoints', e.target.checked)}
+            onChange={(e) => updateSetting("training", "autoSaveCheckpoints", e.target.checked)}
             className="w-4 h-4"
           />
         </div>
@@ -479,7 +516,9 @@ const SettingsComponent: React.FC = () => {
             type="number"
             min="1"
             value={settings.training.checkpointInterval}
-            onChange={(e) => updateSetting('training', 'checkpointInterval', parseInt(e.target.value))}
+            onChange={(e) =>
+              updateSetting("training", "checkpointInterval", parseInt(e.target.value))
+            }
             className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
           />
           <p className="text-sm text-gray-500 mt-1">Save checkpoint every N steps</p>
@@ -488,12 +527,14 @@ const SettingsComponent: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <div className="font-medium">Enable Telemetry</div>
-            <div className="text-sm text-gray-500">Send anonymous usage data to improve the app</div>
+            <div className="text-sm text-gray-500">
+              Send anonymous usage data to improve the app
+            </div>
           </div>
           <input
             type="checkbox"
             checked={settings.training.enableTelemetry}
-            onChange={(e) => updateSetting('training', 'enableTelemetry', e.target.checked)}
+            onChange={(e) => updateSetting("training", "enableTelemetry", e.target.checked)}
             className="w-4 h-4"
           />
         </div>
@@ -506,7 +547,7 @@ const SettingsComponent: React.FC = () => {
           <input
             type="checkbox"
             checked={settings.training.autoResume}
-            onChange={(e) => updateSetting('training', 'autoResume', e.target.checked)}
+            onChange={(e) => updateSetting("training", "autoResume", e.target.checked)}
             className="w-4 h-4"
           />
         </div>
@@ -516,7 +557,7 @@ const SettingsComponent: React.FC = () => {
 
   const renderAdvancedTab = () => {
     if (!settings) return null;
-    
+
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -527,7 +568,7 @@ const SettingsComponent: React.FC = () => {
           <input
             type="checkbox"
             checked={settings.advanced.enableDebugMode}
-            onChange={(e) => updateSetting('advanced', 'enableDebugMode', e.target.checked)}
+            onChange={(e) => updateSetting("advanced", "enableDebugMode", e.target.checked)}
             className="w-4 h-4"
           />
         </div>
@@ -536,7 +577,7 @@ const SettingsComponent: React.FC = () => {
           <label className="block text-sm font-medium mb-2">Log Level</label>
           <select
             value={settings.advanced.logLevel}
-            onChange={(e) => updateSetting('advanced', 'logLevel', e.target.value)}
+            onChange={(e) => updateSetting("advanced", "logLevel", e.target.value)}
             className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
           >
             <option value="DEBUG">Debug</option>
@@ -553,10 +594,14 @@ const SettingsComponent: React.FC = () => {
             min="1"
             max="10"
             value={settings.advanced.maxConcurrentRuns}
-            onChange={(e) => updateSetting('advanced', 'maxConcurrentRuns', parseInt(e.target.value))}
+            onChange={(e) =>
+              updateSetting("advanced", "maxConcurrentRuns", parseInt(e.target.value))
+            }
             className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
           />
-          <p className="text-sm text-gray-500 mt-1">Maximum number of training runs to run simultaneously</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Maximum number of training runs to run simultaneously
+          </p>
         </div>
 
         <div className="flex items-center justify-between">
@@ -567,7 +612,9 @@ const SettingsComponent: React.FC = () => {
           <input
             type="checkbox"
             checked={settings.advanced.enableExperimentalFeatures}
-            onChange={(e) => updateSetting('advanced', 'enableExperimentalFeatures', e.target.checked)}
+            onChange={(e) =>
+              updateSetting("advanced", "enableExperimentalFeatures", e.target.checked)
+            }
             className="w-4 h-4"
           />
         </div>
@@ -623,12 +670,7 @@ const SettingsComponent: React.FC = () => {
             <label className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
               <Upload className="w-4 h-4" />
               Import
-              <input
-                type="file"
-                accept=".json"
-                onChange={importSettings}
-                className="hidden"
-              />
+              <input type="file" accept=".json" onChange={importSettings} className="hidden" />
             </label>
           </div>
         </div>
@@ -636,11 +678,15 @@ const SettingsComponent: React.FC = () => {
 
       {/* Message Banner */}
       {message && (
-        <div className={cn(
-          "px-6 py-3 flex items-center gap-2",
-          message.type === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-        )}>
-          {message.type === 'success' ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
+        <div
+          className={cn(
+            "px-6 py-3 flex items-center gap-2",
+            message.type === "success"
+              ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+              : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+          )}
+        >
+          {message.type === "success" ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
           <span>{message.text}</span>
         </div>
       )}
@@ -674,13 +720,13 @@ const SettingsComponent: React.FC = () => {
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-3xl mx-auto p-8">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-              {activeTab === 'appearance' && renderAppearanceTab()}
-              {activeTab === 'notifications' && renderNotificationsTab()}
-              {activeTab === 'providers' && renderProvidersTab()}
-              {activeTab === 'dataRetention' && renderDataRetentionTab()}
-              {activeTab === 'training' && renderTrainingTab()}
-              {activeTab === 'advanced' && renderAdvancedTab()}
-              
+              {activeTab === "appearance" && renderAppearanceTab()}
+              {activeTab === "notifications" && renderNotificationsTab()}
+              {activeTab === "providers" && renderProvidersTab()}
+              {activeTab === "dataRetention" && renderDataRetentionTab()}
+              {activeTab === "training" && renderTrainingTab()}
+              {activeTab === "advanced" && renderAdvancedTab()}
+
               {/* Action Buttons */}
               <div className="flex gap-3 mt-8 pt-6 border-t">
                 <button
@@ -689,7 +735,7 @@ const SettingsComponent: React.FC = () => {
                   className="flex items-center gap-2 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
                 >
                   <Save className="w-4 h-4" />
-                  {saving ? 'Saving...' : 'Save Changes'}
+                  {saving ? "Saving..." : "Save Changes"}
                 </button>
                 <button
                   onClick={resetCategory}

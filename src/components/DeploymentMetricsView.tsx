@@ -1,13 +1,13 @@
 /**
  * Deployment Metrics View
- * 
+ *
  * Detailed view of deployment usage metrics and performance.
  * Shows request statistics, latency percentiles, and cost tracking.
- * 
+ *
  * Requirements: 9.5
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 
 interface UsageMetrics {
   deployment_id: string;
@@ -35,7 +35,7 @@ interface DeploymentMetricsViewProps {
 export const DeploymentMetricsView: React.FC<DeploymentMetricsViewProps> = ({
   deploymentId,
   deploymentName,
-  onClose
+  onClose,
 }) => {
   const [metrics, setMetrics] = useState<UsageMetrics | null>(null);
   const [loading, setLoading] = useState(true);
@@ -45,13 +45,13 @@ export const DeploymentMetricsView: React.FC<DeploymentMetricsViewProps> = ({
     try {
       const response = await fetch(`/api/deployments/${deploymentId}/metrics`);
       if (!response.ok) {
-        throw new Error('Failed to load metrics');
+        throw new Error("Failed to load metrics");
       }
       const data = await response.json();
       setMetrics(data);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -68,9 +68,9 @@ export const DeploymentMetricsView: React.FC<DeploymentMetricsViewProps> = ({
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
     }).format(amount);
   };
 
@@ -119,17 +119,19 @@ export const DeploymentMetricsView: React.FC<DeploymentMetricsViewProps> = ({
               <p className="text-gray-600 mt-1">{deploymentName}</p>
               {metrics && (
                 <p className="text-sm text-gray-500 mt-1">
-                  Period: {new Date(metrics.period_start).toLocaleString()} -{' '}
+                  Period: {new Date(metrics.period_start).toLocaleString()} -{" "}
                   {new Date(metrics.period_end).toLocaleString()}
                 </p>
               )}
             </div>
-            <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
-            >
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -209,7 +211,7 @@ export const DeploymentMetricsView: React.FC<DeploymentMetricsViewProps> = ({
                         <div
                           className="bg-blue-500 h-4 rounded-full"
                           style={{
-                            width: `${(metrics.p50_latency_ms / metrics.p99_latency_ms) * 100}%`
+                            width: `${(metrics.p50_latency_ms / metrics.p99_latency_ms) * 100}%`,
                           }}
                         />
                       </div>
@@ -223,7 +225,7 @@ export const DeploymentMetricsView: React.FC<DeploymentMetricsViewProps> = ({
                         <div
                           className="bg-yellow-500 h-4 rounded-full"
                           style={{
-                            width: `${(metrics.p95_latency_ms / metrics.p99_latency_ms) * 100}%`
+                            width: `${(metrics.p95_latency_ms / metrics.p99_latency_ms) * 100}%`,
                           }}
                         />
                       </div>
@@ -312,9 +314,7 @@ export const DeploymentMetricsView: React.FC<DeploymentMetricsViewProps> = ({
                         const start = new Date(metrics.period_start).getTime();
                         const end = new Date(metrics.period_end).getTime();
                         const minutes = (end - start) / (1000 * 60);
-                        return minutes > 0
-                          ? (metrics.total_requests / minutes).toFixed(2)
-                          : 0;
+                        return minutes > 0 ? (metrics.total_requests / minutes).toFixed(2) : 0;
                       })()}
                     </span>
                   </div>
@@ -336,10 +336,7 @@ export const DeploymentMetricsView: React.FC<DeploymentMetricsViewProps> = ({
         {/* Footer */}
         <div className="p-6 border-t bg-gray-50">
           <div className="flex justify-between items-center">
-            <button
-              onClick={loadMetrics}
-              className="px-4 py-2 text-blue-600 hover:text-blue-700"
-            >
+            <button onClick={loadMetrics} className="px-4 py-2 text-blue-600 hover:text-blue-700">
               Refresh
             </button>
             <button

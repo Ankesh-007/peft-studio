@@ -64,28 +64,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <h4 className="mb-8 font-medium">Keyboard Shortcuts:</h4>
               <ul className="space-y-4 font-mono text-tiny" role="list">
                 <li>
-                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">
-                    ⌘K
-                  </kbd>{" "}
-                  - Command Palette
+                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">⌘K</kbd> - Command Palette
                 </li>
                 <li>
-                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">
-                    ⌘N
-                  </kbd>{" "}
-                  - New Training
+                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">⌘N</kbd> - New Training
                 </li>
                 <li>
-                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">
-                    ⌘O
-                  </kbd>{" "}
-                  - Open Dataset
+                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">⌘O</kbd> - Open Dataset
                 </li>
                 <li>
-                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">
-                    ⌘,
-                  </kbd>{" "}
-                  - Settings
+                  <kbd className="px-2 py-1 bg-dark-bg-tertiary rounded">⌘,</kbd> - Settings
                 </li>
               </ul>
             </section>

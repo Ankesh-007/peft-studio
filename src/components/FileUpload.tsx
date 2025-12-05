@@ -1,8 +1,8 @@
-import { Upload, X, File, CheckCircle, AlertCircle } from 'lucide-react';
-import React, { useState, useRef } from 'react';
+import { Upload, X, File, CheckCircle, AlertCircle } from "lucide-react";
+import React, { useState, useRef } from "react";
 
-import { cn } from '../lib/utils';
-import { formatBytes } from '../lib/utils';
+import { cn } from "../lib/utils";
+import { formatBytes } from "../lib/utils";
 
 export interface FileUploadProps {
   accept?: string;
@@ -11,7 +11,7 @@ export interface FileUploadProps {
   onFilesSelected: (files: File[]) => void;
   disabled?: boolean;
   error?: string;
-  'aria-label': string;
+  "aria-label": string;
   className?: string;
 }
 
@@ -22,7 +22,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   onFilesSelected,
   disabled = false,
   error,
-  'aria-label': ariaLabel,
+  "aria-label": ariaLabel,
   className,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -35,24 +35,24 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     if (maxSize && file.size > maxSize) {
       return `File size exceeds ${formatBytes(maxSize)}`;
     }
-    
+
     if (accept) {
-      const acceptedTypes = accept.split(',').map(t => t.trim());
-      const fileExtension = '.' + file.name.split('.').pop();
+      const acceptedTypes = accept.split(",").map((t) => t.trim());
+      const fileExtension = "." + file.name.split(".").pop();
       const mimeType = file.type;
-      
-      const isAccepted = acceptedTypes.some(type => {
-        if (type.startsWith('.')) {
+
+      const isAccepted = acceptedTypes.some((type) => {
+        if (type.startsWith(".")) {
           return fileExtension === type;
         }
-        return mimeType.match(new RegExp(type.replace('*', '.*')));
+        return mimeType.match(new RegExp(type.replace("*", ".*")));
       });
-      
+
       if (!isAccepted) {
         return `File type not accepted. Accepted: ${accept}`;
       }
     }
-    
+
     return null;
   };
 
@@ -63,7 +63,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     const errors: Record<string, string> = {};
     const validFiles: File[] = [];
 
-    fileArray.forEach(file => {
+    fileArray.forEach((file) => {
       const error = validateFile(file);
       if (error) {
         errors[file.name] = error;
@@ -73,14 +73,14 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     });
 
     setFileErrors(errors);
-    
+
     if (validFiles.length > 0) {
       const newFiles = multiple ? [...selectedFiles, ...validFiles] : validFiles;
       setSelectedFiles(newFiles);
       onFilesSelected(newFiles);
-      
+
       // Simulate upload progress
-      validFiles.forEach(file => {
+      validFiles.forEach((file) => {
         simulateUpload(file.name);
       });
     }
@@ -90,8 +90,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     let progress = 0;
     const interval = setInterval(() => {
       progress += 10;
-      setUploadProgress(prev => ({ ...prev, [fileName]: progress }));
-      
+      setUploadProgress((prev) => ({ ...prev, [fileName]: progress }));
+
       if (progress >= 100) {
         clearInterval(interval);
       }
@@ -117,11 +117,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   };
 
   const handleRemove = (fileName: string) => {
-    const newFiles = selectedFiles.filter(f => f.name !== fileName);
+    const newFiles = selectedFiles.filter((f) => f.name !== fileName);
     setSelectedFiles(newFiles);
     onFilesSelected(newFiles);
-    
-    setUploadProgress(prev => {
+
+    setUploadProgress((prev) => {
       const updated = { ...prev };
       delete updated[fileName];
       return updated;
@@ -129,26 +129,28 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   };
 
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn("space-y-3", className)}>
       <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => !disabled && inputRef.current?.click()}
         className={cn(
-          'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors',
-          isDragging && 'border-blue-500 bg-blue-50',
-          !isDragging && 'border-gray-300 hover:border-gray-400',
-          disabled && 'opacity-50 cursor-not-allowed',
-          error && 'border-red-500'
+          "border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors",
+          isDragging && "border-blue-500 bg-blue-50",
+          !isDragging && "border-gray-300 hover:border-gray-400",
+          disabled && "opacity-50 cursor-not-allowed",
+          error && "border-red-500"
         )}
         role="button"
         aria-label={ariaLabel}
         tabIndex={disabled ? -1 : 0}
       >
-        <Upload className={cn('w-12 h-12 mx-auto mb-4', isDragging ? 'text-blue-600' : 'text-gray-400')} />
+        <Upload
+          className={cn("w-12 h-12 mx-auto mb-4", isDragging ? "text-blue-600" : "text-gray-400")}
+        />
         <p className="text-sm font-medium text-gray-700 mb-1">
-          {isDragging ? 'Drop files here' : 'Click to upload or drag and drop'}
+          {isDragging ? "Drop files here" : "Click to upload or drag and drop"}
         </p>
         <p className="text-xs text-gray-500">
           {accept && `Accepted: ${accept}`}
@@ -169,13 +171,16 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
       {selectedFiles.length > 0 && (
         <div className="space-y-2">
-          {selectedFiles.map(file => {
+          {selectedFiles.map((file) => {
             const progress = uploadProgress[file.name] || 0;
             const isComplete = progress === 100;
             const hasError = fileErrors[file.name];
 
             return (
-              <div key={file.name} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div
+                key={file.name}
+                className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
+              >
                 <File className="w-5 h-5 text-gray-400 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
@@ -185,7 +190,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                   {!hasError && (
                     <div className="w-full bg-gray-200 rounded-full h-1.5">
                       <div
-                        className={cn('h-1.5 rounded-full transition-all', isComplete ? 'bg-green-600' : 'bg-blue-600')}
+                        className={cn(
+                          "h-1.5 rounded-full transition-all",
+                          isComplete ? "bg-green-600" : "bg-blue-600"
+                        )}
                         style={{ width: `${progress}%` }}
                       />
                     </div>

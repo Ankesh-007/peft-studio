@@ -43,7 +43,7 @@ interface TrainingMetric {
 }
 
 interface TrainingUpdate {
-  type: 'training_update' | 'status_change' | 'log_entry';
+  type: "training_update" | "status_change" | "log_entry";
   data: {
     step?: number;
     epoch?: number;
@@ -55,7 +55,7 @@ interface TrainingUpdate {
     tokensPerSecond?: number;
     timeElapsed?: number;
     timeRemaining?: number;
-    status?: 'running' | 'paused' | 'completed' | 'failed';
+    status?: "running" | "paused" | "completed" | "failed";
     progress?: number;
     log?: {
       time: string;
@@ -77,23 +77,15 @@ interface TrainingMonitorProps {
   runName: string;
 }
 
-const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
-  runId,
-  runName,
-}) => {
-  const [status, setStatus] = useState<
-    "running" | "paused" | "completed" | "failed"
-  >("running");
+const TrainingMonitor: React.FC<TrainingMonitorProps> = ({ runId, runName }) => {
+  const [status, setStatus] = useState<"running" | "paused" | "completed" | "failed">("running");
   const [progress, setProgress] = useState(0);
   const [currentEpoch, setCurrentEpoch] = useState(0);
   const [totalEpochs] = useState(10);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
-  const [activeTab, setActiveTab] = useState<
-    "loss" | "resources" | "parameters"
-  >("loss");
+  const [activeTab, setActiveTab] = useState<"loss" | "resources" | "parameters">("loss");
 
-  
   // Real-time data from WebSocket
   const [lossData, setLossData] = useState<LossDataPoint[]>([]);
   const [currentMetrics, setCurrentMetrics] = useState({
@@ -112,62 +104,64 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
   const { isConnected, subscribe } = useWebSocket<TrainingUpdate>(wsUrl, {
     autoConnect: true,
     onConnectionChange: (connected) => {
-      console.log(`Training monitor ${connected ? 'connected' : 'disconnected'}`);
+      console.log(`Training monitor ${connected ? "connected" : "disconnected"}`);
     },
     onError: (error) => {
-      console.error('WebSocket error:', error);
+      console.error("WebSocket error:", error);
     },
   });
 
   // Subscribe to training updates
   useEffect(() => {
     const unsubscribe = subscribe((update: TrainingUpdate) => {
-      if (update.type === 'training_update' && update.data) {
+      if (update.type === "training_update" && update.data) {
         const data = update.data;
-        
+
         // Update metrics
         if (data.loss !== undefined) {
-          setCurrentMetrics(prev => ({ ...prev, loss: data.loss! }));
-          setLossSparkline(prev => [...prev.slice(-6), data.loss!]);
+          setCurrentMetrics((prev) => ({ ...prev, loss: data.loss! }));
+          setLossSparkline((prev) => [...prev.slice(-6), data.loss!]);
         }
         if (data.valLoss !== undefined) {
-          setCurrentMetrics(prev => ({ ...prev, valLoss: data.valLoss! }));
+          setCurrentMetrics((prev) => ({ ...prev, valLoss: data.valLoss! }));
         }
         if (data.learningRate !== undefined) {
-          setCurrentMetrics(prev => ({ ...prev, learningRate: data.learningRate! }));
+          setCurrentMetrics((prev) => ({ ...prev, learningRate: data.learningRate! }));
         }
         if (data.gpuUtilization !== undefined) {
-          setCurrentMetrics(prev => ({ ...prev, gpuUtilization: data.gpuUtilization! }));
+          setCurrentMetrics((prev) => ({ ...prev, gpuUtilization: data.gpuUtilization! }));
         }
         if (data.gpuMemory !== undefined) {
-          setCurrentMetrics(prev => ({ ...prev, gpuMemory: data.gpuMemory! }));
+          setCurrentMetrics((prev) => ({ ...prev, gpuMemory: data.gpuMemory! }));
         }
         if (data.tokensPerSecond !== undefined) {
-          setCurrentMetrics(prev => ({ ...prev, tokensPerSecond: data.tokensPerSecond! }));
+          setCurrentMetrics((prev) => ({ ...prev, tokensPerSecond: data.tokensPerSecond! }));
         }
-        
+
         // Update progress
         if (data.epoch !== undefined) setCurrentEpoch(data.epoch);
         if (data.progress !== undefined) setProgress(data.progress);
         if (data.timeElapsed !== undefined) setTimeElapsed(data.timeElapsed);
         if (data.timeRemaining !== undefined) setTimeRemaining(data.timeRemaining);
-        
+
         // Update loss chart data
         if (data.step !== undefined && data.loss !== undefined) {
-          setLossData(prev => [
-            ...prev,
-            {
-              step: data.step!,
-              trainLoss: data.loss!,
-              valLoss: data.valLoss || 0,
-              lr: data.learningRate || 0,
-            }
-          ].slice(-100)); // Keep last 100 points
+          setLossData((prev) =>
+            [
+              ...prev,
+              {
+                step: data.step!,
+                trainLoss: data.loss!,
+                valLoss: data.valLoss || 0,
+                lr: data.learningRate || 0,
+              },
+            ].slice(-100)
+          ); // Keep last 100 points
         }
-      } else if (update.type === 'status_change' && update.data.status) {
+      } else if (update.type === "status_change" && update.data.status) {
         setStatus(update.data.status);
-      } else if (update.type === 'log_entry' && update.data.log) {
-        setLogs(prev => [...prev, update.data.log!].slice(-100)); // Keep last 100 logs
+      } else if (update.type === "log_entry" && update.data.log) {
+        setLogs((prev) => [...prev, update.data.log!].slice(-100)); // Keep last 100 logs
       }
     });
 
@@ -179,9 +173,10 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
     {
       label: "Current Loss",
       value: currentMetrics.loss.toFixed(4),
-      trend: lossData.length > 1 ? 
-        `↓ ${((lossData[lossData.length - 2].trainLoss - currentMetrics.loss) / lossData[lossData.length - 2].trainLoss * 100).toFixed(1)}%` : 
-        undefined,
+      trend:
+        lossData.length > 1
+          ? `↓ ${(((lossData[lossData.length - 2].trainLoss - currentMetrics.loss) / lossData[lossData.length - 2].trainLoss) * 100).toFixed(1)}%`
+          : undefined,
       color: "accent-success",
       icon: Target,
       sparkline: lossSparkline,
@@ -189,9 +184,10 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
     {
       label: "Learning Rate",
       value: currentMetrics.learningRate.toExponential(1),
-      trend: lossData.length > 1 ? 
-        `↓ ${(lossData[lossData.length - 2].lr - currentMetrics.learningRate).toExponential(1)}` : 
-        undefined,
+      trend:
+        lossData.length > 1
+          ? `↓ ${(lossData[lossData.length - 2].lr - currentMetrics.learningRate).toExponential(1)}`
+          : undefined,
       color: "accent-warning",
       icon: Zap,
     },
@@ -226,7 +222,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
     {
       label: "VRAM Usage",
       value: `${currentMetrics.gpuMemory.toFixed(1)} GB`,
-      trend: `${Math.round(currentMetrics.gpuMemory / 80 * 100)}% Max`,
+      trend: `${Math.round((currentMetrics.gpuMemory / 80) * 100)}% Max`,
       color: "accent-primary",
       icon: MemoryStick,
     },
@@ -281,35 +277,33 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
     try {
       const action = status === "running" ? "pause" : "resume";
       const response = await fetch(`http://localhost:8000/api/training/${runId}/${action}`, {
-        method: 'POST',
+        method: "POST",
       });
-      
+
       if (response.ok) {
         setStatus(status === "running" ? "paused" : "running");
       } else {
         console.error(`Failed to ${action} training`);
       }
     } catch (error) {
-      console.error('Error controlling training:', error);
+      console.error("Error controlling training:", error);
     }
   };
 
   const handleStop = async () => {
-    if (
-      confirm("Are you sure you want to stop training? Progress will be saved.")
-    ) {
+    if (confirm("Are you sure you want to stop training? Progress will be saved.")) {
       try {
         const response = await fetch(`http://localhost:8000/api/training/${runId}/stop`, {
-          method: 'POST',
+          method: "POST",
         });
-        
+
         if (response.ok) {
           setStatus("completed");
         } else {
-          console.error('Failed to stop training');
+          console.error("Failed to stop training");
         }
       } catch (error) {
-        console.error('Error stopping training:', error);
+        console.error("Error stopping training:", error);
       }
     }
   };
@@ -318,27 +312,20 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0f0f0f] p-24 space-y-24">
       {/* WebSocket Connection Status */}
       <div className="fixed top-16 right-16 z-50">
-        <ConnectionStatus 
-          status={isConnected ? "online" : "offline"} 
-          showLabel={true}
-        />
+        <ConnectionStatus status={isConnected ? "online" : "offline"} showLabel={true} />
       </div>
 
       {/* Status Header */}
       <div className="text-center space-y-16">
         <div className="inline-flex items-center gap-12 px-24 py-12 bg-dark-bg-secondary border border-dark-border rounded-full">
-          <span
-            className={cn("text-h2", status === "running" && "animate-pulse")}
-          >
+          <span className={cn("text-h2", status === "running" && "animate-pulse")}>
             {getStatusIcon()}
           </span>
           <span className="text-h2 font-semibold capitalize">{status}</span>
         </div>
 
         <h1 className="text-display">{runName}</h1>
-        <p className="text-body text-dark-text-secondary">
-          Started: {new Date().toLocaleString()}
-        </p>
+        <p className="text-body text-dark-text-secondary">Started: {new Date().toLocaleString()}</p>
 
         {/* Control Buttons */}
         <div className="flex items-center justify-center gap-12">
@@ -346,7 +333,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
             onClick={handlePauseResume}
             className={cn(
               "btn-primary flex items-center gap-8",
-              status === "paused" && "bg-accent-success",
+              status === "paused" && "bg-accent-success"
             )}
           >
             {status === "running" ? (
@@ -362,10 +349,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
             )}
           </button>
 
-          <button
-            onClick={handleStop}
-            className="btn-secondary flex items-center gap-8"
-          >
+          <button onClick={handleStop} className="btn-secondary flex items-center gap-8">
             <Square size={16} />
             <span>Stop & Save</span>
           </button>
@@ -387,14 +371,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
 
           <div className="w-[200px] h-[200px] relative">
             <svg className="transform -rotate-90" viewBox="0 0 200 200">
-              <circle
-                cx="100"
-                cy="100"
-                r="90"
-                fill="none"
-                stroke="#1a1a1a"
-                strokeWidth="12"
-              />
+              <circle cx="100" cy="100" r="90" fill="none" stroke="#1a1a1a" strokeWidth="12" />
               <circle
                 cx="100"
                 cy="100"
@@ -407,13 +384,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
                 className="transition-all duration-500"
               />
               <defs>
-                <linearGradient
-                  id="progressGradient"
-                  x1="0%"
-                  y1="0%"
-                  x2="100%"
-                  y2="0%"
-                >
+                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="#6366f1" />
                   <stop offset="100%" stopColor="#3b82f6" />
                 </linearGradient>
@@ -421,18 +392,14 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <div className="text-h1 font-bold">{currentEpoch}</div>
-              <div className="text-small text-dark-text-tertiary">
-                / {totalEpochs}
-              </div>
+              <div className="text-small text-dark-text-tertiary">/ {totalEpochs}</div>
             </div>
           </div>
 
           <div className="text-center flex-1">
             <div className="text-h2 mb-4">{formatDuration(timeElapsed)}</div>
             <div className="text-small text-dark-text-tertiary">Elapsed</div>
-            <div className="text-h3 mt-12 text-accent-info">
-              {formatDuration(timeRemaining)}
-            </div>
+            <div className="text-h3 mt-12 text-accent-info">{formatDuration(timeRemaining)}</div>
             <div className="text-tiny text-dark-text-tertiary">Remaining</div>
           </div>
         </div>
@@ -449,23 +416,16 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
       <div className="grid grid-cols-4 gap-16">
         {metrics.map((metric, index) => {
           const Icon = metric.icon;
-          const isNegativeTrend =
-            metric.trend?.includes("↑") && metric.label.includes("Loss");
-          const isPositiveTrend =
-            metric.trend?.includes("↑") && !metric.label.includes("Loss");
+          const isNegativeTrend = metric.trend?.includes("↑") && metric.label.includes("Loss");
+          const isPositiveTrend = metric.trend?.includes("↑") && !metric.label.includes("Loss");
 
           return (
-            <div
-              key={index}
-              className="card card-hover relative overflow-hidden"
-            >
+            <div key={index} className="card card-hover relative overflow-hidden">
               {/* Sparkline background */}
               {metric.sparkline && (
                 <div className="absolute top-0 right-0 w-[100px] h-[40px] opacity-20">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={metric.sparkline.map((v, i) => ({ v, i }))}
-                    >
+                    <LineChart data={metric.sparkline.map((v, i) => ({ v, i }))}>
                       <Line
                         type="monotone"
                         dataKey="v"
@@ -487,9 +447,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
                         "flex items-center gap-4 text-tiny",
                         isNegativeTrend && "text-accent-error",
                         isPositiveTrend && "text-accent-success",
-                        !isNegativeTrend &&
-                          !isPositiveTrend &&
-                          "text-dark-text-tertiary",
+                        !isNegativeTrend && !isPositiveTrend && "text-dark-text-tertiary"
                       )}
                     >
                       {isNegativeTrend ? (
@@ -505,9 +463,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
                 </div>
 
                 <div className="text-h1 font-bold mb-4">{metric.value}</div>
-                <div className="text-small text-dark-text-tertiary">
-                  {metric.label}
-                </div>
+                <div className="text-small text-dark-text-tertiary">{metric.label}</div>
               </div>
             </div>
           );
@@ -530,7 +486,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
                 "px-16 py-12 text-body font-medium transition-all relative",
                 activeTab === tab.id
                   ? "text-accent-primary"
-                  : "text-dark-text-secondary hover:text-dark-text-primary",
+                  : "text-dark-text-secondary hover:text-dark-text-primary"
               )}
             >
               {tab.label}
@@ -547,13 +503,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
             <ResponsiveContainer width="100%" height={400}>
               <LineChart data={lossData}>
                 <defs>
-                  <linearGradient
-                    id="trainGradient"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
+                  <linearGradient id="trainGradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                   </linearGradient>
@@ -636,11 +586,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={resourceData} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
-                  <XAxis
-                    type="number"
-                    stroke="#71717a"
-                    style={{ fontSize: "12px" }}
-                  />
+                  <XAxis type="number" stroke="#71717a" style={{ fontSize: "12px" }} />
                   <YAxis
                     dataKey="name"
                     type="category"
@@ -656,17 +602,9 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
                   />
                   <Bar dataKey="usage" radius={[0, 8, 8, 0]}>
                     {resourceData.map((entry, index) => {
-                      const fillColor = entry.usage > 90
-                        ? "#ef4444"
-                        : entry.usage > 70
-                          ? "#f59e0b"
-                          : "#10b981";
-                      return (
-                        <rect
-                          key={index}
-                          fill={fillColor}
-                        />
-                      );
+                      const fillColor =
+                        entry.usage > 90 ? "#ef4444" : entry.usage > 70 ? "#f59e0b" : "#10b981";
+                      return <rect key={index} fill={fillColor} />;
                     })}
                   </Bar>
                 </BarChart>
@@ -691,21 +629,15 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
           <div className="space-y-12 text-small">
             <div>
               <div className="text-dark-text-tertiary mb-4">Model</div>
-              <div className="text-dark-text-primary font-medium">
-                Llama-3-8B
-              </div>
+              <div className="text-dark-text-primary font-medium">Llama-3-8B</div>
             </div>
             <div>
               <div className="text-dark-text-tertiary mb-4">Dataset</div>
-              <div className="text-dark-text-primary font-medium">
-                Finance-10k
-              </div>
+              <div className="text-dark-text-primary font-medium">Finance-10k</div>
             </div>
             <div>
               <div className="text-dark-text-tertiary mb-4">PEFT Method</div>
-              <div className="text-dark-text-primary font-medium">
-                QLoRA (r=64, α=128)
-              </div>
+              <div className="text-dark-text-primary font-medium">QLoRA (r=64, α=128)</div>
             </div>
             <div>
               <div className="text-dark-text-tertiary mb-4">Batch Size</div>
@@ -724,9 +656,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
           </div>
 
           <div className="mt-20 pt-20 border-t border-dark-border">
-            <button className="btn-ghost w-full justify-center">
-              View Full Config
-            </button>
+            <button className="btn-ghost w-full justify-center">View Full Config</button>
           </div>
         </div>
 
@@ -751,7 +681,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
                   log.level === "INFO" && "text-[#a1a1aa]",
                   log.level === "WARN" && "text-[#f59e0b]",
                   log.level === "ERROR" && "text-[#ef4444] animate-pulse",
-                  log.level === "DEBUG" && "text-[#52525b]",
+                  log.level === "DEBUG" && "text-[#52525b]"
                 )}
               >
                 <span className="text-dark-text-tertiary">[{log.time}]</span>{" "}
@@ -762,11 +692,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
           </div>
 
           <div className="mt-12">
-            <input
-              type="text"
-              placeholder="Filter logs..."
-              className="input w-full text-tiny"
-            />
+            <input type="text" placeholder="Filter logs..." className="input w-full text-tiny" />
           </div>
         </div>
       </div>
@@ -783,27 +709,19 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
             <div className="grid grid-cols-4 gap-16 max-w-[800px] mx-auto mb-32">
               <div className="text-center">
                 <div className="text-h2 text-accent-success mb-4">0.4321</div>
-                <div className="text-small text-dark-text-tertiary">
-                  Best Loss
-                </div>
+                <div className="text-small text-dark-text-tertiary">Best Loss</div>
               </div>
               <div className="text-center">
                 <div className="text-h2 text-accent-primary mb-4">07:12:45</div>
-                <div className="text-small text-dark-text-tertiary">
-                  Total Time
-                </div>
+                <div className="text-small text-dark-text-tertiary">Total Time</div>
               </div>
               <div className="text-center">
                 <div className="text-h2 text-accent-info mb-4">1.5 GB</div>
-                <div className="text-small text-dark-text-tertiary">
-                  Checkpoint Size
-                </div>
+                <div className="text-small text-dark-text-tertiary">Checkpoint Size</div>
               </div>
               <div className="text-center">
                 <div className="text-h2 text-accent-warning mb-4">4</div>
-                <div className="text-small text-dark-text-tertiary">
-                  Artifacts
-                </div>
+                <div className="text-small text-dark-text-tertiary">Artifacts</div>
               </div>
             </div>
 
@@ -845,28 +763,21 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
                     "flex items-center justify-between p-16 rounded-lg",
                     checkpoint.isBest
                       ? "bg-accent-success/10 border border-accent-success/30"
-                      : "bg-dark-bg-tertiary",
+                      : "bg-dark-bg-tertiary"
                   )}
                 >
                   <div className="flex items-center gap-16">
                     {checkpoint.isBest && <span className="text-h3">🏆</span>}
                     <div>
-                      <div className="text-body font-medium">
-                        {checkpoint.name}
-                      </div>
+                      <div className="text-body font-medium">{checkpoint.name}</div>
                       <div className="text-small text-dark-text-tertiary">
-                        Step {checkpoint.step} • Loss: {checkpoint.loss} •{" "}
-                        {checkpoint.time}
+                        Step {checkpoint.step} • Loss: {checkpoint.loss} • {checkpoint.time}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-8">
-                    <button className="btn-ghost text-tiny px-12 py-6">
-                      Load
-                    </button>
-                    <button className="btn-ghost text-tiny px-12 py-6">
-                      Export
-                    </button>
+                    <button className="btn-ghost text-tiny px-12 py-6">Load</button>
+                    <button className="btn-ghost text-tiny px-12 py-6">Export</button>
                     <button className="btn-ghost text-tiny px-12 py-6 text-accent-error">
                       Delete
                     </button>

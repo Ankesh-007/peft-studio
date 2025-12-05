@@ -18,44 +18,24 @@ describe("DatasetUploadStep", () => {
   };
 
   it("should render dataset upload step", () => {
-    render(
-      <DatasetUploadStep
-        wizardState={mockWizardState}
-        onDatasetSelect={() => {}}
-      />
-    );
+    render(<DatasetUploadStep wizardState={mockWizardState} onDatasetSelect={() => {}} />);
     expect(screen.getByText(/upload your training data/i)).toBeInTheDocument();
   });
 
   it("should show upload instructions", () => {
-    render(
-      <DatasetUploadStep
-        wizardState={mockWizardState}
-        onDatasetSelect={() => {}}
-      />
-    );
+    render(<DatasetUploadStep wizardState={mockWizardState} onDatasetSelect={() => {}} />);
     // Component should display upload guidance
     expect(screen.getByText(/upload your training data/i)).toBeInTheDocument();
   });
 
   it("should accept file uploads", () => {
-    render(
-      <DatasetUploadStep
-        wizardState={mockWizardState}
-        onDatasetSelect={() => {}}
-      />
-    );
+    render(<DatasetUploadStep wizardState={mockWizardState} onDatasetSelect={() => {}} />);
     const fileInput = document.querySelector('input[type="file"]');
     expect(fileInput).toBeInTheDocument();
   });
 
   it("should validate dataset format", () => {
-    render(
-      <DatasetUploadStep
-        wizardState={mockWizardState}
-        onDatasetSelect={() => {}}
-      />
-    );
+    render(<DatasetUploadStep wizardState={mockWizardState} onDatasetSelect={() => {}} />);
     // Smoke test - component renders
     expect(screen.getByText(/upload your training data/i)).toBeInTheDocument();
   });
@@ -73,12 +53,7 @@ describe("DatasetUploadStep", () => {
       },
     };
 
-    render(
-      <DatasetUploadStep
-        wizardState={wizardStateWithDataset}
-        onDatasetSelect={() => {}}
-      />
-    );
+    render(<DatasetUploadStep wizardState={wizardStateWithDataset} onDatasetSelect={() => {}} />);
     // Component should render with dataset
     expect(screen.getByText(/dataset ready/i)).toBeInTheDocument();
   });
@@ -96,12 +71,7 @@ describe("DatasetUploadStep", () => {
       },
     };
 
-    render(
-      <DatasetUploadStep
-        wizardState={wizardStateWithDataset}
-        onDatasetSelect={() => {}}
-      />
-    );
+    render(<DatasetUploadStep wizardState={wizardStateWithDataset} onDatasetSelect={() => {}} />);
     // Component renders successfully - check for file name
     expect(screen.getByText("test.json")).toBeInTheDocument();
   });

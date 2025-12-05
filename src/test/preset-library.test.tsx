@@ -19,7 +19,7 @@ describe("PresetLibrary", () => {
   it("should call onSelectPreset when preset is clicked", async () => {
     const onSelectPreset = vi.fn();
     render(<PresetLibrary onSelectPreset={onSelectPreset} onClose={() => {}} />);
-    
+
     // Smoke test - component renders
     expect(screen.getByText("Configuration Presets")).toBeInTheDocument();
   });

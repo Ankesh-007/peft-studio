@@ -44,7 +44,7 @@ interface TrainingEstimates {
 function calculateTrainingEstimates(config: TrainingConfig): TrainingEstimates {
   // Calculate base training time
   const stepsPerEpoch = Math.ceil(
-    config.numSamples / (config.batchSize * config.gradientAccumulation),
+    config.numSamples / (config.batchSize * config.gradientAccumulation)
   );
   const totalSteps = stepsPerEpoch * config.epochs;
 
@@ -120,19 +120,15 @@ describe("Property 10: Training estimates include confidence intervals", () => {
           expect(estimates.duration.max).toBeGreaterThan(0);
 
           // Verify confidence interval ordering: min <= expected <= max
-          expect(estimates.duration.min).toBeLessThanOrEqual(
-            estimates.duration.expected,
-          );
-          expect(estimates.duration.expected).toBeLessThanOrEqual(
-            estimates.duration.max,
-          );
+          expect(estimates.duration.min).toBeLessThanOrEqual(estimates.duration.expected);
+          expect(estimates.duration.expected).toBeLessThanOrEqual(estimates.duration.max);
 
           // Verify confidence value is between 0 and 1
           expect(estimates.confidence).toBeGreaterThanOrEqual(0);
           expect(estimates.confidence).toBeLessThanOrEqual(1);
-        },
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -160,9 +156,9 @@ describe("Property 10: Training estimates include confidence intervals", () => {
           expect(estimates.cost.gpuHours).toBeGreaterThanOrEqual(0);
           expect(estimates.cost.electricityCost).toBeGreaterThanOrEqual(0);
           expect(estimates.cost.carbonFootprint).toBeGreaterThanOrEqual(0);
-        },
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -190,9 +186,9 @@ describe("Property 10: Training estimates include confidence intervals", () => {
           expect(estimates.resources.peakMemory).toBeGreaterThan(0);
           expect(estimates.resources.avgGPUUtilization).toBeGreaterThan(0);
           expect(estimates.resources.diskSpace).toBeGreaterThan(0);
-        },
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 });

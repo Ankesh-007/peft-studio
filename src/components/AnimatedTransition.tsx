@@ -40,7 +40,7 @@ export const AnimatedTransition: React.FC<AnimatedTransitionProps> = ({
         () => {
           setShouldRender(false);
         },
-        prefersReducedMotion ? 0 : duration,
+        prefersReducedMotion ? 0 : duration
       );
       return () => clearTimeout(timer);
     }
@@ -49,18 +49,12 @@ export const AnimatedTransition: React.FC<AnimatedTransitionProps> = ({
   if (!shouldRender) return null;
 
   const getTransitionClasses = () => {
-    const baseClasses = prefersReducedMotion
-      ? ""
-      : `transition-all duration-${duration}`;
+    const baseClasses = prefersReducedMotion ? "" : `transition-all duration-${duration}`;
 
     const typeClasses = {
       fade: isVisible ? "opacity-100" : "opacity-0",
-      "slide-up": isVisible
-        ? "opacity-100 translate-y-0"
-        : "opacity-0 translate-y-4",
-      "slide-down": isVisible
-        ? "opacity-100 translate-y-0"
-        : "opacity-0 -translate-y-4",
+      "slide-up": isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4",
+      "slide-down": isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4",
       scale: isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95",
     };
 
@@ -92,9 +86,7 @@ export const StaggeredList: React.FC<StaggeredListProps> = ({
         <div
           className={cn(!prefersReducedMotion && "animate-fade-in")}
           style={{
-            animationDelay: prefersReducedMotion
-              ? "0ms"
-              : `${index * staggerDelay}ms`,
+            animationDelay: prefersReducedMotion ? "0ms" : `${index * staggerDelay}ms`,
           }}
         >
           {child}
@@ -113,20 +105,11 @@ interface PulseProps {
 /**
  * Pulse animation for attention-grabbing elements
  */
-export const Pulse: React.FC<PulseProps> = ({
-  children,
-  active = true,
-  className,
-}) => {
+export const Pulse: React.FC<PulseProps> = ({ children, active = true, className }) => {
   const prefersReducedMotion = usePrefersReducedMotion();
 
   return (
-    <div
-      className={cn(
-        active && !prefersReducedMotion && "animate-pulse",
-        className,
-      )}
-    >
+    <div className={cn(active && !prefersReducedMotion && "animate-pulse", className)}>
       {children}
     </div>
   );

@@ -1,13 +1,13 @@
 /**
  * Deployment Dashboard
- * 
+ *
  * Main dashboard for viewing and managing all deployments.
  * Shows deployment status, endpoints, and quick actions.
- * 
+ *
  * Requirements: 9.1, 9.2, 9.3, 9.4, 9.5
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface Deployment {
   deployment_id: string;
@@ -20,7 +20,7 @@ interface Deployment {
     max_instances: number;
     auto_scaling: boolean;
   };
-  status: 'pending' | 'deploying' | 'active' | 'failed' | 'stopped' | 'updating';
+  status: "pending" | "deploying" | "active" | "failed" | "stopped" | "updating";
   endpoint?: {
     endpoint_id: string;
     url: string;
@@ -49,31 +49,31 @@ interface DeploymentDashboardProps {
 }
 
 const STATUS_COLORS = {
-  pending: 'bg-gray-100 text-gray-800',
-  deploying: 'bg-blue-100 text-blue-800',
-  active: 'bg-green-100 text-green-800',
-  failed: 'bg-red-100 text-red-800',
-  stopped: 'bg-gray-100 text-gray-600',
-  updating: 'bg-yellow-100 text-yellow-800'
+  pending: "bg-gray-100 text-gray-800",
+  deploying: "bg-blue-100 text-blue-800",
+  active: "bg-green-100 text-green-800",
+  failed: "bg-red-100 text-red-800",
+  stopped: "bg-gray-100 text-gray-600",
+  updating: "bg-yellow-100 text-yellow-800",
 };
 
 const PLATFORM_ICONS: Record<string, string> = {
-  predibase: '🚀',
-  together_ai: '⚡',
-  modal: '🎯',
-  replicate: '🔄'
+  predibase: "🚀",
+  together_ai: "⚡",
+  modal: "🎯",
+  replicate: "🔄",
 };
 
 export const DeploymentDashboard: React.FC<DeploymentDashboardProps> = ({
   onCreateDeployment,
   onTestEndpoint,
   onStopDeployment,
-  onViewMetrics
+  onViewMetrics,
 }) => {
   const [deployments, setDeployments] = useState<Deployment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<string>('all');
-  const [platformFilter, setPlatformFilter] = useState<string>('all');
+  const [filter, setFilter] = useState<string>("all");
+  const [platformFilter, setPlatformFilter] = useState<string>("all");
 
   useEffect(() => {
     loadDeployments();
@@ -83,27 +83,27 @@ export const DeploymentDashboard: React.FC<DeploymentDashboardProps> = ({
 
   const loadDeployments = async () => {
     try {
-      const response = await fetch('/api/deployments');
+      const response = await fetch("/api/deployments");
       const data = await response.json();
       setDeployments(data);
     } catch (error) {
-      console.error('Failed to load deployments:', error);
+      console.error("Failed to load deployments:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredDeployments = deployments.filter(d => {
-    if (filter !== 'all' && d.status !== filter) return false;
-    if (platformFilter !== 'all' && d.config.platform !== platformFilter) return false;
+  const filteredDeployments = deployments.filter((d) => {
+    if (filter !== "all" && d.status !== filter) return false;
+    if (platformFilter !== "all" && d.config.platform !== platformFilter) return false;
     return true;
   });
 
   const stats = {
     total: deployments.length,
-    active: deployments.filter(d => d.status === 'active').length,
-    deploying: deployments.filter(d => d.status === 'deploying').length,
-    failed: deployments.filter(d => d.status === 'failed').length
+    active: deployments.filter((d) => d.status === "active").length,
+    deploying: deployments.filter((d) => d.status === "deploying").length,
+    failed: deployments.filter((d) => d.status === "failed").length,
   };
 
   if (loading) {
@@ -155,7 +155,7 @@ export const DeploymentDashboard: React.FC<DeploymentDashboardProps> = ({
       <div className="flex gap-4">
         <select
           value={filter}
-          onChange={e => setFilter(e.target.value)}
+          onChange={(e) => setFilter(e.target.value)}
           className="px-4 py-2 border rounded-lg"
         >
           <option value="all">All Status</option>
@@ -168,7 +168,7 @@ export const DeploymentDashboard: React.FC<DeploymentDashboardProps> = ({
 
         <select
           value={platformFilter}
-          onChange={e => setPlatformFilter(e.target.value)}
+          onChange={(e) => setPlatformFilter(e.target.value)}
           className="px-4 py-2 border rounded-lg"
         >
           <option value="all">All Platforms</option>
@@ -192,16 +192,13 @@ export const DeploymentDashboard: React.FC<DeploymentDashboardProps> = ({
         </div>
       ) : (
         <div className="space-y-4">
-          {filteredDeployments.map(deployment => (
-            <div
-              key={deployment.deployment_id}
-              className="bg-white rounded-lg shadow p-6"
-            >
+          {filteredDeployments.map((deployment) => (
+            <div key={deployment.deployment_id} className="bg-white rounded-lg shadow p-6">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">
-                      {PLATFORM_ICONS[deployment.config.platform] || '📦'}
+                      {PLATFORM_ICONS[deployment.config.platform] || "📦"}
                     </span>
                     <div>
                       <h3 className="text-xl font-semibold">{deployment.config.name}</h3>
@@ -246,9 +243,7 @@ export const DeploymentDashboard: React.FC<DeploymentDashboardProps> = ({
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
                           <span className="text-gray-600">Requests:</span>
-                          <p className="font-semibold">
-                            {deployment.usage_metrics.total_requests}
-                          </p>
+                          <p className="font-semibold">{deployment.usage_metrics.total_requests}</p>
                         </div>
                         <div>
                           <span className="text-gray-600">Success Rate:</span>
@@ -288,7 +283,7 @@ export const DeploymentDashboard: React.FC<DeploymentDashboardProps> = ({
 
                 {/* Actions */}
                 <div className="flex flex-col gap-2 ml-4">
-                  {deployment.status === 'active' && (
+                  {deployment.status === "active" && (
                     <>
                       <button
                         onClick={() => onTestEndpoint(deployment.deployment_id)}
@@ -310,7 +305,7 @@ export const DeploymentDashboard: React.FC<DeploymentDashboardProps> = ({
                       </button>
                     </>
                   )}
-                  {deployment.status === 'failed' && (
+                  {deployment.status === "failed" && (
                     <button
                       onClick={() => onCreateDeployment()}
                       className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"

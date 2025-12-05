@@ -27,9 +27,7 @@ export const ElectricityRateInput: React.FC<ElectricityRateInputProps> = ({
   useEffect(() => {
     const fetchDefaultRate = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:8000/api/cost/electricity-rate/${region}`,
-        );
+        const response = await fetch(`http://localhost:8000/api/cost/electricity-rate/${region}`);
 
         if (response.ok) {
           const data = await response.json();
@@ -112,8 +110,8 @@ export const ElectricityRateInput: React.FC<ElectricityRateInputProps> = ({
 
       <div className="rate-help">
         <p>
-          💡 Your electricity rate affects the cost estimate. Check your utility
-          bill for your actual rate.
+          💡 Your electricity rate affects the cost estimate. Check your utility bill for your
+          actual rate.
         </p>
       </div>
     </div>

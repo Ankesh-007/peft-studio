@@ -27,7 +27,7 @@ export function getLossColorZone(
   currentLoss: number,
   previousLoss: number | null = null,
   goodThreshold: number = 1.0,
-  acceptableThreshold: number = 2.0,
+  acceptableThreshold: number = 2.0
 ): LossColorResult {
   // Handle invalid inputs
   if (currentLoss < 0 || isNaN(currentLoss) || !isFinite(currentLoss)) {
@@ -87,7 +87,7 @@ describe("Property 9: Loss curve color coding", () => {
         // Property: Result must have a valid color hex code
         expect(result.color).toMatch(/^#[0-9a-f]{6}$/i);
       }),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -100,8 +100,7 @@ describe("Property 9: Loss curve color coding", () => {
           const result = getLossColorZone(currentLoss, previousLoss);
 
           // Property: Significant increase (>10%) should be red
-          const percentChange =
-            ((currentLoss - previousLoss) / previousLoss) * 100;
+          const percentChange = ((currentLoss - previousLoss) / previousLoss) * 100;
           if (percentChange > 10) {
             expect(result.zone).toBe("red");
           }
@@ -114,14 +113,13 @@ describe("Property 9: Loss curve color coding", () => {
           // Property: Low decreasing loss (<1.0 and significantly decreasing) should be green
           // Only check for green if there's a meaningful decrease (>1% decrease)
           const lossChange = currentLoss - previousLoss;
-          const isSignificantDecrease =
-            lossChange < 0 && Math.abs(percentChange) > 1;
+          const isSignificantDecrease = lossChange < 0 && Math.abs(percentChange) > 1;
           if (currentLoss < 1.0 && isSignificantDecrease) {
             expect(result.zone).toBe("green");
           }
-        },
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -132,7 +130,7 @@ describe("Property 9: Loss curve color coding", () => {
           fc.constant(NaN),
           fc.constant(Infinity),
           fc.constant(-Infinity),
-          fc.double({ min: -100, max: -0.01 }),
+          fc.double({ min: -100, max: -0.01 })
         ),
         (invalidLoss) => {
           const result = getLossColorZone(invalidLoss);
@@ -140,9 +138,9 @@ describe("Property 9: Loss curve color coding", () => {
           // Property: Invalid values should always be red (problematic)
           expect(result.zone).toBe("red");
           expect(result.color).toBe("#ef4444");
-        },
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -158,9 +156,9 @@ describe("Property 9: Loss curve color coding", () => {
           // Property: Same inputs should produce same outputs
           expect(result1.zone).toBe(result2.zone);
           expect(result1.color).toBe(result2.color);
-        },
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -181,9 +179,9 @@ describe("Property 9: Loss curve color coding", () => {
               expect(lossChange).toBeLessThan(0);
             }
           }
-        },
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -199,16 +197,15 @@ describe("Property 9: Loss curve color coding", () => {
           if (result.zone === "red") {
             const isHighLoss = currentLoss > 2.0;
             const isIncreasing =
-              previousLoss !== null &&
-              ((currentLoss - previousLoss) / previousLoss) * 100 > 10;
+              previousLoss !== null && ((currentLoss - previousLoss) / previousLoss) * 100 > 10;
             const isInvalid = !isFinite(currentLoss) || currentLoss < 0;
 
             // At least one problematic condition should be true
             expect(isHighLoss || isIncreasing || isInvalid).toBe(true);
           }
-        },
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 });

@@ -4,8 +4,8 @@
  * Validates: Requirement 18.1 - Export configuration
  */
 
-import React, { useState } from 'react';
-import { X, Download, AlertCircle } from 'lucide-react';
+import React, { useState } from "react";
+import { X, Download, AlertCircle } from "lucide-react";
 
 interface ExportConfigurationDialogProps {
   onClose: () => void;
@@ -16,10 +16,10 @@ const ExportConfigurationDialog: React.FC<ExportConfigurationDialogProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [author, setAuthor] = useState('');
-  const [tags, setTags] = useState('');
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [author, setAuthor] = useState("");
+  const [tags, setTags] = useState("");
   const [saveToLibrary, setSaveToLibrary] = useState(true);
   const [downloadFile, setDownloadFile] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -27,32 +27,32 @@ const ExportConfigurationDialog: React.FC<ExportConfigurationDialogProps> = ({
 
   // Mock configuration - in real app, this would come from props or context
   const mockConfiguration = {
-    base_model: 'meta-llama/Llama-2-7b-hf',
-    model_source: 'huggingface',
-    algorithm: 'lora',
+    base_model: "meta-llama/Llama-2-7b-hf",
+    model_source: "huggingface",
+    algorithm: "lora",
     rank: 16,
     alpha: 32,
     dropout: 0.1,
-    target_modules: ['q_proj', 'v_proj'],
-    quantization: 'int4',
+    target_modules: ["q_proj", "v_proj"],
+    quantization: "int4",
     learning_rate: 0.0002,
     batch_size: 4,
     gradient_accumulation_steps: 4,
     num_epochs: 3,
     warmup_steps: 100,
-    provider: 'runpod',
-    resource_id: 'gpu-rtx-4090',
-    dataset_path: '/data/training.jsonl',
+    provider: "runpod",
+    resource_id: "gpu-rtx-4090",
+    dataset_path: "/data/training.jsonl",
     validation_split: 0.1,
-    experiment_tracker: 'wandb',
-    project_name: 'my-project',
-    output_dir: '/output',
+    experiment_tracker: "wandb",
+    project_name: "my-project",
+    output_dir: "/output",
     checkpoint_steps: 500,
   };
 
   const handleExport = async () => {
     if (!name.trim()) {
-      setError('Configuration name is required');
+      setError("Configuration name is required");
       return;
     }
 
@@ -61,7 +61,7 @@ const ExportConfigurationDialog: React.FC<ExportConfigurationDialogProps> = ({
       setError(null);
 
       const tagList = tags
-        .split(',')
+        .split(",")
         .map((t) => t.trim())
         .filter((t) => t.length > 0);
 
@@ -75,39 +75,42 @@ const ExportConfigurationDialog: React.FC<ExportConfigurationDialogProps> = ({
 
       // Save to library if requested
       if (saveToLibrary) {
-        const saveResponse = await fetch('http://localhost:8000/api/configurations/library/save', {
-          method: 'POST',
+        const saveResponse = await fetch("http://localhost:8000/api/configurations/library/save", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(exportRequest),
         });
 
         if (!saveResponse.ok) {
-          throw new Error('Failed to save configuration to library');
+          throw new Error("Failed to save configuration to library");
         }
       }
 
       // Download file if requested
       if (downloadFile) {
-        const downloadResponse = await fetch('http://localhost:8000/api/configurations/export-file', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(exportRequest),
-        });
+        const downloadResponse = await fetch(
+          "http://localhost:8000/api/configurations/export-file",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(exportRequest),
+          }
+        );
 
         if (!downloadResponse.ok) {
-          throw new Error('Failed to download configuration file');
+          throw new Error("Failed to download configuration file");
         }
 
         // Trigger download
         const blob = await downloadResponse.blob();
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
-        a.download = `${name.replace(/[^a-z0-9]/gi, '_')}.json`;
+        a.download = `${name.replace(/[^a-z0-9]/gi, "_")}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -116,8 +119,8 @@ const ExportConfigurationDialog: React.FC<ExportConfigurationDialogProps> = ({
 
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to export configuration');
-      console.error('Error exporting configuration:', err);
+      setError(err instanceof Error ? err.message : "Failed to export configuration");
+      console.error("Error exporting configuration:", err);
     } finally {
       setLoading(false);
     }
@@ -132,10 +135,7 @@ const ExportConfigurationDialog: React.FC<ExportConfigurationDialogProps> = ({
             <Download className="w-6 h-6 text-blue-600" />
             <h2 className="text-2xl font-bold text-gray-900">Export Configuration</h2>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -171,9 +171,7 @@ const ExportConfigurationDialog: React.FC<ExportConfigurationDialogProps> = ({
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -185,9 +183,7 @@ const ExportConfigurationDialog: React.FC<ExportConfigurationDialogProps> = ({
 
             {/* Author */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Author
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Author</label>
               <input
                 type="text"
                 value={author}
@@ -199,9 +195,7 @@ const ExportConfigurationDialog: React.FC<ExportConfigurationDialogProps> = ({
 
             {/* Tags */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tags
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Tags</label>
               <input
                 type="text"
                 value={tags}
@@ -209,9 +203,7 @@ const ExportConfigurationDialog: React.FC<ExportConfigurationDialogProps> = ({
                 placeholder="e.g., llama, lora, production (comma-separated)"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              <p className="mt-1 text-sm text-gray-500">
-                Separate tags with commas
-              </p>
+              <p className="mt-1 text-sm text-gray-500">Separate tags with commas</p>
             </div>
 
             {/* Export Options */}
@@ -226,9 +218,7 @@ const ExportConfigurationDialog: React.FC<ExportConfigurationDialogProps> = ({
                   className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <div>
-                  <div className="text-sm font-medium text-gray-900">
-                    Save to Library
-                  </div>
+                  <div className="text-sm font-medium text-gray-900">Save to Library</div>
                   <div className="text-sm text-gray-500">
                     Save this configuration to your local library for easy access
                   </div>
@@ -243,9 +233,7 @@ const ExportConfigurationDialog: React.FC<ExportConfigurationDialogProps> = ({
                   className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <div>
-                  <div className="text-sm font-medium text-gray-900">
-                    Download as File
-                  </div>
+                  <div className="text-sm font-medium text-gray-900">Download as File</div>
                   <div className="text-sm text-gray-500">
                     Download a JSON file that can be shared with others
                   </div>
@@ -255,9 +243,7 @@ const ExportConfigurationDialog: React.FC<ExportConfigurationDialogProps> = ({
 
             {/* Configuration Preview */}
             <div className="pt-4 border-t border-gray-200">
-              <h3 className="text-sm font-medium text-gray-900 mb-2">
-                Configuration Preview
-              </h3>
+              <h3 className="text-sm font-medium text-gray-900 mb-2">Configuration Preview</h3>
               <div className="bg-gray-50 rounded-lg p-4 max-h-48 overflow-y-auto">
                 <pre className="text-xs text-gray-700 font-mono">
                   {JSON.stringify(mockConfiguration, null, 2)}

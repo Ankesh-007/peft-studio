@@ -4,8 +4,8 @@
  * Validates: Requirement 18.3 - Configuration library browser
  */
 
-import React from 'react';
-import { Calendar, User, Tag, Trash2, Share2, FileText } from 'lucide-react';
+import React from "react";
+import { Calendar, User, Tag, Trash2, Share2, FileText } from "lucide-react";
 
 interface ConfigurationMetadata {
   id: string;
@@ -40,9 +40,9 @@ const ConfigurationLibraryBrowser: React.FC<ConfigurationLibraryBrowserProps> = 
       const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
       if (diffDays === 0) {
-        return 'Today';
+        return "Today";
       } else if (diffDays === 1) {
-        return 'Yesterday';
+        return "Yesterday";
       } else if (diffDays < 7) {
         return `${diffDays} days ago`;
       } else {
@@ -58,22 +58,22 @@ const ConfigurationLibraryBrowser: React.FC<ConfigurationLibraryBrowserProps> = 
       // Download the configuration file
       const response = await fetch(`http://localhost:8000/api/configurations/library/${config.id}`);
       if (!response.ok) {
-        throw new Error('Failed to load configuration');
+        throw new Error("Failed to load configuration");
       }
 
       const data = await response.json();
-      const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: "application/json" });
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = `${config.name.replace(/[^a-z0-9]/gi, '_')}.json`;
+      a.download = `${config.name.replace(/[^a-z0-9]/gi, "_")}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      console.error('Error sharing configuration:', err);
-      alert('Failed to share configuration');
+      console.error("Error sharing configuration:", err);
+      alert("Failed to share configuration");
     }
   };
 
@@ -92,12 +92,8 @@ const ConfigurationLibraryBrowser: React.FC<ConfigurationLibraryBrowserProps> = 
       <div className="p-6">
         <div className="text-center py-12">
           <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            No Configurations Found
-          </h3>
-          <p className="text-gray-600">
-            Export a configuration to add it to your library
-          </p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">No Configurations Found</h3>
+          <p className="text-gray-600">Export a configuration to add it to your library</p>
         </div>
       </div>
     );
@@ -119,13 +115,9 @@ const ConfigurationLibraryBrowser: React.FC<ConfigurationLibraryBrowserProps> = 
             {/* Header */}
             <div className="flex items-start justify-between mb-2">
               <div className="flex-1 min-w-0">
-                <h4 className="text-base font-semibold text-gray-900 truncate">
-                  {config.name}
-                </h4>
+                <h4 className="text-base font-semibold text-gray-900 truncate">{config.name}</h4>
                 {config.description && (
-                  <p className="text-sm text-gray-600 line-clamp-2 mt-1">
-                    {config.description}
-                  </p>
+                  <p className="text-sm text-gray-600 line-clamp-2 mt-1">{config.description}</p>
                 )}
               </div>
 

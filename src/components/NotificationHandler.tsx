@@ -7,7 +7,7 @@
 
 import { useEffect, useCallback } from "react";
 
-interface NotificationOptions {
+interface AppNotificationOptions {
   type: "progress" | "error" | "completion" | "warning";
   title: string;
   message: string;
@@ -21,7 +21,7 @@ interface NotificationOptions {
 
 interface NotificationHandlerProps {
   jobId?: string;
-  onNotificationReceived?: (notification: NotificationOptions) => void;
+  onNotificationReceived?: (notification: AppNotificationOptions) => void;
 }
 
 export const NotificationHandler: React.FC<NotificationHandlerProps> = ({
@@ -51,7 +51,7 @@ export const NotificationHandler: React.FC<NotificationHandlerProps> = ({
 
   // Show desktop notification
   const showDesktopNotification = useCallback(
-    async (options: NotificationOptions) => {
+    async (options: AppNotificationOptions) => {
       try {
         // Check if Electron API is available
         if (window.api?.showNotification) {
@@ -60,7 +60,7 @@ export const NotificationHandler: React.FC<NotificationHandlerProps> = ({
             message: options.message,
             urgency: options.urgency || "normal",
             sound: options.sound || false,
-          });
+          } as any);
         } else if ("Notification" in window) {
           // Fallback to Web Notifications API
           if (Notification.permission === "granted") {
@@ -84,7 +84,7 @@ export const NotificationHandler: React.FC<NotificationHandlerProps> = ({
         console.error("Error showing desktop notification:", error);
       }
     },
-    [jobId],
+    [jobId]
   );
 
   // Update taskbar progress
@@ -100,7 +100,7 @@ export const NotificationHandler: React.FC<NotificationHandlerProps> = ({
 
   // Handle incoming notification
   const handleNotification = useCallback(
-    async (notification: NotificationOptions) => {
+    async (notification: AppNotificationOptions) => {
       console.log("Received notification:", notification);
 
       // Call callback if provided
@@ -125,12 +125,7 @@ export const NotificationHandler: React.FC<NotificationHandlerProps> = ({
       // This would integrate with your toast/notification system
       // For example: toast.show({ title: notification.title, message: notification.message })
     },
-    [
-      showDesktopNotification,
-      playNotificationSound,
-      updateTaskbarProgress,
-      onNotificationReceived,
-    ],
+    [showDesktopNotification, playNotificationSound, updateTaskbarProgress, onNotificationReceived]
   );
 
   // Connect to notification WebSocket

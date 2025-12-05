@@ -10,16 +10,12 @@ export const SkeletonText: React.FC<{
   className?: string;
 }> = ({ lines = 1, className }) => {
   return (
-    <div
-      className={cn("space-y-2", className)}
-      role="status"
-      aria-label="Loading content"
-    >
+    <div className={cn("space-y-2", className)} role="status" aria-label="Loading content">
       {Array.from({ length: lines }).map((_, i) => (
         <div
           key={i}
           className="h-4 bg-dark-bg-tertiary rounded animate-pulse"
-          style={{ width: `${70 + (i * 10) % 30}%` }}
+          style={{ width: `${70 + ((i * 10) % 30)}%` }}
         />
       ))}
       <span className="sr-only">Loading...</span>
@@ -34,11 +30,7 @@ export const SkeletonCard: React.FC<{
   className?: string;
 }> = ({ className }) => {
   return (
-    <div
-      className={cn("card animate-pulse", className)}
-      role="status"
-      aria-label="Loading card"
-    >
+    <div className={cn("card animate-pulse", className)} role="status" aria-label="Loading card">
       <div className="h-6 bg-dark-bg-tertiary rounded w-1/3 mb-4" />
       <div className="space-y-2">
         <div className="h-4 bg-dark-bg-tertiary rounded w-full" />
@@ -59,11 +51,7 @@ export const SkeletonTable: React.FC<{
   className?: string;
 }> = ({ rows = 5, columns = 4, className }) => {
   return (
-    <div
-      className={cn("space-y-2", className)}
-      role="status"
-      aria-label="Loading table"
-    >
+    <div className={cn("space-y-2", className)} role="status" aria-label="Loading table">
       {Array.from({ length: rows }).map((_, i) => (
         <div key={i} className="flex gap-4 animate-pulse">
           {Array.from({ length: columns }).map((_, j) => (
@@ -94,7 +82,7 @@ export const Spinner: React.FC<{
       className={cn(
         "inline-block rounded-full border-accent-primary border-t-transparent animate-spin",
         sizeClasses[size],
-        className,
+        className
       )}
       role="status"
       aria-label="Loading"
@@ -168,11 +156,7 @@ export const ProgressBar: React.FC<{
  */
 export const SkeletonWizardStep: React.FC = () => {
   return (
-    <div
-      className="space-y-6 animate-pulse"
-      role="status"
-      aria-label="Loading wizard step"
-    >
+    <div className="space-y-6 animate-pulse" role="status" aria-label="Loading wizard step">
       <div className="h-8 bg-dark-bg-tertiary rounded w-1/4 mb-8" />
       <div className="grid grid-cols-3 gap-4">
         {Array.from({ length: 6 }).map((_, i) => (

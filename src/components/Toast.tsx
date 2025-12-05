@@ -41,8 +41,6 @@ export const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
     }
   }, [toast.duration, handleDismiss]);
 
-
-
   const getTypeStyles = (type: ToastType): string => {
     switch (type) {
       case "success":
@@ -82,7 +80,7 @@ export const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
       className={cn(
         "w-full max-w-md overflow-hidden rounded-lg border-2 shadow-lg transition-all duration-300",
         isExiting ? "translate-x-full opacity-0" : "translate-x-0 opacity-100",
-        getTypeStyles(toast.type),
+        getTypeStyles(toast.type)
       )}
       role={getAriaRole(toast.type)}
       aria-live={toast.type === "error" ? "assertive" : "polite"}
@@ -92,7 +90,7 @@ export const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
           <div className="flex items-center gap-8">
             <span
               className={cn(
-                "flex h-20 w-20 items-center justify-center rounded-full bg-white/20 text-base font-bold",
+                "flex h-20 w-20 items-center justify-center rounded-full bg-white/20 text-base font-bold"
               )}
             >
               {getTypeIcon(toast.type)}
@@ -108,9 +106,7 @@ export const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
           </button>
         </div>
 
-        {toast.message && (
-          <p className="mb-8 text-small text-white/90">{toast.message}</p>
-        )}
+        {toast.message && <p className="mb-8 text-small text-white/90">{toast.message}</p>}
 
         {toast.action && (
           <button

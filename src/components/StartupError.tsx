@@ -1,8 +1,14 @@
-import React from 'react';
-import { AlertCircle, RefreshCw, FileText, ExternalLink } from 'lucide-react';
+import React from "react";
+import { AlertCircle, RefreshCw, FileText, ExternalLink } from "lucide-react";
 
 export interface StartupErrorInfo {
-  type: 'python_not_found' | 'port_conflict' | 'missing_packages' | 'backend_crash' | 'cuda_error' | 'unknown';
+  type:
+    | "python_not_found"
+    | "port_conflict"
+    | "missing_packages"
+    | "backend_crash"
+    | "cuda_error"
+    | "unknown";
   message: string;
   cause?: string;
   fixInstructions: string[];
@@ -18,73 +24,69 @@ interface StartupErrorProps {
 
 const errorTypeConfig = {
   python_not_found: {
-    title: 'Python Not Found',
-    icon: '🐍',
-    color: 'red',
-    severity: 'critical',
+    title: "Python Not Found",
+    icon: "🐍",
+    color: "red",
+    severity: "critical",
   },
   port_conflict: {
-    title: 'Port Conflict',
-    icon: '🔌',
-    color: 'yellow',
-    severity: 'warning',
+    title: "Port Conflict",
+    icon: "🔌",
+    color: "yellow",
+    severity: "warning",
   },
   missing_packages: {
-    title: 'Missing Dependencies',
-    icon: '📦',
-    color: 'orange',
-    severity: 'error',
+    title: "Missing Dependencies",
+    icon: "📦",
+    color: "orange",
+    severity: "error",
   },
   backend_crash: {
-    title: 'Backend Service Crashed',
-    icon: '💥',
-    color: 'red',
-    severity: 'critical',
+    title: "Backend Service Crashed",
+    icon: "💥",
+    color: "red",
+    severity: "critical",
   },
   cuda_error: {
-    title: 'CUDA Error',
-    icon: '🎮',
-    color: 'yellow',
-    severity: 'warning',
+    title: "CUDA Error",
+    icon: "🎮",
+    color: "yellow",
+    severity: "warning",
   },
   unknown: {
-    title: 'Startup Error',
-    icon: '⚠️',
-    color: 'red',
-    severity: 'error',
+    title: "Startup Error",
+    icon: "⚠️",
+    color: "red",
+    severity: "error",
   },
 };
 
-export const StartupError: React.FC<StartupErrorProps> = ({
-  error,
-  onRetry,
-  onViewLogs,
-}) => {
+export const StartupError: React.FC<StartupErrorProps> = ({ error, onRetry, onViewLogs }) => {
   const config = errorTypeConfig[error.type];
 
   const getSeverityColor = () => {
     switch (config.severity) {
-      case 'critical':
-        return 'border-red-500 bg-red-500/10';
-      case 'error':
-        return 'border-orange-500 bg-orange-500/10';
-      case 'warning':
-        return 'border-yellow-500 bg-yellow-500/10';
+      case "critical":
+        return "border-red-500 bg-red-500/10";
+      case "error":
+        return "border-orange-500 bg-orange-500/10";
+      case "warning":
+        return "border-yellow-500 bg-yellow-500/10";
       default:
-        return 'border-gray-500 bg-gray-500/10';
+        return "border-gray-500 bg-gray-500/10";
     }
   };
 
   const getTextColor = () => {
     switch (config.severity) {
-      case 'critical':
-        return 'text-red-400';
-      case 'error':
-        return 'text-orange-400';
-      case 'warning':
-        return 'text-yellow-400';
+      case "critical":
+        return "text-red-400";
+      case "error":
+        return "text-orange-400";
+      case "warning":
+        return "text-yellow-400";
       default:
-        return 'text-gray-400';
+        return "text-gray-400";
     }
   };
 
@@ -97,9 +99,7 @@ export const StartupError: React.FC<StartupErrorProps> = ({
           <div className="flex items-start gap-4 mb-6">
             <div className="text-5xl">{config.icon}</div>
             <div className="flex-1">
-              <h1 className={`text-2xl font-bold mb-2 ${getTextColor()}`}>
-                {config.title}
-              </h1>
+              <h1 className={`text-2xl font-bold mb-2 ${getTextColor()}`}>{config.title}</h1>
               <p className="text-gray-300 text-lg">{error.message}</p>
             </div>
             <AlertCircle className={`w-6 h-6 ${getTextColor()}`} />
@@ -108,24 +108,18 @@ export const StartupError: React.FC<StartupErrorProps> = ({
           {/* Cause Section */}
           {error.cause && (
             <div className="mb-6 p-4 bg-black/30 rounded-lg">
-              <h3 className="text-sm font-semibold text-gray-400 mb-2">
-                Why this happened:
-              </h3>
+              <h3 className="text-sm font-semibold text-gray-400 mb-2">Why this happened:</h3>
               <p className="text-gray-300 text-sm">{error.cause}</p>
             </div>
           )}
 
           {/* Fix Instructions */}
           <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-400 mb-3">
-              How to fix:
-            </h3>
+            <h3 className="text-sm font-semibold text-gray-400 mb-3">How to fix:</h3>
             <ol className="space-y-2">
               {error.fixInstructions.map((instruction, index) => (
                 <li key={index} className="flex gap-3">
-                  <span className={`font-bold ${getTextColor()} min-w-[24px]`}>
-                    {index + 1}.
-                  </span>
+                  <span className={`font-bold ${getTextColor()} min-w-[24px]`}>{index + 1}.</span>
                   <span className="text-gray-300 text-sm">{instruction}</span>
                 </li>
               ))}
@@ -160,30 +154,30 @@ export const StartupError: React.FC<StartupErrorProps> = ({
               <FileText className="w-4 h-4" />
               View Logs
             </button>
-            {error.type === 'python_not_found' && (
+            {error.type === "python_not_found" && (
               <button
-                onClick={() => window.open('https://www.python.org/downloads/', '_blank')}
+                onClick={() => window.open("https://www.python.org/downloads/", "_blank")}
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
               >
                 <ExternalLink className="w-4 h-4" />
                 Download Python
               </button>
             )}
-            {error.type === 'missing_packages' && (
+            {error.type === "missing_packages" && (
               <button
                 onClick={async () => {
                   try {
                     if (window.api) {
                       const result = await window.api.installDependencies();
                       if (result.success) {
-                        alert('Dependencies installed successfully! Click Retry to restart.');
+                        alert("Dependencies installed successfully! Click Retry to restart.");
                       } else {
                         alert(`Failed to install dependencies: ${result.error}`);
                       }
                     }
                   } catch (err) {
-                    console.error('Failed to install dependencies:', err);
-                    alert('Failed to install dependencies. Please install manually.');
+                    console.error("Failed to install dependencies:", err);
+                    alert("Failed to install dependencies. Please install manually.");
                   }
                 }}
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
@@ -204,21 +198,23 @@ export const StartupError: React.FC<StartupErrorProps> = ({
 
         {/* Common Errors Reference */}
         <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-          <h3 className="text-sm font-semibold text-gray-400 mb-3">
-            Common Startup Issues:
-          </h3>
+          <h3 className="text-sm font-semibold text-gray-400 mb-3">Common Startup Issues:</h3>
           <ul className="space-y-2 text-xs text-gray-400">
             <li>
-              <strong className="text-gray-300">Python not found:</strong> Install Python 3.10+ from python.org
+              <strong className="text-gray-300">Python not found:</strong> Install Python 3.10+ from
+              python.org
             </li>
             <li>
-              <strong className="text-gray-300">Port conflict:</strong> Another application is using port 8000
+              <strong className="text-gray-300">Port conflict:</strong> Another application is using
+              port 8000
             </li>
             <li>
-              <strong className="text-gray-300">Missing packages:</strong> Run: pip install -r requirements.txt
+              <strong className="text-gray-300">Missing packages:</strong> Run: pip install -r
+              requirements.txt
             </li>
             <li>
-              <strong className="text-gray-300">CUDA not available:</strong> Install CUDA toolkit for GPU support
+              <strong className="text-gray-300">CUDA not available:</strong> Install CUDA toolkit
+              for GPU support
             </li>
           </ul>
         </div>

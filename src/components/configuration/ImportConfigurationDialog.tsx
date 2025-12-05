@@ -4,13 +4,15 @@
  * Validates: Requirement 18.2 - Import configuration with validation
  */
 
-import React, { useState } from 'react';
-import { X, Upload, AlertCircle, CheckCircle, FileText } from 'lucide-react';
-import ConfigurationPreview from './ConfigurationPreview';
+import React, { useState } from "react";
+import { X, Upload, AlertCircle, CheckCircle, FileText } from "lucide-react";
+import ConfigurationPreview from "./ConfigurationPreview";
+
+import type { SavedConfiguration } from "../ConfigurationManagement";
 
 interface ImportConfigurationDialogProps {
   onClose: () => void;
-  onSuccess: (config: Record<string, unknown>) => void;
+  onSuccess: (config: SavedConfiguration) => void;
 }
 
 const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
@@ -18,9 +20,9 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
   onSuccess,
 }) => {
   const [file, setFile] = useState<File | null>(null);
-  const [jsonText, setJsonText] = useState('');
-  const [importMode, setImportMode] = useState<'file' | 'text'>('file');
-  const [previewConfig, setPreviewConfig] = useState<Record<string, unknown> | null>(null);
+  const [jsonText, setJsonText] = useState("");
+  const [importMode, setImportMode] = useState<"file" | "text">("file");
+  const [previewConfig, setPreviewConfig] = useState<SavedConfiguration | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +43,7 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
           const parsed = JSON.parse(content);
           validateAndPreview(parsed);
         } catch {
-          setError('Invalid JSON file');
+          setError("Invalid JSON file");
         }
       };
       reader.readAsText(selectedFile);
@@ -59,7 +61,7 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
         const parsed = JSON.parse(text);
         validateAndPreview(parsed);
       } catch {
-        setError('Invalid JSON format');
+        setError("Invalid JSON format");
       }
     }
   };
@@ -78,24 +80,26 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
 
     // Validate metadata
     if (data.metadata) {
-      if (!data.metadata.name) {
-        errors.push('Missing configuration name in metadata');
+      const metadata = data.metadata as Record<string, any>;
+      if (!metadata.name) {
+        errors.push("Missing configuration name in metadata");
       }
     }
 
     // Validate configuration fields
     if (data.configuration) {
+      const config = data.configuration as Record<string, any>;
       const requiredFields = [
-        'base_model',
-        'algorithm',
-        'provider',
-        'learning_rate',
-        'batch_size',
-        'num_epochs',
+        "base_model",
+        "algorithm",
+        "provider",
+        "learning_rate",
+        "batch_size",
+        "num_epochs",
       ];
 
       for (const field of requiredFields) {
-        if (!(field in data.configuration)) {
+        if (!(field in config)) {
           errors.push(`Missing required field: ${field}`);
         }
       }
@@ -104,13 +108,13 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
     setValidationErrors(errors);
 
     if (errors.length === 0) {
-      setPreviewConfig(data);
+      setPreviewConfig(data as unknown as SavedConfiguration);
     }
   };
 
   const handleImport = async () => {
     if (!previewConfig) {
-      setError('No valid configuration to import');
+      setError("No valid configuration to import");
       return;
     }
 
@@ -120,21 +124,21 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
 
       let response;
 
-      if (importMode === 'file' && file) {
+      if (importMode === "file" && file) {
         // Import from file
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append("file", file);
 
-        response = await fetch('http://localhost:8000/api/configurations/import-file', {
-          method: 'POST',
+        response = await fetch("http://localhost:8000/api/configurations/import-file", {
+          method: "POST",
           body: formData,
         });
       } else {
         // Import from JSON text
-        response = await fetch('http://localhost:8000/api/configurations/import', {
-          method: 'POST',
+        response = await fetch("http://localhost:8000/api/configurations/import", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(previewConfig),
         });
@@ -142,14 +146,14 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to import configuration');
+        throw new Error(errorData.detail || "Failed to import configuration");
       }
 
       const data = await response.json();
       onSuccess(data.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to import configuration');
-      console.error('Error importing configuration:', err);
+      setError(err instanceof Error ? err.message : "Failed to import configuration");
+      console.error("Error importing configuration:", err);
     } finally {
       setLoading(false);
     }
@@ -166,10 +170,7 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
             <Upload className="w-6 h-6 text-green-600" />
             <h2 className="text-2xl font-bold text-gray-900">Import Configuration</h2>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -189,29 +190,27 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
           {/* Import Mode Selection */}
           <div className="flex gap-4 border-b border-gray-200">
             <button
-              onClick={() => setImportMode('file')}
-              className={`pb-3 px-4 font-medium transition-colors ${
-                importMode === 'file'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
+              onClick={() => setImportMode("file")}
+              className={`pb-3 px-4 font-medium transition-colors ${importMode === "file"
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-gray-500 hover:text-gray-700"
+                }`}
             >
               Upload File
             </button>
             <button
-              onClick={() => setImportMode('text')}
-              className={`pb-3 px-4 font-medium transition-colors ${
-                importMode === 'text'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
+              onClick={() => setImportMode("text")}
+              className={`pb-3 px-4 font-medium transition-colors ${importMode === "text"
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-gray-500 hover:text-gray-700"
+                }`}
             >
               Paste JSON
             </button>
           </div>
 
           {/* File Upload */}
-          {importMode === 'file' && (
+          {importMode === "file" && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Select Configuration File
@@ -224,24 +223,19 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
                   className="hidden"
                   id="file-upload"
                 />
-                <label
-                  htmlFor="file-upload"
-                  className="cursor-pointer flex flex-col items-center"
-                >
+                <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center">
                   <FileText className="w-12 h-12 text-gray-400 mb-3" />
                   <span className="text-sm font-medium text-gray-900 mb-1">
-                    {file ? file.name : 'Click to upload or drag and drop'}
+                    {file ? file.name : "Click to upload or drag and drop"}
                   </span>
-                  <span className="text-xs text-gray-500">
-                    JSON files only
-                  </span>
+                  <span className="text-xs text-gray-500">JSON files only</span>
                 </label>
               </div>
             </div>
           )}
 
           {/* Text Input */}
-          {importMode === 'text' && (
+          {importMode === "text" && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Paste Configuration JSON
@@ -264,9 +258,7 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
                   <div className="flex items-start gap-3 mb-2">
                     <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="text-sm font-medium text-red-900 mb-2">
-                        Validation Errors
-                      </h4>
+                      <h4 className="text-sm font-medium text-red-900 mb-2">Validation Errors</h4>
                       <ul className="list-disc list-inside space-y-1">
                         {validationErrors.map((error, index) => (
                           <li key={index} className="text-sm text-red-800">
@@ -293,13 +285,8 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
           {/* Configuration Preview */}
           {previewConfig && validationErrors.length === 0 && (
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Configuration Preview
-              </h3>
-              <ConfigurationPreview
-                configuration={previewConfig}
-                compact={true}
-              />
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Configuration Preview</h3>
+              <ConfigurationPreview configuration={previewConfig} compact={true} />
             </div>
           )}
         </div>

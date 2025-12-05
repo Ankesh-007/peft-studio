@@ -19,9 +19,7 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   context = {},
 }) => {
   const [isExecutingFix, setIsExecutingFix] = useState(false);
-  const [executedActions, setExecutedActions] = useState<Set<number>>(
-    new Set(),
-  );
+  const [executedActions, setExecutedActions] = useState<Set<number>>(new Set());
 
   const getSeverityColor = (severity: ErrorSeverity): string => {
     switch (severity) {
@@ -75,10 +73,7 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
       }
     } else if (action.action_type === "help_link" && action.action_data?.link) {
       // Open help link
-      window.open(
-        error.help_link || "https://docs.peftstudio.ai/troubleshooting",
-        "_blank",
-      );
+      window.open(error.help_link || "https://docs.peftstudio.ai/troubleshooting", "_blank");
     }
   };
 
@@ -142,11 +137,7 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
               className="flex items-start gap-3 p-3 bg-white rounded-md border border-gray-200"
             >
               <span className="text-lg mt-0.5">
-                {action.automatic
-                  ? "🔧"
-                  : action.action_type === "help_link"
-                    ? "📚"
-                    : "👉"}
+                {action.automatic ? "🔧" : action.action_type === "help_link" ? "📚" : "👉"}
               </span>
               <div className="flex-1">
                 <p className="text-gray-800">{action.description}</p>
@@ -160,12 +151,13 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
                 <button
                   onClick={() => handleActionClick(action, index)}
                   disabled={isExecutingFix || executedActions.has(index)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${executedActions.has(index)
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    executedActions.has(index)
                       ? "bg-green-100 text-green-700 cursor-not-allowed"
                       : action.automatic
                         ? "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
+                  }`}
                 >
                   {getActionButtonText(action, index)}
                 </button>
@@ -193,8 +185,7 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
       {error.auto_recoverable && (
         <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
           <p className="text-sm text-green-800">
-            ✓ This error can be automatically recovered. Click &quot;Apply Fix&quot; above
-            to try.
+            ✓ This error can be automatically recovered. Click &quot;Apply Fix&quot; above to try.
           </p>
         </div>
       )}

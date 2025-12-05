@@ -27,9 +27,7 @@ export interface TrainingConfig {
  * - Throughput (steps/sec) determines base time
  * - Confidence intervals account for variability (±20% typical)
  */
-export function calculateTrainingEstimate(
-  config: TrainingConfig,
-): TrainingEstimate {
+export function calculateTrainingEstimate(config: TrainingConfig): TrainingEstimate {
   // Validate inputs
   if (
     config.batchSize <= 0 ||
@@ -38,9 +36,7 @@ export function calculateTrainingEstimate(
     config.stepsPerEpoch <= 0 ||
     config.throughputStepsPerSec <= 0
   ) {
-    throw new Error(
-      "Invalid training configuration: all values must be positive",
-    );
+    throw new Error("Invalid training configuration: all values must be positive");
   }
 
   // Calculate total steps

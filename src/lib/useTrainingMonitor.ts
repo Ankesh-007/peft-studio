@@ -42,7 +42,7 @@ export function useTrainingMonitor(jobId: string): UseTrainingMonitorResult {
   const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 5;
 
-  const connectRef = useRef<() => void>(() => { });
+  const connectRef = useRef<() => void>(() => {});
 
   const connect = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
@@ -90,13 +90,8 @@ export function useTrainingMonitor(jobId: string): UseTrainingMonitorResult {
         // Attempt to reconnect
         if (reconnectAttemptsRef.current < maxReconnectAttempts) {
           reconnectAttemptsRef.current += 1;
-          const delay = Math.min(
-            1000 * Math.pow(2, reconnectAttemptsRef.current),
-            30000,
-          );
-          console.log(
-            `Reconnecting in ${delay}ms (attempt ${reconnectAttemptsRef.current})`,
-          );
+          const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 30000);
+          console.log(`Reconnecting in ${delay}ms (attempt ${reconnectAttemptsRef.current})`);
 
           reconnectTimeoutRef.current = setTimeout(() => {
             connectRef.current();

@@ -28,7 +28,7 @@ export interface ModelSearchFilters {
   maxParameters?: number;
   architectures?: string[];
   registries?: string[];
-  sort?: 'downloads' | 'likes' | 'trending';
+  sort?: "downloads" | "likes" | "trending";
 }
 
 export interface ModelRegistry {

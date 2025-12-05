@@ -46,12 +46,7 @@ describe("Test Utilities", () => {
   describe("Mock Factories", () => {
     it("should create mock profile with defaults", () => {
       const profile = createMockProfile();
-      expect(profile).toHaveRequiredFields([
-        "id",
-        "name",
-        "config",
-        "requirements",
-      ]);
+      expect(profile).toHaveRequiredFields(["id", "name", "config", "requirements"]);
       expect(profile.config.lora_r).toBe(16);
     });
 
@@ -69,11 +64,7 @@ describe("Test Utilities", () => {
 
     it("should create mock model", () => {
       const model = createMockModel();
-      expect(model).toHaveRequiredFields([
-        "model_id",
-        "author",
-        "model_name",
-      ]);
+      expect(model).toHaveRequiredFields(["model_id", "author", "model_name"]);
       expect(model.parameters).toBeGreaterThan(0);
     });
 
@@ -85,22 +76,13 @@ describe("Test Utilities", () => {
 
     it("should create mock wizard state", () => {
       const state = createMockWizardState();
-      expect(state).toHaveRequiredFields([
-        "currentStep",
-        "config",
-        "validation",
-      ]);
+      expect(state).toHaveRequiredFields(["currentStep", "config", "validation"]);
       expect(state.currentStep).toBeWithinRange(0, 10);
     });
 
     it("should create mock paused run", () => {
       const pausedRun = createMockPausedRun();
-      expect(pausedRun).toHaveRequiredFields([
-        "job_id",
-        "state",
-        "paused_at",
-        "resource_usage",
-      ]);
+      expect(pausedRun).toHaveRequiredFields(["job_id", "state", "paused_at", "resource_usage"]);
       expect(pausedRun.state).toBe("paused");
     });
 

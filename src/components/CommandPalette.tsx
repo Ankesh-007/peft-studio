@@ -61,7 +61,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
   const filteredCommands = commands.filter(
     (cmd) =>
       cmd.label.toLowerCase().includes(search.toLowerCase()) ||
-      cmd.category.toLowerCase().includes(search.toLowerCase()),
+      cmd.category.toLowerCase().includes(search.toLowerCase())
   );
 
   useEffect(() => {
@@ -75,10 +75,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
         setSelectedIndex((prev) => (prev + 1) % filteredCommands.length);
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
-        setSelectedIndex(
-          (prev) =>
-            (prev - 1 + filteredCommands.length) % filteredCommands.length,
-        );
+        setSelectedIndex((prev) => (prev - 1 + filteredCommands.length) % filteredCommands.length);
       } else if (e.key === "Enter") {
         e.preventDefault();
         if (filteredCommands[selectedIndex]) {
@@ -91,8 +88,6 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, selectedIndex, filteredCommands, onClose]);
-
-
 
   if (!isOpen) return null;
 
@@ -125,9 +120,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
         {/* Commands List */}
         <div className="max-h-[400px] overflow-y-auto">
           {filteredCommands.length === 0 ? (
-            <div className="p-32 text-center text-dark-text-tertiary">
-              No commands found
-            </div>
+            <div className="p-32 text-center text-dark-text-tertiary">No commands found</div>
           ) : (
             <div className="p-8">
               {Object.entries(
@@ -137,8 +130,8 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
                     acc[cmd.category].push(cmd);
                     return acc;
                   },
-                  {} as Record<string, Command[]>,
-                ),
+                  {} as Record<string, Command[]>
+                )
               ).map(([category, cmds]) => (
                 <div key={category} className="mb-12">
                   <div className="px-12 py-8 text-tiny text-dark-text-tertiary uppercase font-medium">
@@ -156,7 +149,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
                           "w-full flex items-center gap-12 px-12 py-10 rounded-lg transition-all",
                           isSelected
                             ? "bg-accent-primary text-white"
-                            : "text-dark-text-primary hover:bg-dark-bg-tertiary",
+                            : "text-dark-text-primary hover:bg-dark-bg-tertiary"
                         )}
                         onClick={() => {
                           cmd.action();
@@ -179,18 +172,12 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
         <div className="flex items-center justify-between px-16 py-12 border-t border-dark-border bg-dark-bg-tertiary/50">
           <div className="flex items-center gap-16 text-tiny text-dark-text-tertiary">
             <div className="flex items-center gap-4">
-              <kbd className="px-6 py-2 bg-dark-bg-secondary rounded font-mono">
-                ↑
-              </kbd>
-              <kbd className="px-6 py-2 bg-dark-bg-secondary rounded font-mono">
-                ↓
-              </kbd>
+              <kbd className="px-6 py-2 bg-dark-bg-secondary rounded font-mono">↑</kbd>
+              <kbd className="px-6 py-2 bg-dark-bg-secondary rounded font-mono">↓</kbd>
               <span>Navigate</span>
             </div>
             <div className="flex items-center gap-4">
-              <kbd className="px-6 py-2 bg-dark-bg-secondary rounded font-mono">
-                ↵
-              </kbd>
+              <kbd className="px-6 py-2 bg-dark-bg-secondary rounded font-mono">↵</kbd>
               <span>Select</span>
             </div>
           </div>

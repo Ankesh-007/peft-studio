@@ -49,9 +49,7 @@ interface CloudPlatformComparisonProps {
   onPlatformSelect?: (platform: string) => void;
 }
 
-export const CloudPlatformComparison: React.FC<
-  CloudPlatformComparisonProps
-> = ({
+export const CloudPlatformComparison: React.FC<CloudPlatformComparisonProps> = ({
   trainingHours,
   localGpuType,
   localElectricityCost,
@@ -68,21 +66,18 @@ export const CloudPlatformComparison: React.FC<
     setError(null);
 
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/cloud/compare-costs",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            training_hours: trainingHours,
-            local_gpu_type: localGpuType,
-            local_electricity_cost: localElectricityCost,
-            min_memory_gb: minMemoryGb,
-          }),
+      const response = await fetch("http://localhost:8000/api/cloud/compare-costs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          training_hours: trainingHours,
+          local_gpu_type: localGpuType,
+          local_electricity_cost: localElectricityCost,
+          min_memory_gb: minMemoryGb,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch cost comparison");
@@ -150,34 +145,22 @@ export const CloudPlatformComparison: React.FC<
               Best Value
             </span>
           </div>
-          <p className="text-2xl font-bold text-green-900">
-            {comparison.summary.cheapest.cost}
-          </p>
-          <p className="text-sm text-green-700 mt-1">
-            {comparison.summary.cheapest.platform}
-          </p>
-          <p className="text-xs text-green-600 mt-1">
-            {comparison.summary.cheapest.gpu}
-          </p>
+          <p className="text-2xl font-bold text-green-900">{comparison.summary.cheapest.cost}</p>
+          <p className="text-sm text-green-700 mt-1">{comparison.summary.cheapest.platform}</p>
+          <p className="text-xs text-green-600 mt-1">{comparison.summary.cheapest.gpu}</p>
         </div>
 
         {/* Fastest Option */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-blue-800">Fastest</h3>
-            <span className="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded">
-              Quick Start
-            </span>
+            <span className="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded">Quick Start</span>
           </div>
           <p className="text-2xl font-bold text-blue-900">
             {comparison.summary.fastest.setup_time}
           </p>
-          <p className="text-sm text-blue-700 mt-1">
-            {comparison.summary.fastest.platform}
-          </p>
-          <p className="text-xs text-blue-600 mt-1">
-            {comparison.summary.fastest.gpu}
-          </p>
+          <p className="text-sm text-blue-700 mt-1">{comparison.summary.fastest.platform}</p>
+          <p className="text-xs text-blue-600 mt-1">{comparison.summary.fastest.gpu}</p>
         </div>
 
         {/* Recommended Option */}
@@ -191,12 +174,8 @@ export const CloudPlatformComparison: React.FC<
           <p className="text-2xl font-bold text-purple-900">
             {comparison.summary.recommended.cost}
           </p>
-          <p className="text-sm text-purple-700 mt-1">
-            {comparison.summary.recommended.platform}
-          </p>
-          <p className="text-xs text-purple-600 mt-1">
-            {comparison.summary.recommended.reason}
-          </p>
+          <p className="text-sm text-purple-700 mt-1">{comparison.summary.recommended.platform}</p>
+          <p className="text-xs text-purple-600 mt-1">{comparison.summary.recommended.reason}</p>
         </div>
       </div>
 
@@ -204,8 +183,8 @@ export const CloudPlatformComparison: React.FC<
       {comparison.summary.savings_vs_local && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <p className="text-yellow-800">
-            💰 Save <strong>{comparison.summary.savings_vs_local}</strong> by
-            using cloud instead of local training
+            💰 Save <strong>{comparison.summary.savings_vs_local}</strong> by using cloud instead of
+            local training
           </p>
         </div>
       )}
@@ -240,18 +219,12 @@ export const CloudPlatformComparison: React.FC<
 
                   <div className="flex items-center gap-4 mb-3">
                     <div>
-                      <span className="text-2xl font-bold text-gray-900">
-                        {option.cost}
-                      </span>
+                      <span className="text-2xl font-bold text-gray-900">{option.cost}</span>
                       {option.hourly_rate && (
-                        <span className="text-sm text-gray-600 ml-2">
-                          ({option.hourly_rate})
-                        </span>
+                        <span className="text-sm text-gray-600 ml-2">({option.hourly_rate})</span>
                       )}
                     </div>
-                    <div className="text-sm text-gray-600">
-                      Setup: {option.setup_time}
-                    </div>
+                    <div className="text-sm text-gray-600">Setup: {option.setup_time}</div>
                     {option.availability && (
                       <div className="text-sm">
                         <span
@@ -272,15 +245,10 @@ export const CloudPlatformComparison: React.FC<
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Pros */}
                     <div>
-                      <h5 className="text-sm font-medium text-green-700 mb-2">
-                        Pros
-                      </h5>
+                      <h5 className="text-sm font-medium text-green-700 mb-2">Pros</h5>
                       <ul className="space-y-1">
                         {option.pros.map((pro, i) => (
-                          <li
-                            key={i}
-                            className="text-sm text-gray-700 flex items-start"
-                          >
+                          <li key={i} className="text-sm text-gray-700 flex items-start">
                             <span className="text-green-500 mr-2">✓</span>
                             <span>{pro}</span>
                           </li>
@@ -290,15 +258,10 @@ export const CloudPlatformComparison: React.FC<
 
                     {/* Cons */}
                     <div>
-                      <h5 className="text-sm font-medium text-red-700 mb-2">
-                        Cons
-                      </h5>
+                      <h5 className="text-sm font-medium text-red-700 mb-2">Cons</h5>
                       <ul className="space-y-1">
                         {option.cons.map((con, i) => (
-                          <li
-                            key={i}
-                            className="text-sm text-gray-700 flex items-start"
-                          >
+                          <li key={i} className="text-sm text-gray-700 flex items-start">
                             <span className="text-red-500 mr-2">✗</span>
                             <span>{con}</span>
                           </li>

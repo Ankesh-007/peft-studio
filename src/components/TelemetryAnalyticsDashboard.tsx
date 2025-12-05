@@ -1,23 +1,26 @@
 /**
  * Telemetry Analytics Dashboard
- * 
+ *
  * Displays usage analytics and performance metrics for users who have
  * opted into telemetry.
- * 
+ *
  * Requirements: 15.5
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 
 interface AnalyticsData {
   total_events: number;
   event_counts: Record<string, number>;
-  performance_metrics: Record<string, {
-    count: number;
-    avg: number;
-    min: number;
-    max: number;
-  }>;
+  performance_metrics: Record<
+    string,
+    {
+      count: number;
+      avg: number;
+      min: number;
+      max: number;
+    }
+  >;
   session_duration_minutes: number;
   system_info: {
     os: string;
@@ -36,31 +39,31 @@ export const TelemetryAnalyticsDashboard: React.FC = () => {
     start_date: string;
     end_date: string;
   }>({
-    start_date: '',
-    end_date: '',
+    start_date: "",
+    end_date: "",
   });
 
   const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
-      const response = await fetch('/api/telemetry/analytics', {
-        method: 'POST',
+      const response = await fetch("/api/telemetry/analytics", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(dateRange),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch analytics');
+        throw new Error("Failed to fetch analytics");
       }
 
       const data = await response.json();
       setAnalytics(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -72,21 +75,21 @@ export const TelemetryAnalyticsDashboard: React.FC = () => {
 
   const exportData = async () => {
     try {
-      const response = await fetch('/api/telemetry/export');
+      const response = await fetch("/api/telemetry/export");
       const data = await response.json();
-      
+
       // Download as JSON file
       const blob = new Blob([JSON.stringify(data, null, 2)], {
-        type: 'application/json',
+        type: "application/json",
       });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `telemetry-export-${new Date().toISOString()}.json`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
-      console.error('Failed to export data:', err);
+      console.error("Failed to export data:", err);
     }
   };
 
@@ -122,9 +125,7 @@ export const TelemetryAnalyticsDashboard: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Usage Analytics</h2>
-          <p className="mt-1 text-gray-600">
-            Your anonymized usage statistics
-          </p>
+          <p className="mt-1 text-gray-600">Your anonymized usage statistics</p>
         </div>
         <button
           onClick={exportData}
@@ -217,9 +218,7 @@ export const TelemetryAnalyticsDashboard: React.FC = () => {
 
       {/* Event Breakdown */}
       <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Event Breakdown
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Event Breakdown</h3>
         <div className="space-y-3">
           {Object.entries(analytics.event_counts)
             .sort(([, a], [, b]) => b - a)
@@ -229,7 +228,7 @@ export const TelemetryAnalyticsDashboard: React.FC = () => {
                 <div key={eventType}>
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-medium text-gray-700">
-                      {eventType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      {eventType.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
                     </span>
                     <span className="text-sm text-gray-600">
                       {count} ({percentage.toFixed(1)}%)
@@ -250,9 +249,7 @@ export const TelemetryAnalyticsDashboard: React.FC = () => {
       {/* Performance Metrics */}
       {Object.keys(analytics.performance_metrics).length > 0 && (
         <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Performance Metrics
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Metrics</h3>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead>
@@ -278,20 +275,12 @@ export const TelemetryAnalyticsDashboard: React.FC = () => {
                 {Object.entries(analytics.performance_metrics).map(([metric, stats]) => (
                   <tr key={metric}>
                     <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                      {metric.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      {metric.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {stats.count}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {stats.avg.toFixed(2)} ms
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {stats.min.toFixed(2)} ms
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {stats.max.toFixed(2)} ms
-                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{stats.count}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{stats.avg.toFixed(2)} ms</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{stats.min.toFixed(2)} ms</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{stats.max.toFixed(2)} ms</td>
                   </tr>
                 ))}
               </tbody>
@@ -302,9 +291,7 @@ export const TelemetryAnalyticsDashboard: React.FC = () => {
 
       {/* System Information */}
       <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          System Information
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">System Information</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div>
             <p className="text-sm text-gray-600">Operating System</p>

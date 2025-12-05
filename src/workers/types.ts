@@ -1,36 +1,36 @@
 /**
  * Web Worker Types
- * 
+ *
  * Type definitions for worker communication protocol.
- * 
+ *
  * Requirements: 14.3
  */
 
 // Worker message types
 export enum WorkerMessageType {
   // File processing
-  PROCESS_FILE = 'PROCESS_FILE',
-  PARSE_JSON = 'PARSE_JSON',
-  PARSE_CSV = 'PARSE_CSV',
-  COMPRESS_DATA = 'COMPRESS_DATA',
-  DECOMPRESS_DATA = 'DECOMPRESS_DATA',
-  
+  PROCESS_FILE = "PROCESS_FILE",
+  PARSE_JSON = "PARSE_JSON",
+  PARSE_CSV = "PARSE_CSV",
+  COMPRESS_DATA = "COMPRESS_DATA",
+  DECOMPRESS_DATA = "DECOMPRESS_DATA",
+
   // Data processing
-  COMPUTE_METRICS = 'COMPUTE_METRICS',
-  AGGREGATE_DATA = 'AGGREGATE_DATA',
-  FILTER_DATA = 'FILTER_DATA',
-  SORT_DATA = 'SORT_DATA',
-  
+  COMPUTE_METRICS = "COMPUTE_METRICS",
+  AGGREGATE_DATA = "AGGREGATE_DATA",
+  FILTER_DATA = "FILTER_DATA",
+  SORT_DATA = "SORT_DATA",
+
   // Image processing
-  RESIZE_IMAGE = 'RESIZE_IMAGE',
-  CONVERT_IMAGE = 'CONVERT_IMAGE',
-  
+  RESIZE_IMAGE = "RESIZE_IMAGE",
+  CONVERT_IMAGE = "CONVERT_IMAGE",
+
   // Model processing
-  VALIDATE_CONFIG = 'VALIDATE_CONFIG',
-  CALCULATE_COST = 'CALCULATE_COST',
-  
+  VALIDATE_CONFIG = "VALIDATE_CONFIG",
+  CALCULATE_COST = "CALCULATE_COST",
+
   // Generic
-  CUSTOM = 'CUSTOM',
+  CUSTOM = "CUSTOM",
 }
 
 // Worker message structure
@@ -72,10 +72,10 @@ export interface WorkerPoolConfig {
 
 // Worker status
 export enum WorkerStatus {
-  IDLE = 'IDLE',
-  BUSY = 'BUSY',
-  ERROR = 'ERROR',
-  TERMINATED = 'TERMINATED',
+  IDLE = "IDLE",
+  BUSY = "BUSY",
+  ERROR = "ERROR",
+  TERMINATED = "TERMINATED",
 }
 
 // Worker info
@@ -110,13 +110,13 @@ export interface ParseCSVPayload {
 
 export interface CompressDataPayload {
   data: string | ArrayBuffer;
-  algorithm?: 'gzip' | 'deflate';
+  algorithm?: "gzip" | "deflate";
 }
 
 // Data processing payloads
 export interface ComputeMetricsPayload {
   data: number[];
-  metrics: ('mean' | 'median' | 'std' | 'min' | 'max' | 'p95' | 'p99')[];
+  metrics: ("mean" | "median" | "std" | "min" | "max" | "p95" | "p99")[];
 }
 
 // Generic data record type for data processing operations
@@ -127,7 +127,7 @@ export interface AggregateDataPayload {
   groupBy: string;
   aggregations: {
     field: string;
-    operation: 'sum' | 'avg' | 'count' | 'min' | 'max';
+    operation: "sum" | "avg" | "count" | "min" | "max";
   }[];
 }
 
@@ -139,7 +139,7 @@ export interface FilterDataPayload {
 export interface SortDataPayload {
   data: DataRecord[];
   key: string;
-  order: 'asc' | 'desc';
+  order: "asc" | "desc";
 }
 
 // Image processing payloads
@@ -152,7 +152,7 @@ export interface ResizeImagePayload {
 
 export interface ConvertImagePayload {
   imageData: ArrayBuffer;
-  format: 'webp' | 'jpeg' | 'png';
+  format: "webp" | "jpeg" | "png";
   quality?: number;
 }
 

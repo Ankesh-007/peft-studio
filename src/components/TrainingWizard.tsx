@@ -61,10 +61,7 @@ const STEPS = [
  * Training Wizard - Multi-step guided interface for configuring training runs
  * with full keyboard navigation and accessibility support
  */
-const TrainingWizard: React.FC<TrainingWizardProps> = ({
-  onComplete,
-  onCancel,
-}) => {
+const TrainingWizard: React.FC<TrainingWizardProps> = ({ onComplete, onCancel }) => {
   const [wizardState, setWizardState] = useState<WizardState>({
     currentStep: 1,
     profile: null,
@@ -139,9 +136,7 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({
     setIsTransitioning(true);
 
     // Simulate async validation/processing
-    await new Promise((resolve) =>
-      setTimeout(resolve, prefersReducedMotion ? 0 : 300),
-    );
+    await new Promise((resolve) => setTimeout(resolve, prefersReducedMotion ? 0 : 300));
 
     setWizardState((prev) => ({
       ...prev,
@@ -162,9 +157,7 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({
 
     setIsTransitioning(true);
 
-    await new Promise((resolve) =>
-      setTimeout(resolve, prefersReducedMotion ? 0 : 300),
-    );
+    await new Promise((resolve) => setTimeout(resolve, prefersReducedMotion ? 0 : 300));
 
     setWizardState((prev) => ({
       ...prev,
@@ -193,18 +186,21 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({
         learningRate: profile.config.learning_rate,
         epochs: profile.config.num_epochs,
         warmupSteps: Math.floor(profile.config.warmup_ratio * 1000), // Placeholder
-        scheduler: profile.config.scheduler as string,
+        scheduler: profile.config.scheduler as any,
         weightDecay: profile.config.weight_decay,
         maxGradNorm: profile.config.max_grad_norm,
       },
     }));
   };
 
-  const handleDatasetSelect = (dataset: Dataset, validation: Array<{ field: string; message: string }>) => {
+  const handleDatasetSelect = (
+    dataset: Dataset,
+    validation: Array<{ field: string; message: string }>
+  ) => {
     setWizardState((prev) => ({
       ...prev,
       dataset,
-      validation,
+      validation: validation as any[],
     }));
   };
 
@@ -269,12 +265,11 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({
                   className={`
                     flex items-center justify-center w-10 h-10 rounded-full border-2 font-semibold
                     transition-all duration-300 ease-in-out
-                    ${
-                      wizardState.currentStep === step.id
-                        ? "border-blue-600 bg-blue-600 text-white scale-110"
-                        : wizardState.currentStep > step.id
-                          ? "border-green-600 bg-green-600 text-white"
-                          : "border-gray-300 bg-white text-gray-400"
+                    ${wizardState.currentStep === step.id
+                      ? "border-blue-600 bg-blue-600 text-white scale-110"
+                      : wizardState.currentStep > step.id
+                        ? "border-green-600 bg-green-600 text-white"
+                        : "border-gray-300 bg-white text-gray-400"
                     }
                   `}
                   role="img"
@@ -289,22 +284,16 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({
                   {wizardState.currentStep > step.id ? "✓" : step.id}
                 </div>
                 <span
-                  className={`ml-2 text-sm font-medium transition-colors duration-200 ${
-                    wizardState.currentStep >= step.id
-                      ? "text-gray-900"
-                      : "text-gray-400"
-                  }`}
+                  className={`ml-2 text-sm font-medium transition-colors duration-200 ${wizardState.currentStep >= step.id ? "text-gray-900" : "text-gray-400"
+                    }`}
                 >
                   {step.name}
                 </span>
               </li>
               {index < STEPS.length - 1 && (
                 <div
-                  className={`flex-1 h-0.5 mx-4 transition-all duration-500 ${
-                    wizardState.currentStep > step.id
-                      ? "bg-green-600"
-                      : "bg-gray-300"
-                  }`}
+                  className={`flex-1 h-0.5 mx-4 transition-all duration-500 ${wizardState.currentStep > step.id ? "bg-green-600" : "bg-gray-300"
+                    }`}
                   role="presentation"
                 />
               )}
@@ -357,11 +346,7 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({
             disabled={isTransitioning}
             icon={<ChevronLeft className="w-4 h-4" />}
             iconPosition="left"
-            ariaLabel={
-              wizardState.currentStep === 1
-                ? "Cancel wizard"
-                : "Go to previous step"
-            }
+            ariaLabel={wizardState.currentStep === 1 ? "Cancel wizard" : "Go to previous step"}
           >
             {wizardState.currentStep === 1 ? "Cancel" : "Previous"}
           </AccessibleButton>

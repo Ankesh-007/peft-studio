@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { CheckCircle, Loader2, XCircle } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { CheckCircle, Loader2, XCircle } from "lucide-react";
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -15,24 +15,24 @@ interface StartupProgress {
 
 interface StartupSubstep {
   name: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  status: "pending" | "in_progress" | "completed" | "failed";
   message?: string;
 }
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError }) => {
   const [progress, setProgress] = useState<StartupProgress>({
-    stage: 'initializing',
+    stage: "initializing",
     progress: 0,
-    message: 'Initializing PEFT Studio...',
+    message: "Initializing PEFT Studio...",
     substeps: [
-      { name: 'Starting backend service', status: 'pending' },
-      { name: 'Checking dependencies', status: 'pending' },
-      { name: 'Loading configuration', status: 'pending' },
-      { name: 'Initializing interface', status: 'pending' },
+      { name: "Starting backend service", status: "pending" },
+      { name: "Checking dependencies", status: "pending" },
+      { name: "Loading configuration", status: "pending" },
+      { name: "Initializing interface", status: "pending" },
     ],
   });
 
-  const updateSubstep = (index: number, status: StartupSubstep['status'], message?: string) => {
+  const updateSubstep = (index: number, status: StartupSubstep["status"], message?: string) => {
     setProgress((prev) => ({
       ...prev,
       substeps: prev.substeps?.map((step, i) =>
@@ -47,11 +47,11 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
         // Stage 1: Starting backend service (0-25%)
         setProgress((prev) => ({
           ...prev,
-          stage: 'backend',
+          stage: "backend",
           progress: 5,
-          message: 'Starting backend service...',
+          message: "Starting backend service...",
         }));
-        updateSubstep(0, 'in_progress');
+        updateSubstep(0, "in_progress");
 
         // Wait for backend to be ready (but don't block UI if it fails)
         let backendReady = false;
@@ -60,7 +60,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
 
         while (!backendReady && attempts < maxAttempts) {
           try {
-            const healthCheck = await fetch('http://localhost:8000/api/health', {
+            const healthCheck = await fetch("http://localhost:8000/api/health", {
               signal: AbortSignal.timeout(1500),
             });
 
@@ -75,106 +75,106 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
 
         if (!backendReady) {
           // Backend not available - continue anyway with warning
-          console.warn('Backend service not available - running in limited mode');
-          updateSubstep(0, 'failed', 'Backend unavailable (limited functionality)');
+          console.warn("Backend service not available - running in limited mode");
+          updateSubstep(0, "failed", "Backend unavailable (limited functionality)");
           setProgress((prev) => ({
             ...prev,
             progress: 25,
-            message: 'Running without backend (limited mode)',
+            message: "Running without backend (limited mode)",
           }));
-          
+
           // Store backend status for the app to handle
-          sessionStorage.setItem('backendAvailable', 'false');
+          sessionStorage.setItem("backendAvailable", "false");
         } else {
-          updateSubstep(0, 'completed', 'Backend service running');
+          updateSubstep(0, "completed", "Backend service running");
           setProgress((prev) => ({
             ...prev,
             progress: 25,
-            message: 'Backend service connected',
+            message: "Backend service connected",
           }));
-          sessionStorage.setItem('backendAvailable', 'true');
+          sessionStorage.setItem("backendAvailable", "true");
         }
 
         // Stage 2: Checking dependencies (25-50%)
         setProgress((prev) => ({
           ...prev,
-          stage: 'dependencies',
+          stage: "dependencies",
           progress: 30,
-          message: 'Checking dependencies...',
+          message: "Checking dependencies...",
         }));
-        updateSubstep(1, 'in_progress');
+        updateSubstep(1, "in_progress");
 
         // Only check dependencies if backend is available
         if (backendReady) {
           try {
-            const depsCheck = await fetch('http://localhost:8000/api/dependencies', {
+            const depsCheck = await fetch("http://localhost:8000/api/dependencies", {
               signal: AbortSignal.timeout(5000),
             });
 
             if (depsCheck.ok) {
               await depsCheck.json();
-              updateSubstep(1, 'completed', 'All dependencies verified');
+              updateSubstep(1, "completed", "All dependencies verified");
             } else {
-              updateSubstep(1, 'completed', 'Dependencies checked (warnings present)');
+              updateSubstep(1, "completed", "Dependencies checked (warnings present)");
             }
           } catch {
             // Non-critical, continue
-            updateSubstep(1, 'completed', 'Dependency check skipped');
+            updateSubstep(1, "completed", "Dependency check skipped");
           }
         } else {
           // Backend not available, skip dependency check
-          updateSubstep(1, 'completed', 'Skipped (backend unavailable)');
+          updateSubstep(1, "completed", "Skipped (backend unavailable)");
         }
 
         setProgress((prev) => ({
           ...prev,
           progress: 50,
-          message: backendReady ? 'Dependencies verified' : 'Running in limited mode',
+          message: backendReady ? "Dependencies verified" : "Running in limited mode",
         }));
 
         // Stage 3: Loading configuration (50-75%)
         setProgress((prev) => ({
           ...prev,
-          stage: 'configuration',
+          stage: "configuration",
           progress: 55,
-          message: 'Loading configuration...',
+          message: "Loading configuration...",
         }));
-        updateSubstep(2, 'in_progress');
+        updateSubstep(2, "in_progress");
 
         // Simulate loading configuration
         await new Promise((resolve) => setTimeout(resolve, 500));
 
-        updateSubstep(2, 'completed', 'Configuration loaded');
+        updateSubstep(2, "completed", "Configuration loaded");
         setProgress((prev) => ({
           ...prev,
           progress: 75,
-          message: 'Configuration ready',
+          message: "Configuration ready",
         }));
 
         // Stage 4: Initializing interface (75-95%)
         setProgress((prev) => ({
           ...prev,
-          stage: 'ui',
+          stage: "ui",
           progress: 80,
-          message: 'Initializing interface...',
+          message: "Initializing interface...",
         }));
-        updateSubstep(3, 'in_progress');
+        updateSubstep(3, "in_progress");
 
         await new Promise((resolve) => setTimeout(resolve, 300));
 
-        updateSubstep(3, 'completed', 'Interface ready');
+        updateSubstep(3, "completed", "Interface ready");
         setProgress((prev) => ({
           ...prev,
           progress: 95,
-          message: 'Interface initialized',
+          message: "Interface initialized",
         }));
 
         // Stage 5: Complete (95-100%)
         setProgress((prev) => ({
           ...prev,
-          stage: 'complete',
+          stage: "complete",
           progress: 100,
-          message: 'Ready!',
+          message: "Ready!",
         }));
 
         // Small delay before transitioning
@@ -182,22 +182,22 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
 
         onComplete();
       } catch (error) {
-        console.error('Startup error:', error);
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        
+        console.error("Startup error:", error);
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+
         setProgress((prev) => ({
           ...prev,
-          stage: 'error',
+          stage: "error",
           progress: 0,
           message: `Startup failed: ${errorMessage}`,
         }));
 
         // Find which substep failed and mark it
         const currentSubstep = progress.substeps?.findIndex(
-          (step) => step.status === 'in_progress'
+          (step) => step.status === "in_progress"
         );
         if (currentSubstep !== undefined && currentSubstep !== -1) {
-          updateSubstep(currentSubstep, 'failed', errorMessage);
+          updateSubstep(currentSubstep, "failed", errorMessage);
         }
 
         // Notify parent component of error
@@ -210,13 +210,13 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
     initializeApp();
   }, [onComplete, onError, progress.substeps]);
 
-  const getSubstepIcon = (status: StartupSubstep['status']) => {
+  const getSubstepIcon = (status: StartupSubstep["status"]) => {
     switch (status) {
-      case 'completed':
+      case "completed":
         return <CheckCircle className="w-4 h-4 text-green-400" />;
-      case 'failed':
+      case "failed":
         return <XCircle className="w-4 h-4 text-red-400" />;
-      case 'in_progress':
+      case "in_progress":
         return <Loader2 className="w-4 h-4 text-blue-400 animate-spin" />;
       default:
         return <div className="w-4 h-4 rounded-full border-2 border-gray-500" />;
@@ -247,9 +247,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
           </div>
 
           {/* Status Message */}
-          <p className="text-blue-100 text-base font-medium mb-1">
-            {progress.message}
-          </p>
+          <p className="text-blue-100 text-base font-medium mb-1">{progress.message}</p>
 
           {/* Progress Percentage */}
           <p className="text-blue-300 text-sm">{progress.progress}%</p>
@@ -260,31 +258,24 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
           <div className="bg-white/5 rounded-lg p-4 mb-6 backdrop-blur-sm">
             <div className="space-y-3">
               {progress.substeps.map((substep, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-3 text-left"
-                >
-                  <div className="flex-shrink-0">
-                    {getSubstepIcon(substep.status)}
-                  </div>
+                <div key={index} className="flex items-center gap-3 text-left">
+                  <div className="flex-shrink-0">{getSubstepIcon(substep.status)}</div>
                   <div className="flex-1 min-w-0">
                     <p
                       className={`text-sm font-medium ${
-                        substep.status === 'completed'
-                          ? 'text-green-300'
-                          : substep.status === 'failed'
-                          ? 'text-red-300'
-                          : substep.status === 'in_progress'
-                          ? 'text-blue-300'
-                          : 'text-gray-400'
+                        substep.status === "completed"
+                          ? "text-green-300"
+                          : substep.status === "failed"
+                            ? "text-red-300"
+                            : substep.status === "in_progress"
+                              ? "text-blue-300"
+                              : "text-gray-400"
                       }`}
                     >
                       {substep.name}
                     </p>
                     {substep.message && (
-                      <p className="text-xs text-gray-400 mt-0.5">
-                        {substep.message}
-                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">{substep.message}</p>
                     )}
                   </div>
                 </div>
@@ -294,7 +285,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
         )}
 
         {/* Error State */}
-        {progress.stage === 'error' && (
+        {progress.stage === "error" && (
           <div className="mt-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg backdrop-blur-sm">
             <p className="text-red-200 text-sm mb-3">{progress.message}</p>
             <button
@@ -307,14 +298,14 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
         )}
 
         {/* Loading Spinner */}
-        {progress.stage !== 'error' && progress.stage !== 'complete' && (
+        {progress.stage !== "error" && progress.stage !== "complete" && (
           <div className="mt-6 flex justify-center">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-t-2 border-white"></div>
           </div>
         )}
 
         {/* Success State */}
-        {progress.stage === 'complete' && (
+        {progress.stage === "complete" && (
           <div className="mt-6 flex justify-center">
             <CheckCircle className="w-12 h-12 text-green-400 animate-pulse" />
           </div>

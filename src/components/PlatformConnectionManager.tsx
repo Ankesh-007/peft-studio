@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { PlatformConnectionCard } from './PlatformConnectionCard';
-import { PlatformCredentialForm } from './PlatformCredentialForm';
-import { Spinner } from './LoadingStates';
+import React, { useState, useEffect } from "react";
+import { PlatformConnectionCard } from "./PlatformConnectionCard";
+import { PlatformCredentialForm } from "./PlatformCredentialForm";
+import { Spinner } from "./LoadingStates";
 
 interface Platform {
   name: string;
@@ -29,7 +29,7 @@ interface PlatformConnection {
 
 /**
  * Platform Connection Manager UI
- * 
+ *
  * Provides a comprehensive interface for managing platform connections.
  * Validates: Requirements 1.1, 1.2, 1.3, 1.4, 1.5
  */
@@ -50,13 +50,13 @@ export const PlatformConnectionManager: React.FC = () => {
 
   const loadPlatforms = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/platforms');
-      if (!response.ok) throw new Error('Failed to load platforms');
-      
+      const response = await fetch("http://localhost:8000/api/platforms");
+      if (!response.ok) throw new Error("Failed to load platforms");
+
       const data = await response.json();
       setPlatforms(data.platforms);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load platforms');
+      setError(err instanceof Error ? err.message : "Failed to load platforms");
     } finally {
       setLoading(false);
     }
@@ -64,13 +64,13 @@ export const PlatformConnectionManager: React.FC = () => {
 
   const loadConnections = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/platforms/connections');
-      if (!response.ok) throw new Error('Failed to load connections');
-      
+      const response = await fetch("http://localhost:8000/api/platforms/connections");
+      if (!response.ok) throw new Error("Failed to load connections");
+
       const data = await response.json();
       setConnections(data.connections);
     } catch (err) {
-      console.error('Error loading connections:', err);
+      console.error("Error loading connections:", err);
     }
   };
 
@@ -94,30 +94,29 @@ export const PlatformConnectionManager: React.FC = () => {
     try {
       const response = await fetch(
         `http://localhost:8000/api/platforms/disconnect/${platformName}`,
-        { method: 'POST' }
+        { method: "POST" }
       );
 
-      if (!response.ok) throw new Error('Failed to disconnect');
+      if (!response.ok) throw new Error("Failed to disconnect");
 
       // Reload data
       await loadPlatforms();
       await loadConnections();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to disconnect');
+      alert(err instanceof Error ? err.message : "Failed to disconnect");
     }
   };
 
   const handleVerify = async (platformName: string) => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/platforms/verify/${platformName}`,
-        { method: 'POST' }
-      );
+      const response = await fetch(`http://localhost:8000/api/platforms/verify/${platformName}`, {
+        method: "POST",
+      });
 
-      if (!response.ok) throw new Error('Failed to verify connection');
+      if (!response.ok) throw new Error("Failed to verify connection");
 
       const result = await response.json();
-      
+
       if (result.valid) {
         alert(`Connection to ${platformName} is valid!`);
       } else {
@@ -127,7 +126,7 @@ export const PlatformConnectionManager: React.FC = () => {
       // Reload connections to update status
       await loadConnections();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to verify connection');
+      alert(err instanceof Error ? err.message : "Failed to verify connection");
     }
   };
 
@@ -137,22 +136,22 @@ export const PlatformConnectionManager: React.FC = () => {
     try {
       const endpoint = editingPlatform
         ? `http://localhost:8000/api/platforms/credentials/${selectedPlatform.name}`
-        : 'http://localhost:8000/api/platforms/connect';
+        : "http://localhost:8000/api/platforms/connect";
 
-      const method = editingPlatform ? 'PUT' : 'POST';
+      const method = editingPlatform ? "PUT" : "POST";
 
       const response = await fetch(endpoint, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           platform_name: selectedPlatform.name,
-          credentials
-        })
+          credentials,
+        }),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.detail || 'Failed to connect');
+        throw new Error(error.detail || "Failed to connect");
       }
 
       // Close form and reload data
@@ -162,7 +161,7 @@ export const PlatformConnectionManager: React.FC = () => {
       await loadPlatforms();
       await loadConnections();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to connect');
+      alert(err instanceof Error ? err.message : "Failed to connect");
     }
   };
 
@@ -173,7 +172,7 @@ export const PlatformConnectionManager: React.FC = () => {
   };
 
   const getConnectionForPlatform = (platformName: string): PlatformConnection | undefined => {
-    return connections.find(c => c.platform_name === platformName);
+    return connections.find((c) => c.platform_name === platformName);
   };
 
   if (loading) {
@@ -231,26 +230,26 @@ export const PlatformConnectionManager: React.FC = () => {
         <div className="bg-white rounded-lg shadow p-4">
           <div className="text-sm text-gray-600">Connected</div>
           <div className="text-2xl font-bold text-green-600">
-            {platforms.filter(p => p.connected).length}
+            {platforms.filter((p) => p.connected).length}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <div className="text-sm text-gray-600">Available</div>
           <div className="text-2xl font-bold text-blue-600">
-            {platforms.filter(p => !p.connected).length}
+            {platforms.filter((p) => !p.connected).length}
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <div className="text-sm text-gray-600">Errors</div>
           <div className="text-2xl font-bold text-red-600">
-            {connections.filter(c => c.status === 'error').length}
+            {connections.filter((c) => c.status === "error").length}
           </div>
         </div>
       </div>
 
       {/* Platform Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {platforms.map(platform => (
+        {platforms.map((platform) => (
           <PlatformConnectionCard
             key={platform.name}
             platform={platform}

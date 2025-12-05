@@ -14,7 +14,7 @@ export function trainingConfigToPreset(
   id: string,
   name: string,
   description: string = "",
-  tags: string[] = [],
+  tags: string[] = []
 ): Omit<ConfigurationPreset, "created_at" | "updated_at"> {
   return {
     id,
@@ -52,9 +52,7 @@ export function trainingConfigToPreset(
 /**
  * Convert ConfigurationPreset to TrainingConfig format
  */
-export function presetToTrainingConfig(
-  preset: ConfigurationPreset,
-): Partial<TrainingConfig> {
+export function presetToTrainingConfig(preset: ConfigurationPreset): Partial<TrainingConfig> {
   return {
     modelName: preset.model_name,
     modelPath: preset.model_path,
@@ -88,7 +86,7 @@ export function presetToTrainingConfig(
  * Save a configuration preset
  */
 export async function savePreset(
-  preset: Omit<ConfigurationPreset, "created_at" | "updated_at">,
+  preset: Omit<ConfigurationPreset, "created_at" | "updated_at">
 ): Promise<ConfigurationPreset> {
   const response = await fetch(`${API_BASE_URL}/presets/save`, {
     method: "POST",
@@ -112,7 +110,7 @@ export async function savePreset(
  */
 export async function listPresets(
   search?: string,
-  tags?: string[],
+  tags?: string[]
 ): Promise<ConfigurationPreset[]> {
   const params = new URLSearchParams();
   if (search) params.append("search", search);
@@ -131,9 +129,7 @@ export async function listPresets(
 /**
  * Get a specific preset by ID
  */
-export async function getPreset(
-  presetId: string,
-): Promise<ConfigurationPreset> {
+export async function getPreset(presetId: string): Promise<ConfigurationPreset> {
   const response = await fetch(`${API_BASE_URL}/presets/${presetId}`);
 
   if (!response.ok) {
@@ -183,7 +179,7 @@ export async function exportPreset(presetId: string): Promise<Record<string, unk
  */
 export async function importPreset(
   importData: Record<string, unknown>,
-  newId?: string,
+  newId?: string
 ): Promise<ConfigurationPreset> {
   const response = await fetch(`${API_BASE_URL}/presets/import`, {
     method: "POST",
@@ -210,7 +206,7 @@ export async function importPreset(
  */
 export async function updatePreset(
   presetId: string,
-  updates: Partial<ConfigurationPreset>,
+  updates: Partial<ConfigurationPreset>
 ): Promise<ConfigurationPreset> {
   const response = await fetch(`${API_BASE_URL}/presets/${presetId}`, {
     method: "PATCH",
@@ -232,10 +228,7 @@ export async function updatePreset(
 /**
  * Download preset as JSON file
  */
-export async function downloadPresetAsFile(
-  presetId: string,
-  filename?: string,
-): Promise<void> {
+export async function downloadPresetAsFile(presetId: string, filename?: string): Promise<void> {
   const exportData = await exportPreset(presetId);
 
   const blob = new Blob([JSON.stringify(exportData, null, 2)], {
@@ -254,10 +247,7 @@ export async function downloadPresetAsFile(
 /**
  * Upload and import preset from file
  */
-export async function uploadPresetFile(
-  file: File,
-  newId?: string,
-): Promise<ConfigurationPreset> {
+export async function uploadPresetFile(file: File, newId?: string): Promise<ConfigurationPreset> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 

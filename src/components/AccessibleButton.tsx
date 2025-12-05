@@ -17,10 +17,7 @@ export interface AccessibleButtonProps extends React.ButtonHTMLAttributes<HTMLBu
 /**
  * Accessible button component with loading states and proper ARIA attributes
  */
-export const AccessibleButton = forwardRef<
-  HTMLButtonElement,
-  AccessibleButtonProps
->(
+export const AccessibleButton = forwardRef<HTMLButtonElement, AccessibleButtonProps>(
   (
     {
       variant = "primary",
@@ -35,17 +32,15 @@ export const AccessibleButton = forwardRef<
       disabled,
       ...props
     },
-    ref,
+    ref
   ) => {
     const variantClasses = {
-      primary:
-        "bg-accent-primary text-white hover:bg-accent-primary/90 focus:ring-accent-primary",
+      primary: "bg-accent-primary text-white hover:bg-accent-primary/90 focus:ring-accent-primary",
       secondary:
         "bg-dark-bg-tertiary text-dark-text-primary hover:bg-dark-bg-tertiary/80 focus:ring-dark-border",
       ghost:
         "bg-transparent border border-dark-border text-dark-text-secondary hover:bg-dark-bg-tertiary hover:text-dark-text-primary focus:ring-dark-border",
-      danger:
-        "bg-accent-error text-white hover:bg-accent-error/90 focus:ring-accent-error",
+      danger: "bg-accent-error text-white hover:bg-accent-error/90 focus:ring-accent-error",
     };
 
     const sizeClasses = {
@@ -67,12 +62,10 @@ export const AccessibleButton = forwardRef<
           variantClasses[variant],
           sizeClasses[size],
           fullWidth && "w-full",
-          className,
+          className
         )}
         disabled={isDisabled}
-        aria-label={
-          ariaLabel || (typeof children === "string" ? children : undefined)
-        }
+        aria-label={ariaLabel || (typeof children === "string" ? children : undefined)}
         aria-busy={loading}
         {...props}
       >
@@ -82,7 +75,7 @@ export const AccessibleButton = forwardRef<
         {!loading && icon && iconPosition === "right" && icon}
       </button>
     );
-  },
+  }
 );
 
 AccessibleButton.displayName = "AccessibleButton";

@@ -1,6 +1,6 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from "react";
 
-import { cn } from '../lib/utils';
+import { cn } from "../lib/utils";
 
 export interface SliderProps {
   min: number;
@@ -12,7 +12,7 @@ export interface SliderProps {
   showValue?: boolean;
   formatValue?: (value: number) => string;
   disabled?: boolean;
-  'aria-label': string;
+  "aria-label": string;
   className?: string;
 }
 
@@ -26,7 +26,7 @@ export const Slider: React.FC<SliderProps> = ({
   showValue = true,
   formatValue = (v) => v.toString(),
   disabled = false,
-  'aria-label': ariaLabel,
+  "aria-label": ariaLabel,
   className,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -34,17 +34,20 @@ export const Slider: React.FC<SliderProps> = ({
 
   const percentage = ((value - min) / (max - min)) * 100;
 
-  const updateValue = useCallback((clientX: number) => {
-    if (!sliderRef.current) return;
+  const updateValue = useCallback(
+    (clientX: number) => {
+      if (!sliderRef.current) return;
 
-    const rect = sliderRef.current.getBoundingClientRect();
-    const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-    const rawValue = min + percent * (max - min);
-    const steppedValue = Math.round(rawValue / step) * step;
-    const clampedValue = Math.max(min, Math.min(max, steppedValue));
+      const rect = sliderRef.current.getBoundingClientRect();
+      const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      const rawValue = min + percent * (max - min);
+      const steppedValue = Math.round(rawValue / step) * step;
+      const clampedValue = Math.max(min, Math.min(max, steppedValue));
 
-    onChange(clampedValue);
-  }, [min, max, step, onChange]);
+      onChange(clampedValue);
+    },
+    [min, max, step, onChange]
+  );
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (disabled) return;
@@ -52,11 +55,14 @@ export const Slider: React.FC<SliderProps> = ({
     updateValue(e.clientX);
   };
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (isDragging && !disabled) {
-      updateValue(e.clientX);
-    }
-  }, [isDragging, disabled, updateValue]);
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (isDragging && !disabled) {
+        updateValue(e.clientX);
+      }
+    },
+    [isDragging, disabled, updateValue]
+  );
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -64,11 +70,11 @@ export const Slider: React.FC<SliderProps> = ({
 
   React.useEffect(() => {
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
       return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
       };
     }
   }, [isDragging, handleMouseMove, handleMouseUp]);
@@ -78,21 +84,21 @@ export const Slider: React.FC<SliderProps> = ({
 
     let newValue = value;
     switch (e.key) {
-      case 'ArrowRight':
-      case 'ArrowUp':
+      case "ArrowRight":
+      case "ArrowUp":
         e.preventDefault();
         newValue = Math.min(max, value + step);
         break;
-      case 'ArrowLeft':
-      case 'ArrowDown':
+      case "ArrowLeft":
+      case "ArrowDown":
         e.preventDefault();
         newValue = Math.max(min, value - step);
         break;
-      case 'Home':
+      case "Home":
         e.preventDefault();
         newValue = min;
         break;
-      case 'End':
+      case "End":
         e.preventDefault();
         newValue = max;
         break;
@@ -103,7 +109,7 @@ export const Slider: React.FC<SliderProps> = ({
   };
 
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn("space-y-2", className)}>
       {(label || showValue) && (
         <div className="flex items-center justify-between">
           {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
@@ -116,8 +122,8 @@ export const Slider: React.FC<SliderProps> = ({
       <div
         ref={sliderRef}
         className={cn(
-          'relative h-2 bg-gray-200 rounded-full cursor-pointer',
-          disabled && 'opacity-50 cursor-not-allowed'
+          "relative h-2 bg-gray-200 rounded-full cursor-pointer",
+          disabled && "opacity-50 cursor-not-allowed"
         )}
         onMouseDown={handleMouseDown}
         role="slider"
@@ -135,9 +141,9 @@ export const Slider: React.FC<SliderProps> = ({
         />
         <div
           className={cn(
-            'absolute top-1/2 -translate-y-1/2 w-5 h-5 bg-white border-2 border-blue-600 rounded-full shadow-md transition-all',
-            isDragging && 'scale-110',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+            "absolute top-1/2 -translate-y-1/2 w-5 h-5 bg-white border-2 border-blue-600 rounded-full shadow-md transition-all",
+            isDragging && "scale-110",
+            "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           )}
           style={{ left: `calc(${percentage}% - 10px)` }}
         />

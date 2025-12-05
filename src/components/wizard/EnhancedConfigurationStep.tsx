@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Zap, DollarSign, Leaf, Clock, HelpCircle, Server, Cpu, Database } from 'lucide-react';
-import { WizardState, TrainingEstimates } from '../../types/wizard';
-import Tooltip from '../Tooltip';
+import React, { useState, useEffect, useCallback } from "react";
+import { Zap, DollarSign, Leaf, Clock, HelpCircle, Server, Cpu, Database } from "lucide-react";
+import { WizardState, TrainingEstimates } from "../../types/wizard";
+import Tooltip from "../Tooltip";
 
 interface EnhancedConfigurationStepProps {
   wizardState: WizardState;
   onConfigUpdate: (config: Partial<TrainingConfig>, estimates: TrainingEstimates) => void;
 }
 
-type PEFTAlgorithm = 'lora' | 'qlora' | 'dora' | 'pissa' | 'rslora';
-type QuantizationType = 'none' | 'int8' | 'int4' | 'nf4';
-type ComputeProvider = 'local' | 'runpod' | 'lambda' | 'vastai';
-type ExperimentTracker = 'none' | 'wandb' | 'cometml' | 'phoenix';
+type PEFTAlgorithm = "lora" | "qlora" | "dora" | "pissa" | "rslora";
+type QuantizationType = "none" | "int8" | "int4" | "nf4";
+type ComputeProvider = "local" | "runpod" | "lambda" | "vastai";
+type ExperimentTracker = "none" | "wandb" | "cometml" | "phoenix";
 
 interface EnhancedConfig {
   // Provider
@@ -44,7 +44,6 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
   wizardState,
   onConfigUpdate,
 }) => {
-
   const [loading, setLoading] = useState(true);
   const [electricityRate, setElectricityRate] = useState(0.12);
   const [smartConfig, setSmartConfig] = useState<Record<string, unknown> | null>(null);
@@ -52,91 +51,97 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
 
   // Enhanced configuration state
   const [enhancedConfig, setEnhancedConfig] = useState<EnhancedConfig>({
-    provider: 'local',
-    algorithm: 'lora',
-    quantization: 'none',
-    experimentTracker: 'none',
+    provider: "local",
+    algorithm: "lora",
+    quantization: "none",
+    experimentTracker: "none",
     batchSize: 4,
     gradientAccumulation: 4,
     learningRate: 2e-4,
     epochs: 3,
-    precision: 'fp16',
+    precision: "fp16",
   });
 
-  const [availableProviders, setAvailableProviders] = useState<Array<{ id: string; name: string; [key: string]: unknown }>>([]);
+  const [availableProviders, setAvailableProviders] = useState<
+    Array<{ id: string; name: string;[key: string]: unknown }>
+  >([]);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   const fetchAvailableProviders = useCallback(async () => {
     try {
       // Fetch connected providers
-      const response = await fetch('http://127.0.0.1:8000/api/platforms/connections');
+      const response = await fetch("http://127.0.0.1:8000/api/platforms/connections");
       const data = await response.json();
 
       // Always include local
-      const providers = [
-        { id: 'local', name: 'Local GPU', status: 'available', cost: 0 }
-      ];
+      const providers = [{ id: "local", name: "Local GPU", status: "available", cost: 0 }];
 
       // Add connected cloud providers
       if (data.connections) {
-        data.connections.forEach((conn: { status: string; platform_name: string; name: string }) => {
-          if (conn.status === 'connected' && ['runpod', 'lambda', 'vastai'].includes(conn.platform_name)) {
-            providers.push({
-              id: conn.platform_name,
-              name: conn.platform_name.charAt(0).toUpperCase() + conn.platform_name.slice(1),
-              status: 'available',
-              cost: 0.5, // Placeholder
-            });
+        data.connections.forEach(
+          (conn: { status: string; platform_name: string; name: string }) => {
+            if (
+              conn.status === "connected" &&
+              ["runpod", "lambda", "vastai"].includes(conn.platform_name)
+            ) {
+              providers.push({
+                id: conn.platform_name,
+                name: conn.platform_name.charAt(0).toUpperCase() + conn.platform_name.slice(1),
+                status: "available",
+                cost: 0.5, // Placeholder
+              });
+            }
           }
-        });
+        );
       }
 
       setAvailableProviders(providers);
     } catch (error) {
-      console.error('Error fetching providers:', error);
-      setAvailableProviders([
-        { id: 'local', name: 'Local GPU', status: 'available', cost: 0 }
-      ]);
+      console.error("Error fetching providers:", error);
+      setAvailableProviders([{ id: "local", name: "Local GPU", status: "available", cost: 0 }]);
     }
   }, []);
 
-  const validateConfiguration = useCallback((config: EnhancedConfig, smartConfig: Record<string, unknown>) => {
-    const errors: string[] = [];
+  const validateConfiguration = useCallback(
+    (config: EnhancedConfig, smartConfig: Record<string, unknown>) => {
+      const errors: string[] = [];
 
-    // Validate provider selection
-    if (!config.provider) {
-      errors.push('Compute provider must be selected');
-    }
+      // Validate provider selection
+      if (!config.provider) {
+        errors.push("Compute provider must be selected");
+      }
 
-    // Validate algorithm selection
-    if (!config.algorithm) {
-      errors.push('PEFT algorithm must be selected');
-    }
+      // Validate algorithm selection
+      if (!config.algorithm) {
+        errors.push("PEFT algorithm must be selected");
+      }
 
-    // Validate quantization compatibility
-    if (config.quantization !== 'none' && config.algorithm === 'dora') {
-      errors.push('DoRA is not compatible with quantization');
-    }
+      // Validate quantization compatibility
+      if (config.quantization !== "none" && config.algorithm === "dora") {
+        errors.push("DoRA is not compatible with quantization");
+      }
 
-    // Validate experiment tracker project name
-    if (config.experimentTracker !== 'none' && !config.projectName) {
-      errors.push('Project name required for experiment tracking');
-    }
+      // Validate experiment tracker project name
+      if (config.experimentTracker !== "none" && !config.projectName) {
+        errors.push("Project name required for experiment tracking");
+      }
 
-    // Validate memory requirements
-    if (smartConfig && smartConfig.estimated_memory_mb > 24000 && config.provider === 'local') {
-      errors.push('Configuration requires more memory than available on local GPU');
-    }
+      // Validate memory requirements
+      if (smartConfig && (smartConfig as any).estimated_memory_mb > 24000 && config.provider === "local") {
+        errors.push("Configuration requires more memory than available on local GPU");
+      }
 
-    setValidationErrors(errors);
-  }, []);
+      setValidationErrors(errors);
+    },
+    []
+  );
 
   const calculateSmartDefaults = useCallback(async () => {
     try {
       setLoading(true);
 
       // Get hardware profile
-      const hardwareResponse = await fetch('http://127.0.0.1:8000/api/hardware/profile');
+      const hardwareResponse = await fetch("http://127.0.0.1:8000/api/hardware/profile");
       const hardwareData = await hardwareResponse.json();
 
       const gpuMemoryMB = hardwareData.gpus[0]?.memory_available_gb * 1024 || 8000;
@@ -144,9 +149,9 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
       const ramGB = hardwareData.ram?.available_gb || 16;
 
       // Calculate smart defaults with algorithm and quantization
-      const configResponse = await fetch('http://127.0.0.1:8000/api/config/smart-defaults', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const configResponse = await fetch("http://127.0.0.1:8000/api/config/smart-defaults", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           gpu_memory_mb: gpuMemoryMB,
           cpu_cores: cpuCores,
@@ -169,7 +174,7 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
       setSmartConfig(configData);
 
       // Update enhanced config with smart defaults
-      setEnhancedConfig(prev => ({
+      setEnhancedConfig((prev) => ({
         ...prev,
         batchSize: configData.batch_size,
         gradientAccumulation: configData.gradient_accumulation_steps,
@@ -211,23 +216,37 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
       // Notify parent
       onConfigUpdate({ ...configData, ...enhancedConfig }, newEstimates);
     } catch (error) {
-      console.error('Error calculating smart defaults:', error);
+      console.error("Error calculating smart defaults:", error);
     } finally {
       setLoading(false);
     }
-  }, [wizardState.model, wizardState.dataset, wizardState.profile, electricityRate, enhancedConfig, onConfigUpdate, validateConfiguration]);
+  }, [
+    wizardState.model,
+    wizardState.dataset,
+    wizardState.profile,
+    electricityRate,
+    enhancedConfig,
+    onConfigUpdate,
+    validateConfiguration,
+  ]);
 
   useEffect(() => {
     if (wizardState.model && wizardState.dataset && wizardState.profile) {
       calculateSmartDefaults();
       fetchAvailableProviders();
     }
-  }, [wizardState.model, wizardState.dataset, wizardState.profile, calculateSmartDefaults, fetchAvailableProviders]);
+  }, [
+    wizardState.model,
+    wizardState.dataset,
+    wizardState.profile,
+    calculateSmartDefaults,
+    fetchAvailableProviders,
+  ]);
 
   const handleProviderChange = (provider: ComputeProvider) => {
     const updated = { ...enhancedConfig, provider };
     setEnhancedConfig(updated);
-    validateConfiguration(updated, smartConfig);
+    validateConfiguration(updated, smartConfig as Record<string, unknown>);
   };
 
   const handleAlgorithmChange = (algorithm: PEFTAlgorithm) => {
@@ -247,13 +266,13 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
   const handleTrackerChange = (tracker: ExperimentTracker) => {
     const updated = { ...enhancedConfig, experimentTracker: tracker };
     setEnhancedConfig(updated);
-    validateConfiguration(updated, smartConfig);
+    validateConfiguration(updated, smartConfig as Record<string, unknown>);
   };
 
   const handleProjectNameChange = (projectName: string) => {
     const updated = { ...enhancedConfig, projectName };
     setEnhancedConfig(updated);
-    validateConfiguration(updated, smartConfig);
+    validateConfiguration(updated, smartConfig as Record<string, unknown>);
   };
 
   const formatDuration = (seconds: number): string => {
@@ -271,9 +290,7 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
         <div className="text-center">
           <Zap className="w-12 h-12 text-blue-600 animate-pulse mx-auto mb-4" />
           <p className="text-gray-600">Calculating optimal configuration...</p>
-          <p className="text-sm text-gray-500 mt-2">
-            Analyzing your hardware, model, and dataset
-          </p>
+          <p className="text-sm text-gray-500 mt-2">Analyzing your hardware, model, and dataset</p>
         </div>
       </div>
     );
@@ -283,10 +300,12 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
     <div className="space-y-6">
       {/* Instructions */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-blue-900 mb-2">Enhanced Training Configuration</h2>
+        <h2 className="text-xl font-semibold text-blue-900 mb-2">
+          Enhanced Training Configuration
+        </h2>
         <p className="text-blue-800">
-          Configure your training environment, algorithm, and tracking preferences.
-          We&apos;ve calculated optimal settings, but you can customize as needed.
+          Configure your training environment, algorithm, and tracking preferences. We&apos;ve
+          calculated optimal settings, but you can customize as needed.
         </p>
       </div>
 
@@ -296,7 +315,9 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
           <h4 className="font-semibold text-red-900 mb-2">Configuration Issues</h4>
           <ul className="list-disc list-inside space-y-1">
             {validationErrors.map((error, idx) => (
-              <li key={idx} className="text-sm text-red-800">{error}</li>
+              <li key={idx} className="text-sm text-red-800">
+                {error}
+              </li>
             ))}
           </ul>
         </div>
@@ -320,8 +341,8 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
               className={`
                 p-4 rounded-lg border-2 transition-all text-left
                 ${enhancedConfig.provider === provider.id
-                  ? 'border-blue-600 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? "border-blue-600 bg-blue-50"
+                  : "border-gray-200 hover:border-gray-300"
                 }
               `}
             >
@@ -332,7 +353,7 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
                 )}
               </div>
               <p className="text-sm text-gray-600">
-                {provider.cost === 0 ? 'Free' : `$${provider.cost}/hr`}
+                {provider.cost === 0 ? "Free" : `$${provider.cost}/hr`}
               </p>
             </button>
           ))}
@@ -350,30 +371,28 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          {(['lora', 'qlora', 'dora', 'pissa', 'rslora'] as PEFTAlgorithm[]).map((algo) => (
+          {(["lora", "qlora", "dora", "pissa", "rslora"] as PEFTAlgorithm[]).map((algo) => (
             <button
               key={algo}
               onClick={() => handleAlgorithmChange(algo)}
               className={`
                 p-4 rounded-lg border-2 transition-all text-left
                 ${enhancedConfig.algorithm === algo
-                  ? 'border-blue-600 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? "border-blue-600 bg-blue-50"
+                  : "border-gray-200 hover:border-gray-300"
                 }
               `}
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="font-semibold text-gray-900 uppercase">{algo}</span>
-                {enhancedConfig.algorithm === algo && (
-                  <span className="text-blue-600">✓</span>
-                )}
+                {enhancedConfig.algorithm === algo && <span className="text-blue-600">✓</span>}
               </div>
               <p className="text-xs text-gray-600">
-                {algo === 'lora' && 'Standard LoRA'}
-                {algo === 'qlora' && '4-bit quantized'}
-                {algo === 'dora' && 'Weight decomposition'}
-                {algo === 'pissa' && 'Principal singular values'}
-                {algo === 'rslora' && 'Rank-stabilized'}
+                {algo === "lora" && "Standard LoRA"}
+                {algo === "qlora" && "4-bit quantized"}
+                {algo === "dora" && "Weight decomposition"}
+                {algo === "pissa" && "Principal singular values"}
+                {algo === "rslora" && "Rank-stabilized"}
               </p>
             </button>
           ))}
@@ -391,31 +410,29 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {(['none', 'int8', 'int4', 'nf4'] as QuantizationType[]).map((quant) => (
+          {(["none", "int8", "int4", "nf4"] as QuantizationType[]).map((quant) => (
             <button
               key={quant}
               onClick={() => handleQuantizationChange(quant)}
-              disabled={quant !== 'none' && enhancedConfig.algorithm === 'dora'}
+              disabled={quant !== "none" && enhancedConfig.algorithm === "dora"}
               className={`
                 p-4 rounded-lg border-2 transition-all text-left
                 ${enhancedConfig.quantization === quant
-                  ? 'border-blue-600 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? "border-blue-600 bg-blue-50"
+                  : "border-gray-200 hover:border-gray-300"
                 }
-                ${quant !== 'none' && enhancedConfig.algorithm === 'dora' ? 'opacity-50 cursor-not-allowed' : ''}
+                ${quant !== "none" && enhancedConfig.algorithm === "dora" ? "opacity-50 cursor-not-allowed" : ""}
               `}
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="font-semibold text-gray-900 uppercase">{quant}</span>
-                {enhancedConfig.quantization === quant && (
-                  <span className="text-blue-600">✓</span>
-                )}
+                {enhancedConfig.quantization === quant && <span className="text-blue-600">✓</span>}
               </div>
               <p className="text-xs text-gray-600">
-                {quant === 'none' && 'Full precision'}
-                {quant === 'int8' && '8-bit integers'}
-                {quant === 'int4' && '4-bit integers'}
-                {quant === 'nf4' && '4-bit NormalFloat'}
+                {quant === "none" && "Full precision"}
+                {quant === "int8" && "8-bit integers"}
+                {quant === "int4" && "4-bit integers"}
+                {quant === "nf4" && "4-bit NormalFloat"}
               </p>
             </button>
           ))}
@@ -433,21 +450,27 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-          {(['none', 'wandb', 'cometml', 'phoenix'] as ExperimentTracker[]).map((tracker) => (
+          {(["none", "wandb", "cometml", "phoenix"] as ExperimentTracker[]).map((tracker) => (
             <button
               key={tracker}
               onClick={() => handleTrackerChange(tracker)}
               className={`
                 p-4 rounded-lg border-2 transition-all text-left
                 ${enhancedConfig.experimentTracker === tracker
-                  ? 'border-blue-600 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? "border-blue-600 bg-blue-50"
+                  : "border-gray-200 hover:border-gray-300"
                 }
               `}
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="font-semibold text-gray-900 capitalize">
-                  {tracker === 'none' ? 'None' : tracker === 'wandb' ? 'W&B' : tracker === 'cometml' ? 'Comet ML' : 'Phoenix'}
+                  {tracker === "none"
+                    ? "None"
+                    : tracker === "wandb"
+                      ? "W&B"
+                      : tracker === "cometml"
+                        ? "Comet ML"
+                        : "Phoenix"}
                 </span>
                 {enhancedConfig.experimentTracker === tracker && (
                   <span className="text-blue-600">✓</span>
@@ -457,14 +480,12 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
           ))}
         </div>
 
-        {enhancedConfig.experimentTracker !== 'none' && (
+        {enhancedConfig.experimentTracker !== "none" && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Project Name *
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Project Name *</label>
             <input
               type="text"
-              value={enhancedConfig.projectName || ''}
+              value={enhancedConfig.projectName || ""}
               onChange={(e) => handleProjectNameChange(e.target.value)}
               placeholder="my-finetuning-project"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
@@ -562,7 +583,9 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
           <div>
             <label className="text-sm font-medium text-gray-700">Gradient Accumulation</label>
             <div className="p-3 bg-gray-50 rounded border border-gray-200 mt-2">
-              <p className="text-lg font-semibold text-gray-900">{enhancedConfig.gradientAccumulation}</p>
+              <p className="text-lg font-semibold text-gray-900">
+                {enhancedConfig.gradientAccumulation}
+              </p>
             </div>
           </div>
 
@@ -587,7 +610,8 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
         <div className="bg-green-50 border border-green-200 rounded-lg p-6">
           <h4 className="font-semibold text-green-900 mb-2">✓ Configuration Complete</h4>
           <p className="text-sm text-green-800">
-            Your training is configured and ready to launch. Click &quot;Next&quot; to review everything before starting.
+            Your training is configured and ready to launch. Click &quot;Next&quot; to review
+            everything before starting.
           </p>
         </div>
       ) : (

@@ -1,10 +1,10 @@
-import type { FormattedError } from "../types/error";
+import { FormattedError, ErrorCategory, ErrorSeverity } from "../types/error";
 
 const API_BASE_URL = "http://localhost:8000";
 
 export async function formatError(
   error: Error,
-  context?: Record<string, unknown>,
+  context?: Record<string, unknown>
 ): Promise<FormattedError> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/errors/format`, {
@@ -42,8 +42,8 @@ export async function formatError(
           action_type: "manual_step",
         },
       ],
-      category: "system" as const,
-      severity: "medium" as const,
+      category: ErrorCategory.SYSTEM,
+      severity: ErrorSeverity.MEDIUM,
       help_link: "https://docs.peftstudio.ai/troubleshooting",
       auto_recoverable: false,
     };
@@ -52,7 +52,7 @@ export async function formatError(
 
 export async function executeAutoFix(
   actionData: Record<string, unknown>,
-  context: Record<string, unknown>,
+  context: Record<string, unknown>
 ): Promise<boolean> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/errors/auto-fix`, {

@@ -1,7 +1,7 @@
-import { ChevronRight, Home } from 'lucide-react';
-import React from 'react';
+import { ChevronRight, Home } from "lucide-react";
+import React from "react";
 
-import { cn } from '../lib/utils';
+import { cn } from "../lib/utils";
 
 export interface BreadcrumbItem {
   label: string;
@@ -15,15 +15,11 @@ export interface BreadcrumbsProps {
   className?: string;
 }
 
-export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
-  items,
-  onNavigate,
-  className,
-}) => {
+export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, onNavigate, className }) => {
   return (
-    <nav aria-label="Breadcrumb" className={cn('flex items-center space-x-2', className)}>
+    <nav aria-label="Breadcrumb" className={cn("flex items-center space-x-2", className)}>
       <button
-        onClick={() => onNavigate('/')}
+        onClick={() => onNavigate("/")}
         className="p-1 hover:bg-gray-100 rounded transition-colors"
         aria-label="Home"
       >
@@ -37,7 +33,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
         return (
           <React.Fragment key={item.path}>
             <ChevronRight className="w-4 h-4 text-gray-400" aria-hidden="true" />
-            
+
             {isLast ? (
               <span className="flex items-center gap-1 text-sm font-medium text-gray-900">
                 {Icon && <Icon className="w-4 h-4" />}

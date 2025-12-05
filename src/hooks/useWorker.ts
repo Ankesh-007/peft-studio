@@ -1,14 +1,14 @@
 /**
  * Worker Hooks
- * 
+ *
  * React hooks for using Web Workers in components.
- * 
+ *
  * Requirements: 14.3
  */
 
-import { useEffect, useRef, useCallback, useState } from 'react';
-import { getWorkerPool, destroyWorkerPool } from '../workers/WorkerPool';
-import { WorkerMessageType } from '../workers/types';
+import { useEffect, useRef, useCallback, useState } from "react";
+import { getWorkerPool, destroyWorkerPool } from "../workers/WorkerPool";
+import { WorkerMessageType } from "../workers/types";
 
 /**
  * Hook to use the worker pool
@@ -69,10 +69,7 @@ export function useFileProcessor() {
         const buffer = await file.arrayBuffer();
 
         // Process in worker
-        const result = await execute(
-          WorkerMessageType.PROCESS_FILE,
-          { file: buffer, options }
-        );
+        const result = await execute(WorkerMessageType.PROCESS_FILE, { file: buffer, options });
 
         setProgress(100);
         return result;
@@ -93,10 +90,7 @@ export function useFileProcessor() {
       setError(null);
 
       try {
-        const result = await execute(
-          WorkerMessageType.PARSE_JSON,
-          { data }
-        );
+        const result = await execute(WorkerMessageType.PARSE_JSON, { data });
         return result;
       } catch (err) {
         const error = err instanceof Error ? err : new Error(String(err));
@@ -115,10 +109,7 @@ export function useFileProcessor() {
       setError(null);
 
       try {
-        const result = await execute(
-          WorkerMessageType.PARSE_CSV,
-          { data, ...options }
-        );
+        const result = await execute(WorkerMessageType.PARSE_CSV, { data, ...options });
         return result;
       } catch (err) {
         const error = err instanceof Error ? err : new Error(String(err));
@@ -155,10 +146,7 @@ export function useDataProcessor() {
       setError(null);
 
       try {
-        const result = await execute(
-          WorkerMessageType.COMPUTE_METRICS,
-          { data, metrics }
-        );
+        const result = await execute(WorkerMessageType.COMPUTE_METRICS, { data, metrics });
         return result;
       } catch (err) {
         const error = err instanceof Error ? err : new Error(String(err));
@@ -172,15 +160,20 @@ export function useDataProcessor() {
   );
 
   const aggregateData = useCallback(
-    async (data: Record<string, unknown>[], groupBy: string, aggregations: Array<{ field: string; operation: string }>) => {
+    async (
+      data: Record<string, unknown>[],
+      groupBy: string,
+      aggregations: Array<{ field: string; operation: string }>
+    ) => {
       setProcessing(true);
       setError(null);
 
       try {
-        const result = await execute(
-          WorkerMessageType.AGGREGATE_DATA,
-          { data, groupBy, aggregations }
-        );
+        const result = await execute(WorkerMessageType.AGGREGATE_DATA, {
+          data,
+          groupBy,
+          aggregations,
+        });
         return result;
       } catch (err) {
         const error = err instanceof Error ? err : new Error(String(err));
@@ -199,10 +192,7 @@ export function useDataProcessor() {
       setError(null);
 
       try {
-        const result = await execute(
-          WorkerMessageType.FILTER_DATA,
-          { data, predicate }
-        );
+        const result = await execute(WorkerMessageType.FILTER_DATA, { data, predicate });
         return result;
       } catch (err) {
         const error = err instanceof Error ? err : new Error(String(err));
@@ -216,15 +206,12 @@ export function useDataProcessor() {
   );
 
   const sortData = useCallback(
-    async (data: Record<string, unknown>[], key: string, order: 'asc' | 'desc') => {
+    async (data: Record<string, unknown>[], key: string, order: "asc" | "desc") => {
       setProcessing(true);
       setError(null);
 
       try {
-        const result = await execute(
-          WorkerMessageType.SORT_DATA,
-          { data, key, order }
-        );
+        const result = await execute(WorkerMessageType.SORT_DATA, { data, key, order });
         return result;
       } catch (err) {
         const error = err instanceof Error ? err : new Error(String(err));

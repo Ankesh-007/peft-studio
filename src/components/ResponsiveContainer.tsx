@@ -56,12 +56,7 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
 
-
-  const gridCols = isMobile
-    ? cols.mobile
-    : isTablet
-      ? cols.tablet
-      : cols.desktop;
+  const gridCols = isMobile ? cols.mobile : isTablet ? cols.tablet : cols.desktop;
 
   return (
     <div
@@ -79,30 +74,22 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
 /**
  * Show/hide content based on screen size
  */
-export const ShowOnMobile: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const ShowOnMobile: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isMobile = useIsMobile();
   return isMobile ? <>{children}</> : null;
 };
 
-export const HideOnMobile: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const HideOnMobile: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isMobile = useIsMobile();
   return !isMobile ? <>{children}</> : null;
 };
 
-export const ShowOnTablet: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const ShowOnTablet: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isTablet = useIsTablet();
   return isTablet ? <>{children}</> : null;
 };
 
-export const ShowOnDesktop: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const ShowOnDesktop: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isDesktop = useIsDesktop();
   return isDesktop ? <>{children}</> : null;
 };

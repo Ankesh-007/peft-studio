@@ -96,19 +96,12 @@ export const TechnicalTermDetector: React.FC<TechnicalTermDetectorProps> = ({
           }}
           data-testid={`technical-term-tooltip-${hoveredTerm}`}
         >
-          <div className="text-xs text-blue-600 font-semibold mb-1">
-            TECHNICAL TERM
-          </div>
-          <div className="text-sm font-semibold text-gray-900 mb-2">
-            {tooltipData.title}
-          </div>
-          <div className="text-sm text-gray-600 mb-2">
-            {tooltipData.description}
-          </div>
+          <div className="text-xs text-blue-600 font-semibold mb-1">TECHNICAL TERM</div>
+          <div className="text-sm font-semibold text-gray-900 mb-2">{tooltipData.title}</div>
+          <div className="text-sm text-gray-600 mb-2">{tooltipData.description}</div>
           {tooltipData.example && (
             <div className="text-xs text-gray-500 italic border-t border-gray-100 pt-2">
-              <span className="font-medium">Example:</span>{" "}
-              {tooltipData.example}
+              <span className="font-medium">Example:</span> {tooltipData.example}
             </div>
           )}
         </div>

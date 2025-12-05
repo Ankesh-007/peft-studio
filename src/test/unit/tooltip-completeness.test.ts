@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import fc from 'fast-check';
-import { getTooltip, hasTooltip, getAllTooltipKeys } from '../../config/tooltips';
+import { describe, it, expect } from "vitest";
+import fc from "fast-check";
+import { getTooltip, hasTooltip, getAllTooltipKeys } from "../../config/tooltips";
 
 // **Feature: simplified-llm-optimization, Property 2: Configuration tooltips completeness**
 
@@ -111,7 +111,7 @@ describe("Tooltip Completeness Property Tests", () => {
           }
         }
       }),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -140,7 +140,7 @@ describe("Tooltip Completeness Property Tests", () => {
           expect(description).toMatch(/[.!?]$/);
         }
       }),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -160,13 +160,13 @@ describe("Tooltip Completeness Property Tests", () => {
           // Title should not be all caps (unless it's an acronym)
           const words = tooltip.title.split(" ");
           const allCapsWords = words.filter(
-            (word) => word === word.toUpperCase() && word.length > 1,
+            (word) => word === word.toUpperCase() && word.length > 1
           );
           // Allow some acronyms, but not all words
           expect(allCapsWords.length).toBeLessThan(words.length);
         }
       }),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -181,9 +181,7 @@ describe("Tooltip Completeness Property Tests", () => {
           expect(tooltip.example.length).toBeGreaterThan(10);
 
           // Example should not be the same as the description
-          expect(tooltip.example.toLowerCase()).not.toBe(
-            tooltip.description.toLowerCase(),
-          );
+          expect(tooltip.example.toLowerCase()).not.toBe(tooltip.description.toLowerCase());
 
           // Example should provide specific values or guidance
           const hasSpecificGuidance =
@@ -194,7 +192,7 @@ describe("Tooltip Completeness Property Tests", () => {
           expect(hasSpecificGuidance).toBe(true);
         }
       }),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -302,7 +300,7 @@ describe("Tooltip Completeness Property Tests", () => {
           expect(isActionable).toBe(true);
         }
       }),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 });

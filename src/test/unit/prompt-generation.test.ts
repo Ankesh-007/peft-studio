@@ -53,7 +53,7 @@ describe("Property 14: Use case generates relevant prompts", () => {
           "summarization",
           "qa",
           "creative-writing",
-          "domain-adaptation",
+          "domain-adaptation"
         ),
         (useCase) => {
           const prompts = generateExamplePrompts(useCase);
@@ -71,9 +71,9 @@ describe("Property 14: Use case generates relevant prompts", () => {
           // Prompts should be unique
           const uniquePrompts = new Set(prompts);
           expect(uniquePrompts.size).toBe(prompts.length);
-        },
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -86,7 +86,7 @@ describe("Property 14: Use case generates relevant prompts", () => {
           "summarization",
           "qa",
           "creative-writing",
-          "domain-adaptation",
+          "domain-adaptation"
         ),
         (useCase) => {
           const prompts = generateExamplePrompts(useCase);
@@ -96,13 +96,10 @@ describe("Property 14: Use case generates relevant prompts", () => {
             chatbot: (p) => /help|how|what|can|tell|know/i.test(p),
             "code-generation": (p) =>
               /write|create|implement|function|component|algorithm/i.test(p),
-            summarization: (p) =>
-              /summarize|overview|brief|key points/i.test(p),
+            summarization: (p) => /summarize|overview|brief|key points/i.test(p),
             qa: (p) => /what|who|how|explain|where|when/i.test(p),
-            "creative-writing": (p) =>
-              /write|compose|create|story|poem|dialogue/i.test(p),
-            "domain-adaptation": (p) =>
-              /explain|example|implications|concept/i.test(p),
+            "creative-writing": (p) => /write|compose|create|story|poem|dialogue/i.test(p),
+            "domain-adaptation": (p) => /explain|example|implications|concept/i.test(p),
           };
 
           const checker = relevanceChecks[useCase];
@@ -111,9 +108,9 @@ describe("Property 14: Use case generates relevant prompts", () => {
             const hasRelevant = prompts.some(checker);
             expect(hasRelevant).toBe(true);
           }
-        },
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 });

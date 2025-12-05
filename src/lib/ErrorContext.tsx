@@ -26,42 +26,39 @@ export const ErrorProvider: React.FC<ErrorProviderProps> = ({ children }) => {
   const [currentError, setCurrentError] = useState<FormattedError | null>(null);
   const [toastErrors, setToastErrors] = useState<FormattedError[]>([]);
 
-  const showError = useCallback(
-    async (error: Error, context?: Record<string, unknown>) => {
-      try {
-        const formatted = await formatError(error, context);
+  const showError = useCallback(async (error: Error, context?: Record<string, unknown>) => {
+    try {
+      const formatted = await formatError(error, context);
 
-        // Critical errors are shown as full-screen modals
-        if (formatted.severity === "critical") {
-          setCurrentError(formatted);
-        } else {
-          // Other errors are shown as toasts
-          setToastErrors((prev) => [...prev, formatted]);
-        }
-      } catch (e) {
-        console.error("Failed to format error:", e);
-        // Fallback
-        const fallbackError: FormattedError = {
-          title: "Error Occurred",
-          what_happened: error.message || "An unexpected error occurred.",
-          why_it_happened: "The system encountered an issue.",
-          actions: [
-            {
-              description: "Try again",
-              automatic: false,
-              action_type: "manual_step",
-            },
-          ],
-          category: "system" as ErrorCategory,
-          severity: "medium" as ErrorSeverity,
-          help_link: "https://docs.peftstudio.ai/troubleshooting",
-          auto_recoverable: false,
-        };
-        setToastErrors((prev) => [...prev, fallbackError]);
+      // Critical errors are shown as full-screen modals
+      if (formatted.severity === "critical") {
+        setCurrentError(formatted);
+      } else {
+        // Other errors are shown as toasts
+        setToastErrors((prev) => [...prev, formatted]);
       }
-    },
-    [],
-  );
+    } catch (e) {
+      console.error("Failed to format error:", e);
+      // Fallback
+      const fallbackError: FormattedError = {
+        title: "Error Occurred",
+        what_happened: error.message || "An unexpected error occurred.",
+        why_it_happened: "The system encountered an issue.",
+        actions: [
+          {
+            description: "Try again",
+            automatic: false,
+            action_type: "manual_step",
+          },
+        ],
+        category: "system" as ErrorCategory,
+        severity: "medium" as ErrorSeverity,
+        help_link: "https://docs.peftstudio.ai/troubleshooting",
+        auto_recoverable: false,
+      };
+      setToastErrors((prev) => [...prev, fallbackError]);
+    }
+  }, []);
 
   const clearError = useCallback(() => {
     setCurrentError(null);

@@ -3,8 +3,8 @@
  * Loads images progressively with low-quality placeholder
  */
 
-import React, { useState, useEffect } from 'react';
-import { cn } from '../lib/utils';
+import React, { useState, useEffect } from "react";
+import { cn } from "../lib/utils";
 
 interface ProgressiveImageProps {
   src: string;
@@ -34,7 +34,7 @@ export const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
   useEffect(() => {
     // Create image object to preload
     const img = new Image();
-    
+
     img.onload = () => {
       setCurrentSrc(src);
       setLoading(false);
@@ -58,20 +58,12 @@ export const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
   if (error) {
     return (
       <div
-        className={cn(
-          'flex items-center justify-center bg-gray-100 text-gray-400',
-          className
-        )}
+        className={cn("flex items-center justify-center bg-gray-100 text-gray-400", className)}
         style={{ width, height }}
         role="img"
         aria-label={alt}
       >
-        <svg
-          className="w-12 h-12"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+        <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -90,8 +82,8 @@ export const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
       width={width}
       height={height}
       className={cn(
-        'transition-opacity duration-300',
-        loading && placeholderSrc ? 'opacity-50 blur-sm' : 'opacity-100',
+        "transition-opacity duration-300",
+        loading && placeholderSrc ? "opacity-50 blur-sm" : "opacity-100",
         className
       )}
       loading="lazy"
@@ -105,17 +97,17 @@ export const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
 export function generatePlaceholder(
   width: number,
   height: number,
-  color: string = '#e5e7eb'
+  color: string = "#e5e7eb"
 ): string {
-  const canvas = document.createElement('canvas');
+  const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
-  
-  const ctx = canvas.getContext('2d');
+
+  const ctx = canvas.getContext("2d");
   if (ctx) {
     ctx.fillStyle = color;
     ctx.fillRect(0, 0, width, height);
   }
-  
+
   return canvas.toDataURL();
 }

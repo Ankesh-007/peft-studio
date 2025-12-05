@@ -38,9 +38,7 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
       case "online":
         return "Connected";
       case "offline":
-        return reconnectAttempts > 0
-          ? `Reconnecting (${reconnectAttempts})`
-          : "Disconnected";
+        return reconnectAttempts > 0 ? `Reconnecting (${reconnectAttempts})` : "Disconnected";
       case "connecting":
         return "Connecting...";
       default:
@@ -74,23 +72,19 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
           className={cn(
             "h-8 w-8 rounded-full",
             getStatusColor(),
-            status === "connecting" && "animate-pulse",
+            status === "connecting" && "animate-pulse"
           )}
         />
         {status === "connecting" && (
           <span
             className={cn(
               "absolute h-12 w-12 animate-ping rounded-full opacity-75",
-              getStatusColor(),
+              getStatusColor()
             )}
           />
         )}
       </div>
-      {showLabel && (
-        <span className="text-small text-dark-text-secondary">
-          {getStatusText()}
-        </span>
-      )}
+      {showLabel && <span className="text-small text-dark-text-secondary">{getStatusText()}</span>}
     </div>
   );
 };

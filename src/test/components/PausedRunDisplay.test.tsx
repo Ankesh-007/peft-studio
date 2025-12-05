@@ -2,9 +2,9 @@
  * Unit tests for PausedRunDisplay component
  */
 
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import PausedRunDisplay from '../../components/PausedRunDisplay';
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
+import PausedRunDisplay from "../../components/PausedRunDisplay";
 
 describe("PausedRunDisplay", () => {
   const mockPausedRun = {
@@ -32,11 +32,7 @@ describe("PausedRunDisplay", () => {
 
   it("renders paused run information", () => {
     render(
-      <PausedRunDisplay
-        pausedRun={mockPausedRun}
-        onResume={mockOnResume}
-        onStop={mockOnStop}
-      />,
+      <PausedRunDisplay pausedRun={mockPausedRun} onResume={mockOnResume} onStop={mockOnStop} />
     );
 
     // Check for job ID
@@ -56,11 +52,7 @@ describe("PausedRunDisplay", () => {
 
   it("displays elapsed time", () => {
     render(
-      <PausedRunDisplay
-        pausedRun={mockPausedRun}
-        onResume={mockOnResume}
-        onStop={mockOnStop}
-      />,
+      <PausedRunDisplay pausedRun={mockPausedRun} onResume={mockOnResume} onStop={mockOnStop} />
     );
 
     // Should display elapsed time (1.5 hours = 1h 30m)
@@ -69,11 +61,7 @@ describe("PausedRunDisplay", () => {
 
   it("displays remaining time estimate", () => {
     render(
-      <PausedRunDisplay
-        pausedRun={mockPausedRun}
-        onResume={mockOnResume}
-        onStop={mockOnStop}
-      />,
+      <PausedRunDisplay pausedRun={mockPausedRun} onResume={mockOnResume} onStop={mockOnStop} />
     );
 
     // Should display remaining time
@@ -82,17 +70,11 @@ describe("PausedRunDisplay", () => {
 
   it("displays resource usage at pause time", () => {
     render(
-      <PausedRunDisplay
-        pausedRun={mockPausedRun}
-        onResume={mockOnResume}
-        onStop={mockOnStop}
-      />,
+      <PausedRunDisplay pausedRun={mockPausedRun} onResume={mockOnResume} onStop={mockOnStop} />
     );
 
     // Check for resource usage section
-    expect(
-      screen.getByText(/Resource Usage at Pause Time/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Resource Usage at Pause Time/i)).toBeInTheDocument();
 
     // Check for GPU utilization
     expect(screen.getByText(/GPU Utilization/i)).toBeInTheDocument();
@@ -109,11 +91,7 @@ describe("PausedRunDisplay", () => {
 
   it("calls onResume when resume button is clicked", () => {
     render(
-      <PausedRunDisplay
-        pausedRun={mockPausedRun}
-        onResume={mockOnResume}
-        onStop={mockOnStop}
-      />,
+      <PausedRunDisplay pausedRun={mockPausedRun} onResume={mockOnResume} onStop={mockOnStop} />
     );
 
     const resumeButton = screen.getByRole("button", {
@@ -126,11 +104,7 @@ describe("PausedRunDisplay", () => {
 
   it("calls onStop when stop button is clicked", () => {
     render(
-      <PausedRunDisplay
-        pausedRun={mockPausedRun}
-        onResume={mockOnResume}
-        onStop={mockOnStop}
-      />,
+      <PausedRunDisplay pausedRun={mockPausedRun} onResume={mockOnResume} onStop={mockOnStop} />
     );
 
     const stopButton = screen.getByRole("button", { name: /Stop & Save/i });
@@ -141,11 +115,7 @@ describe("PausedRunDisplay", () => {
 
   it("displays model and dataset names when provided", () => {
     render(
-      <PausedRunDisplay
-        pausedRun={mockPausedRun}
-        onResume={mockOnResume}
-        onStop={mockOnStop}
-      />,
+      <PausedRunDisplay pausedRun={mockPausedRun} onResume={mockOnResume} onStop={mockOnStop} />
     );
 
     expect(screen.getByText(/Llama-3-8B/i)).toBeInTheDocument();
@@ -154,11 +124,7 @@ describe("PausedRunDisplay", () => {
 
   it("handles multiple GPUs correctly", () => {
     render(
-      <PausedRunDisplay
-        pausedRun={mockPausedRun}
-        onResume={mockOnResume}
-        onStop={mockOnStop}
-      />,
+      <PausedRunDisplay pausedRun={mockPausedRun} onResume={mockOnResume} onStop={mockOnStop} />
     );
 
     // Should show GPU 0 and GPU 1 (may appear multiple times in the UI)
@@ -173,9 +139,7 @@ describe("PausedRunDisplay", () => {
   });
 
   it("renders without stop button when onStop is not provided", () => {
-    render(
-      <PausedRunDisplay pausedRun={mockPausedRun} onResume={mockOnResume} />,
-    );
+    render(<PausedRunDisplay pausedRun={mockPausedRun} onResume={mockOnResume} />);
 
     const resumeButton = screen.getByRole("button", {
       name: /Resume Training/i,
@@ -188,11 +152,7 @@ describe("PausedRunDisplay", () => {
 
   it("displays paused timestamp", () => {
     render(
-      <PausedRunDisplay
-        pausedRun={mockPausedRun}
-        onResume={mockOnResume}
-        onStop={mockOnStop}
-      />,
+      <PausedRunDisplay pausedRun={mockPausedRun} onResume={mockOnResume} onStop={mockOnStop} />
     );
 
     expect(screen.getByText(/Paused At/i)).toBeInTheDocument();
@@ -200,11 +160,7 @@ describe("PausedRunDisplay", () => {
 
   it("displays info banner about paused state", () => {
     render(
-      <PausedRunDisplay
-        pausedRun={mockPausedRun}
-        onResume={mockOnResume}
-        onStop={mockOnStop}
-      />,
+      <PausedRunDisplay pausedRun={mockPausedRun} onResume={mockOnResume} onStop={mockOnStop} />
     );
 
     expect(screen.getByText(/Training Paused/i)).toBeInTheDocument();

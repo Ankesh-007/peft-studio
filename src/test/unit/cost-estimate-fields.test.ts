@@ -32,7 +32,7 @@ interface CostEstimates {
 function calculateCostEstimates(config: TrainingConfig): CostEstimates {
   // Calculate training time
   const stepsPerEpoch = Math.ceil(
-    config.numSamples / (config.batchSize * config.gradientAccumulation),
+    config.numSamples / (config.batchSize * config.gradientAccumulation)
   );
   const totalSteps = stepsPerEpoch * config.epochs;
 
@@ -97,9 +97,9 @@ describe("Property 17: Cost estimates completeness", () => {
           expect(Number.isFinite(estimates.gpuHours)).toBe(true);
           expect(Number.isFinite(estimates.electricityCost)).toBe(true);
           expect(Number.isFinite(estimates.carbonFootprint)).toBe(true);
-        },
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -122,15 +122,11 @@ describe("Property 17: Cost estimates completeness", () => {
           const expectedMinCost = estimates.gpuHours * 0.3 * 0.05; // Min rate
           const expectedMaxCost = estimates.gpuHours * 0.3 * 0.5; // Max rate
 
-          expect(estimates.electricityCost).toBeGreaterThanOrEqual(
-            expectedMinCost * 0.9,
-          ); // Allow 10% tolerance
-          expect(estimates.electricityCost).toBeLessThanOrEqual(
-            expectedMaxCost * 1.1,
-          );
-        },
+          expect(estimates.electricityCost).toBeGreaterThanOrEqual(expectedMinCost * 0.9); // Allow 10% tolerance
+          expect(estimates.electricityCost).toBeLessThanOrEqual(expectedMaxCost * 1.1);
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -153,15 +149,11 @@ describe("Property 17: Cost estimates completeness", () => {
           const expectedCarbonFootprint = estimates.gpuHours * 0.3 * 0.5;
 
           // Allow 10% tolerance for calculation variations
-          expect(estimates.carbonFootprint).toBeGreaterThanOrEqual(
-            expectedCarbonFootprint * 0.9,
-          );
-          expect(estimates.carbonFootprint).toBeLessThanOrEqual(
-            expectedCarbonFootprint * 1.1,
-          );
-        },
+          expect(estimates.carbonFootprint).toBeGreaterThanOrEqual(expectedCarbonFootprint * 0.9);
+          expect(estimates.carbonFootprint).toBeLessThanOrEqual(expectedCarbonFootprint * 1.1);
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 
@@ -185,23 +177,15 @@ describe("Property 17: Cost estimates completeness", () => {
 
           // All cost metrics should increase
           expect(estimates2.gpuHours).toBeGreaterThan(estimates1.gpuHours);
-          expect(estimates2.electricityCost).toBeGreaterThan(
-            estimates1.electricityCost,
-          );
-          expect(estimates2.carbonFootprint).toBeGreaterThan(
-            estimates1.carbonFootprint,
-          );
+          expect(estimates2.electricityCost).toBeGreaterThan(estimates1.electricityCost);
+          expect(estimates2.carbonFootprint).toBeGreaterThan(estimates1.carbonFootprint);
 
           // Should be roughly double (allow 10% tolerance)
-          expect(estimates2.gpuHours).toBeGreaterThanOrEqual(
-            estimates1.gpuHours * 1.8,
-          );
-          expect(estimates2.gpuHours).toBeLessThanOrEqual(
-            estimates1.gpuHours * 2.2,
-          );
-        },
+          expect(estimates2.gpuHours).toBeGreaterThanOrEqual(estimates1.gpuHours * 1.8);
+          expect(estimates2.gpuHours).toBeLessThanOrEqual(estimates1.gpuHours * 2.2);
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 

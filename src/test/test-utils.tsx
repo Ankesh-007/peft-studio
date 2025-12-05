@@ -13,10 +13,7 @@ import { vi } from "vitest";
 /**
  * Custom render function that wraps components with common providers
  */
-export function renderWithProviders(
-  ui: ReactElement,
-  options?: Omit<RenderOptions, "wrapper">,
-) {
+export function renderWithProviders(ui: ReactElement, options?: Omit<RenderOptions, "wrapper">) {
   // For now, just use standard render
   // Can be extended with providers like Router, Theme, etc.
   return render(ui, options);
@@ -35,7 +32,7 @@ export async function waitForAsync(ms: number = 0): Promise<void> {
 export async function typeWithDelay(
   element: HTMLElement,
   text: string,
-  delayMs: number = 50,
+  delayMs: number = 50
 ): Promise<void> {
   const { fireEvent } = await import("@testing-library/react");
 
@@ -64,10 +61,7 @@ export function hasClass(element: HTMLElement, className: string): boolean {
 /**
  * Get computed style property value
  */
-export function getStyleProperty(
-  element: HTMLElement,
-  property: string,
-): string {
+export function getStyleProperty(element: HTMLElement, property: string): string {
   return window.getComputedStyle(element).getPropertyValue(property);
 }
 
@@ -81,7 +75,7 @@ export function getStyleProperty(
 export async function waitForCondition(
   condition: () => boolean,
   timeout: number = 5000,
-  interval: number = 100,
+  interval: number = 100
 ): Promise<void> {
   const startTime = Date.now();
 
@@ -120,7 +114,7 @@ export function createMockResponse<T>(
     status?: number;
     statusText?: string;
     headers?: Record<string, string>;
-  } = {},
+  } = {}
 ): Response {
   const { status = 200, statusText = "OK", headers = {} } = options;
 
@@ -137,22 +131,14 @@ export function createMockResponse<T>(
 /**
  * Create a mock API error response
  */
-export function createMockErrorResponse(
-  message: string,
-  status: number = 500,
-): Response {
-  return createMockResponse(
-    { error: message },
-    { status, statusText: "Error" },
-  );
+export function createMockErrorResponse(message: string, status: number = 500): Response {
+  return createMockResponse({ error: message }, { status, statusText: "Error" });
 }
 
 /**
  * Mock fetch with custom responses
  */
-export function mockFetch(
-  responses: Record<string, any> | ((url: string) => any),
-): void {
+export function mockFetch(responses: Record<string, any> | ((url: string) => any)): void {
   global.fetch = vi.fn((url: RequestInfo | URL) => {
     const urlStr = url.toString();
     const data = typeof responses === "function" ? responses(urlStr) : responses[urlStr];
@@ -178,9 +164,7 @@ export function mockFetchError(error: Error): void {
 export function mockFetchTimeout(timeoutMs: number = 5000): void {
   global.fetch = vi.fn(
     () =>
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Request timeout")), timeoutMs),
-      ),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Request timeout")), timeoutMs))
   ) as any;
 }
 
@@ -216,7 +200,7 @@ export function createMockFile(
   name: string,
   size: number,
   type: string,
-  content: string = "",
+  content: string = ""
 ): File {
   const blob = new Blob([content], { type });
   return new File([blob], name, { type });
@@ -225,10 +209,7 @@ export function createMockFile(
 /**
  * Simulate drag and drop event
  */
-export function createDragEvent(
-  type: string,
-  files: File[],
-): DragEvent {
+export function createDragEvent(type: string, files: File[]): DragEvent {
   const dataTransfer = new DataTransfer();
   files.forEach((file) => dataTransfer.items.add(file));
 

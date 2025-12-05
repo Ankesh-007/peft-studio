@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Play,
   Copy,
@@ -16,8 +16,8 @@ import {
   AlertCircle,
   CheckCircle,
   Loader,
-} from 'lucide-react';
-import { cn } from '../lib/utils';
+} from "lucide-react";
+import { cn } from "../lib/utils";
 
 interface GenerationSettings {
   temperature: number;
@@ -37,7 +37,7 @@ interface LoadedModel {
 }
 
 interface ConversationMessage {
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: string;
   model_id?: string;
@@ -53,39 +53,39 @@ interface Conversation {
 }
 
 const InferencePlayground: React.FC = () => {
-  const [selectedModel, setSelectedModel] = useState('');
+  const [selectedModel, setSelectedModel] = useState("");
   const [loadedModels, setLoadedModels] = useState<LoadedModel[]>([]);
   const [isLoadingModel, setIsLoadingModel] = useState(false);
-  const [modelToLoad, setModelToLoad] = useState('');
-  const [adapterPath, setAdapterPath] = useState('');
-  const [useCase, setUseCase] = useState('chatbot');
-  
-  const [template, setTemplate] = useState<'chat' | 'instruct' | 'raw'>('instruct');
-  const [prompt, setPrompt] = useState('');
-  const [output, setOutput] = useState('');
+  const [modelToLoad, setModelToLoad] = useState("");
+  const [adapterPath, setAdapterPath] = useState("");
+  const [useCase, setUseCase] = useState("chatbot");
+
+  const [template, setTemplate] = useState<"chat" | "instruct" | "raw">("instruct");
+  const [prompt, setPrompt] = useState("");
+  const [output, setOutput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [charCount, setCharCount] = useState(0);
   const [tokenCount, setTokenCount] = useState(0);
   const [useStreaming, setUseStreaming] = useState(true);
-  
+
   const [generationStats, setGenerationStats] = useState({
     tokens: 0,
     time: 0,
     speed: 0,
   });
-  
-  const [setConversations] = useState<Conversation[]>([]);
-  const [currentConversationId, setCurrentConversationId] = useState<string>('');
+
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [currentConversationId, setCurrentConversationId] = useState<string>("");
   const [showConversationHistory, setShowConversationHistory] = useState(false);
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
-  
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  
+
   const wsRef = useRef<WebSocket | null>(null);
   const outputRef = useRef<HTMLDivElement>(null);
-  
+
   const [settings, setSettings] = useState<GenerationSettings>({
     temperature: 0.7,
     topP: 0.9,
@@ -97,24 +97,24 @@ const InferencePlayground: React.FC = () => {
 
   const fetchLoadedModels = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/inference/models/loaded');
+      const response = await fetch("http://localhost:8000/api/inference/models/loaded");
       const data = await response.json();
       setLoadedModels(data.models || []);
       if (data.models && data.models.length > 0 && !selectedModel) {
         setSelectedModel(data.models[0].model_id);
       }
     } catch (err) {
-      console.error('Error fetching loaded models:', err);
+      console.error("Error fetching loaded models:", err);
     }
   }, [selectedModel]);
-  
+
   const fetchConversations = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/inference/conversations');
+      const response = await fetch("http://localhost:8000/api/inference/conversations");
       const data = await response.json();
       setConversations(data);
     } catch (error) {
-      console.error('Error fetching conversations:', error);
+      console.error("Error fetching conversations:", error);
     }
   }, [setConversations]);
 
@@ -123,68 +123,68 @@ const InferencePlayground: React.FC = () => {
     fetchLoadedModels();
     fetchConversations();
   }, [fetchLoadedModels, fetchConversations]);
-  
+
   // Auto-scroll output
   useEffect(() => {
     if (outputRef.current) {
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
     }
   }, [output]);
-  
+
   const handleLoadModel = async () => {
     if (!modelToLoad) {
-      setError('Please enter a model ID');
+      setError("Please enter a model ID");
       return;
     }
-    
+
     setIsLoadingModel(true);
     setError(null);
-    
+
     try {
-      const response = await fetch('http://localhost:8000/api/inference/load', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("http://localhost:8000/api/inference/load", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model_id: modelToLoad,
           adapter_path: adapterPath || null,
           use_case: useCase,
         }),
       });
-      
+
       if (!response.ok) {
-        throw new Error('Failed to load model');
+        throw new Error("Failed to load model");
       }
-      
+
       const data = await response.json();
       setSuccess(`Model ${data.model_id} loaded successfully`);
       setSelectedModel(data.model_id);
       await fetchLoadedModels();
-      setModelToLoad('');
-      setAdapterPath('');
+      setModelToLoad("");
+      setAdapterPath("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load model');
+      setError(err instanceof Error ? err.message : "Failed to load model");
     } finally {
       setIsLoadingModel(false);
     }
   };
-  
+
   const handleUnloadModel = async (modelId: string) => {
     try {
       const response = await fetch(`http://localhost:8000/api/inference/models/${modelId}/unload`, {
-        method: 'POST',
+        method: "POST",
       });
-      
+
       if (!response.ok) {
-        throw new Error('Failed to unload model');
+        throw new Error("Failed to unload model");
       }
-      
+
       setSuccess(`Model ${modelId} unloaded`);
       if (selectedModel === modelId) {
-        setSelectedModel('');
+        setSelectedModel("");
       }
       await fetchLoadedModels();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to unload model');
+      setError(err instanceof Error ? err.message : "Failed to unload model");
     }
   };
 
@@ -211,19 +211,19 @@ const InferencePlayground: React.FC = () => {
 
   const handleGenerate = async () => {
     if (!selectedModel) {
-      setError('Please select a model first');
+      setError("Please select a model first");
       return;
     }
-    
+
     if (!prompt.trim()) {
-      setError('Please enter a prompt');
+      setError("Please enter a prompt");
       return;
     }
-    
+
     setIsGenerating(true);
-    setOutput('');
+    setOutput("");
     setError(null);
-    
+
     try {
       if (useStreaming) {
         // Use WebSocket for streaming
@@ -232,49 +232,51 @@ const InferencePlayground: React.FC = () => {
         // Use REST API for non-streaming
         await generateWithoutStreaming();
       }
-      
+
       // Save to conversation if we have a conversation ID
       if (currentConversationId) {
-        await saveToConversation('user', prompt);
-        await saveToConversation('assistant', output);
+        await saveToConversation("user", prompt);
+        await saveToConversation("assistant", output);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate response');
+      setError(err instanceof Error ? err.message : "Failed to generate response");
     } finally {
       setIsGenerating(false);
     }
   };
-  
+
   const generateWithStreaming = async () => {
     return new Promise<void>((resolve, reject) => {
-      const ws = new WebSocket('ws://localhost:8000/api/inference/stream');
+      const ws = new WebSocket("ws://localhost:8000/api/inference/stream");
       wsRef.current = ws;
-      
-      let generatedText = '';
+
+      let generatedText = "";
       let tokenCount = 0;
       const startTime = Date.now();
-      
+
       ws.onopen = () => {
-        ws.send(JSON.stringify({
-          model_id: selectedModel,
-          prompt: prompt,
-          max_tokens: settings.maxTokens,
-          temperature: settings.temperature,
-          top_p: settings.topP,
-          top_k: settings.topK,
-          repetition_penalty: settings.repetitionPenalty,
-          stream: true,
-        }));
+        ws.send(
+          JSON.stringify({
+            model_id: selectedModel,
+            prompt: prompt,
+            max_tokens: settings.maxTokens,
+            temperature: settings.temperature,
+            top_p: settings.topP,
+            top_k: settings.topK,
+            repetition_penalty: settings.repetitionPenalty,
+            stream: true,
+          })
+        );
       };
-      
+
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        
-        if (data.type === 'token') {
+
+        if (data.type === "token") {
           generatedText += data.token;
           tokenCount++;
           setOutput(generatedText);
-          
+
           // Update stats in real-time
           const elapsed = (Date.now() - startTime) / 1000;
           setGenerationStats({
@@ -282,7 +284,7 @@ const InferencePlayground: React.FC = () => {
             time: elapsed,
             speed: tokenCount / elapsed,
           });
-        } else if (data.type === 'complete') {
+        } else if (data.type === "complete") {
           const elapsed = (Date.now() - startTime) / 1000;
           setGenerationStats({
             tokens: data.total_tokens || tokenCount,
@@ -291,27 +293,27 @@ const InferencePlayground: React.FC = () => {
           });
           ws.close();
           resolve();
-        } else if (data.type === 'error') {
+        } else if (data.type === "error") {
           reject(new Error(data.error));
           ws.close();
         }
       };
-      
+
       ws.onerror = () => {
-        reject(new Error('WebSocket error'));
+        reject(new Error("WebSocket error"));
         ws.close();
       };
-      
+
       ws.onclose = () => {
         wsRef.current = null;
       };
     });
   };
-  
+
   const generateWithoutStreaming = async () => {
-    const response = await fetch('http://localhost:8000/api/inference/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("http://localhost:8000/api/inference/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         model_id: selectedModel,
         prompt: prompt,
@@ -322,11 +324,11 @@ const InferencePlayground: React.FC = () => {
         repetition_penalty: settings.repetitionPenalty,
       }),
     });
-    
+
     if (!response.ok) {
-      throw new Error('Failed to generate response');
+      throw new Error("Failed to generate response");
     }
-    
+
     const data = await response.json();
     setOutput(data.response);
     setGenerationStats({
@@ -335,14 +337,14 @@ const InferencePlayground: React.FC = () => {
       speed: data.tokens_per_second,
     });
   };
-  
-  const saveToConversation = async (role: 'user' | 'assistant', content: string) => {
+
+  const saveToConversation = async (role: "user" | "assistant", content: string) => {
     if (!currentConversationId) return;
-    
+
     try {
-      await fetch('http://localhost:8000/api/inference/conversation/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("http://localhost:8000/api/inference/conversation/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           conversation_id: currentConversationId,
           role,
@@ -351,31 +353,33 @@ const InferencePlayground: React.FC = () => {
           use_case: useCase,
         }),
       });
-      
+
       // Refresh conversation
       await loadConversation(currentConversationId);
     } catch (error) {
-      console.error('Error saving to conversation:', error);
+      console.error("Error saving to conversation:", error);
     }
   };
-  
+
   const loadConversation = async (conversationId: string) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/inference/conversation/${conversationId}`);
+      const response = await fetch(
+        `http://localhost:8000/api/inference/conversation/${conversationId}`
+      );
       const data = await response.json();
       setConversationMessages(data.messages);
     } catch (error) {
-      console.error('Error loading conversation:', error);
+      console.error("Error loading conversation:", error);
     }
   };
-  
+
   const startNewConversation = () => {
     const newId = `conv_${Date.now()}`;
     setCurrentConversationId(newId);
     setConversationMessages([]);
-    setSuccess('Started new conversation');
+    setSuccess("Started new conversation");
   };
-  
+
   // Conversation deletion functionality (currently unused)
   // const deleteConversation = async (conversationId: string) => {
   //   try {
@@ -420,7 +424,7 @@ const InferencePlayground: React.FC = () => {
           Test your fine-tuned models with custom prompts and streaming responses
         </p>
       </div>
-      
+
       {/* Alerts */}
       {error && (
         <div className="card bg-red-500/10 border-red-500/50 flex items-start gap-12">
@@ -433,7 +437,7 @@ const InferencePlayground: React.FC = () => {
           </button>
         </div>
       )}
-      
+
       {success && (
         <div className="card bg-green-500/10 border-green-500/50 flex items-start gap-12">
           <CheckCircle size={20} className="text-green-500 flex-shrink-0 mt-2" />
@@ -445,7 +449,7 @@ const InferencePlayground: React.FC = () => {
           </button>
         </div>
       )}
-      
+
       {/* Model Loading Section */}
       <div className="card">
         <h2 className="text-h3 mb-16">Load Model</h2>
@@ -514,7 +518,7 @@ const InferencePlayground: React.FC = () => {
             <RefreshCw size={16} />
           </button>
         </div>
-        
+
         {loadedModels.length === 0 ? (
           <div className="text-center py-32 text-dark-text-tertiary">
             <Sparkles size={48} className="mx-auto mb-16 opacity-50" />
@@ -527,10 +531,10 @@ const InferencePlayground: React.FC = () => {
               <div
                 key={model.model_id}
                 className={cn(
-                  'p-16 rounded-lg border-2 transition-all',
+                  "p-16 rounded-lg border-2 transition-all",
                   selectedModel === model.model_id
-                    ? 'border-accent-primary bg-accent-primary/10'
-                    : 'border-dark-border bg-dark-bg-tertiary'
+                    ? "border-accent-primary bg-accent-primary/10"
+                    : "border-dark-border bg-dark-bg-tertiary"
                 )}
               >
                 <div className="flex items-start justify-between mb-8">
@@ -571,21 +575,19 @@ const InferencePlayground: React.FC = () => {
             return (
               <button
                 key={tmpl.id}
-                onClick={() => setTemplate(tmpl.id as 'chat' | 'completion' | 'instruct')}
+                onClick={() => setTemplate(tmpl.id as "chat" | "instruct" | "raw")}
                 className={cn(
                   "flex-1 p-16 rounded-lg border-2 transition-all",
                   template === tmpl.id
                     ? "border-accent-primary bg-accent-primary/10"
-                    : "border-dark-border bg-dark-bg-tertiary hover:border-dark-border/50",
+                    : "border-dark-border bg-dark-bg-tertiary hover:border-dark-border/50"
                 )}
               >
                 <Icon
                   size={24}
                   className={cn(
                     "mb-8",
-                    template === tmpl.id
-                      ? "text-accent-primary"
-                      : "text-dark-text-tertiary",
+                    template === tmpl.id ? "text-accent-primary" : "text-dark-text-tertiary"
                   )}
                 />
                 <div className="text-body font-medium mb-4">{tmpl.label}</div>
@@ -628,7 +630,7 @@ const InferencePlayground: React.FC = () => {
               )}
             </div>
           </div>
-          
+
           <div className="card">
             <div className="flex items-center justify-between mb-16">
               <h2 className="text-h3">Prompt Input</h2>
@@ -651,8 +653,8 @@ const InferencePlayground: React.FC = () => {
                 onClick={handleGenerate}
                 disabled={!prompt || isGenerating || !selectedModel}
                 className={cn(
-                  'btn-primary flex-1 flex items-center justify-center gap-8',
-                  (isGenerating || !selectedModel) && 'opacity-50 cursor-not-allowed'
+                  "btn-primary flex-1 flex items-center justify-center gap-8",
+                  (isGenerating || !selectedModel) && "opacity-50 cursor-not-allowed"
                 )}
               >
                 {isGenerating ? (
@@ -671,7 +673,7 @@ const InferencePlayground: React.FC = () => {
               <button onClick={handleReset} className="btn-ghost">
                 <RotateCcw size={16} />
               </button>
-              
+
               <label className="flex items-center gap-8 text-small text-dark-text-secondary cursor-pointer">
                 <input
                   type="checkbox"
@@ -681,12 +683,12 @@ const InferencePlayground: React.FC = () => {
                 />
                 Stream
               </label>
-              
+
               <button
                 onClick={() => setShowSettings(!showSettings)}
                 className={cn(
                   "btn-ghost",
-                  showSettings && "bg-accent-primary/10 text-accent-primary",
+                  showSettings && "bg-accent-primary/10 text-accent-primary"
                 )}
               >
                 <Settings size={16} />
@@ -703,9 +705,7 @@ const InferencePlayground: React.FC = () => {
                 {/* Temperature */}
                 <div>
                   <div className="flex items-center justify-between mb-8">
-                    <label className="text-small text-dark-text-secondary">
-                      Temperature
-                    </label>
+                    <label className="text-small text-dark-text-secondary">Temperature</label>
                     <span className="text-small font-mono text-accent-primary">
                       {settings.temperature}
                     </span>
@@ -733,9 +733,7 @@ const InferencePlayground: React.FC = () => {
                 {/* Top P */}
                 <div>
                   <div className="flex items-center justify-between mb-8">
-                    <label className="text-small text-dark-text-secondary">
-                      Top P
-                    </label>
+                    <label className="text-small text-dark-text-secondary">Top P</label>
                     <span className="text-small font-mono text-accent-primary">
                       {settings.topP}
                     </span>
@@ -759,9 +757,7 @@ const InferencePlayground: React.FC = () => {
                 {/* Top K */}
                 <div>
                   <div className="flex items-center justify-between mb-8">
-                    <label className="text-small text-dark-text-secondary">
-                      Top K
-                    </label>
+                    <label className="text-small text-dark-text-secondary">Top K</label>
                     <input
                       type="number"
                       value={settings.topK}
@@ -779,9 +775,7 @@ const InferencePlayground: React.FC = () => {
                 {/* Max Tokens */}
                 <div>
                   <div className="flex items-center justify-between mb-8">
-                    <label className="text-small text-dark-text-secondary">
-                      Max Tokens
-                    </label>
+                    <label className="text-small text-dark-text-secondary">Max Tokens</label>
                     <input
                       type="number"
                       value={settings.maxTokens}
@@ -864,7 +858,7 @@ const InferencePlayground: React.FC = () => {
                 </div>
               )}
             </div>
-            
+
             <div
               ref={outputRef}
               className="min-h-[400px] max-h-[600px] overflow-y-auto bg-dark-bg-tertiary border border-dark-border rounded-lg p-16"
@@ -881,7 +875,7 @@ const InferencePlayground: React.FC = () => {
                   <Sparkles size={48} className="mb-16 opacity-50" />
                   <p className="text-body">Generated output will appear here</p>
                   <p className="text-small mt-8">
-                    {selectedModel ? 'Click "Generate" to start' : 'Load a model first'}
+                    {selectedModel ? 'Click "Generate" to start' : "Load a model first"}
                   </p>
                 </div>
               )}
@@ -912,7 +906,7 @@ const InferencePlayground: React.FC = () => {
               </div>
             )}
           </div>
-          
+
           {/* Conversation History */}
           {showConversationHistory && conversationMessages.length > 0 && (
             <div className="card animate-scale-in">
@@ -922,10 +916,10 @@ const InferencePlayground: React.FC = () => {
                   <div
                     key={idx}
                     className={cn(
-                      'p-12 rounded-lg',
-                      msg.role === 'user'
-                        ? 'bg-accent-primary/10 border border-accent-primary/30'
-                        : 'bg-dark-bg-tertiary border border-dark-border'
+                      "p-12 rounded-lg",
+                      msg.role === "user"
+                        ? "bg-accent-primary/10 border border-accent-primary/30"
+                        : "bg-dark-bg-tertiary border border-dark-border"
                     )}
                   >
                     <div className="flex items-center gap-8 mb-8">

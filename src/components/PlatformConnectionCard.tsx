@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface Platform {
   name: string;
@@ -35,7 +35,7 @@ interface PlatformConnectionCardProps {
 
 /**
  * Platform Connection Card Component
- * 
+ *
  * Displays platform information and connection status with action buttons.
  * Validates: Requirements 1.1, 1.4
  */
@@ -45,45 +45,45 @@ export const PlatformConnectionCard: React.FC<PlatformConnectionCardProps> = ({
   onConnect,
   onDisconnect,
   onVerify,
-  onEdit
+  onEdit,
 }) => {
-  const isConnected = connection?.status === 'connected';
-  const isError = connection?.status === 'error';
-  const isVerifying = connection?.status === 'verifying';
+  const isConnected = connection?.status === "connected";
+  const isError = connection?.status === "error";
+  const isVerifying = connection?.status === "verifying";
 
   const getStatusColor = () => {
-    if (isConnected) return 'bg-green-100 text-green-800 border-green-200';
-    if (isError) return 'bg-red-100 text-red-800 border-red-200';
-    if (isVerifying) return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    return 'bg-gray-100 text-gray-800 border-gray-200';
+    if (isConnected) return "bg-green-100 text-green-800 border-green-200";
+    if (isError) return "bg-red-100 text-red-800 border-red-200";
+    if (isVerifying) return "bg-yellow-100 text-yellow-800 border-yellow-200";
+    return "bg-gray-100 text-gray-800 border-gray-200";
   };
 
   const getStatusText = () => {
-    if (isConnected) return 'Connected';
-    if (isError) return 'Error';
-    if (isVerifying) return 'Verifying...';
-    return 'Not Connected';
+    if (isConnected) return "Connected";
+    if (isError) return "Error";
+    if (isVerifying) return "Verifying...";
+    return "Not Connected";
   };
 
   const getStatusIcon = () => {
-    if (isConnected) return '✓';
-    if (isError) return '✗';
-    if (isVerifying) return '⟳';
-    return '○';
+    if (isConnected) return "✓";
+    if (isError) return "✗";
+    if (isVerifying) return "⟳";
+    return "○";
   };
 
   const formatDate = (dateString?: string) => {
-    if (!dateString) return 'Never';
+    if (!dateString) return "Never";
     const date = new Date(dateString);
     return date.toLocaleString();
   };
 
   const getFeatureIcons = () => {
     const features = [];
-    if (platform.supports_training) features.push({ icon: '🎓', label: 'Training' });
-    if (platform.supports_inference) features.push({ icon: '🤖', label: 'Inference' });
-    if (platform.supports_registry) features.push({ icon: '📦', label: 'Registry' });
-    if (platform.supports_tracking) features.push({ icon: '📊', label: 'Tracking' });
+    if (platform.supports_training) features.push({ icon: "🎓", label: "Training" });
+    if (platform.supports_inference) features.push({ icon: "🤖", label: "Inference" });
+    if (platform.supports_registry) features.push({ icon: "📦", label: "Registry" });
+    if (platform.supports_tracking) features.push({ icon: "📊", label: "Tracking" });
     return features;
   };
 
@@ -93,12 +93,8 @@ export const PlatformConnectionCard: React.FC<PlatformConnectionCardProps> = ({
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900">
-              {platform.display_name}
-            </h3>
-            <p className="text-sm text-gray-600 mt-1">
-              {platform.description}
-            </p>
+            <h3 className="text-lg font-semibold text-gray-900">{platform.display_name}</h3>
+            <p className="text-sm text-gray-600 mt-1">{platform.description}</p>
           </div>
           <div className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor()}`}>
             <span className="mr-1">{getStatusIcon()}</span>
@@ -110,7 +106,7 @@ export const PlatformConnectionCard: React.FC<PlatformConnectionCardProps> = ({
       {/* Features */}
       <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
         <div className="flex flex-wrap gap-2">
-          {getFeatureIcons().map(feature => (
+          {getFeatureIcons().map((feature) => (
             <div
               key={feature.label}
               className="flex items-center gap-1 px-2 py-1 bg-white rounded text-xs text-gray-700 border border-gray-200"
