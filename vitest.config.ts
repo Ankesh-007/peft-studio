@@ -14,7 +14,7 @@ export default defineConfig({
     },
     maxConcurrency: 5,
     coverage: {
-      provider: 'v8',
+      provider: 'istanbul',
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage',
       all: true,

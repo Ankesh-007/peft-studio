@@ -331,14 +331,16 @@
   - Verify all checks pass in CI
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
-- [-] 12.1 Commit and push fixes
+- [x] 12.1 Commit and push fixes
+
 
   - Stage all changes: `git add .`
   - Commit with message: "fix: resolve CI pipeline failures - add module type and fix dependencies"
   - Push to branch: `git push`
   - _Requirements: 9.1_
 
-- [ ] 12.2 Monitor GitHub Actions workflow
+- [-] 12.2 Monitor GitHub Actions workflow
+
   - Open GitHub Actions tab in browser
   - Watch workflow run in real-time
   - Check each job as it completes
