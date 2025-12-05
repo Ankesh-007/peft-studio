@@ -8,9 +8,13 @@
  * Requirements: 1.1, 1.2, 1.3, 1.4, 1.5
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Colors for console output
 const colors = {
@@ -150,6 +154,99 @@ function checkPrerequisites() {
   
   logSuccess('Prerequisites check complete');
   return { success: true, checks };
+}
+
+/**
+ * Verify build environment (Python, PyInstaller)
+ * Requirements: 9.1, 9.2, 9.3, 9.4, 9.5
+ */
+function verifyBuildEnvironment() {
+  log('\n=== Verifying Build Environment ===', colors.bright);
+  
+  const result = exec('node scripts/verify-build-environment.js');
+  
+  if (!result.success) {
+    logError('Build environment verification failed');
+    logError('Please install the required dependencies and try again');
+    return { success: false, error: result.error };
+  }
+  
+  logSuccess('Build environment verified');
+  return { success: true };
+}
+
+/**
+ * Build backend executable using PyInstaller
+ * Requirements: 6.1, 6.2, 6.3, 6.4
+ */
+function buildBackend() {
+  log('\n=== Building Backend ===', colors.bright);
+  
+  const startTime = Date.now();
+  const result = exec('npm run build:backend');
+  const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+  
+  if (!result.success) {
+    logError('Backend build failed', result.error);
+    return { success: false, error: result.error, duration };
+  }
+  
+  logSuccess(`Backend build complete (${duration}s)`);
+  return { success: true, duration };
+}
+
+/**
+ * Verify backend executable was built correctly
+ * Requirements: 6.2, 6.3
+ */
+function verifyBackendBuild() {
+  log('\n=== Verifying Backend Build ===', colors.bright);
+  
+  const result = exec('npm run build:backend:verify');
+  
+  if (!result.success) {
+    logError('Backend build verification failed');
+    logError('The backend executable may be missing or corrupted');
+    return { success: false, error: result.error };
+  }
+  
+  logSuccess('Backend build verified');
+  return { success: true };
+}
+
+/**
+ * Collect backend artifacts
+ * Requirements: 6.4
+ */
+function collectBackendArtifacts() {
+  log('\n=== Collecting Backend Artifacts ===', colors.bright);
+  
+  const platform = process.platform;
+  const exeName = platform === 'win32' ? 'peft_engine.exe' : 'peft_engine';
+  const backendDistPath = path.join(__dirname, '../backend/dist');
+  const exePath = path.join(backendDistPath, exeName);
+  
+  if (!fs.existsSync(exePath)) {
+    logWarning('Backend executable not found');
+    return { artifacts: [], totalSize: 0 };
+  }
+  
+  const stats = fs.statSync(exePath);
+  const artifact = {
+    filename: exeName,
+    path: exePath,
+    size: stats.size,
+    type: 'backend-executable',
+    platform: platform,
+    format: platform === 'win32' ? 'EXE' : 'Binary',
+  };
+  
+  logSuccess(`Collected backend executable: ${exeName} (${formatSize(stats.size)})`);
+  
+  return {
+    artifacts: [artifact],
+    totalSize: stats.size,
+  };
 }
 
 /**
@@ -648,13 +745,34 @@ function generateSizeReport(baseDir = null) {
  * @param {Array} buildResults - Build results for each platform
  * @param {Object} verification - Verification results
  * @param {number} startTime - Build start timestamp
+ * @param {Object} backendResult - Backend build result (optional)
  * @param {string} baseDir - Optional base directory (for testing)
  */
-function generateBuildReport(buildResults, verification, startTime, baseDir = null) {
+function generateBuildReport(buildResults, verification, startTime, backendResult = null, baseDir = null) {
   log('\n=== Build Report ===', colors.bright);
   
   const duration = ((Date.now() - startTime) / 1000).toFixed(2);
   const { artifacts, totalSize } = collectArtifacts(baseDir);
+  const backendArtifacts = collectBackendArtifacts();
+  
+  // Backend build result
+  if (backendResult) {
+    log('\nBackend Build Result:', colors.bright);
+    const symbol = backendResult.success ? '✓' : '✗';
+    const color = backendResult.success ? colors.green : colors.red;
+    const status = backendResult.success ? 'success' : 'failed';
+    log(`  ${symbol} Backend: ${status} (${backendResult.duration || 0}s)`, color);
+    
+    // Backend artifacts
+    if (backendArtifacts.artifacts.length > 0) {
+      log('\nBackend Artifacts:', colors.bright);
+      for (const artifact of backendArtifacts.artifacts) {
+        log(`  - ${artifact.filename}`, colors.cyan);
+        log(`    Type: ${artifact.type}, Format: ${artifact.format}`, colors.cyan);
+        log(`    Size: ${formatSize(artifact.size)}`, colors.cyan);
+      }
+    }
+  }
   
   // Platform results
   log('\nPlatform Build Results:', colors.bright);
@@ -680,8 +798,11 @@ function generateBuildReport(buildResults, verification, startTime, baseDir = nu
   
   // Summary
   log('\nSummary:', colors.bright);
-  log(`  Total artifacts: ${artifacts.length}`);
-  log(`  Total size: ${formatSize(totalSize)}`);
+  log(`  Backend artifacts: ${backendArtifacts.artifacts.length}`);
+  log(`  Backend size: ${formatSize(backendArtifacts.totalSize)}`);
+  log(`  Installer artifacts: ${artifacts.length}`);
+  log(`  Installer size: ${formatSize(totalSize)}`);
+  log(`  Total size: ${formatSize(totalSize + backendArtifacts.totalSize)}`);
   log(`  Build duration: ${duration}s`);
   log(`  Verification: ${verification.valid ? 'PASSED' : 'FAILED'}`, 
       verification.valid ? colors.green : colors.yellow);
@@ -692,10 +813,13 @@ function generateBuildReport(buildResults, verification, startTime, baseDir = nu
   
   return {
     duration,
-    artifactCount: artifacts.length,
-    totalSize,
+    artifactCount: artifacts.length + backendArtifacts.artifacts.length,
+    totalSize: totalSize + backendArtifacts.totalSize,
+    backendSize: backendArtifacts.totalSize,
+    installerSize: totalSize,
     verification,
     buildResults,
+    backendResult,
   };
 }
 
@@ -730,6 +854,27 @@ function main() {
     process.exit(1);
   }
   
+  // Verify build environment (Python, PyInstaller) before building backend
+  const buildEnvResult = verifyBuildEnvironment();
+  if (!buildEnvResult.success) {
+    process.exit(1);
+  }
+  
+  // Build backend before frontend
+  // Requirements: 6.1, 6.2, 6.3, 6.4
+  const backendResult = buildBackend();
+  if (!backendResult.success) {
+    logError('Backend build failed - cannot proceed with packaging');
+    process.exit(1);
+  }
+  
+  // Verify backend executable before proceeding
+  const backendVerifyResult = verifyBackendBuild();
+  if (!backendVerifyResult.success) {
+    logError('Backend verification failed - cannot proceed with packaging');
+    process.exit(1);
+  }
+  
   const frontendResult = buildFrontend();
   if (!frontendResult.success) {
     process.exit(1);
@@ -758,7 +903,7 @@ function main() {
   const sizeReport = generateSizeReport();
   
   // Generate report
-  const report = generateBuildReport(buildResults, verification, startTime);
+  const report = generateBuildReport(buildResults, verification, startTime, backendResult);
   
   // Determine exit status
   const allSuccess = buildResults.every(r => r.success || r.skipped);
@@ -779,25 +924,27 @@ function main() {
 }
 
 // Export functions for testing
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    BUILD_CONFIG,
-    checkPrerequisites,
-    buildFrontend,
-    buildPlatform,
-    buildAllPlatforms,
-    collectArtifacts,
-    verifyBuildOutputs,
-    generateBuildReport,
-    formatSize,
-    verifyCompressionConfig,
-    verifyDependencyExclusion,
-    validateInstallerSizes,
-    generateSizeReport,
-  };
-}
+export {
+  BUILD_CONFIG,
+  checkPrerequisites,
+  verifyBuildEnvironment,
+  buildBackend,
+  verifyBackendBuild,
+  collectBackendArtifacts,
+  buildFrontend,
+  buildPlatform,
+  buildAllPlatforms,
+  collectArtifacts,
+  verifyBuildOutputs,
+  generateBuildReport,
+  formatSize,
+  verifyCompressionConfig,
+  verifyDependencyExclusion,
+  validateInstallerSizes,
+  generateSizeReport,
+};
 
 // Run main if executed directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main();
 }

@@ -10,6 +10,15 @@
     "build:no-check": "vite build",
     "build:analyze": "npm run build && open dist/stats.html",
     "build:electron": "npm run build && electron-builder --dir",
+    "build:frontend": "tsc && vite build",
+    "build:backend": "npm run verify:build-env && cd backend && pyinstaller peft_engine.spec --clean",
+    "build:backend:win": "npm run verify:build-env && cd backend && pyinstaller peft_engine.spec --clean",
+    "build:backend:mac": "npm run verify:build-env && cd backend && pyinstaller peft_engine.spec --clean",
+    "build:backend:linux": "npm run verify:build-env && cd backend && pyinstaller peft_engine.spec --clean",
+    "build:backend:verify": "node scripts/verify-backend-build.js",
+    "build:all": "npm run build:backend && npm run build:backend:verify && npm run build:frontend",
+    "verify:build-env": "node scripts/verify-build-environment.js",
+    "verify:final": "node scripts/verify-final-release.js",
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest --run",
@@ -43,6 +52,7 @@
     "dist:linux": "node scripts/build.js linux",
     "verify:build": "node scripts/verify-build-config.js",
     "verify:build-outputs": "node scripts/verify-build-outputs.js",
+    "verify:code-signing": "node scripts/verify-code-signing.js",
     "generate:checksums": "node scripts/generate-checksums.js",
     "prepare:release": "pwsh -File scripts/prepare-release.ps1",
     "prepare:release:dry": "pwsh -File scripts/prepare-release.ps1 -DryRun",
@@ -130,11 +140,18 @@
     "directories": {
       "output": "release"
     },
+    "extraResources": [
+      {
+        "from": "backend/dist/peft_engine${/*}",
+        "to": "backend",
+        "filter": ["peft_engine*"]
+      }
+    ],
     "files": [
       "dist/**/*",
       "electron/**/*",
-      "backend/**/*",
-      "package.json"
+      "package.json",
+      "!backend/**/*"
     ],
     "publish": {
       "provider": "github",
@@ -159,6 +176,7 @@
       "publisherName": "PEFT Studio",
       "verifyUpdateCodeSignature": false,
       "sign": "./scripts/sign-windows.js",
+      "requestedExecutionLevel": "asInvoker",
       "artifactName": "${productName}-Setup-${version}.${ext}",
       "fileAssociations": [
         {

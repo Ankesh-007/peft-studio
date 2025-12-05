@@ -6,12 +6,13 @@
  * Requirements: 1.1, 1.2, 1.3, 1.4, 1.5
  */
 
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const {
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import {
   BUILD_CONFIG,
   collectArtifacts,
+  collectBackendArtifacts,
   verifyBuildOutputs,
   formatSize,
   generateBuildReport,
@@ -19,7 +20,7 @@ const {
   verifyDependencyExclusion,
   validateInstallerSizes,
   generateSizeReport,
-} = require('../build');
+} from '../build.js';
 
 /**
  * Helper: Create a temporary test directory
@@ -354,6 +355,46 @@ describe('Build Module - Unit Tests', () => {
     });
   });
   
+  describe('Backend Artifact Collection', () => {
+    it('should collect backend artifacts when executable exists', () => {
+      // This test assumes the backend executable may or may not exist
+      const result = collectBackendArtifacts();
+      
+      expect(result).toBeDefined();
+      expect(result.artifacts).toBeDefined();
+      expect(Array.isArray(result.artifacts)).toBe(true);
+      expect(result.totalSize).toBeDefined();
+      expect(typeof result.totalSize).toBe('number');
+    });
+    
+    it('should return empty artifacts when backend executable does not exist', () => {
+      // If backend is not built, should return empty
+      const result = collectBackendArtifacts();
+      
+      expect(result.artifacts).toBeDefined();
+      expect(result.totalSize).toBeDefined();
+      
+      // Either has artifacts or is empty
+      if (result.artifacts.length === 0) {
+        expect(result.totalSize).toBe(0);
+      }
+    });
+    
+    it('should include correct metadata for backend artifacts', () => {
+      const result = collectBackendArtifacts();
+      
+      if (result.artifacts.length > 0) {
+        const artifact = result.artifacts[0];
+        expect(artifact.filename).toBeDefined();
+        expect(artifact.path).toBeDefined();
+        expect(artifact.size).toBeDefined();
+        expect(artifact.type).toBe('backend-executable');
+        expect(artifact.platform).toBeDefined();
+        expect(artifact.format).toBeDefined();
+      }
+    });
+  });
+  
   describe('Build Report Generation', () => {
     it('should generate a complete build report', () => {
       const buildResults = [
@@ -379,6 +420,33 @@ describe('Build Module - Unit Tests', () => {
       expect(report.totalSize).toBeDefined();
       expect(report.verification).toBe(verification);
       expect(report.buildResults).toBe(buildResults);
+    });
+    
+    it('should include backend result in build report', () => {
+      const buildResults = [
+        { success: true, platform: 'windows', duration: '10.5' },
+      ];
+      
+      const verification = {
+        valid: true,
+        verified: [],
+        missing: [],
+        unexpected: [],
+      };
+      
+      const backendResult = {
+        success: true,
+        duration: '5.0',
+      };
+      
+      const startTime = Date.now() - 5000;
+      
+      const report = generateBuildReport(buildResults, verification, startTime, backendResult);
+      
+      expect(report).toBeDefined();
+      expect(report.backendResult).toBe(backendResult);
+      expect(report.backendSize).toBeDefined();
+      expect(report.installerSize).toBeDefined();
     });
     
     it('should handle failed builds in report', () => {

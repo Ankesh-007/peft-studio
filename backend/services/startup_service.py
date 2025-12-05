@@ -293,17 +293,33 @@ class StartupOptimizer:
         """
         self.metrics.finalize()
         
+        # Determine target based on mode (production vs development)
+        # Production bundled executables should start within 5 seconds
+        # Development mode has a 3-second target
+        import sys
+        is_bundled = getattr(sys, 'frozen', False)
+        target_time = 5.0 if is_bundled else 3.0
+        
         report = {
             "total_time": self.metrics.total_time,
-            "meets_target": self.metrics.total_time < 3.0,
-            "components": self.metrics.components,
+            "meets_target": self.metrics.total_time < target_time,
+            "target_time": target_time,
+            "mode": "production" if is_bundled else "development",
+            "phases": self.metrics.components,
             "recommendations": []
         }
         
         # Add recommendations based on metrics
-        if self.metrics.total_time > 3.0:
+        if self.metrics.total_time > target_time:
             report["recommendations"].append(
-                "Startup time exceeds 3-second target. Consider further optimization."
+                f"Startup time {self.metrics.total_time:.2f}s exceeds {target_time}s target. Consider further optimization."
+            )
+            
+            # Log detailed warning for slow startups
+            logger.warning(
+                f"SLOW STARTUP DETECTED: {self.metrics.total_time:.2f}s (target: {target_time}s)\n"
+                f"Mode: {'production' if is_bundled else 'development'}\n"
+                f"Components: {self.metrics.components}"
             )
         
         # Check individual components
@@ -312,6 +328,17 @@ class StartupOptimizer:
                 report["recommendations"].append(
                     f"Component '{component}' took {duration:.2f}s. Consider optimization."
                 )
+                logger.warning(f"Slow component: '{component}' took {duration:.2f}s")
+        
+        # Add performance insights
+        if self.metrics.total_time < target_time * 0.5:
+            report["performance_rating"] = "excellent"
+        elif self.metrics.total_time < target_time * 0.75:
+            report["performance_rating"] = "good"
+        elif self.metrics.total_time < target_time:
+            report["performance_rating"] = "acceptable"
+        else:
+            report["performance_rating"] = "needs_improvement"
         
         return report
 

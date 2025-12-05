@@ -265,9 +265,132 @@ spctl -a -vv "PEFT Studio.app"
 - [Apple Notarization](https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution)
 - [electron-builder Configuration](https://www.electron.build/configuration/configuration)
 
+## Backend Executable Code Signing
+
+### Overview
+
+PEFT Studio includes a bundled Python backend executable (`peft_engine.exe` on Windows, `peft_engine` on macOS/Linux) that must be properly signed along with the main application.
+
+### Windows Backend Signing
+
+The backend executable is automatically signed as part of the application bundle when code signing is configured:
+
+1. **Automatic Signing**: The backend executable in `extraResources/backend/` is signed by electron-builder
+2. **Certificate Requirements**: Same certificate used for the main application
+3. **Antivirus Compatibility**: Signed backend reduces false positives from Windows Defender and other antivirus software
+
+**Verification**:
+```powershell
+# Check backend executable signature
+Get-AuthenticodeSignature "resources\backend\peft_engine.exe"
+```
+
+### macOS Backend Signing
+
+The backend executable requires specific entitlements for proper operation:
+
+**Required Entitlements** (in `build/entitlements.mac.plist`):
+- `com.apple.security.cs.allow-jit` - Required for Python JIT compilation
+- `com.apple.security.cs.disable-library-validation` - Required for Python dynamic libraries
+- `com.apple.security.network.server` - Required for FastAPI server
+- `com.apple.security.network.client` - Required for API calls
+- `com.apple.security.files.user-selected.read-write` - Required for dataset access
+
+**Verification**:
+```bash
+# Check backend executable signature
+codesign -dv --verbose=4 "PEFT Studio.app/Contents/Resources/backend/peft_engine"
+
+# Verify entitlements
+codesign -d --entitlements - "PEFT Studio.app/Contents/Resources/backend/peft_engine"
+```
+
+### Linux Backend Signing
+
+Linux does not require code signing for the backend executable. However, ensure the executable has proper permissions:
+
+```bash
+# Verify executable permissions
+ls -la resources/backend/peft_engine
+
+# Should show: -rwxr-xr-x (executable)
+```
+
+### Antivirus Compatibility
+
+**Windows Defender**:
+- Signed executables are less likely to trigger SmartScreen warnings
+- PyInstaller-bundled executables may still trigger heuristic scans
+- Code signing significantly reduces false positives
+
+**macOS Gatekeeper**:
+- Notarized applications with signed backend executables pass Gatekeeper checks
+- Unsigned backend executables will cause the entire application to be blocked
+- Hardened runtime must be enabled for notarization
+
+**Best Practices**:
+1. Always sign the backend executable in production builds
+2. Test signed builds with antivirus software before release
+3. Submit false positives to antivirus vendors if they occur
+4. Document any known antivirus issues in release notes
+
+### Troubleshooting Backend Signing
+
+**Problem**: Backend executable is not signed
+- **Solution**: Verify `extraResources` configuration in `package.json` includes backend
+- **Solution**: Check that backend build completed before electron-builder runs
+- **Solution**: Ensure signing credentials are valid
+
+**Problem**: macOS Gatekeeper blocks backend executable
+- **Solution**: Verify entitlements include required permissions
+- **Solution**: Check that hardened runtime is enabled
+- **Solution**: Ensure application is notarized, not just signed
+
+**Problem**: Windows Defender flags backend executable
+- **Solution**: Verify executable is signed with valid certificate
+- **Solution**: Submit false positive report to Microsoft
+- **Solution**: Consider EV certificate for better reputation
+
+**Problem**: Backend fails to start after signing
+- **Solution**: Verify entitlements don't restrict required operations
+- **Solution**: Check that JIT compilation is allowed
+- **Solution**: Test with `codesign --verify --verbose` on macOS
+
+### Development vs Production
+
+**Development Builds** (unsigned):
+- Backend executable works without signing
+- May trigger antivirus warnings
+- Requires manual security exceptions on macOS
+
+**Production Builds** (signed):
+- Backend executable signed automatically
+- Reduced antivirus false positives
+- Passes Gatekeeper checks on macOS
+- Better user experience
+
+### CI/CD Integration
+
+The CI/CD pipeline automatically signs the backend executable when credentials are configured:
+
+```yaml
+# .github/workflows/build.yml
+- name: Build backend
+  run: npm run build:backend
+
+- name: Sign and package
+  env:
+    CSC_LINK: ${{ secrets.CSC_LINK }}
+    CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+  run: npm run package:win
+```
+
+The backend executable is signed as part of the application bundle, no separate signing step is required.
+
 ## Support
 
 If you encounter issues with code signing:
 1. Check the [Troubleshooting](#troubleshooting) section above
-2. Review the [electron-builder documentation](https://www.electron.build/code-signing)
-3. Open an issue on the [GitHub repository](https://github.com/Ankesh-007/peft-studio/issues)
+2. Review the [Backend Executable Code Signing](#backend-executable-code-signing) section
+3. Review the [electron-builder documentation](https://www.electron.build/code-signing)
+4. Open an issue on the [GitHub repository](https://github.com/Ankesh-007/peft-studio/issues)

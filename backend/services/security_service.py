@@ -652,7 +652,11 @@ def get_security_service() -> SecurityService:
     """Get or create the global security service instance"""
     global _security_service
     if _security_service is None:
+        import sys
         from pathlib import Path
-        audit_log_path = Path(__file__).parent.parent / "data" / "security_audit.log"
+        # Add parent directory to path to import runtime_paths
+        sys.path.insert(0, str(Path(__file__).parent.parent))
+        from runtime_paths import get_data_dir
+        audit_log_path = get_data_dir() / "security_audit.log"
         _security_service = SecurityService(audit_log_file=str(audit_log_path))
     return _security_service

@@ -1,19 +1,16 @@
 import os
 from pathlib import Path
+from runtime_paths import get_base_path, get_data_dir, get_models_dir, get_datasets_dir, get_checkpoints_dir, get_cache_dir
 
-# Base directories
-BASE_DIR = Path(__file__).parent
-DATA_DIR = BASE_DIR / "data"
-MODELS_DIR = DATA_DIR / "models"
-DATASETS_DIR = DATA_DIR / "datasets"
-CHECKPOINTS_DIR = DATA_DIR / "checkpoints"
-CACHE_DIR = DATA_DIR / "cache"
+# Base directories - use runtime path resolution for bundled executable support
+BASE_DIR = get_base_path()
+DATA_DIR = get_data_dir()
+MODELS_DIR = get_models_dir()
+DATASETS_DIR = get_datasets_dir()
+CHECKPOINTS_DIR = get_checkpoints_dir()
+CACHE_DIR = get_cache_dir()
 
-# Create directories if they don't exist
-for directory in [DATA_DIR, MODELS_DIR, DATASETS_DIR, CHECKPOINTS_DIR, CACHE_DIR]:
-    directory.mkdir(parents=True, exist_ok=True)
-
-# Database
+# Database - use data directory (writable location)
 DATABASE_URL = f"sqlite:///{DATA_DIR / 'peft_studio.db'}"
 
 # API Settings

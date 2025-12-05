@@ -1,0 +1,272 @@
+{
+  "timestamp": "2025-12-05T17:41:01.411Z",
+  "platform": "win32",
+  "arch": "x64",
+  "results": {
+    "passed": [
+      {
+        "category": "Files",
+        "test": "PyInstaller spec file exists",
+        "message": "D:\\New folder\\peft-studio-1\\backend\\peft_engine.spec"
+      },
+      {
+        "category": "Files",
+        "test": "Build hooks file exists",
+        "message": "D:\\New folder\\peft-studio-1\\backend\\build_hooks.py"
+      },
+      {
+        "category": "Files",
+        "test": "Runtime paths module exists",
+        "message": "D:\\New folder\\peft-studio-1\\backend\\runtime_paths.py"
+      },
+      {
+        "category": "Build Scripts",
+        "test": "Script \"build:backend\" exists",
+        "message": ""
+      },
+      {
+        "category": "Build Scripts",
+        "test": "Script \"build:backend:verify\" exists",
+        "message": ""
+      },
+      {
+        "category": "Build Scripts",
+        "test": "Script \"build:frontend\" exists",
+        "message": ""
+      },
+      {
+        "category": "Build Scripts",
+        "test": "Script \"build:all\" exists",
+        "message": ""
+      },
+      {
+        "category": "Files",
+        "test": "Backend build verification script exists",
+        "message": "D:\\New folder\\peft-studio-1\\scripts\\verify-backend-build.js"
+      },
+      {
+        "category": "Files",
+        "test": "Build environment verification script exists",
+        "message": "D:\\New folder\\peft-studio-1\\scripts\\verify-build-environment.js"
+      },
+      {
+        "category": "Files",
+        "test": "Main build script exists",
+        "message": "D:\\New folder\\peft-studio-1\\scripts\\build.js"
+      },
+      {
+        "category": "Files",
+        "test": "Electron main.js exists",
+        "message": "D:\\New folder\\peft-studio-1\\electron\\main.js"
+      },
+      {
+        "category": "Electron Config",
+        "test": "getBackendPath() method exists",
+        "message": ""
+      },
+      {
+        "category": "Electron Config",
+        "test": "Production mode detection exists",
+        "message": ""
+      },
+      {
+        "category": "Electron Config",
+        "test": "Resource path usage exists",
+        "message": ""
+      },
+      {
+        "category": "Electron Config",
+        "test": "Graceful shutdown (SIGTERM) exists",
+        "message": ""
+      },
+      {
+        "category": "Electron Config",
+        "test": "Force kill (SIGKILL) exists",
+        "message": ""
+      },
+      {
+        "category": "Electron Config",
+        "test": "extraResources configured",
+        "message": ""
+      },
+      {
+        "category": "Electron Config",
+        "test": "files configuration exists",
+        "message": ""
+      },
+      {
+        "category": "Files",
+        "test": "Test file: backend/tests/test_pyinstaller_dependency_inclusion.py",
+        "message": "D:\\New folder\\peft-studio-1\\backend\\tests\\test_pyinstaller_dependency_inclusion.py"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: backend/tests/test_data_file_bundling.py",
+        "message": "D:\\New folder\\peft-studio-1\\backend\\tests\\test_data_file_bundling.py"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: backend/tests/test_runtime_path_integration.py",
+        "message": "D:\\New folder\\peft-studio-1\\backend\\tests\\test_runtime_path_integration.py"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: backend/tests/test_python_import_resolution.py",
+        "message": "D:\\New folder\\peft-studio-1\\backend\\tests\\test_python_import_resolution.py"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: src/test/pbt/backend-path-resolution.pbt.test.ts",
+        "message": "D:\\New folder\\peft-studio-1\\src\\test\\pbt\\backend-path-resolution.pbt.test.ts"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: src/test/pbt/backend-process-cleanup.pbt.test.ts",
+        "message": "D:\\New folder\\peft-studio-1\\src\\test\\pbt\\backend-process-cleanup.pbt.test.ts"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: src/test/pbt/resource-path-accessibility.pbt.test.ts",
+        "message": "D:\\New folder\\peft-studio-1\\src\\test\\pbt\\resource-path-accessibility.pbt.test.ts"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: src/test/pbt/backend-error-message-specificity.pbt.test.ts",
+        "message": "D:\\New folder\\peft-studio-1\\src\\test\\pbt\\backend-error-message-specificity.pbt.test.ts"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: src/test/pbt/data-file-bundling.pbt.test.ts",
+        "message": "D:\\New folder\\peft-studio-1\\src\\test\\pbt\\data-file-bundling.pbt.test.ts"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: src/test/pbt/update-package-integrity.pbt.test.ts",
+        "message": "D:\\New folder\\peft-studio-1\\src\\test\\pbt\\update-package-integrity.pbt.test.ts"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: scripts/test/build-backend.test.js",
+        "message": "D:\\New folder\\peft-studio-1\\scripts\\test\\build-backend.test.js"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: scripts/test/verify-backend-build.pbt.test.js",
+        "message": "D:\\New folder\\peft-studio-1\\scripts\\test\\verify-backend-build.pbt.test.js"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: src/test/integration/backend-lifecycle-verification.test.ts",
+        "message": "D:\\New folder\\peft-studio-1\\src\\test\\integration\\backend-lifecycle-verification.test.ts"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: src/test/integration/backend-performance-verification.test.ts",
+        "message": "D:\\New folder\\peft-studio-1\\src\\test\\integration\\backend-performance-verification.test.ts"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: src/test/integration/code-signing-backend-integration.test.ts",
+        "message": "D:\\New folder\\peft-studio-1\\src\\test\\integration\\code-signing-backend-integration.test.ts"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: src/test/integration/platform-windows.test.ts",
+        "message": "D:\\New folder\\peft-studio-1\\src\\test\\integration\\platform-windows.test.ts"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: src/test/integration/platform-macos.test.ts",
+        "message": "D:\\New folder\\peft-studio-1\\src\\test\\integration\\platform-macos.test.ts"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: src/test/integration/platform-linux.test.ts",
+        "message": "D:\\New folder\\peft-studio-1\\src\\test\\integration\\platform-linux.test.ts"
+      },
+      {
+        "category": "Files",
+        "test": "Test file: src/test/e2e/bundled-backend-integration.e2e.test.ts",
+        "message": "D:\\New folder\\peft-studio-1\\src\\test\\e2e\\bundled-backend-integration.e2e.test.ts"
+      },
+      {
+        "category": "Files",
+        "test": "Documentation: docs/developer-guide/backend-bundling.md",
+        "message": "D:\\New folder\\peft-studio-1\\docs\\developer-guide\\backend-bundling.md"
+      },
+      {
+        "category": "Files",
+        "test": "Documentation: docs/developer-guide/backend-bundling-troubleshooting.md",
+        "message": "D:\\New folder\\peft-studio-1\\docs\\developer-guide\\backend-bundling-troubleshooting.md"
+      },
+      {
+        "category": "Files",
+        "test": "Documentation: docs/developer-guide/testing-bundled-backend.md",
+        "message": "D:\\New folder\\peft-studio-1\\docs\\developer-guide\\testing-bundled-backend.md"
+      },
+      {
+        "category": "Files",
+        "test": "Documentation: docs/developer-guide/release-with-bundled-backend.md",
+        "message": "D:\\New folder\\peft-studio-1\\docs\\developer-guide\\release-with-bundled-backend.md"
+      },
+      {
+        "category": "Files",
+        "test": "Documentation: docs/developer-guide/BACKEND_BUNDLING_INDEX.md",
+        "message": "D:\\New folder\\peft-studio-1\\docs\\developer-guide\\BACKEND_BUNDLING_INDEX.md"
+      },
+      {
+        "category": "Files",
+        "test": "Documentation: backend/BUILD_SYSTEM_README.md",
+        "message": "D:\\New folder\\peft-studio-1\\backend\\BUILD_SYSTEM_README.md"
+      },
+      {
+        "category": "Files",
+        "test": "CI workflow: .github/workflows/ci.yml",
+        "message": "D:\\New folder\\peft-studio-1\\.github\\workflows\\ci.yml"
+      },
+      {
+        "category": "Files",
+        "test": "CI workflow: .github/workflows/build.yml",
+        "message": "D:\\New folder\\peft-studio-1\\.github\\workflows\\build.yml"
+      },
+      {
+        "category": "CI Config",
+        "test": "Backend build step in build.yml",
+        "message": ""
+      }
+    ],
+    "failed": [
+      {
+        "category": "Files",
+        "test": "Backend executable exists",
+        "message": "Not found: D:\\New folder\\peft-studio-1\\backend\\dist\\peft_engine.exe"
+      },
+      {
+        "category": "Files",
+        "test": "Backend executable size is reasonable",
+        "message": "File not found: D:\\New folder\\peft-studio-1\\backend\\dist\\peft_engine.exe"
+      },
+      {
+        "category": "Files",
+        "test": "Windows .exe executable exists",
+        "message": "Not found: D:\\New folder\\peft-studio-1\\backend\\dist\\peft_engine.exe"
+      }
+    ],
+    "warnings": [],
+    "skipped": [
+      {
+        "category": "Tests",
+        "test": "Test execution",
+        "reason": "Run tests separately to verify functionality"
+      }
+    ]
+  },
+  "summary": {
+    "total": 49,
+    "passed": 46,
+    "failed": 3,
+    "warnings": 0,
+    "skipped": 1,
+    "passRate": 93.9
+  }
+}

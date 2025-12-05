@@ -24,6 +24,110 @@ class BackendServiceManager {
     this.isShuttingDown = false;
   }
 
+  /**
+   * Resolve the backend path based on development or production mode
+   * @returns {Promise<Object>} Object containing path information and execution details
+   */
+  async getBackendPath() {
+    const mode = app.isPackaged ? 'production' : 'development';
+    const platform = process.platform;
+    
+    log.info(`Resolving backend path - Mode: ${mode}, Platform: ${platform}`);
+    
+    if (app.isPackaged) {
+      // Production mode: use bundled executable
+      const exeName = platform === 'win32' ? 'peft_engine.exe' : 'peft_engine';
+      const backendPath = path.join(process.resourcesPath, 'backend', exeName);
+      
+      log.info(`Production mode - Backend executable path: ${backendPath}`);
+      
+      return {
+        mode: 'production',
+        executable: backendPath,
+        args: [],
+        platform
+      };
+    } else {
+      // Development mode: use Python script with system Python
+      const scriptPath = path.join(__dirname, '../backend/main.py');
+      const pythonCmd = await this.findPythonExecutable();
+      
+      log.info(`Development mode - Python: ${pythonCmd}, Script: ${scriptPath}`);
+      
+      return {
+        mode: 'development',
+        executable: pythonCmd,
+        args: [scriptPath],
+        platform
+      };
+    }
+  }
+
+  /**
+   * Get backend version information
+   * @param {string} backendPath - Path to backend executable or script
+   * @returns {Promise<Object>} Version information including app version and backend file info
+   */
+  async getBackendVersion(backendPath) {
+    const fs = require('fs');
+    const crypto = require('crypto');
+    
+    try {
+      const appVersion = app.getVersion();
+      
+      // If backend executable exists, get its file stats and checksum
+      if (fs.existsSync(backendPath)) {
+        const stats = fs.statSync(backendPath);
+        const fileBuffer = fs.readFileSync(backendPath);
+        const checksum = crypto.createHash('sha256').update(fileBuffer).digest('hex');
+        
+        return {
+          appVersion,
+          backendPath,
+          backendSize: stats.size,
+          backendModified: stats.mtime.toISOString(),
+          backendChecksum: checksum.substring(0, 16), // First 16 chars for logging
+          platform: process.platform,
+          mode: app.isPackaged ? 'production' : 'development'
+        };
+      } else {
+        return {
+          appVersion,
+          backendPath,
+          backendExists: false,
+          platform: process.platform,
+          mode: app.isPackaged ? 'production' : 'development'
+        };
+      }
+    } catch (error) {
+      log.warn('Failed to get backend version info:', error.message);
+      return {
+        appVersion: app.getVersion(),
+        error: error.message
+      };
+    }
+  }
+
+  /**
+   * Log structured error information for diagnostics
+   * @param {string} errorType - Type of error
+   * @param {string} errorMessage - Error message
+   * @param {Object} context - Additional context
+   */
+  logStructuredError(errorType, errorMessage, context = {}) {
+    const errorInfo = {
+      type: errorType,
+      message: errorMessage,
+      platform: process.platform,
+      mode: app.isPackaged ? 'production' : 'development',
+      timestamp: new Date().toISOString(),
+      ...context
+    };
+    
+    log.error('Backend Error:', JSON.stringify(errorInfo, null, 2));
+    return errorInfo;
+  }
+
   async start() {
     if (this.process) {
       log.info('Backend service already running');
@@ -35,19 +139,67 @@ class BackendServiceManager {
 
     try {
       const { spawn } = require('child_process');
-      const pythonPath = path.join(__dirname, '../backend/main.py');
       
-      // Try to find Python executable
-      const pythonCmd = await this.findPythonExecutable();
-      if (!pythonCmd) {
+      // Resolve backend path based on mode
+      const backendInfo = await this.getBackendPath();
+      
+      // In development mode, check if Python is available
+      if (backendInfo.mode === 'development' && !backendInfo.executable) {
         const error = 'Python 3.10+ is required but not found. Please install Python from python.org';
-        log.error(error);
+        this.logStructuredError('PYTHON_NOT_FOUND', error, {
+          mode: backendInfo.mode,
+          platform: backendInfo.platform
+        });
         this.sendStatusToRenderer('error', { error, code: 'PYTHON_NOT_FOUND' });
         return { running: false, error, code: 'PYTHON_NOT_FOUND' };
       }
+      
+      // In production mode, check if executable exists
+      if (backendInfo.mode === 'production') {
+        const fs = require('fs');
+        if (!fs.existsSync(backendInfo.executable)) {
+          const error = 'Backend executable not found. Installation may be corrupted. Please reinstall the application.';
+          this.logStructuredError('EXECUTABLE_NOT_FOUND', error, {
+            path: backendInfo.executable,
+            mode: backendInfo.mode,
+            platform: backendInfo.platform
+          });
+          this.sendStatusToRenderer('error', { error, code: 'EXECUTABLE_NOT_FOUND', path: backendInfo.executable });
+          return { running: false, error, code: 'EXECUTABLE_NOT_FOUND' };
+        }
+        
+        // On Unix systems, ensure executable has execute permissions
+        if (backendInfo.platform !== 'win32') {
+          try {
+            fs.accessSync(backendInfo.executable, fs.constants.X_OK);
+            log.info('Executable has proper execute permissions');
+          } catch (permError) {
+            log.warn('Executable lacks execute permission, attempting to fix...');
+            try {
+              fs.chmodSync(backendInfo.executable, 0o755);
+              log.info('Execute permission granted successfully');
+            } catch (chmodError) {
+              const error = 'Backend executable lacks execute permission. Please run: chmod +x ' + backendInfo.executable;
+              this.logStructuredError('PERMISSION_DENIED', error, {
+                path: backendInfo.executable,
+                mode: backendInfo.mode,
+                platform: backendInfo.platform,
+                chmodError: chmodError.message
+              });
+              this.sendStatusToRenderer('error', { error, code: 'PERMISSION_DENIED', path: backendInfo.executable });
+              return { running: false, error, code: 'PERMISSION_DENIED' };
+            }
+          }
+        }
+      }
 
-      // Start the Python process
-      this.process = spawn(pythonCmd, [pythonPath], {
+      // Log backend version information
+      const versionInfo = await this.getBackendVersion(backendInfo.executable);
+      log.info('Backend Version Information:', JSON.stringify(versionInfo, null, 2));
+      
+      // Start the backend process
+      log.info(`Spawning backend process: ${backendInfo.executable} ${backendInfo.args.join(' ')}`);
+      this.process = spawn(backendInfo.executable, backendInfo.args, {
         env: { ...process.env, PYTHONUNBUFFERED: '1' }
       });
 
@@ -57,8 +209,28 @@ class BackendServiceManager {
         
         // Check if backend is ready
         if (output.includes('Uvicorn running on') || output.includes('Application startup complete')) {
-          log.info('Backend service started successfully');
-          this.sendStatusToRenderer('ready', { port: this.port, pid: this.process.pid });
+          const startupTime = Date.now() - this.startTime.getTime();
+          const startupSeconds = (startupTime / 1000).toFixed(2);
+          
+          log.info(`Backend service started successfully in ${startupSeconds}s`);
+          
+          // Log performance warning if startup is slow
+          const targetTime = app.isPackaged ? 5000 : 3000; // 5s for production, 3s for development
+          if (startupTime > targetTime) {
+            log.warn(
+              `SLOW BACKEND STARTUP: ${startupSeconds}s exceeds ${targetTime/1000}s target\n` +
+              `Mode: ${app.isPackaged ? 'production' : 'development'}\n` +
+              `Platform: ${process.platform}\n` +
+              `Consider investigating performance bottlenecks`
+            );
+          }
+          
+          this.sendStatusToRenderer('ready', { 
+            port: this.port, 
+            pid: this.process.pid,
+            startupTime: startupTime,
+            startupSeconds: parseFloat(startupSeconds)
+          });
           this.startHealthChecks();
         }
       });
@@ -67,30 +239,63 @@ class BackendServiceManager {
         const error = data.toString();
         log.error(`Backend Error: ${error}`);
         
-        // Check for specific errors
+        // Check for specific errors and provide detailed messages
         if (error.includes('Address already in use') || error.includes('EADDRINUSE')) {
-          log.error(`Port ${this.port} is already in use`);
+          this.logStructuredError('PORT_IN_USE', `Port ${this.port} is already in use`, {
+            port: this.port,
+            stderr: error
+          });
           this.sendStatusToRenderer('error', { 
             error: `Port ${this.port} is in use. Trying alternative port...`,
-            code: 'PORT_IN_USE'
+            code: 'PORT_IN_USE',
+            port: this.port
           });
           this.tryAlternativePort();
         } else if (error.includes('ModuleNotFoundError') || error.includes('ImportError')) {
-          const missingModule = error.match(/No module named '(\w+)'/)?.[1] || 'unknown';
+          // Extract module name from error message
+          const moduleMatch = error.match(/No module named ['"]([\w.]+)['"]/);
+          const missingModule = moduleMatch ? moduleMatch[1] : 'unknown';
+          
+          const errorMessage = `Missing Python package: ${missingModule}. Please run: pip install -r requirements.txt`;
+          this.logStructuredError('MISSING_PACKAGE', errorMessage, {
+            missingModule,
+            stderr: error
+          });
           this.sendStatusToRenderer('error', {
-            error: `Missing Python package: ${missingModule}. Please run: pip install -r requirements.txt`,
+            error: errorMessage,
             code: 'MISSING_PACKAGE',
             missingModule
+          });
+        } else if (error.includes('Permission denied') || error.includes('EACCES')) {
+          const errorMessage = 'Permission denied accessing backend resources. Please check file permissions.';
+          this.logStructuredError('PERMISSION_ERROR', errorMessage, {
+            stderr: error
+          });
+          this.sendStatusToRenderer('error', {
+            error: errorMessage,
+            code: 'PERMISSION_ERROR'
+          });
+        } else {
+          // Generic error - still log it with structure
+          this.logStructuredError('BACKEND_ERROR', 'Backend process error', {
+            stderr: error
           });
         }
       });
 
       this.process.on('close', (code) => {
-        log.info(`Backend process exited with code ${code}`);
+        const uptime = this.startTime ? (Date.now() - this.startTime.getTime()) / 1000 : 0;
+        
+        this.logStructuredError('PROCESS_CLOSED', `Backend process exited with code ${code}`, {
+          exitCode: code,
+          uptime: `${uptime.toFixed(2)}s`,
+          isShuttingDown: this.isShuttingDown,
+          restartAttempts: this.restartAttempts
+        });
         
         if (!this.isShuttingDown && code !== 0) {
           log.warn('Backend crashed unexpectedly');
-          this.handleCrash();
+          this.handleCrash(code);
         }
         
         this.process = null;
@@ -98,10 +303,16 @@ class BackendServiceManager {
       });
 
       this.process.on('error', (err) => {
-        log.error('Failed to start backend process:', err);
+        const errorMessage = `Failed to start backend process. Please check the logs for details.`;
+        this.logStructuredError('PROCESS_START_FAILED', errorMessage, {
+          originalError: err.message,
+          errorCode: err.code,
+          errorStack: err.stack
+        });
         this.sendStatusToRenderer('error', {
-          error: err.message,
-          code: 'PROCESS_START_FAILED'
+          error: errorMessage,
+          code: 'PROCESS_START_FAILED',
+          details: err.message
         });
       });
 
@@ -168,10 +379,15 @@ class BackendServiceManager {
       }
     }
     
-    log.error('No available ports found in range 8000-8010');
+    const errorMessage = 'All ports 8000-8010 are in use. Please close other applications.';
+    this.logStructuredError('NO_AVAILABLE_PORTS', errorMessage, {
+      portRange: '8000-8010',
+      attemptedPorts: Array.from({ length: 11 }, (_, i) => 8000 + i)
+    });
     this.sendStatusToRenderer('error', {
-      error: 'All ports 8000-8010 are in use. Please close other applications.',
-      code: 'NO_AVAILABLE_PORTS'
+      error: errorMessage,
+      code: 'NO_AVAILABLE_PORTS',
+      portRange: '8000-8010'
     });
   }
 
@@ -262,23 +478,32 @@ class BackendServiceManager {
     }
   }
 
-  async handleCrash() {
+  async handleCrash(exitCode = null) {
     this.stopHealthChecks();
     
     if (this.restartAttempts < this.maxRestartAttempts) {
       this.restartAttempts++;
       log.info(`Attempting to restart backend (attempt ${this.restartAttempts}/${this.maxRestartAttempts})`);
-      this.sendStatusToRenderer('restarting', { attempt: this.restartAttempts });
+      this.sendStatusToRenderer('restarting', { 
+        attempt: this.restartAttempts,
+        maxAttempts: this.maxRestartAttempts
+      });
       
       // Wait a bit before restarting
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       await this.start();
     } else {
-      log.error('Max restart attempts reached. Backend service failed to start.');
+      const errorMessage = 'Backend service failed to start after multiple attempts. Please check the logs and try restarting the application.';
+      this.logStructuredError('MAX_RESTARTS_EXCEEDED', errorMessage, {
+        restartAttempts: this.restartAttempts,
+        maxRestartAttempts: this.maxRestartAttempts,
+        lastExitCode: exitCode
+      });
       this.sendStatusToRenderer('failed', {
-        error: 'Backend service failed to start after multiple attempts',
-        code: 'MAX_RESTARTS_EXCEEDED'
+        error: errorMessage,
+        code: 'MAX_RESTARTS_EXCEEDED',
+        attempts: this.restartAttempts
       });
     }
   }
@@ -317,6 +542,39 @@ class BackendServiceManager {
       pid: this.process?.pid,
       startTime: this.startTime,
       restartAttempts: this.restartAttempts
+    };
+  }
+
+  /**
+   * Get startup performance metrics
+   * @returns {Object} Startup metrics including time and mode
+   */
+  getStartupMetrics() {
+    if (!this.startTime) {
+      return {
+        available: false,
+        message: 'Backend has not been started yet'
+      };
+    }
+
+    const now = Date.now();
+    const uptime = now - this.startTime.getTime();
+    const uptimeSeconds = (uptime / 1000).toFixed(2);
+    const mode = app.isPackaged ? 'production' : 'development';
+    const targetTime = app.isPackaged ? 5000 : 3000;
+
+    return {
+      available: true,
+      startTime: this.startTime.toISOString(),
+      uptime: uptime,
+      uptimeSeconds: parseFloat(uptimeSeconds),
+      mode: mode,
+      platform: process.platform,
+      targetTime: targetTime,
+      meetsTarget: uptime < targetTime,
+      running: this.process !== null,
+      port: this.port,
+      pid: this.process?.pid
     };
   }
 

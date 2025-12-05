@@ -53,9 +53,26 @@ jobs:
           compression-level: 6
 
   build-backend:
-    name: Build Backend
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    name: Build Backend - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            executable: peft_engine
+            artifact_name: backend-linux
+          - os: windows-latest
+            platform: windows
+            executable: peft_engine.exe
+            artifact_name: backend-windows
+          - os: macos-latest
+            platform: mac
+            executable: peft_engine
+            artifact_name: backend-mac
     
     steps:
       - name: Checkout code
@@ -68,31 +85,66 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'backend/requirements.txt'
       
-      - name: Install dependencies
+      - name: Install dependencies and PyInstaller
         run: |
           cd backend
           pip install -r requirements.txt
+          pip install pyinstaller
+        shell: bash
+      
+      - name: Verify PyInstaller installation
+        run: pyinstaller --version
+        shell: bash
       
       - name: Verify backend imports
         run: |
           cd backend
           python test_imports.py
+        shell: bash
       
-      - name: Verify backend can start
+      - name: Build backend with PyInstaller
+        run: npm run build:backend
+        shell: bash
+        env:
+          PLATFORM: ${{ matrix.platform }}
+      
+      - name: Verify backend build
+        run: node scripts/verify-backend-build.js
+        shell: bash
+      
+      - name: List backend build output
         run: |
-          cd backend
-          python -c "import main; print('Backend imports successful')"
+          echo "Backend build output:"
+          ls -lah backend/dist/ || echo "No backend/dist directory"
+          if [ -f "backend/dist/${{ matrix.executable }}" ]; then
+            echo "✅ Backend executable found: ${{ matrix.executable }}"
+            ls -lh "backend/dist/${{ matrix.executable }}"
+          else
+            echo "❌ Backend executable not found: ${{ matrix.executable }}"
+            exit 1
+          fi
+        shell: bash
       
-      - name: Upload backend artifacts
+      - name: Upload backend executable
         uses: actions/upload-artifact@v4
         with:
-          name: backend-build
+          name: ${{ matrix.artifact_name }}
+          path: backend/dist/${{ matrix.executable }}
+          retention-days: 7
+          compression-level: 6
+      
+      - name: Upload backend source (for reference)
+        uses: actions/upload-artifact@v4
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: backend-source
           path: |
             backend/**/*.py
             backend/requirements.txt
             backend/config.py
             backend/database.py
             backend/main.py
+            backend/peft_engine.spec
           retention-days: 7
           compression-level: 6
 
@@ -109,12 +161,18 @@ jobs:
           - os: ubuntu-latest
             platform: linux
             artifact_name: linux-build
+            backend_artifact: backend-linux
+            backend_executable: peft_engine
           - os: windows-latest
             platform: windows
             artifact_name: windows-build
+            backend_artifact: backend-windows
+            backend_executable: peft_engine.exe
           - os: macos-latest
             platform: mac
             artifact_name: mac-build
+            backend_artifact: backend-mac
+            backend_executable: peft_engine
     
     steps:
       - name: Checkout code
@@ -131,6 +189,24 @@ jobs:
         with:
           name: frontend-build
           path: dist/
+      
+      - name: Download backend executable
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.backend_artifact }}
+          path: backend/dist/
+      
+      - name: Verify backend executable
+        run: |
+          echo "Verifying backend executable..."
+          ls -lah backend/dist/
+          if [ -f "backend/dist/${{ matrix.backend_executable }}" ]; then
+            echo "✅ Backend executable found: ${{ matrix.backend_executable }}"
+          else
+            echo "❌ Backend executable not found: ${{ matrix.backend_executable }}"
+            exit 1
+          fi
+        shell: bash
       
       - name: Install dependencies
         run: npm ci
@@ -198,31 +274,52 @@ jobs:
             echo "✅ Frontend build found"
           fi
           
-          # Check backend build
-          if [ ! -d "artifacts/backend-build" ]; then
-            echo "❌ Backend build missing"
+          # Check backend executables
+          if [ ! -d "artifacts/backend-linux" ]; then
+            echo "❌ Backend Linux build missing"
             exit 1
           else
-            echo "✅ Backend build found"
+            echo "✅ Backend Linux build found"
+          fi
+          
+          if [ ! -d "artifacts/backend-windows" ]; then
+            echo "❌ Backend Windows build missing"
+            exit 1
+          else
+            echo "✅ Backend Windows build found"
+          fi
+          
+          if [ ! -d "artifacts/backend-mac" ]; then
+            echo "❌ Backend Mac build missing"
+            exit 1
+          else
+            echo "✅ Backend Mac build found"
+          fi
+          
+          # Check backend source
+          if [ -d "artifacts/backend-source" ]; then
+            echo "✅ Backend source found"
+          else
+            echo "⚠️ Backend source not found"
           fi
           
           # Check platform builds (may not exist if electron build failed)
           if [ -d "artifacts/linux-build" ]; then
-            echo "✅ Linux build found"
+            echo "✅ Linux Electron build found"
           else
-            echo "⚠️ Linux build not found"
+            echo "⚠️ Linux Electron build not found"
           fi
           
           if [ -d "artifacts/windows-build" ]; then
-            echo "✅ Windows build found"
+            echo "✅ Windows Electron build found"
           else
-            echo "⚠️ Windows build not found"
+            echo "⚠️ Windows Electron build not found"
           fi
           
           if [ -d "artifacts/mac-build" ]; then
-            echo "✅ Mac build found"
+            echo "✅ Mac Electron build found"
           else
-            echo "⚠️ Mac build not found"
+            echo "⚠️ Mac Electron build not found"
           fi
           
           echo "Core builds verified successfully!"
