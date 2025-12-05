@@ -50,7 +50,7 @@ export class WorkerPool {
   /**
    * Execute a task on a worker
    */
-  async execute<T = any, R = any>(
+  async execute<T = unknown, R = unknown>(
     type: WorkerMessageType,
     payload: T,
     timeout?: number

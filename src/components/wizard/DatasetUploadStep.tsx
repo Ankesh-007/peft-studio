@@ -23,39 +23,9 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState<any[] | null>(null);
+  const [preview, setPreview] = useState<Array<Record<string, unknown>> | null>(null);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  }, []);
-
-  const handleDrop = useCallback(async (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-      await handleFileUpload(files[0]);
-    }
-  }, []);
-
-  const handleFileSelect = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = e.target.files;
-      if (files && files.length > 0) {
-        await handleFileUpload(files[0]);
-      }
-    },
-    [],
-  );
-
-  const handleFileUpload = async (file: File) => {
+  const handleFileUpload = useCallback(async (file: File) => {
     setUploading(true);
 
     try {
@@ -159,10 +129,40 @@ const DatasetUploadStep: React.FC<DatasetUploadStepProps> = ({
     } finally {
       setUploading(false);
     }
-  };
+  }, [onDatasetSelect]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
+
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      await handleFileUpload(files[0]);
+    }
+  }, [handleFileUpload]);
+
+  const handleFileSelect = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (files && files.length > 0) {
+        await handleFileUpload(files[0]);
+      }
+    },
+    [handleFileUpload],
+  );
 
   const handleRemoveDataset = () => {
-    onDatasetSelect(null as any, []);
+    onDatasetSelect(null as unknown as Dataset, []);
     setPreview(null);
   };
 

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, Info, CheckCircle, Zap, TrendingUp } from 'lucide-react';
+import { AlertCircle, Info, CheckCircle, TrendingUp } from 'lucide-react';
 
 interface ParameterDefinition {
   name: string;
   display_name: string;
   description: string;
   type: string;
-  default: any;
+  default: unknown;
   min_value?: number;
   max_value?: number;
   recommended_range?: string;
@@ -97,7 +97,7 @@ const PEFTConfiguration: React.FC<PEFTConfigurationProps> = ({
     setConfig(prev => ({ ...prev, algorithm: algorithmId }));
   };
 
-  const handleParameterChange = (paramName: string, value: any) => {
+  const handleParameterChange = (paramName: string, value: unknown) => {
     setConfig(prev => ({ ...prev, [paramName]: value }));
   };
 

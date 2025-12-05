@@ -53,9 +53,9 @@ const ModelGrid: React.FC<ModelGridProps> = ({
                   <span className="text-sm text-gray-500 dark:text-gray-400">
                     by {model.author}
                   </span>
-                  {(model as any).registry && (
+                  {(model as Record<string, unknown>).registry && (
                     <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-xs">
-                      {(model as any).registry}
+                      {(model as Record<string, unknown>).registry as string}
                     </span>
                   )}
                 </div>
@@ -118,9 +118,9 @@ const ModelGrid: React.FC<ModelGridProps> = ({
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-1">
                 {model.model_name}
               </h3>
-              {(model as any).registry && (
+              {(model as Record<string, unknown>).registry && (
                 <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-xs">
-                  {(model as any).registry}
+                  {(model as Record<string, unknown>).registry as string}
                 </span>
               )}
             </div>

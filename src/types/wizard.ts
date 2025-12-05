@@ -39,7 +39,7 @@ export interface Dataset {
   format: string;
   size: number;
   num_samples?: number;
-  preview?: any[];
+  preview?: Record<string, unknown>[];
 }
 
 export interface ModelInfo {

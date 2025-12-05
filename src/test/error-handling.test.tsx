@@ -29,13 +29,16 @@ describe("Error Handling Components", () => {
       expect(screen.getByText("Test content")).toBeInTheDocument();
     });
 
-    it("should catch and display errors from children", () => {
+    it("should catch and display errors from children", async () => {
       const ThrowError = () => {
         throw new Error("Test error");
       };
 
       // Suppress console.error for this test
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => { });
+      
+      // Mock window.alert since JSDOM doesn't implement it
+      const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => { });
 
       render(
         <ErrorBoundary>
@@ -43,8 +46,11 @@ describe("Error Handling Components", () => {
         </ErrorBoundary>
       );
 
-      expect(screen.getByText(/something went wrong/i)).toBeInTheDocument();
+      // Wait for async error formatting to complete
+      await screen.findByText(/application error|something went wrong/i, {}, { timeout: 3000 });
+      
       consoleSpy.mockRestore();
+      alertSpy.mockRestore();
     });
   });
 

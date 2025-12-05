@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 
 import { cn } from '../lib/utils';
 
@@ -34,21 +34,33 @@ export const Slider: React.FC<SliderProps> = ({
 
   const percentage = ((value - min) / (max - min)) * 100;
 
+  const updateValue = useCallback((clientX: number) => {
+    if (!sliderRef.current) return;
+
+    const rect = sliderRef.current.getBoundingClientRect();
+    const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    const rawValue = min + percent * (max - min);
+    const steppedValue = Math.round(rawValue / step) * step;
+    const clampedValue = Math.max(min, Math.min(max, steppedValue));
+
+    onChange(clampedValue);
+  }, [min, max, step, onChange]);
+
   const handleMouseDown = (e: React.MouseEvent) => {
     if (disabled) return;
     setIsDragging(true);
     updateValue(e.clientX);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isDragging && !disabled) {
       updateValue(e.clientX);
     }
-  };
+  }, [isDragging, disabled, updateValue]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  };
+  }, []);
 
   React.useEffect(() => {
     if (isDragging) {
@@ -59,19 +71,7 @@ export const Slider: React.FC<SliderProps> = ({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging]);
-
-  const updateValue = (clientX: number) => {
-    if (!sliderRef.current) return;
-
-    const rect = sliderRef.current.getBoundingClientRect();
-    const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-    const rawValue = min + percent * (max - min);
-    const steppedValue = Math.round(rawValue / step) * step;
-    const clampedValue = Math.max(min, Math.min(max, steppedValue));
-
-    onChange(clampedValue);
-  };
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (disabled) return;

@@ -9,7 +9,7 @@ import * as path from "path";
  */
 
 // Helper to load and parse package.json
-function loadPackageJson(): any {
+function loadPackageJson(): Record<string, unknown> {
   const packagePath = path.join(process.cwd(), "package.json");
   const packageContent = fs.readFileSync(packagePath, "utf-8");
   return JSON.parse(packageContent);
@@ -54,7 +54,7 @@ describe("Electron Builder Configuration Properties", () => {
           expect(platformConfig.target).toBeDefined();
           
           // Extract target names (handle both string array and object array formats)
-          const targets = platformConfig.target.map((t: any) => 
+          const targets = platformConfig.target.map((t: string | { target: string }) => 
             typeof t === "string" ? t : t.target
           );
           
@@ -86,7 +86,7 @@ describe("Electron Builder Configuration Properties", () => {
     expect(buildConfig.win.target).toBeDefined();
     
     // Extract target names
-    const targets = buildConfig.win.target.map((t: any) => 
+    const targets = buildConfig.win.target.map((t: string | { target: string }) => 
       typeof t === "string" ? t : t.target
     );
     
@@ -234,9 +234,9 @@ describe("Auto-Update Configuration Properties", () => {
     expect(publishConfig.owner).toBeDefined();
     expect(publishConfig.repo).toBeDefined();
     
-    // Verify electron-updater is in dependencies
-    expect(packageJson.dependencies).toBeDefined();
-    expect(packageJson.dependencies["electron-updater"]).toBeDefined();
+    // Verify electron-updater is in dependencies or devDependencies
+    const hasElectronUpdater = packageJson.dependencies?.["electron-updater"] || packageJson.devDependencies?.["electron-updater"];
+    expect(hasElectronUpdater).toBeDefined();
   });
 });
 

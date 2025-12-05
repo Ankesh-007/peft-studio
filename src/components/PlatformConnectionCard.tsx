@@ -21,7 +21,7 @@ interface PlatformConnection {
   last_verified?: string;
   error_message?: string;
   features: string[];
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 interface PlatformConnectionCardProps {

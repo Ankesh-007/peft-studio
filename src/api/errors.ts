@@ -4,7 +4,7 @@ const API_BASE_URL = "http://localhost:8000";
 
 export async function formatError(
   error: Error,
-  context?: Record<string, any>,
+  context?: Record<string, unknown>,
 ): Promise<FormattedError> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/errors/format`, {
@@ -24,7 +24,7 @@ export async function formatError(
     }
 
     return await response.json();
-  } catch (e) {
+  } catch {
     // Fallback if the backend is unavailable
     return {
       title: "Error Occurred",
@@ -42,8 +42,8 @@ export async function formatError(
           action_type: "manual_step",
         },
       ],
-      category: "system" as any,
-      severity: "medium" as any,
+      category: "system" as const,
+      severity: "medium" as const,
       help_link: "https://docs.peftstudio.ai/troubleshooting",
       auto_recoverable: false,
     };
@@ -51,8 +51,8 @@ export async function formatError(
 }
 
 export async function executeAutoFix(
-  actionData: Record<string, any>,
-  context: Record<string, any>,
+  actionData: Record<string, unknown>,
+  context: Record<string, unknown>,
 ): Promise<boolean> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/errors/auto-fix`, {
@@ -72,8 +72,8 @@ export async function executeAutoFix(
 
     const result = await response.json();
     return result.success || false;
-  } catch (e) {
-    console.error("Failed to execute auto-fix:", e);
+  } catch (error) {
+    console.error("Failed to execute auto-fix:", error);
     return false;
   }
 }

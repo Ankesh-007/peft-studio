@@ -180,7 +180,7 @@ const ModelSelectionStep: React.FC<ModelSelectionStepProps> = ({
             ].map((filter) => (
               <button
                 key={filter.value}
-                onClick={() => setSelectedFilter(filter.value as any)}
+                onClick={() => setSelectedFilter(filter.value as "all" | "small" | "medium" | "large")}
                 className={`px-4 py-1.5 text-sm rounded-lg border transition-colors ${selectedFilter === filter.value
                     ? "bg-blue-600 text-white border-blue-600"
                     : "bg-white text-gray-700 border-gray-300 hover:border-blue-300"

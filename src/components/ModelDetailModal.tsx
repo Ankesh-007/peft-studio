@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ModelMetadata, ModelCompatibility } from '../types/model';
 import { apiClient } from '../api/client';
 import { Spinner } from './LoadingStates';
@@ -26,7 +26,7 @@ const ModelDetailModal: React.FC<ModelDetailModalProps> = ({
     // Load GPU memory from hardware profile
     const loadHardwareInfo = async () => {
       try {
-        const hardware = await apiClient.getHardwareProfile() as any;
+        const hardware = await apiClient.getHardwareProfile() as { gpus?: Array<{ memory_total_gb: number }> };
         if (hardware.gpus && hardware.gpus.length > 0) {
           setGpuMemory(hardware.gpus[0].memory_total_gb);
         }
@@ -37,23 +37,23 @@ const ModelDetailModal: React.FC<ModelDetailModalProps> = ({
     loadHardwareInfo();
   }, []);
 
-  useEffect(() => {
-    if (gpuMemory > 0) {
-      checkCompatibility();
-    }
-  }, [gpuMemory, model.model_id]);
-
-  const checkCompatibility = async () => {
+  const checkCompatibility = useCallback(async () => {
     setLoadingCompatibility(true);
     try {
-      const result = await apiClient.checkModelCompatibility(model.model_id, gpuMemory) as any;
+      const result = await apiClient.checkModelCompatibility(model.model_id, gpuMemory) as ModelCompatibility;
       setCompatibility(result);
     } catch (error) {
       console.error('Error checking compatibility:', error);
     } finally {
       setLoadingCompatibility(false);
     }
-  };
+  }, [model.model_id, gpuMemory]);
+
+  useEffect(() => {
+    if (gpuMemory > 0) {
+      checkCompatibility();
+    }
+  }, [gpuMemory, checkCompatibility]);
 
   const formatNumber = (num: number | null): string => {
     if (!num) return 'N/A';

@@ -34,7 +34,7 @@ export enum WorkerMessageType {
 }
 
 // Worker message structure
-export interface WorkerMessage<T = any> {
+export interface WorkerMessage<T = unknown> {
   id: string;
   type: WorkerMessageType;
   payload: T;
@@ -42,7 +42,7 @@ export interface WorkerMessage<T = any> {
 }
 
 // Worker response structure
-export interface WorkerResponse<T = any> {
+export interface WorkerResponse<T = unknown> {
   id: string;
   success: boolean;
   result?: T;
@@ -52,7 +52,7 @@ export interface WorkerResponse<T = any> {
 }
 
 // Worker task
-export interface WorkerTask<T = any, R = any> {
+export interface WorkerTask<T = unknown, R = unknown> {
   id: string;
   type: WorkerMessageType;
   payload: T;
@@ -119,8 +119,11 @@ export interface ComputeMetricsPayload {
   metrics: ('mean' | 'median' | 'std' | 'min' | 'max' | 'p95' | 'p99')[];
 }
 
+// Generic data record type for data processing operations
+export type DataRecord = Record<string, unknown>;
+
 export interface AggregateDataPayload {
-  data: any[];
+  data: DataRecord[];
   groupBy: string;
   aggregations: {
     field: string;
@@ -129,12 +132,12 @@ export interface AggregateDataPayload {
 }
 
 export interface FilterDataPayload {
-  data: any[];
+  data: DataRecord[];
   predicate: string; // Serialized function
 }
 
 export interface SortDataPayload {
-  data: any[];
+  data: DataRecord[];
   key: string;
   order: 'asc' | 'desc';
 }
@@ -155,13 +158,13 @@ export interface ConvertImagePayload {
 
 // Model processing payloads
 export interface ValidateConfigPayload {
-  config: any;
-  schema: any;
+  config: Record<string, unknown>;
+  schema: Record<string, unknown>;
 }
 
 export interface CalculateCostPayload {
   provider: string;
   resourceId: string;
   duration: number;
-  options?: any;
+  options?: Record<string, unknown>;
 }

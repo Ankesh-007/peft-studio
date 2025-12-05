@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import { ErrorSeverity } from "../types/error";
 
@@ -18,15 +18,13 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({
   const [isVisible, setIsVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
 
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
     setIsExiting(true);
     setTimeout(() => {
       setIsVisible(false);
       onDismiss();
     }, 300); // Match animation duration
-  };
-
-
+  }, [onDismiss]);
 
   useEffect(() => {
     if (autoHideDuration > 0 && error.severity !== ErrorSeverity.CRITICAL) {
@@ -36,7 +34,7 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({
 
       return () => clearTimeout(timer);
     }
-  }, [autoHideDuration, error.severity]);
+  }, [autoHideDuration, error.severity, handleDismiss]);
 
 
 

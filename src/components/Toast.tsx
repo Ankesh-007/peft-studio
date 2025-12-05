@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { cn } from "../lib/utils";
 
 export type ToastType = "success" | "error" | "warning" | "info";
@@ -23,14 +23,12 @@ interface ToastProps {
 export const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
   const [isExiting, setIsExiting] = useState(false);
 
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
     setIsExiting(true);
     setTimeout(() => {
       onDismiss();
     }, 300); // Match animation duration
-  };
-
-
+  }, [onDismiss]);
 
   useEffect(() => {
     const duration = toast.duration ?? 5000;
@@ -41,7 +39,7 @@ export const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
 
       return () => clearTimeout(timer);
     }
-  }, [toast.duration]);
+  }, [toast.duration, handleDismiss]);
 
 
 

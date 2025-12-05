@@ -75,7 +75,7 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({
     validation: [],
   });
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -193,14 +193,14 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({
         learningRate: profile.config.learning_rate,
         epochs: profile.config.num_epochs,
         warmupSteps: Math.floor(profile.config.warmup_ratio * 1000), // Placeholder
-        scheduler: profile.config.scheduler as any,
+        scheduler: profile.config.scheduler as string,
         weightDecay: profile.config.weight_decay,
         maxGradNorm: profile.config.max_grad_norm,
       },
     }));
   };
 
-  const handleDatasetSelect = (dataset: Dataset, validation: any[]) => {
+  const handleDatasetSelect = (dataset: Dataset, validation: Array<{ field: string; message: string }>) => {
     setWizardState((prev) => ({
       ...prev,
       dataset,
@@ -215,7 +215,7 @@ const TrainingWizard: React.FC<TrainingWizardProps> = ({
     }));
   };
 
-  const handleConfigUpdate = (config: any, estimates: TrainingEstimates) => {
+  const handleConfigUpdate = (config: Partial<TrainingConfig>, estimates: TrainingEstimates) => {
     setWizardState((prev) => ({
       ...prev,
       config: {

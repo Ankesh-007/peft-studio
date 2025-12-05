@@ -7,7 +7,7 @@
  * Requirements: 15.5
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 interface AnalyticsData {
   total_events: number;
@@ -32,7 +32,7 @@ export const TelemetryAnalyticsDashboard: React.FC = () => {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [dateRange, setDateRange] = useState<{
+  const [dateRange] = useState<{
     start_date: string;
     end_date: string;
   }>({
@@ -40,11 +40,7 @@ export const TelemetryAnalyticsDashboard: React.FC = () => {
     end_date: '',
   });
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, []);
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -68,7 +64,11 @@ export const TelemetryAnalyticsDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange]);
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [fetchAnalytics]);
 
   const exportData = async () => {
     try {

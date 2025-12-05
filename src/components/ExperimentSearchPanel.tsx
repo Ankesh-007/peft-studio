@@ -35,7 +35,7 @@ export const ExperimentSearchPanel: React.FC<ExperimentSearchPanelProps> = ({
   const [metadataKey, setMetadataKey] = useState('');
   const [metadataValue, setMetadataValue] = useState('');
 
-  const handleFilterChange = (key: keyof SearchFilters, value: any) => {
+  const handleFilterChange = (key: keyof SearchFilters, value: unknown) => {
     setFilters(prev => ({
       ...prev,
       [key]: value,

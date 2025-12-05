@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from 'react';
-import { X, Download, Save, AlertCircle } from 'lucide-react';
+import { X, Download, AlertCircle } from 'lucide-react';
 
 interface ExportConfigurationDialogProps {
   onClose: () => void;

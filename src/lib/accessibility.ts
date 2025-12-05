@@ -266,9 +266,9 @@ export function useAriaLive() {
 /**
  * React hook for keyboard navigation
  */
-export function useKeyboardNavigation(
-  items: any[],
-  onSelect: (item: any, index: number) => void
+export function useKeyboardNavigation<T = unknown>(
+  items: T[],
+  onSelect: (item: T, index: number) => void
 ) {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 

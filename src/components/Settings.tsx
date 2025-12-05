@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Settings as SettingsIcon,
   Palette,
@@ -78,22 +78,11 @@ const SettingsComponent: React.FC = () => {
     { id: 'advanced' as TabId, label: 'Advanced', icon: SettingsIcon },
   ];
 
-  useEffect(() => {
-    loadSettings();
+  const showMessage = useCallback((type: 'success' | 'error', text: string) => {
+    setMessage({ type, text });
   }, []);
 
-  useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => setMessage(null), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [message]);
-
-  const showMessage = (type: 'success' | 'error', text: string) => {
-    setMessage({ type, text });
-  };
-
-  const loadSettings = async () => {
+  const loadSettings = useCallback(async () => {
     try {
       const response = await fetch('http://localhost:8000/api/settings');
       const data = await response.json();
@@ -106,9 +95,20 @@ const SettingsComponent: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showMessage]);
 
-  const updateSetting = (category: string, key: string, value: any) => {
+  useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
+
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => setMessage(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
+  const updateSetting = (category: string, key: string, value: unknown) => {
     if (!settings) return;
     setSettings({
       ...settings,

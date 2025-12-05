@@ -20,7 +20,7 @@ const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
     progress: 0,
   });
 
-  const handleFileUpload = (file: File) => {
+  const handleFileUpload = useCallback((file: File) => {
     setUploadState({
       status: "uploading",
       progress: 0,
@@ -41,7 +41,7 @@ const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
         }
       }
     }, 200);
-  };
+  }, [onUpload]);
 
 
 
@@ -61,7 +61,7 @@ const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
     if (file) {
       handleFileUpload(file);
     }
-  }, []);
+  }, [handleFileUpload]);
 
   const handleFileSelect = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +70,7 @@ const DatasetUpload: React.FC<DatasetUploadProps> = ({ onUpload }) => {
         handleFileUpload(file);
       }
     },
-    [],
+    [handleFileUpload],
   );
 
 

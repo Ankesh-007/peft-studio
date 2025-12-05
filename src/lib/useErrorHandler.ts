@@ -2,12 +2,12 @@ import { useState, useCallback } from "react";
 
 import { formatError, executeAutoFix } from "../api/errors";
 
-import type { FormattedError } from "../types/error";
+import type { FormattedError, ErrorCategory, ErrorSeverity } from "../types/error";
 
 interface UseErrorHandlerReturn {
   error: FormattedError | null;
   isRecovering: boolean;
-  handleError: (error: Error, context?: Record<string, any>) => Promise<void>;
+  handleError: (error: Error, context?: Record<string, unknown>) => Promise<void>;
   clearError: () => void;
   retryWithAutoFix: (actionIndex: number) => Promise<boolean>;
 }
@@ -21,7 +21,7 @@ export function useErrorHandler(): UseErrorHandlerReturn {
   const [isRecovering, setIsRecovering] = useState(false);
 
   const handleError = useCallback(
-    async (err: Error, context?: Record<string, any>) => {
+    async (err: Error, context?: Record<string, unknown>) => {
       try {
         const formatted = await formatError(err, context);
         setError(formatted);
@@ -39,8 +39,8 @@ export function useErrorHandler(): UseErrorHandlerReturn {
               action_type: "manual_step",
             },
           ],
-          category: "system" as any,
-          severity: "medium" as any,
+          category: "system" as ErrorCategory,
+          severity: "medium" as ErrorSeverity,
           help_link: "https://docs.peftstudio.ai/troubleshooting",
           auto_recoverable: false,
         });

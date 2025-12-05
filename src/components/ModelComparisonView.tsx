@@ -33,30 +33,30 @@ const ModelComparisonView: React.FC<ModelComparisonViewProps> = ({
     { key: 'likes', label: 'Likes', format: formatNumber },
     { key: 'parameters', label: 'Parameters', format: formatNumber },
     { key: 'size_mb', label: 'Size', format: formatSize },
-    { key: 'architecture', label: 'Architecture', format: (v: any) => v || 'N/A' },
-    { key: 'license', label: 'License', format: (v: any) => v || 'N/A' },
-    { key: 'library_name', label: 'Library', format: (v: any) => v || 'N/A' },
+    { key: 'architecture', label: 'Architecture', format: (v: unknown) => v || 'N/A' },
+    { key: 'license', label: 'License', format: (v: unknown) => v || 'N/A' },
+    { key: 'library_name', label: 'Library', format: (v: unknown) => v || 'N/A' },
   ];
 
-  const getBestValue = (key: string): any => {
-    const values = models.map((m) => (m as any)[key]).filter((v) => v != null);
+  const getBestValue = (key: string): unknown => {
+    const values = models.map((m) => (m as Record<string, unknown>)[key]).filter((v) => v != null);
     if (values.length === 0) return null;
     
     if (key === 'downloads' || key === 'likes') {
-      return Math.max(...values);
+      return Math.max(...(values as number[]));
     }
     if (key === 'parameters') {
       // Smallest is often better for efficiency
-      return Math.min(...values);
+      return Math.min(...(values as number[]));
     }
     if (key === 'size_mb') {
-      return Math.min(...values);
+      return Math.min(...(values as number[]));
     }
     return null;
   };
 
   const isBestValue = (model: ModelMetadata, key: string): boolean => {
-    const value = (model as any)[key];
+    const value = (model as Record<string, unknown>)[key];
     const bestValue = getBestValue(key);
     return value != null && bestValue != null && value === bestValue;
   };
@@ -131,7 +131,7 @@ const ModelComparisonView: React.FC<ModelComparisonViewProps> = ({
                     {metric.label}
                   </td>
                   {models.map((model) => {
-                    const value = (model as any)[metric.key];
+                    const value = (model as Record<string, unknown>)[metric.key];
                     const isBest = isBestValue(model, metric.key);
                     return (
                       <td key={model.model_id} className="p-4 text-center">

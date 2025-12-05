@@ -14,9 +14,9 @@ class MockWorker {
   onmessage: ((event: MessageEvent) => void) | null = null;
   onerror: ((event: ErrorEvent) => void) | null = null;
   
-  postMessage(message: any) {
-    // Simulate async response
-    setTimeout(() => {
+  postMessage(message: unknown) {
+    // Simulate async response - use immediate callback for faster tests
+    Promise.resolve().then(() => {
       if (this.onmessage) {
         this.onmessage(new MessageEvent('message', {
           data: {
@@ -28,14 +28,14 @@ class MockWorker {
           }
         }));
       }
-    }, 10);
+    });
   }
   
   terminate() {
     // Mock termination
   }
   
-  addEventListener(event: string, handler: any) {
+  addEventListener(event: string, handler: (event: MessageEvent) => void) {
     if (event === 'message') {
       this.onmessage = handler;
     } else if (event === 'error') {
@@ -216,15 +216,17 @@ describe('Worker Pool Lifecycle', () => {
   });
 
   it('should terminate idle workers', async () => {
+    vi.useFakeTimers();
     const testPool = new WorkerPool({
       maxWorkers: 2,
       idleTimeout: 100, // Very short timeout for testing
     });
 
     // Wait for idle timeout
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await vi.advanceTimersByTimeAsync(200);
 
     testPool.destroy();
+    vi.useRealTimers();
   });
 
   it('should handle worker errors gracefully', () => {

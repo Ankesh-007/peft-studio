@@ -6,6 +6,8 @@ describe('UpdateNotification', () => {
   let mockApi: any;
 
   beforeEach(() => {
+    vi.useFakeTimers();
+    
     // Mock window.api
     mockApi = {
       getAppVersion: vi.fn().mockResolvedValue({ version: '1.0.0' }),
@@ -22,6 +24,7 @@ describe('UpdateNotification', () => {
   });
 
   afterEach(() => {
+    vi.restoreAllTimers();
     vi.clearAllMocks();
   });
 
@@ -191,27 +194,26 @@ describe('UpdateNotification', () => {
   });
 
   it('should show not available state and auto-dismiss', async () => {
-    vi.useFakeTimers();
     render(<UpdateNotification />);
 
     // Simulate not available event
     const statusCallback = mockApi.onUpdateStatus.mock.calls[0][0];
-    await vi.waitFor(() => statusCallback({
+    statusCallback({
       status: 'not-available'
-    }));
-
-    await vi.waitFor(() => {
-      expect(screen.getByText('Up to Date')).toBeInTheDocument();
     });
+
+    await vi.advanceTimersByTimeAsync(100);
+
+    await waitFor(() => {
+      expect(screen.getByText('Up to Date')).toBeInTheDocument();
+    }, { timeout: 500 });
 
     // Fast-forward time and run pending timers
     await vi.advanceTimersByTimeAsync(3000);
 
-    await vi.waitFor(() => {
+    await waitFor(() => {
       expect(screen.queryByText('Up to Date')).not.toBeInTheDocument();
-    });
-
-    vi.useRealTimers();
+    }, { timeout: 500 });
   });
 
   it('should dismiss notification when X button clicked', async () => {
@@ -219,23 +221,27 @@ describe('UpdateNotification', () => {
 
     // Simulate update available event
     const updateAvailableCallback = mockApi.onUpdateAvailable.mock.calls[0][0];
-    await vi.waitFor(() => updateAvailableCallback({
+    updateAvailableCallback({
       version: '1.0.1',
-    }));
+    });
+
+    await vi.advanceTimersByTimeAsync(100);
 
     await waitFor(() => {
       expect(screen.getByText('Update Available')).toBeInTheDocument();
-    }, { timeout: 5000 });
+    }, { timeout: 500 });
 
     // Find and click the X button - it's the last button in the notification
     const buttons = screen.getAllByRole('button');
     const dismissButton = buttons[buttons.length - 1]; // X button is the last one
     fireEvent.click(dismissButton);
 
+    await vi.advanceTimersByTimeAsync(100);
+
     await waitFor(() => {
       expect(screen.queryByText('Update Available')).not.toBeInTheDocument();
-    }, { timeout: 5000 });
-  }, 15000);
+    }, { timeout: 500 });
+  });
 
   it('should format bytes correctly', async () => {
     render(<UpdateNotification />);
@@ -244,19 +250,21 @@ describe('UpdateNotification', () => {
     const progressCallback = mockApi.onUpdateDownloadProgress.mock.calls[0][0];
     
     // Test MB formatting
-    await vi.waitFor(() => progressCallback({
+    progressCallback({
       percent: 50,
       bytesPerSecond: 2500000,
       transferred: 50000000,
       total: 100000000
-    }));
+    });
+
+    await vi.advanceTimersByTimeAsync(100);
 
     await waitFor(() => {
       // Check that MB formatting is present (multiple elements expected)
       const mbElements = screen.getAllByText(/MB/);
       expect(mbElements.length).toBeGreaterThan(0);
-    }, { timeout: 5000 });
-  }, 15000);
+    }, { timeout: 500 });
+  });
 
   it('should handle missing window.api gracefully', () => {
     (window as any).api = undefined;
@@ -267,19 +275,23 @@ describe('UpdateNotification', () => {
   it('should show current version in update available notification', async () => {
     render(<UpdateNotification />);
 
+    await vi.advanceTimersByTimeAsync(100);
+
     // Wait for version to load
     await waitFor(() => {
       expect(mockApi.getAppVersion).toHaveBeenCalled();
-    }, { timeout: 5000 });
+    }, { timeout: 500 });
 
     // Simulate update available event
     const updateAvailableCallback = mockApi.onUpdateAvailable.mock.calls[0][0];
-    await vi.waitFor(() => updateAvailableCallback({
+    updateAvailableCallback({
       version: '1.0.1',
-    }));
+    });
+
+    await vi.advanceTimersByTimeAsync(100);
 
     await waitFor(() => {
       expect(screen.getByText('Current version: 1.0.0')).toBeInTheDocument();
-    }, { timeout: 5000 });
-  }, 15000);
+    }, { timeout: 500 });
+  });
 });

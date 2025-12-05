@@ -31,7 +31,7 @@ export class PerformanceMonitor {
         });
         longTaskObserver.observe({ entryTypes: ['longtask'] });
         this.observers.push(longTaskObserver);
-      } catch (e) {
+      } catch {
         // longtask not supported in all browsers
       }
 
@@ -39,7 +39,7 @@ export class PerformanceMonitor {
       try {
         const layoutShiftObserver = new PerformanceObserver((list) => {
           for (const entry of list.getEntries()) {
-            const cls = entry as any;
+            const cls = entry as PerformanceEntry & { value: number; sources: unknown[]; hadRecentInput: boolean };
             if (cls.hadRecentInput) continue;
             console.warn('Layout shift detected:', {
               value: cls.value,
@@ -49,7 +49,7 @@ export class PerformanceMonitor {
         });
         layoutShiftObserver.observe({ entryTypes: ['layout-shift'] });
         this.observers.push(layoutShiftObserver);
-      } catch (e) {
+      } catch {
         // layout-shift not supported in all browsers
       }
     }
@@ -129,7 +129,7 @@ export class PerformanceMonitor {
    * Get all metrics
    */
   getAllStats() {
-    const stats: Record<string, any> = {};
+    const stats: Record<string, unknown> = {};
     for (const [name] of this.metrics) {
       stats[name] = this.getStats(name);
     }
@@ -218,6 +218,7 @@ export const animationScheduler = new AnimationScheduler();
 /**
  * Throttle function using requestAnimationFrame
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function throttleRAF<T extends (...args: any[]) => void>(
   callback: T
 ): (...args: Parameters<T>) => void {
@@ -242,6 +243,7 @@ export function throttleRAF<T extends (...args: any[]) => void>(
 /**
  * Debounce function with requestAnimationFrame
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function debounceRAF<T extends (...args: any[]) => void>(
   callback: T,
   frames: number = 1
@@ -413,7 +415,7 @@ export class FPSCounter {
  */
 export function getMemoryUsage() {
   if ('memory' in performance) {
-    const memory = (performance as any).memory;
+    const memory = (performance as Performance & { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
     return {
       usedJSHeapSize: memory.usedJSHeapSize,
       totalJSHeapSize: memory.totalJSHeapSize,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { CheckCircle, XCircle, AlertCircle, RefreshCw, Info } from 'lucide-react';
 
 interface DependencyCheck {
@@ -31,7 +31,7 @@ export const DependencyStatus: React.FC<DependencyStatusProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const checkDependencies = async () => {
+  const checkDependencies = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -73,11 +73,11 @@ export const DependencyStatus: React.FC<DependencyStatusProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [onComplete, onError]);
 
   useEffect(() => {
     checkDependencies();
-  }, []);
+  }, [checkDependencies]);
 
   const getStatusIcon = (check: DependencyCheck) => {
     if (!check.installed) {

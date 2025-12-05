@@ -11,7 +11,7 @@
  * Validates: Requirements 3.1, 3.2, 3.3, 3.4, 3.5
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 interface GPUInstance {
   platform: string;
@@ -73,24 +73,7 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
   const [sortBy, setSortBy] = useState<'cost' | 'performance' | 'availability'>('cost');
   const [refreshInterval, setRefreshInterval] = useState<number | null>(null);
 
-  useEffect(() => {
-    fetchComparison();
-
-    // Set up auto-refresh every 30 seconds for real-time pricing
-    const interval = setInterval(() => {
-      fetchComparison();
-    }, 30000);
-
-    setRefreshInterval(interval as any);
-
-    return () => {
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
-      }
-    };
-  }, [trainingHours, minMemoryGb, localGpuType, localElectricityCost]);
-
-  const fetchComparison = async () => {
+  const fetchComparison = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -125,7 +108,24 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
     } finally {
       setLoading(false);
     }
-  };
+  }, [trainingHours, minMemoryGb, localGpuType, localElectricityCost, selectedPlatform]);
+
+  useEffect(() => {
+    fetchComparison();
+
+    // Set up auto-refresh every 30 seconds for real-time pricing
+    const interval = setInterval(() => {
+      fetchComparison();
+    }, 30000);
+
+    setRefreshInterval(interval as unknown as number);
+
+    return () => {
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+      }
+    };
+  }, [fetchComparison, refreshInterval]);
 
   const handleProviderSelect = (platform: string, instance: GPUInstance) => {
     setSelectedPlatform(platform);
@@ -281,7 +281,7 @@ export const ComputeProviderSelector: React.FC<ComputeProviderSelectorProps> = (
           {/* Sort By */}
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as 'cost' | 'performance' | 'availability')}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="cost">Sort by Cost</option>

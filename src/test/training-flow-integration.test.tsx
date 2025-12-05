@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeAll } from "vitest";
+import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from "vitest";
 import "@testing-library/jest-dom";
 
 import TrainingWizard from "../components/TrainingWizard";
@@ -61,60 +61,45 @@ describe("Training Flow Integration", () => {
   it("should show training progress after starting training", async () => {
     render(<Dashboard />);
 
-    // Wait for dashboard to load
-    await waitFor(() => {
-      expect(screen.queryByRole("status", { name: /loading/i })).not.toBeInTheDocument();
-    }, { timeout: 2000 });
-
     // Dashboard should render with overview section
-    expect(screen.getByRole("region", { name: /dashboard overview/i })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole("region", { name: /dashboard overview/i })).toBeInTheDocument();
+    });
   });
 
   it("should allow pausing and resuming training", async () => {
     render(<Dashboard />);
 
-    // Wait for loading to complete
-    await waitFor(() => {
-      expect(screen.queryByRole("status", { name: /loading/i })).not.toBeInTheDocument();
-    }, { timeout: 2000 });
-
     // Dashboard should render - check for quick actions
-    expect(screen.getByText(/quick actions/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/quick actions/i)).toBeInTheDocument();
+    });
   });
 
   it("should display real-time training metrics", async () => {
     render(<Dashboard />);
 
-    // Wait for loading to complete
-    await waitFor(() => {
-      expect(screen.queryByRole("status", { name: /loading/i })).not.toBeInTheDocument();
-    }, { timeout: 2000 });
-
     // Dashboard should show metrics - check for models trained stat
-    expect(screen.getByText(/models trained/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/models trained/i)).toBeInTheDocument();
+    });
   });
 
   it("should handle training completion", async () => {
     render(<Dashboard />);
 
-    // Wait for loading to complete
-    await waitFor(() => {
-      expect(screen.queryByRole("status", { name: /loading/i })).not.toBeInTheDocument();
-    }, { timeout: 2000 });
-
     // Dashboard should render successfully - check for greeting (time-dependent, so use flexible matcher)
-    expect(screen.getByText(/good (morning|afternoon|evening)/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/good (morning|afternoon|evening)/i)).toBeInTheDocument();
+    });
   });
 
   it("should allow exporting trained model", async () => {
     render(<Dashboard />);
 
-    // Wait for loading to complete
-    await waitFor(() => {
-      expect(screen.queryByRole("status", { name: /loading/i })).not.toBeInTheDocument();
-    }, { timeout: 2000 });
-
     // Dashboard should have quick actions
-    expect(screen.getByText(/quick actions/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/quick actions/i)).toBeInTheDocument();
+    });
   });
 });

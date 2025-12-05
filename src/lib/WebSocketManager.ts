@@ -3,8 +3,7 @@
  * Provides connection pooling, automatic reconnection, and message routing
  */
 
-type MessageHandler = (data: any) => void;
-type ConnectionStatusHandler = (connected: boolean) => void;
+type MessageHandler = (data: unknown) => void;
 
 interface Subscription {
   id: string;

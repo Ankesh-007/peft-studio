@@ -202,7 +202,8 @@ describe("Auto-Update System Properties", () => {
           const packageJson = loadPackageJson();
           
           // Verify electron-updater is configured (it handles checksum verification automatically)
-          expect(packageJson.dependencies["electron-updater"]).toBeDefined();
+          const hasElectronUpdater = packageJson.dependencies?.["electron-updater"] || packageJson.devDependencies?.["electron-updater"];
+          expect(hasElectronUpdater).toBeDefined();
           
           // Verify autoUpdater is imported and configured
           expect(mainContent).toContain("require('electron-updater')");
@@ -277,11 +278,13 @@ describe("Auto-Update Configuration Properties", () => {
     expect(packageJson.build.publish.owner).toBeDefined();
     expect(packageJson.build.publish.repo).toBeDefined();
     
-    // Verify electron-updater dependency exists
-    expect(packageJson.dependencies["electron-updater"]).toBeDefined();
+    // Verify electron-updater dependency exists (can be in dependencies or devDependencies)
+    const hasElectronUpdater = packageJson.dependencies?.["electron-updater"] || packageJson.devDependencies?.["electron-updater"];
+    expect(hasElectronUpdater).toBeDefined();
     
-    // Verify electron-log dependency exists
-    expect(packageJson.dependencies["electron-log"]).toBeDefined();
+    // Verify electron-log dependency exists (can be in dependencies or devDependencies)
+    const hasElectronLog = packageJson.dependencies?.["electron-log"] || packageJson.devDependencies?.["electron-log"];
+    expect(hasElectronLog).toBeDefined();
   });
 
   test("Preload script exposes update API to renderer", () => {

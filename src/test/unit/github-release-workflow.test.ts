@@ -10,7 +10,7 @@ import * as yaml from "yaml";
  */
 
 // Helper to load and parse the workflow file
-function loadWorkflowConfig(): any {
+function loadWorkflowConfig(): Record<string, unknown> {
   const workflowPath = path.join(process.cwd(), ".github/workflows/release.yml");
   const workflowContent = fs.readFileSync(workflowPath, "utf-8");
   return yaml.parse(workflowContent);
@@ -111,19 +111,19 @@ describe("GitHub Release Workflow Properties", () => {
     expect(steps).toBeDefined();
 
     // Should have steps to download artifacts from each platform
-    const downloadSteps = steps.filter((step: any) =>
+    const downloadSteps = steps.filter((step: Record<string, unknown>) =>
       step.uses && step.uses.includes("download-artifact")
     );
     expect(downloadSteps.length).toBeGreaterThanOrEqual(3); // Windows, macOS, Linux
 
     // Should have steps to upload release assets
-    const uploadSteps = steps.filter((step: any) =>
+    const uploadSteps = steps.filter((step: Record<string, unknown>) =>
       step.uses && step.uses.includes("upload-release-asset")
     );
     expect(uploadSteps.length).toBeGreaterThanOrEqual(6); // At least 2 per platform
 
     // Verify each upload step has required fields
-    uploadSteps.forEach((step: any) => {
+    uploadSteps.forEach((step: Record<string, unknown>) => {
       expect(step.with).toBeDefined();
       expect(step.with.upload_url).toBeDefined();
       expect(step.with.asset_path).toBeDefined();

@@ -8,12 +8,12 @@ import React from 'react';
 import { X, Calendar, User, Tag, Cpu, Database, Zap } from 'lucide-react';
 
 interface ConfigurationPreviewProps {
-  configuration: any;
+  configuration: Record<string, unknown>;
   onClose?: () => void;
   compact?: boolean;
 }
 
-const InfoRow: React.FC<{ label: string; value: any; icon?: React.ReactNode }> = ({
+const InfoRow: React.FC<{ label: string; value: unknown; icon?: React.ReactNode }> = ({
   label,
   value,
   icon,

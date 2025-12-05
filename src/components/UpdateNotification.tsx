@@ -93,7 +93,7 @@ export const UpdateNotification: React.FC = () => {
     try {
       setUpdateState('downloading');
       await window.api.downloadUpdate();
-    } catch (err) {
+    } catch {
       setError('Failed to download update');
       setUpdateState('error');
     }
@@ -104,7 +104,7 @@ export const UpdateNotification: React.FC = () => {
 
     try {
       await window.api.installUpdate();
-    } catch (err) {
+    } catch {
       setError('Failed to install update');
       setUpdateState('error');
     }
@@ -117,7 +117,7 @@ export const UpdateNotification: React.FC = () => {
       setUpdateState('checking');
       setError(null);
       await window.api.checkForUpdates();
-    } catch (err) {
+    } catch {
       setError('Failed to check for updates');
       setUpdateState('error');
     }

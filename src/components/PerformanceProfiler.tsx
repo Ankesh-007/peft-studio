@@ -7,7 +7,7 @@
  * Requirements: 14.3
  */
 
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, memo } from 'react';
 import { useFPS, useMemoryUsage, usePerformanceStats } from '../hooks/usePerformance';
 import { performanceMonitor, logPerformanceMetrics } from '../lib/performance';
 
@@ -164,7 +164,7 @@ export const PerformanceProfiler: React.FC<PerformanceProfilerProps> = memo(({
             <div className="p-3">
               <h4 className="text-gray-400 mb-2">Custom Metrics</h4>
               <div className="space-y-2 max-h-64 overflow-y-auto">
-                {Object.entries(stats).map(([name, stat]: [string, any]) => (
+                {Object.entries(stats).map(([name, stat]: [string, { avg?: number; p95?: number; max?: number }]) => (
                   <div key={name} className="bg-gray-800/50 p-2 rounded">
                     <div className="font-medium mb-1 truncate" title={name}>
                       {name}

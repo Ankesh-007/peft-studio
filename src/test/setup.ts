@@ -47,6 +47,11 @@ beforeEach(() => {
       value: new StorageMock(),
       writable: true,
     });
+    
+    // Mock window.alert since JSDOM doesn't implement it
+    if (!window.alert) {
+      window.alert = vi.fn();
+    }
   }
 });
 

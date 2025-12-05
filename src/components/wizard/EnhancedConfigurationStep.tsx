@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Info, Zap, DollarSign, Leaf, Clock, HelpCircle, Server, Cpu, Database } from 'lucide-react';
+import { Zap, DollarSign, Leaf, Clock, HelpCircle, Server, Cpu, Database } from 'lucide-react';
 import { WizardState, TrainingEstimates } from '../../types/wizard';
 import Tooltip from '../Tooltip';
 
 interface EnhancedConfigurationStepProps {
   wizardState: WizardState;
-  onConfigUpdate: (config: any, estimates: TrainingEstimates) => void;
+  onConfigUpdate: (config: Partial<TrainingConfig>, estimates: TrainingEstimates) => void;
 }
 
 type PEFTAlgorithm = 'lora' | 'qlora' | 'dora' | 'pissa' | 'rslora';
@@ -44,10 +44,10 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
   wizardState,
   onConfigUpdate,
 }) => {
-  const [showAdvanced, setShowAdvanced] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const [electricityRate, setElectricityRate] = useState(0.12);
-  const [smartConfig, setSmartConfig] = useState<any>(null);
+  const [smartConfig, setSmartConfig] = useState<Record<string, unknown> | null>(null);
   const [estimates, setEstimates] = useState<TrainingEstimates | null>(null);
 
   // Enhanced configuration state
@@ -63,17 +63,10 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
     precision: 'fp16',
   });
 
-  const [availableProviders, setAvailableProviders] = useState<any[]>([]);
+  const [availableProviders, setAvailableProviders] = useState<Array<{ id: string; name: string; [key: string]: unknown }>>([]);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (wizardState.model && wizardState.dataset && wizardState.profile) {
-      calculateSmartDefaults();
-      fetchAvailableProviders();
-    }
-  }, [wizardState.model, wizardState.dataset, wizardState.profile, electricityRate, enhancedConfig.algorithm, enhancedConfig.quantization]);
-
-  const fetchAvailableProviders = async () => {
+  const fetchAvailableProviders = useCallback(async () => {
     try {
       // Fetch connected providers
       const response = await fetch('http://127.0.0.1:8000/api/platforms/connections');
@@ -86,7 +79,7 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
 
       // Add connected cloud providers
       if (data.connections) {
-        data.connections.forEach((conn: any) => {
+        data.connections.forEach((conn: { status: string; platform_name: string; name: string }) => {
           if (conn.status === 'connected' && ['runpod', 'lambda', 'vastai'].includes(conn.platform_name)) {
             providers.push({
               id: conn.platform_name,
@@ -105,9 +98,40 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
         { id: 'local', name: 'Local GPU', status: 'available', cost: 0 }
       ]);
     }
-  };
+  }, []);
 
-  const calculateSmartDefaults = async () => {
+  const validateConfiguration = useCallback((config: EnhancedConfig, smartConfig: Record<string, unknown>) => {
+    const errors: string[] = [];
+
+    // Validate provider selection
+    if (!config.provider) {
+      errors.push('Compute provider must be selected');
+    }
+
+    // Validate algorithm selection
+    if (!config.algorithm) {
+      errors.push('PEFT algorithm must be selected');
+    }
+
+    // Validate quantization compatibility
+    if (config.quantization !== 'none' && config.algorithm === 'dora') {
+      errors.push('DoRA is not compatible with quantization');
+    }
+
+    // Validate experiment tracker project name
+    if (config.experimentTracker !== 'none' && !config.projectName) {
+      errors.push('Project name required for experiment tracking');
+    }
+
+    // Validate memory requirements
+    if (smartConfig && smartConfig.estimated_memory_mb > 24000 && config.provider === 'local') {
+      errors.push('Configuration requires more memory than available on local GPU');
+    }
+
+    setValidationErrors(errors);
+  }, []);
+
+  const calculateSmartDefaults = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -191,38 +215,14 @@ const EnhancedConfigurationStep: React.FC<EnhancedConfigurationStepProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [wizardState.model, wizardState.dataset, wizardState.profile, electricityRate, enhancedConfig, onConfigUpdate, validateConfiguration]);
 
-  const validateConfiguration = (config: EnhancedConfig, smartConfig: any) => {
-    const errors: string[] = [];
-
-    // Validate provider selection
-    if (!config.provider) {
-      errors.push('Compute provider must be selected');
+  useEffect(() => {
+    if (wizardState.model && wizardState.dataset && wizardState.profile) {
+      calculateSmartDefaults();
+      fetchAvailableProviders();
     }
-
-    // Validate algorithm selection
-    if (!config.algorithm) {
-      errors.push('PEFT algorithm must be selected');
-    }
-
-    // Validate quantization compatibility
-    if (config.quantization !== 'none' && config.algorithm === 'dora') {
-      errors.push('DoRA is not compatible with quantization');
-    }
-
-    // Validate experiment tracker project name
-    if (config.experimentTracker !== 'none' && !config.projectName) {
-      errors.push('Project name required for experiment tracking');
-    }
-
-    // Validate memory requirements
-    if (smartConfig && smartConfig.estimated_memory_mb > 24000 && config.provider === 'local') {
-      errors.push('Configuration requires more memory than available on local GPU');
-    }
-
-    setValidationErrors(errors);
-  };
+  }, [wizardState.model, wizardState.dataset, wizardState.profile, calculateSmartDefaults, fetchAvailableProviders]);
 
   const handleProviderChange = (provider: ComputeProvider) => {
     const updated = { ...enhancedConfig, provider };

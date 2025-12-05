@@ -17,7 +17,7 @@ import type { WizardState, TrainingEstimates } from "../../types/wizard";
 
 interface SmartConfigurationStepProps {
   wizardState: WizardState;
-  onConfigUpdate: (config: any, estimates: TrainingEstimates) => void;
+  onConfigUpdate: (config: Partial<TrainingConfig>, estimates: TrainingEstimates) => void;
 }
 
 /**
@@ -31,24 +31,13 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [loading, setLoading] = useState(true);
   const [electricityRate, setElectricityRate] = useState(0.12);
-  const [smartConfig, setSmartConfig] = useState<any>(null);
+  const [smartConfig, setSmartConfig] = useState<Record<string, unknown> | null>(null);
   const [estimates, setEstimates] = useState<TrainingEstimates | null>(null);
-  const [peftConfig, setPeftConfig] = useState<any>(null);
+  const [peftConfig, setPeftConfig] = useState<Record<string, unknown> | null>(null);
   const [quantization, setQuantization] = useState<'4bit' | '8bit' | 'none'>('none');
   const [gradientCheckpointing, setGradientCheckpointing] = useState(false);
 
-  useEffect(() => {
-    if (wizardState.model && wizardState.dataset && wizardState.profile) {
-      calculateSmartDefaults();
-    }
-  }, [
-    wizardState.model,
-    wizardState.dataset,
-    wizardState.profile,
-    electricityRate,
-  ]);
-
-  const calculateSmartDefaults = async () => {
+  const calculateSmartDefaults = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -133,7 +122,18 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [wizardState.model, wizardState.dataset, wizardState.profile, electricityRate, quantization, gradientCheckpointing, onConfigUpdate]);
+
+  useEffect(() => {
+    if (wizardState.model && wizardState.dataset && wizardState.profile) {
+      calculateSmartDefaults();
+    }
+  }, [
+    wizardState.model,
+    wizardState.dataset,
+    wizardState.profile,
+    calculateSmartDefaults,
+  ]);
 
   const handleQuantizationChange = (value: '4bit' | '8bit' | 'none') => {
     setQuantization(value);
@@ -150,8 +150,6 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
   const handleGradientCheckpointingChange = (enabled: boolean) => {
     setGradientCheckpointing(enabled);
     if (smartConfig && estimates) {
-      // Recalculate memory savings
-      const memorySavings = enabled ? smartConfig.estimated_memory_mb * 0.3 : 0;
       const updatedConfig = {
         ...smartConfig,
         quantization,
@@ -325,7 +323,7 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
                 name="quantization"
                 value="none"
                 checked={quantization === 'none'}
-                onChange={(e) => handleQuantizationChange(e.target.value as any)}
+                onChange={(e) => handleQuantizationChange(e.target.value as '4bit' | '8bit' | 'none')}
                 className="mt-1 mr-3"
               />
               <div className="flex-1">
@@ -346,7 +344,7 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
                 name="quantization"
                 value="8bit"
                 checked={quantization === '8bit'}
-                onChange={(e) => handleQuantizationChange(e.target.value as any)}
+                onChange={(e) => handleQuantizationChange(e.target.value as '4bit' | '8bit' | 'none')}
                 className="mt-1 mr-3"
               />
               <div className="flex-1">
@@ -367,7 +365,7 @@ const SmartConfigurationStep: React.FC<SmartConfigurationStepProps> = ({
                 name="quantization"
                 value="4bit"
                 checked={quantization === '4bit'}
-                onChange={(e) => handleQuantizationChange(e.target.value as any)}
+                onChange={(e) => handleQuantizationChange(e.target.value as '4bit' | '8bit' | 'none')}
                 className="mt-1 mr-3"
               />
               <div className="flex-1">

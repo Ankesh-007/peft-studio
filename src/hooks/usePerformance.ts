@@ -14,18 +14,21 @@ import { performanceMonitor, FPSCounter, getMemoryUsage } from '../lib/performan
  */
 export function useRenderTime(componentName: string) {
   const renderCount = useRef(0);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     renderCount.current++;
+    setCount(renderCount.current);
     const renderTime = performance.now();
+    const currentCount = renderCount.current;
 
     return () => {
       const duration = performance.now() - renderTime;
-      performanceMonitor.measure(`${componentName}-render-${renderCount.current}`, () => duration);
+      performanceMonitor.measure(`${componentName}-render-${currentCount}`, () => duration);
     };
-  });
+  }, [componentName]);
 
-  return renderCount.current;
+  return count;
 }
 
 /**
@@ -80,7 +83,7 @@ export function useAsyncMeasure() {
  * Hook to get performance stats
  */
 export function usePerformanceStats(metricName?: string) {
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<Record<string, unknown> | null>(null);
 
   useEffect(() => {
     const updateStats = () => {
@@ -110,14 +113,16 @@ export function useSlowRenderDetection(threshold: number = 16.67) {
 
   useEffect(() => {
     const renderDuration = performance.now() - lastRenderTime.current;
+    lastRenderTime.current = performance.now();
 
     if (renderDuration > threshold) {
-      setSlowRenders(prev => prev + 1);
-      console.warn(`Slow render detected: ${renderDuration.toFixed(2)}ms`);
+      // Use a callback to avoid triggering cascading renders
+      setTimeout(() => {
+        setSlowRenders(prev => prev + 1);
+        console.warn(`Slow render detected: ${renderDuration.toFixed(2)}ms`);
+      }, 0);
     }
-
-    lastRenderTime.current = performance.now();
-  });
+  }, [threshold]);
 
   return slowRenders;
 }
@@ -134,12 +139,13 @@ export function usePerformanceProfile(componentName: string, enabled: boolean = 
 
     renderCount.current++;
     const renderStart = performance.now();
+    const currentCount = renderCount.current;
 
     return () => {
       const renderDuration = performance.now() - renderStart;
 
       if (renderDuration > 16.67) {
-        console.warn(`[${componentName}] Slow render #${renderCount.current}: ${renderDuration.toFixed(2)}ms`);
+        console.warn(`[${componentName}] Slow render #${currentCount}: ${renderDuration.toFixed(2)}ms`);
       }
     };
   });
@@ -147,9 +153,12 @@ export function usePerformanceProfile(componentName: string, enabled: boolean = 
   useEffect(() => {
     if (!enabled) return;
 
+    const mountTimeValue = mountTime.current;
+    const renderCountValue = renderCount.current;
+
     return () => {
-      const totalTime = performance.now() - mountTime.current;
-      console.log(`[${componentName}] Total lifetime: ${totalTime.toFixed(2)}ms, Renders: ${renderCount.current}`);
+      const totalTime = performance.now() - mountTimeValue;
+      console.log(`[${componentName}] Total lifetime: ${totalTime.toFixed(2)}ms, Renders: ${renderCountValue}`);
     };
   }, [componentName, enabled]);
 }

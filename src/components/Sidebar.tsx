@@ -46,7 +46,7 @@ const navItems: NavItem[] = [
   },
 ];
 
-const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
+const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
   const [activeItem, setActiveItem] = React.useState("dashboard");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 

@@ -1,7 +1,6 @@
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-import { apiClient } from "../../api/client";
 import Tooltip from "../Tooltip";
 
 import type { OptimizationProfile, WizardState } from "../../types/wizard";

@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense, useEffect } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import Layout from './components/Layout';
 import { useHelpPanel } from './hooks/useHelpPanel';
 import { useOnboarding } from './hooks/useOnboarding';

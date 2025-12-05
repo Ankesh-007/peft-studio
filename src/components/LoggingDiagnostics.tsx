@@ -11,7 +11,7 @@
  * Validates: Requirements 19.1, 19.2, 19.3, 19.4, 19.5
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Search,
   Filter,
@@ -37,7 +37,7 @@ interface LogEntry {
   stack_trace: string;
   error_type: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   recent_actions?: string[];
   system_state: {
     timestamp: string;
@@ -45,7 +45,7 @@ interface LogEntry {
     python_version: string;
     cpu_usage_percent: number;
     memory_usage_percent: number;
-    gpu_info?: any;
+    gpu_info?: Record<string, unknown>;
     disk_usage_percent?: number;
     network_status?: string;
   };
@@ -86,7 +86,7 @@ const LoggingDiagnostics: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   // Fetch logs
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -103,7 +103,7 @@ const LoggingDiagnostics: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [severityFilter, errorTypeFilter]);
 
   // Fetch stats
   const fetchStats = async () => {
@@ -132,7 +132,7 @@ const LoggingDiagnostics: React.FC = () => {
     fetchLogs();
     fetchStats();
     fetchDebugMode();
-  }, [severityFilter, errorTypeFilter]);
+  }, [fetchLogs, severityFilter, errorTypeFilter]);
 
   // Search functionality
   useEffect(() => {

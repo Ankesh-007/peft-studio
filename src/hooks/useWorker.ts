@@ -24,7 +24,7 @@ export function useWorkerPool() {
   }, []);
 
   const execute = useCallback(
-    async <T = any, R = any>(
+    async <T = unknown, R = unknown>(
       type: WorkerMessageType,
       payload: T,
       timeout?: number
@@ -59,7 +59,7 @@ export function useFileProcessor() {
   const [error, setError] = useState<Error | null>(null);
 
   const processFile = useCallback(
-    async (file: File, options?: any) => {
+    async (file: File, options?: Record<string, unknown>) => {
       setProcessing(true);
       setProgress(0);
       setError(null);
@@ -172,7 +172,7 @@ export function useDataProcessor() {
   );
 
   const aggregateData = useCallback(
-    async (data: any[], groupBy: string, aggregations: any[]) => {
+    async (data: Record<string, unknown>[], groupBy: string, aggregations: Array<{ field: string; operation: string }>) => {
       setProcessing(true);
       setError(null);
 
@@ -194,7 +194,7 @@ export function useDataProcessor() {
   );
 
   const filterData = useCallback(
-    async (data: any[], predicate: string) => {
+    async (data: Record<string, unknown>[], predicate: string) => {
       setProcessing(true);
       setError(null);
 
@@ -216,7 +216,7 @@ export function useDataProcessor() {
   );
 
   const sortData = useCallback(
-    async (data: any[], key: string, order: 'asc' | 'desc') => {
+    async (data: Record<string, unknown>[], key: string, order: 'asc' | 'desc') => {
       setProcessing(true);
       setError(null);
 

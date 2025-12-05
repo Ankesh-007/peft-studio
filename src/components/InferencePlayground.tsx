@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Play,
   Copy,
@@ -9,7 +9,6 @@ import {
   FileText,
   Code,
   Zap,
-  Download,
   Upload,
   Trash2,
   History,
@@ -76,7 +75,7 @@ const InferencePlayground: React.FC = () => {
     speed: 0,
   });
   
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string>('');
   const [showConversationHistory, setShowConversationHistory] = useState(false);
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
@@ -96,20 +95,7 @@ const InferencePlayground: React.FC = () => {
     stopSequences: "",
   });
 
-  // Load models on mount
-  useEffect(() => {
-    fetchLoadedModels();
-    fetchConversations();
-  }, []);
-  
-  // Auto-scroll output
-  useEffect(() => {
-    if (outputRef.current) {
-      outputRef.current.scrollTop = outputRef.current.scrollHeight;
-    }
-  }, [output]);
-  
-  const fetchLoadedModels = async () => {
+  const fetchLoadedModels = useCallback(async () => {
     try {
       const response = await fetch('http://localhost:8000/api/inference/models/loaded');
       const data = await response.json();
@@ -120,17 +106,30 @@ const InferencePlayground: React.FC = () => {
     } catch (err) {
       console.error('Error fetching loaded models:', err);
     }
-  };
+  }, [selectedModel]);
   
-  const fetchConversations = async () => {
+  const fetchConversations = useCallback(async () => {
     try {
       const response = await fetch('http://localhost:8000/api/inference/conversations');
       const data = await response.json();
       setConversations(data);
-    } catch (err) {
-      console.error('Error fetching conversations:', err);
+    } catch (error) {
+      console.error('Error fetching conversations:', error);
     }
-  };
+  }, [setConversations]);
+
+  // Load models on mount
+  useEffect(() => {
+    fetchLoadedModels();
+    fetchConversations();
+  }, [fetchLoadedModels, fetchConversations]);
+  
+  // Auto-scroll output
+  useEffect(() => {
+    if (outputRef.current) {
+      outputRef.current.scrollTop = outputRef.current.scrollHeight;
+    }
+  }, [output]);
   
   const handleLoadModel = async () => {
     if (!modelToLoad) {
@@ -162,8 +161,8 @@ const InferencePlayground: React.FC = () => {
       await fetchLoadedModels();
       setModelToLoad('');
       setAdapterPath('');
-    } catch (err: any) {
-      setError(err.message || 'Failed to load model');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load model');
     } finally {
       setIsLoadingModel(false);
     }
@@ -184,8 +183,8 @@ const InferencePlayground: React.FC = () => {
         setSelectedModel('');
       }
       await fetchLoadedModels();
-    } catch (err: any) {
-      setError(err.message || 'Failed to unload model');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to unload model');
     }
   };
 
@@ -224,7 +223,6 @@ const InferencePlayground: React.FC = () => {
     setIsGenerating(true);
     setOutput('');
     setError(null);
-    const startTime = Date.now();
     
     try {
       if (useStreaming) {
@@ -240,8 +238,8 @@ const InferencePlayground: React.FC = () => {
         await saveToConversation('user', prompt);
         await saveToConversation('assistant', output);
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to generate response');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to generate response');
     } finally {
       setIsGenerating(false);
     }
@@ -299,7 +297,7 @@ const InferencePlayground: React.FC = () => {
         }
       };
       
-      ws.onerror = (error) => {
+      ws.onerror = () => {
         reject(new Error('WebSocket error'));
         ws.close();
       };
@@ -311,8 +309,6 @@ const InferencePlayground: React.FC = () => {
   };
   
   const generateWithoutStreaming = async () => {
-    const startTime = Date.now();
-    
     const response = await fetch('http://localhost:8000/api/inference/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -358,8 +354,8 @@ const InferencePlayground: React.FC = () => {
       
       // Refresh conversation
       await loadConversation(currentConversationId);
-    } catch (err) {
-      console.error('Error saving to conversation:', err);
+    } catch (error) {
+      console.error('Error saving to conversation:', error);
     }
   };
   
@@ -368,8 +364,8 @@ const InferencePlayground: React.FC = () => {
       const response = await fetch(`http://localhost:8000/api/inference/conversation/${conversationId}`);
       const data = await response.json();
       setConversationMessages(data.messages);
-    } catch (err) {
-      console.error('Error loading conversation:', err);
+    } catch (error) {
+      console.error('Error loading conversation:', error);
     }
   };
   
@@ -380,21 +376,22 @@ const InferencePlayground: React.FC = () => {
     setSuccess('Started new conversation');
   };
   
-  const deleteConversation = async (conversationId: string) => {
-    try {
-      await fetch(`http://localhost:8000/api/inference/conversation/${conversationId}`, {
-        method: 'DELETE',
-      });
-      setSuccess('Conversation deleted');
-      await fetchConversations();
-      if (currentConversationId === conversationId) {
-        setCurrentConversationId('');
-        setConversationMessages([]);
-      }
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete conversation');
-    }
-  };
+  // Conversation deletion functionality (currently unused)
+  // const deleteConversation = async (conversationId: string) => {
+  //   try {
+  //     await fetch(`http://localhost:8000/api/inference/conversation/${conversationId}`, {
+  //       method: 'DELETE',
+  //     });
+  //     setSuccess('Conversation deleted');
+  //     await fetchConversations();
+  //     if (currentConversationId === conversationId) {
+  //       setCurrentConversationId('');
+  //       setConversationMessages([]);
+  //     }
+  //   } catch (error) {
+  //     setError(error instanceof Error ? error.message : 'Failed to delete conversation');
+  //   }
+  // };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(output);
@@ -574,7 +571,7 @@ const InferencePlayground: React.FC = () => {
             return (
               <button
                 key={tmpl.id}
-                onClick={() => setTemplate(tmpl.id as any)}
+                onClick={() => setTemplate(tmpl.id as 'chat' | 'completion' | 'instruct')}
                 className={cn(
                   "flex-1 p-16 rounded-lg border-2 transition-all",
                   template === tmpl.id

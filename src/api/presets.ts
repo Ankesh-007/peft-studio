@@ -165,7 +165,7 @@ export async function deletePreset(presetId: string): Promise<void> {
 /**
  * Export a preset to JSON
  */
-export async function exportPreset(presetId: string): Promise<any> {
+export async function exportPreset(presetId: string): Promise<Record<string, unknown>> {
   const response = await fetch(`${API_BASE_URL}/presets/${presetId}/export`);
 
   if (!response.ok) {
@@ -182,7 +182,7 @@ export async function exportPreset(presetId: string): Promise<any> {
  * Import a preset from JSON
  */
 export async function importPreset(
-  importData: any,
+  importData: Record<string, unknown>,
   newId?: string,
 ): Promise<ConfigurationPreset> {
   const response = await fetch(`${API_BASE_URL}/presets/import`, {

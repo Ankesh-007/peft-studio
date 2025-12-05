@@ -7,8 +7,8 @@
  * Requirements: 6.1, 6.2, 6.3, 6.4, 6.5
  */
 
-import React, { useState, useEffect } from 'react';
-import { Play, Pause, Square, ExternalLink, TrendingUp, Database, Tag } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ExternalLink, TrendingUp, Database, Tag } from 'lucide-react';
 
 interface Experiment {
   job_id: string;
@@ -25,7 +25,7 @@ interface Experiment {
     provider: string;
     algorithm: string;
   };
-  hyperparameters: Record<string, any>;
+  hyperparameters: Record<string, unknown>;
   tags: string[];
   artifacts?: Array<{
     id: string;
@@ -33,7 +33,7 @@ interface Experiment {
     type: string;
     linked_at: string;
   }>;
-  summary?: Record<string, any>;
+  summary?: Record<string, unknown>;
   url?: string;
 }
 
@@ -53,15 +53,7 @@ export const ExperimentTrackingDashboard: React.FC<ExperimentTrackingDashboardPr
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterTracker, setFilterTracker] = useState<string>('all');
 
-  useEffect(() => {
-    loadExperiments();
-    
-    // Refresh every 5 seconds for active experiments
-    const interval = setInterval(loadExperiments, 5000);
-    return () => clearInterval(interval);
-  }, [filterStatus, filterTracker]);
-
-  const loadExperiments = async () => {
+  const loadExperiments = useCallback(async () => {
     try {
       const params = new URLSearchParams();
       if (filterStatus !== 'all') {
@@ -85,7 +77,15 @@ export const ExperimentTrackingDashboard: React.FC<ExperimentTrackingDashboardPr
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterStatus, filterTracker]);
+
+  useEffect(() => {
+    loadExperiments();
+    
+    // Refresh every 5 seconds for active experiments
+    const interval = setInterval(loadExperiments, 5000);
+    return () => clearInterval(interval);
+  }, [loadExperiments]);
 
   const toggleExperimentSelection = (jobId: string) => {
     const newSelection = new Set(selectedExperiments);

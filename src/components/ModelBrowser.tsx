@@ -25,7 +25,7 @@ const ModelBrowser: React.FC<ModelBrowserProps> = ({ onModelSelect }) => {
   const [showComparison, setShowComparison] = useState(false);
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [showCacheManager, setShowCacheManager] = useState(false);
-  const [cachedModels, setCachedModels] = useState<any[]>([]);
+  const [cachedModels, setCachedModels] = useState<Array<{ id: string; name: string; [key: string]: unknown }>>([]);
 
   // Load popular models on mount
   useEffect(() => {
@@ -36,7 +36,7 @@ const ModelBrowser: React.FC<ModelBrowserProps> = ({ onModelSelect }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await apiClient.getPopularModels('text-generation', 20) as any;
+      const response = await apiClient.getPopularModels('text-generation', 20) as { models: ModelMetadata[] };
       setModels(response.models || []);
     } catch (err) {
       setError('Failed to load popular models. Please try again.');
@@ -62,7 +62,7 @@ const ModelBrowser: React.FC<ModelBrowserProps> = ({ onModelSelect }) => {
         searchFilters.task,
         registries,
         20
-      ) as any;
+      ) as { models: ModelMetadata[] };
       setModels(response.models || []);
     } catch (err) {
       setError('Failed to search models. Please try again.');
@@ -100,7 +100,7 @@ const ModelBrowser: React.FC<ModelBrowserProps> = ({ onModelSelect }) => {
 
   const loadCachedModels = async () => {
     try {
-      const response = await apiClient.getCachedModels() as any;
+      const response = await apiClient.getCachedModels() as { cached_models: Array<{ id: string; name: string; [key: string]: unknown }> };
       setCachedModels(response.cached_models || []);
       setShowCacheManager(true);
     } catch (err) {

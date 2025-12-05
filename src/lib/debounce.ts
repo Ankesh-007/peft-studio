@@ -3,6 +3,7 @@
  * Useful for search inputs and API calls
  */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
@@ -26,6 +27,7 @@ export function debounce<T extends (...args: any[]) => any>(
  * Throttle utility for limiting function execution rate
  * Useful for scroll and resize handlers
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function throttle<T extends (...args: any[]) => any>(
   func: T,
   limit: number

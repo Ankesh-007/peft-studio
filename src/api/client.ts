@@ -106,7 +106,7 @@ class APIClient {
   }
 
   // Training operations
-  async startTraining(config: any) {
+  async startTraining(config: Record<string, unknown>) {
     return this.request("/api/training/start", {
       method: "POST",
       body: JSON.stringify(config),
@@ -126,7 +126,7 @@ class APIClient {
   }
 
   // Inference operations
-  async generateText(config: any) {
+  async generateText(config: Record<string, unknown>) {
     return this.request("/api/inference/generate", {
       method: "POST",
       body: JSON.stringify(config),
@@ -151,7 +151,7 @@ class APIClient {
     return this.request(`/api/profiles/use-case/${useCase}`);
   }
 
-  async applyProfileConfig(profileId: string, overrides?: any) {
+  async applyProfileConfig(profileId: string, overrides?: Record<string, unknown>) {
     return this.request("/api/profiles/apply", {
       method: "POST",
       body: JSON.stringify({ profile_id: profileId, overrides }),

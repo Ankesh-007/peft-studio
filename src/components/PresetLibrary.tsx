@@ -5,7 +5,7 @@
  * Allows users to load, export, import, and delete presets.
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import {
   listPresets,
@@ -35,16 +35,6 @@ export const PresetLibrary: React.FC<PresetLibraryProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [allTags, setAllTags] = useState<string[]>([]);
 
-  // Load presets on mount
-  useEffect(() => {
-    loadPresets();
-  }, []);
-
-  // Filter presets when search or tags change
-  useEffect(() => {
-    filterPresets();
-  }, [searchTerm, selectedTags, presets]);
-
   const loadPresets = async () => {
     try {
       setLoading(true);
@@ -65,7 +55,7 @@ export const PresetLibrary: React.FC<PresetLibraryProps> = ({
     }
   };
 
-  const filterPresets = () => {
+  const filterPresets = useCallback(() => {
     let filtered = presets;
 
     // Apply search filter
@@ -86,7 +76,17 @@ export const PresetLibrary: React.FC<PresetLibraryProps> = ({
     }
 
     setFilteredPresets(filtered);
-  };
+  }, [searchTerm, selectedTags, presets]);
+
+  // Load presets on mount
+  useEffect(() => {
+    loadPresets();
+  }, []);
+
+  // Filter presets when search or tags change
+  useEffect(() => {
+    filterPresets();
+  }, [filterPresets]);
 
   const handleDelete = async (presetId: string) => {
     if (!confirm("Are you sure you want to delete this preset?")) {

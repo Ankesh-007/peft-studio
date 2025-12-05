@@ -4,8 +4,8 @@
  * Validates: Requirements 18.1, 18.2, 18.3, 18.4, 18.5
  */
 
-import React, { useState, useEffect } from 'react';
-import { Download, Upload, Library, Share2, Plus, Search, Filter } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Download, Upload, Library, Search } from 'lucide-react';
 import ExportConfigurationDialog from './configuration/ExportConfigurationDialog';
 import ImportConfigurationDialog from './configuration/ImportConfigurationDialog';
 import ConfigurationLibraryBrowser from './configuration/ConfigurationLibraryBrowser';
@@ -19,13 +19,13 @@ interface ConfigurationMetadata {
   modified_at: string;
   author?: string;
   tags: string[];
-  training_results?: any;
-  hardware_requirements?: any;
+  training_results?: Record<string, unknown>;
+  hardware_requirements?: Record<string, unknown>;
 }
 
 interface SavedConfiguration {
   metadata: ConfigurationMetadata;
-  configuration: any;
+  configuration: Record<string, unknown>;
 }
 
 const ConfigurationManagement: React.FC = () => {
@@ -35,16 +35,11 @@ const ConfigurationManagement: React.FC = () => {
   const [selectedConfig, setSelectedConfig] = useState<SavedConfiguration | null>(null);
   const [libraryConfigs, setLibraryConfigs] = useState<ConfigurationMetadata[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load library configurations on mount
-  useEffect(() => {
-    loadLibraryConfigurations();
-  }, []);
-
-  const loadLibraryConfigurations = async () => {
+  const loadLibraryConfigurations = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -72,7 +67,12 @@ const ConfigurationManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedTags, searchQuery]);
+
+  // Load library configurations on mount
+  useEffect(() => {
+    loadLibraryConfigurations();
+  }, [loadLibraryConfigurations]);
 
   const handleExportSuccess = () => {
     setShowExportDialog(false);

@@ -11,7 +11,7 @@ import React, { useState } from 'react';
 
 interface TestResult {
   success: boolean;
-  response?: any;
+  response?: Record<string, unknown>;
   error?: string;
   latency_ms?: number;
   timestamp: string;
@@ -65,7 +65,7 @@ export const EndpointTestingInterface: React.FC<EndpointTestingInterfaceProps> =
     }
   };
 
-  const formatJson = (obj: any) => {
+  const formatJson = (obj: unknown) => {
     try {
       return JSON.stringify(obj, null, 2);
     } catch {

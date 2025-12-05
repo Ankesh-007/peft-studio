@@ -5,7 +5,7 @@
  * Validates: Requirements 9.2
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 interface CloudInstance {
   platform: string;
@@ -63,11 +63,7 @@ export const CloudPlatformComparison: React.FC<
   const [error, setError] = useState<string | null>(null);
   const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchComparison();
-  }, [trainingHours, localGpuType, localElectricityCost, minMemoryGb]);
-
-  const fetchComparison = async () => {
+  const fetchComparison = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -102,7 +98,11 @@ export const CloudPlatformComparison: React.FC<
     } finally {
       setLoading(false);
     }
-  };
+  }, [trainingHours, localGpuType, localElectricityCost, minMemoryGb]);
+
+  useEffect(() => {
+    fetchComparison();
+  }, [fetchComparison]);
 
   const handlePlatformSelect = (platform: string) => {
     setSelectedPlatform(platform);

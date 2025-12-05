@@ -9,7 +9,7 @@ interface ModelFiltersProps {
 const ModelFilters: React.FC<ModelFiltersProps> = ({ filters, onFiltersChange }) => {
   const [localFilters, setLocalFilters] = useState<ModelSearchFilters>(filters);
 
-  const handleFilterChange = (key: keyof ModelSearchFilters, value: any) => {
+  const handleFilterChange = (key: keyof ModelSearchFilters, value: unknown) => {
     const newFilters = { ...localFilters, [key]: value };
     setLocalFilters(newFilters);
     onFiltersChange(newFilters);

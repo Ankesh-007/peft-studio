@@ -21,8 +21,6 @@ import {
   Line,
   BarChart,
   Bar,
-  AreaChart,
-  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -94,7 +92,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
   const [activeTab, setActiveTab] = useState<
     "loss" | "resources" | "parameters"
   >("loss");
-  const [logsExpanded, setLogsExpanded] = useState(true);
+
   
   // Real-time data from WebSocket
   const [lossData, setLossData] = useState<LossDataPoint[]>([]);
@@ -248,20 +246,21 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
     { name: "RAM", usage: 71 }, // Would come from backend
   ];
 
-  const getStatusColor = () => {
-    switch (status) {
-      case "running":
-        return "bg-accent-success";
-      case "paused":
-        return "bg-accent-warning";
-      case "completed":
-        return "bg-accent-success";
-      case "failed":
-        return "bg-accent-error";
-      default:
-        return "bg-dark-text-tertiary";
-    }
-  };
+  // Status color helper (currently unused)
+  // const getStatusColor = () => {
+  //   switch (status) {
+  //     case "running":
+  //       return "bg-accent-success";
+  //     case "paused":
+  //       return "bg-accent-warning";
+  //     case "completed":
+  //       return "bg-accent-success";
+  //     case "failed":
+  //       return "bg-accent-error";
+  //     default:
+  //       return "bg-dark-text-tertiary";
+  //   }
+  // };
 
   const getStatusIcon = () => {
     switch (status) {
@@ -526,7 +525,7 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id as "loss" | "resources" | "parameters")}
               className={cn(
                 "px-16 py-12 text-body font-medium transition-all relative",
                 activeTab === tab.id
@@ -656,18 +655,19 @@ const TrainingMonitor: React.FC<TrainingMonitorProps> = ({
                     }}
                   />
                   <Bar dataKey="usage" radius={[0, 8, 8, 0]}>
-                    {resourceData.map((entry, index) => (
-                      <rect
-                        key={index}
-                        fill={
-                          entry.usage > 90
-                            ? "#ef4444"
-                            : entry.usage > 70
-                              ? "#f59e0b"
-                              : "#10b981"
-                        }
-                      />
-                    ))}
+                    {resourceData.map((entry, index) => {
+                      const fillColor = entry.usage > 90
+                        ? "#ef4444"
+                        : entry.usage > 70
+                          ? "#f59e0b"
+                          : "#10b981";
+                      return (
+                        <rect
+                          key={index}
+                          fill={fillColor}
+                        />
+                      );
+                    })}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>

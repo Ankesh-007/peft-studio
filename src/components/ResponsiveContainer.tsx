@@ -23,7 +23,6 @@ export const ResponsiveContainer: React.FC<ResponsiveContainerProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
-  const isDesktop = useIsDesktop();
 
   const responsiveClass = isMobile
     ? mobileClassName
@@ -56,6 +55,7 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+
 
   const gridCols = isMobile
     ? cols.mobile

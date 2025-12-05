@@ -19,7 +19,7 @@ export interface UseWebSocketOptions {
   onError?: (error: Error) => void;
 }
 
-export interface UseWebSocketResult<T = any> {
+export interface UseWebSocketResult<T = unknown> {
   /**
    * Latest message received
    */
@@ -70,7 +70,7 @@ export interface UseWebSocketResult<T = any> {
  * );
  * ```
  */
-export function useWebSocket<T = any>(
+export function useWebSocket<T = unknown>(
   url: string,
   options: UseWebSocketOptions = {},
 ): UseWebSocketResult<T> {

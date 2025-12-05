@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import GradioDemoGenerator from '../../components/GradioDemoGenerator';
 
@@ -7,11 +7,16 @@ global.fetch = vi.fn();
 
 describe('GradioDemoGenerator', () => {
   beforeEach(() => {
+    vi.useFakeTimers();
     vi.clearAllMocks();
     (global.fetch as any).mockResolvedValue({
       ok: true,
       json: async () => ([]),
     });
+  });
+
+  afterEach(() => {
+    vi.restoreAllTimers();
   });
 
   it('renders the component with title', () => {
@@ -175,7 +180,7 @@ describe('GradioDemoGenerator', () => {
 
     await waitFor(() => {
       expect(screen.getByText('demo_1')).toBeInTheDocument();
-    }, { timeout: 3000 });
+    }, { timeout: 500 });
 
     // Select demo
     const demoCard = screen.getByText('demo_1');
@@ -229,7 +234,7 @@ describe('GradioDemoGenerator', () => {
 
     await waitFor(() => {
       expect(screen.getByText('demo_1')).toBeInTheDocument();
-    }, { timeout: 3000 });
+    }, { timeout: 500 });
 
     // Select demo
     const demoCard = screen.getByText('demo_1');
@@ -394,7 +399,7 @@ describe('GradioDemoGenerator', () => {
 
     await waitFor(() => {
       expect(screen.getByText('demo_1')).toBeInTheDocument();
-    }, { timeout: 3000 });
+    }, { timeout: 500 });
 
     // Select demo
     const demoCard = screen.getByText('demo_1');
@@ -460,3 +465,4 @@ describe('GradioDemoGenerator', () => {
     });
   });
 });
+

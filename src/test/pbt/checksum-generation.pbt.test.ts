@@ -12,7 +12,7 @@ import * as fc from 'fast-check';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
-// @ts-ignore
+// @ts-expect-error - CommonJS module without types
 const {
   calculateChecksum,
   shouldIncludeFile,

@@ -144,7 +144,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
                   <div className="px-12 py-8 text-tiny text-dark-text-tertiary uppercase font-medium">
                     {category}
                   </div>
-                  {cmds.map((cmd, index) => {
+                  {cmds.map((cmd) => {
                     const Icon = cmd.icon;
                     const globalIndex = filteredCommands.indexOf(cmd);
                     const isSelected = globalIndex === selectedIndex;

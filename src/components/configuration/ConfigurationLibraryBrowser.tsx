@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { Calendar, User, Tag, Trash2, Download, Share2, FileText } from 'lucide-react';
+import { Calendar, User, Tag, Trash2, Share2, FileText } from 'lucide-react';
 
 interface ConfigurationMetadata {
   id: string;
@@ -15,8 +15,8 @@ interface ConfigurationMetadata {
   modified_at: string;
   author?: string;
   tags: string[];
-  training_results?: any;
-  hardware_requirements?: any;
+  training_results?: Record<string, unknown>;
+  hardware_requirements?: Record<string, unknown>;
 }
 
 interface ConfigurationLibraryBrowserProps {

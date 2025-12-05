@@ -10,7 +10,7 @@ import ConfigurationPreview from './ConfigurationPreview';
 
 interface ImportConfigurationDialogProps {
   onClose: () => void;
-  onSuccess: (config: any) => void;
+  onSuccess: (config: Record<string, unknown>) => void;
 }
 
 const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
@@ -20,7 +20,7 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
   const [file, setFile] = useState<File | null>(null);
   const [jsonText, setJsonText] = useState('');
   const [importMode, setImportMode] = useState<'file' | 'text'>('file');
-  const [previewConfig, setPreviewConfig] = useState<any | null>(null);
+  const [previewConfig, setPreviewConfig] = useState<Record<string, unknown> | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +40,7 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
           const content = event.target?.result as string;
           const parsed = JSON.parse(content);
           validateAndPreview(parsed);
-        } catch (err) {
+        } catch {
           setError('Invalid JSON file');
         }
       };
@@ -58,13 +58,13 @@ const ImportConfigurationDialog: React.FC<ImportConfigurationDialogProps> = ({
       try {
         const parsed = JSON.parse(text);
         validateAndPreview(parsed);
-      } catch (err) {
+      } catch {
         setError('Invalid JSON format');
       }
     }
   };
 
-  const validateAndPreview = (data: any) => {
+  const validateAndPreview = (data: Record<string, unknown>) => {
     const errors: string[] = [];
 
     // Validate structure

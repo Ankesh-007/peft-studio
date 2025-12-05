@@ -3,11 +3,11 @@ import React, { createContext, useContext, useState, useCallback } from "react";
 import { formatError } from "../api/errors";
 import ErrorToast from "../components/ErrorToast";
 
-import type { FormattedError } from "../types/error";
+import type { FormattedError, ErrorCategory, ErrorSeverity } from "../types/error";
 import type { ReactNode } from "react";
 
 interface ErrorContextType {
-  showError: (error: Error, context?: Record<string, any>) => Promise<void>;
+  showError: (error: Error, context?: Record<string, unknown>) => Promise<void>;
   clearError: () => void;
   currentError: FormattedError | null;
 }
@@ -27,7 +27,7 @@ export const ErrorProvider: React.FC<ErrorProviderProps> = ({ children }) => {
   const [toastErrors, setToastErrors] = useState<FormattedError[]>([]);
 
   const showError = useCallback(
-    async (error: Error, context?: Record<string, any>) => {
+    async (error: Error, context?: Record<string, unknown>) => {
       try {
         const formatted = await formatError(error, context);
 
@@ -52,8 +52,8 @@ export const ErrorProvider: React.FC<ErrorProviderProps> = ({ children }) => {
               action_type: "manual_step",
             },
           ],
-          category: "system" as any,
-          severity: "medium" as any,
+          category: "system" as ErrorCategory,
+          severity: "medium" as ErrorSeverity,
           help_link: "https://docs.peftstudio.ai/troubleshooting",
           auto_recoverable: false,
         };

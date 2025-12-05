@@ -147,9 +147,13 @@ export function useTrainingMonitor(jobId: string): UseTrainingMonitorResult {
 
   // Auto-connect on mount
   useEffect(() => {
-    connect();
+    // Call connect in a setTimeout to avoid calling setState during render
+    const timer = setTimeout(() => {
+      connect();
+    }, 0);
 
     return () => {
+      clearTimeout(timer);
       disconnect();
     };
   }, [connect, disconnect]);

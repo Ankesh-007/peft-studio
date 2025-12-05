@@ -22,7 +22,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
 
-  const tourSteps: TourStep[] = [
+  const tourSteps: TourStep[] = React.useMemo(() => [
     {
       target: '[data-tour="dashboard"]',
       title: "Dashboard Overview",
@@ -58,7 +58,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({
         "Keep an eye on your GPU, CPU, and RAM usage. PEFT Studio automatically optimizes based on available resources.",
       position: "top",
     },
-  ];
+  ], []);
 
   useEffect(() => {
     if (!isActive) return;
@@ -108,7 +108,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({
         el.classList.remove("tour-highlight");
       });
     };
-  }, [currentStep, isActive]);
+  }, [currentStep, isActive, tourSteps]);
 
   if (!isActive) return null;
 

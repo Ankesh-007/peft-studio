@@ -76,9 +76,9 @@ export const useKeyboardNavigation = (
     const container = containerRef.current;
     if (!container || !enabled) return;
 
-    container.addEventListener("keydown", handleKeyDown as any);
+    container.addEventListener("keydown", handleKeyDown as EventListener);
     return () => {
-      container.removeEventListener("keydown", handleKeyDown as any);
+      container.removeEventListener("keydown", handleKeyDown as EventListener);
     };
   }, [containerRef, handleKeyDown, enabled]);
 };
@@ -122,9 +122,9 @@ export const useFocusTrap = (
     // Focus first element when trap is enabled
     firstElement?.focus();
 
-    container.addEventListener("keydown", handleTabKey as any);
+    container.addEventListener("keydown", handleTabKey as EventListener);
     return () => {
-      container.removeEventListener("keydown", handleTabKey as any);
+      container.removeEventListener("keydown", handleTabKey as EventListener);
     };
   }, [containerRef, enabled]);
 };

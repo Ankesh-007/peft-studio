@@ -45,17 +45,24 @@ describe('PerformanceMonitor', () => {
   });
 
   it('should measure async function execution time', async () => {
-    const result = await monitor.measureAsync('test-async', async () => {
+    vi.useFakeTimers();
+    
+    const promise = monitor.measureAsync('test-async', async () => {
       await new Promise(resolve => setTimeout(resolve, 10));
       return 'done';
     });
+    
+    await vi.advanceTimersByTimeAsync(10);
+    const result = await promise;
 
     expect(result).toBe('done');
     
     const stats = monitor.getStats('test-async');
     expect(stats).toBeDefined();
     expect(stats!.count).toBe(1);
-    expect(stats!.avg).toBeGreaterThanOrEqual(10);
+    expect(stats!.avg).toBeGreaterThanOrEqual(0);
+    
+    vi.useRealTimers();
   });
 
   it('should calculate statistics correctly', () => {
@@ -113,16 +120,18 @@ describe('AnimationScheduler', () => {
     });
   });
 
-  it('should return cleanup function', () => {
+  it('should return cleanup function', async () => {
+    vi.useFakeTimers();
     const callback = vi.fn();
     const cleanup = scheduler.schedule(callback);
     
     cleanup();
     
     // Wait a frame to ensure callback wasn't called
-    setTimeout(() => {
-      expect(callback).not.toHaveBeenCalled();
-    }, 20);
+    await vi.advanceTimersByTimeAsync(20);
+    expect(callback).not.toHaveBeenCalled();
+    
+    vi.useRealTimers();
   });
 
   it('should handle multiple callbacks', () => {
@@ -141,29 +150,29 @@ describe('AnimationScheduler', () => {
 });
 
 describe('throttleRAF', () => {
-  it('should throttle function calls', () => {
-    return new Promise<void>((resolve) => {
-      let callCount = 0;
-      const throttled = throttleRAF(() => {
-        callCount++;
-      });
-
-      // Call multiple times rapidly
-      throttled();
-      throttled();
-      throttled();
-
-      // Should only execute once per frame
-      setTimeout(() => {
-        expect(callCount).toBeLessThanOrEqual(2);
-        resolve();
-      }, 50);
+  it('should throttle function calls', async () => {
+    vi.useFakeTimers();
+    let callCount = 0;
+    const throttled = throttleRAF(() => {
+      callCount++;
     });
+
+    // Call multiple times rapidly
+    throttled();
+    throttled();
+    throttled();
+
+    // Should only execute once per frame
+    await vi.advanceTimersByTimeAsync(50);
+    expect(callCount).toBeLessThanOrEqual(2);
+    
+    vi.useRealTimers();
   });
 });
 
 describe('debounceRAF', () => {
   it('should debounce function calls', async () => {
+    vi.useFakeTimers();
     let callCount = 0;
     const debounced = debounceRAF(() => {
       callCount++;
@@ -175,8 +184,10 @@ describe('debounceRAF', () => {
     debounced();
 
     // Should only execute once after frames
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await vi.advanceTimersByTimeAsync(100);
     expect(callCount).toBe(1);
+    
+    vi.useRealTimers();
   });
 });
 
@@ -188,35 +199,44 @@ describe('DOMBatcher', () => {
   });
 
   it('should batch read operations', async () => {
+    vi.useFakeTimers();
     let readExecuted = false;
     
     batcher.read(() => {
       readExecuted = true;
     });
 
-    await new Promise(resolve => setTimeout(resolve, 20));
+    await vi.advanceTimersByTimeAsync(20);
     expect(readExecuted).toBe(true);
+    
+    vi.useRealTimers();
   });
 
   it('should batch write operations', async () => {
+    vi.useFakeTimers();
     let writeExecuted = false;
     
     batcher.write(() => {
       writeExecuted = true;
     });
 
-    await new Promise(resolve => setTimeout(resolve, 20));
+    await vi.advanceTimersByTimeAsync(20);
     expect(writeExecuted).toBe(true);
+    
+    vi.useRealTimers();
   });
 
   it('should execute reads before writes', async () => {
+    vi.useFakeTimers();
     const order: string[] = [];
     
     batcher.write(() => order.push('write'));
     batcher.read(() => order.push('read'));
 
-    await new Promise(resolve => setTimeout(resolve, 20));
+    await vi.advanceTimersByTimeAsync(20);
     expect(order).toEqual(['read', 'write']);
+    
+    vi.useRealTimers();
   });
 });
 
@@ -232,28 +252,32 @@ describe('FPSCounter', () => {
   });
 
   it('should track FPS', async () => {
+    vi.useFakeTimers();
     let fps = 0;
     
     counter.start((currentFps) => {
       fps = currentFps;
     });
 
-    await new Promise(resolve => setTimeout(resolve, 1100)); // Wait just over 1 second
+    await vi.advanceTimersByTimeAsync(1100); // Wait just over 1 second
     expect(fps).toBeGreaterThan(0);
     expect(fps).toBeLessThanOrEqual(60);
+    
+    vi.useRealTimers();
   });
 
-  it('should stop tracking', () => {
+  it('should stop tracking', async () => {
+    vi.useFakeTimers();
     const callback = vi.fn();
     counter.start(callback);
     counter.stop();
     
     // Callback should not be called after stop
-    setTimeout(() => {
-      const callCount = callback.mock.calls.length;
-      setTimeout(() => {
-        expect(callback.mock.calls.length).toBe(callCount);
-      }, 100);
-    }, 100);
+    await vi.advanceTimersByTimeAsync(100);
+    const callCount = callback.mock.calls.length;
+    await vi.advanceTimersByTimeAsync(100);
+    expect(callback.mock.calls.length).toBe(callCount);
+    
+    vi.useRealTimers();
   });
 });

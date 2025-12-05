@@ -272,7 +272,7 @@ export class MockWebSocket {
   public onerror: ((event: Event) => void) | null = null;
   public onclose: ((event: CloseEvent) => void) | null = null;
 
-  private messageQueue: any[] = [];
+  private messageQueue: unknown[] = [];
 
   constructor(url: string) {
     this.url = url;
@@ -319,7 +319,7 @@ export class MockWebSocket {
   }
 
   // Test helper: get sent messages
-  getSentMessages(): any[] {
+  getSentMessages(): unknown[] {
     return [...this.messageQueue];
   }
 

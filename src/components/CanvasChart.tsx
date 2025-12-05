@@ -7,7 +7,7 @@
  * Requirements: 14.3
  */
 
-import React, { useRef, useEffect, memo, useMemo } from 'react';
+import React, { useRef, useEffect, memo, useMemo, useCallback } from 'react';
 import { throttleRAF } from '../lib/performance';
 
 interface DataPoint {
@@ -76,7 +76,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = memo(({
   }, [bounds, height]);
 
   // Draw function
-  const draw = (ctx: CanvasRenderingContext2D, progress: number = 1) => {
+  const draw = useCallback((ctx: CanvasRenderingContext2D, progress: number = 1) => {
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
@@ -172,7 +172,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = memo(({
 
     // Reset scale
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-  };
+  }, [data, width, height, lineColor, fillColor, showGrid, showAxes, showPoints, scaleX, scaleY]);
 
   // Animation loop
   useEffect(() => {
@@ -215,7 +215,7 @@ export const CanvasChart: React.FC<CanvasChartProps> = memo(({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [data, width, height, lineColor, fillColor, showGrid, showAxes, showPoints, animate]);
+  }, [data, width, height, lineColor, fillColor, showGrid, showAxes, showPoints, animate, draw]);
 
   // Handle resize
   useEffect(() => {
@@ -226,12 +226,13 @@ export const CanvasChart: React.FC<CanvasChartProps> = memo(({
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      draw(ctx, progressRef.current);
+      const currentProgress = progressRef.current;
+      draw(ctx, currentProgress);
     });
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [data, width, height]);
+  }, [data, width, height, draw]);
 
   return (
     <canvas
@@ -269,7 +270,7 @@ export const CanvasBarChart: React.FC<BarChartProps> = memo(({
     return Math.max(...data.map(d => d.value), 1);
   }, [data]);
 
-  const draw = (ctx: CanvasRenderingContext2D, progress: number = 1) => {
+  const draw = useCallback((ctx: CanvasRenderingContext2D, progress: number = 1) => {
     ctx.clearRect(0, 0, width, height);
 
     const dpr = window.devicePixelRatio || 1;
@@ -303,7 +304,7 @@ export const CanvasBarChart: React.FC<BarChartProps> = memo(({
     });
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-  };
+  }, [data, width, height, maxValue]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -346,7 +347,7 @@ export const CanvasBarChart: React.FC<BarChartProps> = memo(({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [data, width, height, animate]);
+  }, [data, width, height, animate, draw]);
 
   return (
     <canvas

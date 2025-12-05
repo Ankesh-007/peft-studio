@@ -201,23 +201,22 @@ export const OptimizedModelGrid: React.FC<OptimizedModelGridProps> = memo(({
   }, [onAddToComparison]);
 
   // Throttled resize handler using RAF
-  const handleResize = useMemo(() => {
-    return throttleRAF(() => {
-      if (containerRef.current) {
-        setContainerSize({
-          width: containerRef.current.offsetWidth,
-          height: containerRef.current.offsetHeight
-        });
-      }
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleResize = useCallback(() => {
+    if (containerRef.current) {
+      setContainerSize({
+        width: containerRef.current.offsetWidth,
+        height: containerRef.current.offsetHeight
+      });
+    }
   }, []);
 
   // Update container size on mount and resize
   useEffect(() => {
+    const throttledResize = throttleRAF(handleResize);
+    
     handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener('resize', throttledResize);
+    return () => window.removeEventListener('resize', throttledResize);
   }, [handleResize]);
 
   // Calculate grid dimensions
@@ -238,7 +237,7 @@ export const OptimizedModelGrid: React.FC<OptimizedModelGridProps> = memo(({
   }, [view, containerSize.width, models.length]);
 
   // Render cell for virtual grid
-  const Cell = useCallback(({ columnIndex, rowIndex, style }: any) => {
+  const Cell = useCallback(({ columnIndex, rowIndex, style }: { columnIndex: number; rowIndex: number; style: React.CSSProperties }) => {
     const index = view === 'grid'
       ? rowIndex * gridConfig.columnCount + columnIndex
       : rowIndex;

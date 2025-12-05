@@ -67,6 +67,17 @@ export default [
       'no-undef': 'off', // TypeScript handles this
     },
   },
+  // Relaxed rules for test files and type definitions
+  {
+    files: ['src/test/**/*.{ts,tsx}', 'src/**/*.d.ts', 'src/**/types.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off', // Allow any in tests and type definitions
+      '@typescript-eslint/no-unused-vars': 'off', // Allow unused vars in tests
+      '@typescript-eslint/ban-ts-comment': 'off', // Allow ts-ignore in tests
+      '@typescript-eslint/no-require-imports': 'off', // Allow require in tests
+      '@typescript-eslint/no-empty-object-type': 'off', // Allow empty interfaces in type definitions
+    },
+  },
   {
     ignores: ['dist/**', 'build/**', 'node_modules/**', '*.config.js', '*.config.ts'],
   },

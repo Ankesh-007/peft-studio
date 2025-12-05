@@ -9,7 +9,7 @@ interface ErrorDisplayProps {
   error: FormattedError;
   onDismiss?: () => void;
   onRetry?: () => void;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 }
 
 export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({

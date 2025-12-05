@@ -7,7 +7,7 @@
  * Requirements: 9.5
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 interface UsageMetrics {
   deployment_id: string;
@@ -41,13 +41,7 @@ export const DeploymentMetricsView: React.FC<DeploymentMetricsViewProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadMetrics();
-    const interval = setInterval(loadMetrics, 30000); // Refresh every 30 seconds
-    return () => clearInterval(interval);
-  }, [deploymentId]);
-
-  const loadMetrics = async () => {
+  const loadMetrics = useCallback(async () => {
     try {
       const response = await fetch(`/api/deployments/${deploymentId}/metrics`);
       if (!response.ok) {
@@ -61,7 +55,13 @@ export const DeploymentMetricsView: React.FC<DeploymentMetricsViewProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [deploymentId]);
+
+  useEffect(() => {
+    loadMetrics();
+    const interval = setInterval(loadMetrics, 30000); // Refresh every 30 seconds
+    return () => clearInterval(interval);
+  }, [loadMetrics]);
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat().format(num);

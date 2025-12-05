@@ -21,7 +21,7 @@ import {
 } from './types';
 
 // Worker context
-const ctx: Worker = self as any;
+const ctx: Worker = self as unknown as Worker;
 
 /**
  * Handle incoming messages
@@ -31,7 +31,7 @@ ctx.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
   const startTime = performance.now();
 
   try {
-    let result: any;
+    let result: unknown;
 
     switch (message.type) {
       case WorkerMessageType.PROCESS_FILE:
@@ -103,7 +103,11 @@ ctx.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
 /**
  * Process file in chunks
  */
-async function processFile(payload: ProcessFilePayload): Promise<any> {
+async function processFile(payload: ProcessFilePayload): Promise<{
+  size: number;
+  type: string;
+  chunks: number;
+}> {
   const { file, options = {} } = payload;
   const chunkSize = options.chunkSize || 1024 * 1024; // 1MB chunks
 
@@ -127,7 +131,7 @@ async function processFile(payload: ProcessFilePayload): Promise<any> {
 /**
  * Parse JSON data
  */
-function parseJSON(payload: ParseJSONPayload): any {
+function parseJSON(payload: ParseJSONPayload): unknown {
   const { data, reviver } = payload;
 
   let jsonString: string;
@@ -147,7 +151,7 @@ function parseJSON(payload: ParseJSONPayload): any {
 /**
  * Parse CSV data
  */
-function parseCSV(payload: ParseCSVPayload): any[] {
+function parseCSV(payload: ParseCSVPayload): Array<Record<string, string> | string[]> {
   const { data, delimiter = ',', headers = true } = payload;
 
   const lines = data.trim().split('\n');
@@ -160,7 +164,7 @@ function parseCSV(payload: ParseCSVPayload): any[] {
     const values = line.split(delimiter);
     
     if (headerRow) {
-      const obj: any = {};
+      const obj: Record<string, string> = {};
       headerRow.forEach((header, index) => {
         obj[header.trim()] = values[index]?.trim() || '';
       });
@@ -196,7 +200,7 @@ async function compressData(payload: CompressDataPayload): Promise<ArrayBuffer> 
     });
 
     const compressedStream = stream.pipeThrough(
-      new (self as any).CompressionStream(algorithm)
+      new (self as typeof globalThis & { CompressionStream: new (algorithm: string) => TransformStream }).CompressionStream(algorithm)
     );
 
     const reader = compressedStream.getReader();
@@ -244,7 +248,7 @@ async function decompressData(payload: CompressDataPayload): Promise<ArrayBuffer
     });
 
     const decompressedStream = stream.pipeThrough(
-      new (self as any).DecompressionStream(algorithm)
+      new (self as typeof globalThis & { DecompressionStream: new (algorithm: string) => TransformStream }).DecompressionStream(algorithm)
     );
 
     const reader = decompressedStream.getReader();
@@ -329,11 +333,11 @@ function computeMetrics(payload: ComputeMetricsPayload): Record<string, number> 
 /**
  * Aggregate data by group
  */
-function aggregateData(payload: AggregateDataPayload): any[] {
+function aggregateData(payload: AggregateDataPayload): Record<string, unknown>[] {
   const { data, groupBy, aggregations } = payload;
 
   // Group data
-  const groups = new Map<any, any[]>();
+  const groups = new Map<unknown, Record<string, unknown>[]>();
   for (const item of data) {
     const key = item[groupBy];
     if (!groups.has(key)) {
@@ -343,9 +347,9 @@ function aggregateData(payload: AggregateDataPayload): any[] {
   }
 
   // Aggregate each group
-  const results: any[] = [];
+  const results: Record<string, unknown>[] = [];
   for (const [key, items] of groups) {
-    const result: any = { [groupBy]: key };
+    const result: Record<string, unknown> = { [groupBy]: key };
 
     for (const agg of aggregations) {
       const values = items.map(item => item[agg.field]).filter(v => typeof v === 'number');
@@ -384,7 +388,7 @@ function aggregateData(payload: AggregateDataPayload): any[] {
 /**
  * Filter data using predicate
  */
-function filterData(payload: FilterDataPayload): any[] {
+function filterData(payload: FilterDataPayload): Record<string, unknown>[] {
   const { data, predicate } = payload;
 
   // Evaluate predicate function (be careful with this in production)
@@ -396,7 +400,7 @@ function filterData(payload: FilterDataPayload): any[] {
 /**
  * Sort data by key
  */
-function sortData(payload: SortDataPayload): any[] {
+function sortData(payload: SortDataPayload): Record<string, unknown>[] {
   const { data, key, order } = payload;
 
   const sorted = [...data].sort((a, b) => {

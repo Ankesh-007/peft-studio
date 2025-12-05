@@ -7,7 +7,7 @@
  * Requirements: 6.3, 6.4, 17.1, 17.2, 17.3
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { TrendingUp, TrendingDown, Award, X, Download } from 'lucide-react';
 
 interface ComparisonData {
@@ -18,17 +18,17 @@ interface ComparisonData {
     name: string;
     status: string;
     started_at: string;
-    metadata: Record<string, any>;
+    metadata: Record<string, unknown>;
   }>;
   metrics: Record<string, Record<string, number>>;
-  hyperparameters: Record<string, Record<string, any>>;
-  artifacts: Record<string, Array<any>>;
-  summary: Record<string, Record<string, any>>;
+  hyperparameters: Record<string, Record<string, unknown>>;
+  artifacts: Record<string, Array<Record<string, unknown>>>;
+  summary: Record<string, Record<string, unknown>>;
   statistics: {
     total_experiments: number;
     trackers_used: string[];
     status_counts: Record<string, number>;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -47,11 +47,7 @@ export const ExperimentComparisonView: React.FC<ExperimentComparisonViewProps> =
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'metrics' | 'hyperparameters' | 'summary'>('metrics');
 
-  useEffect(() => {
-    loadComparisonData();
-  }, [jobIds]);
-
-  const loadComparisonData = async () => {
+  const loadComparisonData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch('/api/experiments/compare', {
@@ -75,7 +71,7 @@ export const ExperimentComparisonView: React.FC<ExperimentComparisonViewProps> =
       // Auto-select common metrics
       if (data.comparison.metrics) {
         const allMetrics = new Set<string>();
-        Object.values(data.comparison.metrics).forEach((metrics: any) => {
+        Object.values(data.comparison.metrics).forEach((metrics: Record<string, unknown>) => {
           Object.keys(metrics).forEach(metric => allMetrics.add(metric));
         });
         setSelectedMetrics(Array.from(allMetrics).slice(0, 5)); // Show first 5 metrics
@@ -87,7 +83,11 @@ export const ExperimentComparisonView: React.FC<ExperimentComparisonViewProps> =
     } finally {
       setLoading(false);
     }
-  };
+  }, [jobIds]);
+
+  useEffect(() => {
+    loadComparisonData();
+  }, [loadComparisonData]);
 
   const getBestPerformer = (metricName: string): string | null => {
     if (!comparisonData?.metrics) return null;

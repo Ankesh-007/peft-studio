@@ -67,7 +67,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
             if (healthCheck.ok) {
               backendReady = true;
             }
-          } catch (err) {
+          } catch {
             attempts++;
             await new Promise((resolve) => setTimeout(resolve, 800));
           }
@@ -112,12 +112,12 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
             });
 
             if (depsCheck.ok) {
-              const depsData = await depsCheck.json();
+              await depsCheck.json();
               updateSubstep(1, 'completed', 'All dependencies verified');
             } else {
               updateSubstep(1, 'completed', 'Dependencies checked (warnings present)');
             }
-          } catch (err) {
+          } catch {
             // Non-critical, continue
             updateSubstep(1, 'completed', 'Dependency check skipped');
           }
@@ -208,7 +208,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, onError 
     };
 
     initializeApp();
-  }, [onComplete, onError]);
+  }, [onComplete, onError, progress.substeps]);
 
   const getSubstepIcon = (status: StartupSubstep['status']) => {
     switch (status) {
