@@ -10,6 +10,19 @@ Professional desktop application for Parameter-Efficient Fine-Tuning (PEFT) of L
 
 ## ✨ Features
 
+### 🎉 Latest: Bundled Python Backend
+
+**No Python Installation Required!** PEFT Studio now includes a self-contained Python backend:
+
+- ✅ **One-Click Installation**: Download and run - no Python setup needed
+- ✅ **Zero Configuration**: Backend starts automatically with the application
+- ✅ **All Dependencies Included**: PyTorch, Transformers, PEFT, and all ML libraries bundled
+- ✅ **Cross-Platform**: Works on Windows, macOS, and Linux out of the box
+- ✅ **Automatic Updates**: Backend updates seamlessly with application updates
+- ✅ **Fast Startup**: Optimized bundling with lazy loading for quick launch times
+
+See the [Backend Bundling Documentation](docs/developer-guide/backend-bundling.md) for technical details.
+
 ### Core Training Capabilities
 - **Model Browser**: Search, filter, and download models from HuggingFace with integrated metadata and comparison tools
 - **Dataset Management**: Upload, validate, and analyze training data with drag-and-drop support and format detection
@@ -71,33 +84,42 @@ Choose the installer for your platform from the [releases page](https://github.c
 | **Linux** | AppImage | `PEFT-Studio-{version}-{arch}.AppImage` | Universal, no installation |
 | **Linux** | DEB Package | `PEFT-Studio-{version}-{arch}.deb` | For Debian/Ubuntu |
 
-#### 📥 Direct Download Links (v1.0.1)
+#### 📥 Direct Download Links (Latest Release)
+
+> **🎉 New in Latest Release:** Python backend is now bundled! No need to install Python separately.
 
 **Windows:**
-- [PEFT Studio-Setup-1.0.1.exe](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT%20Studio-Setup-1.0.1.exe) - NSIS Installer (Recommended)
-- [PEFT Studio-Portable-1.0.1.exe](https://github.com/Ankesh-007/peft-studio/releases/download/v1.0.1/PEFT%20Studio-Portable-1.0.1.exe) - Portable Version
+- [PEFT-Studio-Setup-{version}.exe](https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-Setup-{version}.exe) - NSIS Installer (Recommended)
+- [PEFT-Studio-Portable-{version}.exe](https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-Portable-{version}.exe) - Portable Version
 
-**macOS:** *(Coming Soon)*
-- Intel Mac DMG and ZIP
-- Apple Silicon DMG and ZIP
+**macOS:**
+- [PEFT-Studio-{version}-x64.dmg](https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-{version}-x64.dmg) - Intel Mac DMG
+- [PEFT-Studio-{version}-arm64.dmg](https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-{version}-arm64.dmg) - Apple Silicon DMG
+- [PEFT-Studio-{version}-x64.zip](https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-{version}-x64.zip) - Intel Mac ZIP
+- [PEFT-Studio-{version}-arm64.zip](https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-{version}-arm64.zip) - Apple Silicon ZIP
 
-**Linux:** *(Coming Soon)*
-- AppImage (Universal)
-- DEB Package (Debian/Ubuntu)
+**Linux:**
+- [PEFT-Studio-{version}-x64.AppImage](https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-{version}-x64.AppImage) - AppImage (Universal)
+- [PEFT-Studio-{version}-amd64.deb](https://github.com/Ankesh-007/peft-studio/releases/latest/download/PEFT-Studio-{version}-amd64.deb) - DEB Package (Debian/Ubuntu)
+
+> **Note:** Replace `{version}` with the actual version number from the [releases page](https://github.com/Ankesh-007/peft-studio/releases/latest).
 
 ### 💻 System Requirements
 
 **Minimum Requirements:**
 - **OS**: Windows 10+, macOS 10.13+, or Linux (Ubuntu 18.04+, Fedora 28+)
 - **RAM**: 8 GB (16 GB recommended for training)
-- **Storage**: 10 GB free space (more for models and datasets)
+- **Storage**: 15 GB free space (includes bundled Python backend, more for models and datasets)
 - **CPU**: 64-bit processor with 4+ cores
 - **GPU**: Optional but recommended - NVIDIA GPU with CUDA support for training
+- **Python**: ✅ **Not required!** Python backend is bundled with the installer
 
 **Recommended for Training:**
 - **RAM**: 32 GB or more
 - **GPU**: NVIDIA GPU with 16+ GB VRAM (RTX 3090, RTX 4090, A100, etc.)
 - **Storage**: SSD with 100+ GB free space
+
+> **🎉 No Python Installation Required:** The latest release includes a bundled Python backend, eliminating the need for manual Python setup. Just download, install, and run!
 
 ### 📖 Installation Guides
 
@@ -208,12 +230,17 @@ This triggers the build workflow and creates a GitHub Release with installers fo
 
 **Build Status**: ✅ 215/249 tests passing (86%) - Safe to build
 
-### Prerequisites
+### Prerequisites for Development
+
+> **Note:** End users don't need these prerequisites! The bundled installer includes everything needed to run PEFT Studio.
+
+For developers who want to build from source:
 - **Node.js** 18+ (for frontend development)
-- **Python** 3.10+ (for backend services)
+- **Python** 3.10+ (for backend development and building)
+- **PyInstaller** 5.0+ (for building the bundled backend)
 - **CUDA GPU** (recommended for training, optional for development)
 
-### Installation
+### Development Installation
 
 ```bash
 # Clone the repository
@@ -234,6 +261,9 @@ source peft_env/bin/activate
 
 # Install Python dependencies
 pip install -r backend/requirements.txt
+
+# Install PyInstaller for building bundled backend
+pip install pyinstaller
 ```
 
 ### Development
