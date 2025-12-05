@@ -237,7 +237,7 @@ describe("Auto-Update System Properties", () => {
           const componentContent = fs.readFileSync(componentPath, "utf-8");
 
           expect(componentContent).toContain("error");
-          expect(componentContent).toContain("updateState === 'error'");
+          expect(componentContent).toContain('updateState === "error"');
 
           // Verify component shows error message
           expect(componentContent).toContain("Update Error");

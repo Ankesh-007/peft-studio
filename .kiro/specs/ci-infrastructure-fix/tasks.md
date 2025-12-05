@@ -1,433 +1,364 @@
-# CI Infrastructure Fix - Implementation Tasks
+# Implementation Plan
 
-- [x] 1. Diagnose and categorize CI failures
-
-
-
-
-
-  - Analyze GitHub Actions workflow logs for all 33 failing checks
-  - Categorize failures into: build, test, lint, security, and other
-  - Identify root causes for each category
-  - Create prioritized fix list based on dependencies
+- [x] 1. Diagnose CI Failures
+  - Fetch and analyze GitHub Actions workflow logs to identify all failing checks
+  - Categorize failures by type and identify root causes
+  - Compare local and CI environments for version mismatches
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-- [x] 2. Fix dependency issues
+- [x] 1.1 Fetch recent CI workflow runs
+  - Use GitHub CLI or API to fetch the last 5 workflow runs
+  - Filter for failed runs on main/develop branches
+  - Download logs for all failed jobs
+  - _Requirements: 1.1_
 
+- [x] 1.2 Parse and categorize failures
+  - Extract error messages from each failed job
+  - Categorize failures as: linting, test, build, dependency, or environment issues
+  - Create a diagnostic report with all findings
+  - _Requirements: 1.2_
 
+- [x] 1.3 Compare environment configurations
+  - Check Node.js versions (local vs CI)
+  - Check Python versions (local vs CI)
+  - Compare package.json scripts with workflow YAML commands
+  - Identify dependency version mismatches
+  - _Requirements: 1.3, 1.4, 1.5_
 
+- [x] 1.4 Write property test for failure extraction
 
 
 
-  - [x] 2.1 Install missing frontend dependencies
 
-    - Run `npm install` and verify all packages install
-    - Fix any version conflicts in package.json
-    - Update package-lock.json
-    - _Requirements: 2.1, 7.1_
-  
 
-  - [x] 2.2 Install missing backend dependencies
+  - **Property 1: CI Log Failure Extraction Completeness**
+  - **Validates: Requirements 1.1**
 
-    - Run `pip install -r requirements.txt` in backend/
-    - Fix any version conflicts
-    - Add missing test dependencies (pytest, hypothesis, etc.)
-    - _Requirements: 2.1, 7.1_
-  
+- [x] 1.5 Write property test for categorization consistency
 
-  - [x] 2.3 Verify dependency installation
 
-    - Run `npm list --depth=0` to check frontend
-    - Run `pip list` to check backend
-    - Ensure no missing peer dependencies
-    - _Requirements: 7.1_
 
-- [-] 3. Fix build infrastructure
 
 
+  - **Property 2: Failure Categorization Consistency**
+  - **Validates: Requirements 1.2**
 
 
-  - [x] 3.1 Fix TypeScript compilation errors
 
-    - Run `tsc --noEmit` to identify all type errors
-    - Fix type errors in source files
-    - Add missing type definitions
-    - Update import statements
-    - _Requirements: 2.2_
-  
 
-  - [x] 3.2 Fix frontend build
+- [x] 1.6 Write property test for environment comparison
 
-    - Run `npm run build` and capture errors
-    - Fix Vite configuration issues
-    - Verify dist/ directory is created
-    - Check that all assets are bundled correctly
-    - _Requirements: 2.2, 2.4_
-  
 
-  - [x] 3.3 Fix backend imports
+  - **Property 3: Environment Comparison Completeness**
+  - **Validates: Requirements 1.3**
 
 
 
 
+- [x] 2. Fix ESM/CommonJS Module Configuration
 
-    - Test Python imports: `python -c "import main"`
-    - Fix any import errors in backend code
-    - Verify all modules load correctly
-    - _Requirements: 2.1_
-  
-  - [x] 3.4 Verify build outputs
 
+  - Add `"type": "module"` to package.json to fix ESLint and Vitest loading issues
 
+  - Verify lint and test commands work locally
+  - _Requirements: 2.1, 2.2, 2.3, 2.5_
 
+- [x] 2.1 Add module type to package.json
 
+  - Add `"type": "module"` field to package.json
+  - This fixes the ESM import errors in eslint.config.js and vitest configs
+  - _Requirements: 2.1, 2.3_
 
-    - Check that dist/ contains expected files
-    - Verify bundle sizes are reasonable
-    - Test that backend can start
-    - _Requirements: 2.4, 2.5_
+- [x] 2.2 Verify ESLint runs successfully
 
-- [x] 4. Fix test infrastructure
 
+  - Execute `npm run lint` to confirm ESLint loads properly
+  - Address any remaining linting warnings (currently only `any` type warnings)
+  - _Requirements: 2.1_
 
 
+- [x] 2.3 Verify TypeScript type checking passes
 
+  - Execute `npm run type-check` to confirm zero type errors
+  - _Requirements: 2.2_
 
+- [x] 2.4 Verify frontend tests run
 
 
+  - Execute `npm run test:run` to confirm Vitest loads properly
+  - All tests should pass (currently 1 failing test in auto-update-system.test.ts)
+  - _Requirements: 2.5_
 
+- [x] 2.5 Write property test for ESLint idempotence
 
 
+  - **Property 6: ESLint Auto-Fix Idempotence**
+  - **Validates: Requirements 2.3**
 
-  - [x] 4.1 Fix test configuration files
+- [x] 3. Checkpoint - Verify Linting and Tests Pass
 
 
-    - Review vitest.config.ts settings
-    - Review vitest.integration.config.ts
-    - Review vitest.e2e.config.ts
-    - Review vitest.pbt.config.ts
-    - Update test file patterns if needed
-    - Configure appropriate timeouts
-    - _Requirements: 3.1, 3.2, 3.3, 3.4_
-  
-  - [x] 4.2 Fix test setup and fixtures
 
 
-    - Check src/test/setup.ts exists and is correct
-    - Verify test fixtures load correctly
-    - Fix any fixture path issues
-    - Ensure test data files are accessible
-    - _Requirements: 7.3, 7.4_
-  
-  - [x] 4.3 Fix test imports
 
-
-    - Verify all test files can import required modules
-    - Fix any missing test dependencies
-    - Update import paths if needed
-    - _Requirements: 7.2, 7.5_
-  
-  - [x] 4.4 Add missing test scripts to package.json
-
-
-
-    - Ensure `test:integration` script exists
-    - Ensure `test:e2e` script exists (currently just echoes)
-    - Ensure `test:pbt` script exists
-    - Update scripts to use correct config files
-    - _Requirements: 3.1, 3.2, 3.3, 3.4_
-
-
-- [x] 5. Fix failing unit tests
-
-
-
-
-
-  - [x] 5.1 Run unit tests and identify failures
-
-    - Run `npm test -- --run` to see all failures
-    - Categorize failures by type (assertion, import, timeout, etc.)
-    - Create list of failing tests
-    - _Requirements: 3.1, 3.5_
-  
-
-  - [x] 5.2 Fix frontend unit test failures
-
-    - Fix assertion errors in failing tests
-    - Update mocks if needed
-    - Fix any timing issues
-    - Ensure tests are deterministic
-    - _Requirements: 3.1, 3.5_
-  
-
-  - [x] 5.3 Fix backend unit test failures
-
-    - Run `cd backend && pytest -v` to see failures
-    - Fix assertion errors
-    - Update test fixtures if needed
-    - Fix async test issues
-    - _Requirements: 3.1, 3.5_
-  
-
-  - [x] 5.4 Verify unit tests pass on all platforms
-
-
-
-
-
-
-
-
-    - Test on Ubuntu (or WSL)
-    - Test on Windows
-    - Test on macOS (if available)
-    - Fix any platform-specific issues
-    - _Requirements: 6.1, 6.2, 6.3, 6.5_
-
-- [x] 6. Fix integration tests
-
-
-
-
-
-  - [x] 6.1 Implement integration test script
-
-
-    - Create proper `test:integration` script in package.json
-    - Configure integration test environment
-    - _Requirements: 3.2_
-  
-  - [x] 6.2 Run integration tests and fix failures
-
-
-    - Run `npm run test:integration`
-    - Fix any API integration issues
-    - Fix any database integration issues
-    - Ensure proper test isolation
-    - _Requirements: 3.2, 3.5_
-  
-  - [x] 6.3 Fix backend integration tests
-
-
-    - Run `cd backend && pytest -v -m integration`
-    - Fix service integration issues
-    - Fix database connection issues
-    - _Requirements: 3.2, 3.5_
-
-- [x] 7. Fix end-to-end tests
-
-
-
-
-
-  - [x] 7.1 Implement E2E test infrastructure
-
-
-    - Replace echo command in `test:e2e` script
-    - Set up Playwright or similar E2E framework
-    - Create basic E2E test structure
-    - _Requirements: 3.3_
-  
-  - [x] 7.2 Create basic E2E tests
-
-
-    - Test application startup
-    - Test basic user workflows
-    - Test frontend-backend integration
-    - _Requirements: 3.3_
-  
-  - [x] 7.3 Fix E2E test failures
-
-
-    - Run `npm run test:e2e`
-    - Fix any browser automation issues
-    - Fix timing/synchronization issues
-    - _Requirements: 3.3, 3.5_
-
-- [ ] 8. Fix property-based tests
-  - [ ] 8.1 Verify PBT configuration
-    - Check vitest.pbt.config.ts is correct
-    - Ensure fast-check is installed
-    - Verify test file patterns
-    - _Requirements: 3.4_
-  
-  - [ ] 8.2 Run property-based tests and fix failures
-    - Run `npm run test:pbt`
-    - Fix any failing properties
-    - Ensure sufficient iterations (100+)
-    - Fix any generator issues
-    - _Requirements: 3.4, 3.5_
-  
-  - [ ] 8.3 Fix backend property-based tests
-    - Run `cd backend && pytest -v -m pbt`
-    - Fix any failing Hypothesis tests
-    - Ensure proper test strategies
-    - _Requirements: 3.4, 3.5_
-
-- [ ] 9. Checkpoint - Verify all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 10. Fix linting issues
-  - [ ] 10.1 Run linters and identify issues
-    - Run `npm run lint` for frontend
-    - Run `cd backend && flake8 .` for backend (if configured)
-    - Categorize issues as auto-fixable vs manual
-    - _Requirements: 4.1, 4.2, 4.3_
-  
-  - [ ] 10.2 Auto-fix linting issues
-    - Run `npm run lint:fix` for frontend
-    - Run `cd backend && black . && isort .` for backend
-    - Verify auto-fixes don't break functionality
-    - _Requirements: 4.4_
-  
-  - [ ] 10.3 Manually fix remaining lint issues
-    - Fix any remaining ESLint errors
-    - Fix any remaining Python linting errors
-    - Update lint configurations if needed
-    - _Requirements: 4.3, 4.5_
-  
-  - [ ] 10.4 Verify linting passes
-    - Run `npm run lint` and ensure exit code 0
-    - Run backend linting and ensure exit code 0
-    - _Requirements: 4.5_
-
-- [ ] 11. Fix security scanning issues
-  - [ ] 11.1 Run security scans
-    - Run `npm audit` for frontend
-    - Run `pip-audit` for backend (install if needed)
-    - Run secret scanning
-    - Identify all vulnerabilities
-    - _Requirements: 5.1, 5.2, 5.3_
-  
-  - [ ] 11.2 Update vulnerable dependencies
-    - Run `npm audit fix` for auto-fixable issues
-    - Manually update packages with breaking changes
-    - Update Python packages with vulnerabilities
-    - Test that updates don't break functionality
-    - _Requirements: 5.1, 5.2, 5.5_
-  
-  - [ ] 11.3 Fix secret leaks
-    - Remove any detected secrets from code
-    - Add secrets to .gitignore
-    - Rotate any compromised credentials
-    - _Requirements: 5.3_
-  
-  - [ ] 11.4 Verify security scans pass
-    - Run `npm audit` and verify no high/critical issues
-    - Run `pip-audit` and verify no issues
-    - Run secret scanning and verify clean
-    - _Requirements: 5.1, 5.2, 5.3_
-
-- [x] 12. Fix code coverage
+- [x] 4. Fix Backend Dependency Conflict
 
 
 
 
 
-  - [x] 12.1 Configure coverage collection
+  - Fix huggingface-hub version constraint to resolve dependency conflict
+  - Install and verify backend dependencies
+  - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
 
-    - Verify coverage configuration in vitest.config.ts
-    - Set appropriate coverage thresholds
-    - Configure coverage exclusions
-    - _Requirements: 9.1_
-  
-  - [x] 12.2 Run tests with coverage
+- [x] 4.1 Fix huggingface-hub version constraint
+
+  - Change `huggingface-hub==0.19.4` to `huggingface-hub>=0.16.4,<0.18` in requirements.txt
+  - This resolves the conflict with tokenizers package requirements
+  - _Requirements: 3.1, 3.2_
 
 
-    - Run `npm run test:coverage`
-    - Run `cd backend && pytest --cov=. --cov-report=term`
-    - Identify files below threshold
-    - _Requirements: 9.1, 9.2, 9.3_
-  
-  - [x] 12.3 Fix coverage collection issues
+- [x] 4.2 Install backend dependencies
+
+  - Run `pip install -r requirements.txt` in backend directory
+  - Install test dependencies: pytest, pytest-cov, pytest-asyncio, hypothesis
+  - Verify installation completes without errors
+  - _Requirements: 3.1_
 
 
-    - Fix any coverage collection errors
-    - Ensure all source files are included
-    - Verify coverage reports are generated
-    - _Requirements: 9.1, 9.2, 9.5_
+- [x] 4.3 Validate Python imports
 
-- [x] 13. Update CI workflow configurations
+  - Test importing key modules: fastapi, torch, transformers, peft
+  - Ensure all backend modules import without ModuleNotFoundError
+  - _Requirements: 3.2_
 
-
-
-
-  - [x] 13.1 Fix ci.yml workflow
+- [x] 4.4 Run backend tests locally
 
 
-    - Update Node.js and Python versions if needed
-    - Fix any workflow syntax errors
-    - Add proper caching
-    - Update test commands to match package.json
-    - _Requirements: 2.1, 2.2, 3.1, 4.1_
-  
-  - [x] 13.2 Fix comprehensive-testing.yml workflow
+  - Execute `pytest -v -m "not integration and not e2e and not pbt"` in backend directory
+  - Fix any import errors or test failures
+  - _Requirements: 3.3, 3.4_
+
+- [x] 4.5 Write property test for Python import resolution
 
 
-    - Update test commands for each test type
-    - Fix test matrix configuration
-    - Add proper timeout settings
-    - Ensure proper artifact uploads
-    - _Requirements: 3.1, 3.2, 3.3, 3.4, 6.5_
-  
+  - **Property 7: Python Import Resolution**
+  - **Validates: Requirements 3.2**
 
-  - [x] 13.3 Fix build.yml workflow
-
-    - Update build commands
-    - Fix artifact upload/download
-    - Add build verification steps
-    - _Requirements: 2.1, 2.2, 2.3, 2.4_
-  
-  - [x] 13.4 Fix code-quality.yml workflow
-
-
-    - Update linting commands
-    - Add coverage upload
-    - Fix any workflow dependencies
-    - _Requirements: 4.1, 4.2, 9.4_
-  
-  - [x] 13.5 Fix security.yml workflow
-
-
-    - Update security scanning commands
-    - Configure proper security policies
-    - Add vulnerability reporting
-    - _Requirements: 5.1, 5.2, 5.3, 5.4_
+- [x] 5. Checkpoint - Verify Backend Passes
 
 
 
 
-- [-] 14. Final validation
-
-
-
-  - [x] 14.1 Run complete CI pipeline locally
-
-    - Run all build commands
-    - Run all test suites
-    - Run all linting
-    - Run all security scans
-    - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
-  
-  - [-] 14.2 Push changes and verify CI passes
-
-
-    - Commit all fixes
-    - Push to a test branch
-    - Monitor GitHub Actions
-    - Verify all 33 checks now pass
-    - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
-  
-
-  - [ ] 14.3 Document fixes and create troubleshooting guide
-    - Document what was fixed and why
-    - Create troubleshooting guide for common issues
-    - Update CI documentation
-    - Add platform-specific notes
-    - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
-
-- [ ] 15. Final Checkpoint - Verify all CI checks pass
 
   - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 6. Verify Frontend Build
+  - Frontend build is already working locally
+  - TypeScript compilation passes with zero errors
+  - Vite build completes successfully and generates dist directory
+  - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
+
+- [x] 6.1 TypeScript compilation verified
+  - `npm run type-check` passes with zero errors
+  - _Requirements: 4.3_
+
+- [x] 6.2 Vite build verified
+  - `npm run build` completes successfully
+  - _Requirements: 4.2_
+
+- [x] 6.3 Build output verified
+  - dist directory exists with index.html, assets/, and JavaScript bundles
+  - _Requirements: 4.4_
+
+- [x] 6.4 Write property test for npm ci determinism
+
+
+
+
+
+  - **Property 8: npm ci Determinism**
+  - **Validates: Requirements 4.1**
+
+
+- [x] 6.5 Write property test for build output completeness
+
+
+
+
+  - **Property 10: Build Output Completeness**
+  - **Validates: Requirements 4.4**
+
+- [x] 7. Fix Failing Frontend Test
+
+
+
+
+
+  - Fix the one failing test in auto-update-system.test.ts
+  - Ensure all frontend test suites pass
+  - _Requirements: 5.1, 5.4, 5.5_
+
+
+- [x] 7.1 Fix auto-update-system test failure
+
+  - Investigate and fix "Property 37: Update integrity verification" test failure
+  - Execute `npm run test:run` to verify fix
+  - _Requirements: 5.1_
+
+
+- [x] 7.2 Verify test coverage generation
+
+  - Run `npm run test:coverage`
+  - Verify coverage reports are generated successfully
+  - _Requirements: 5.4_
+
+
+- [x] 7.3 Verify all frontend tests pass
+
+  - Run complete test suite and confirm zero failures
+  - _Requirements: 5.5_
+
+- [x] 8. Checkpoint - Verify Frontend Tests Pass
+
+
+
+
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 9. Verify Multi-Platform Build Configuration
+  - CI workflow matrix is properly configured
+  - Build configuration is correct
+  - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+
+- [x] 9.1 CI workflow matrix verified
+  - .github/workflows/ci.yml includes ubuntu-latest, windows-latest, macos-latest
+  - Build check job is properly configured
+  - _Requirements: 7.2_
+
+- [x] 9.2 Electron Builder config verified
+  - package.json has correct main field pointing to electron/main.js
+  - Platform targets are configured
+  - _Requirements: 7.4_
+
+
+- [x] 9.3 Write property test for multi-platform consistency
+
+
+
+
+  - **Property 11: Multi-Platform Build Consistency**
+  - **Validates: Requirements 4.5, 7.2**
+
+
+
+- [x] 10. Verify Security Scans
+
+
+
+  - Security scans should pass once backend dependencies are fixed
+  - Document any acceptable vulnerabilities
+  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+
+
+- [x] 10.1 Run npm audit
+
+  - Execute `npm audit --audit-level=moderate`
+  - Review reported vulnerabilities
+  - _Requirements: 8.1_
+
+
+
+- [x] 10.2 Run pip-audit on backend
+  - Install pip-audit: `pip install pip-audit`
+  - Run `pip-audit` in backend directory
+  - _Requirements: 8.2_
+
+
+- [x] 10.3 Document security scan results
+
+  - Note any moderate vulnerabilities that are acceptable
+  - Document why certain vulnerabilities cannot be fixed immediately
+  - _Requirements: 8.4, 8.5_
+
+- [x] 11. Create Local CI Verification Script
+
+
+
+
+
+  - Create script to run all CI checks locally
+  - Document environment requirements
+  - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
+
+- [x] 11.1 Create run-ci-locally script
+
+
+  - Create scripts/run-ci-locally.ps1 for Windows
+  - Include all CI commands: lint, type-check, test, build
+  - _Requirements: 10.1, 10.2, 10.3_
+
+- [x] 11.2 Document environment requirements
+
+
+  - Update or create documentation for CI environment
+  - List Node.js 18, Python 3.10 requirements
+  - Document any CI-specific configurations
+  - _Requirements: 10.5_
+
+- [x] 11.3 Test local CI script
+
+
+  - Run the local CI script
+  - Verify all checks pass locally
+  - _Requirements: 10.1, 10.2, 10.3_
+
+- [x] 11.4 Write property test for local-CI parity
+
+
+  - **Property 13: Local-CI Parity**
+  - **Validates: Requirements 10.4**
+
+
+- [ ] 12. Push Fixes and Monitor CI
+
+
+  - Commit all fixes with descriptive message
+  - Push to GitHub and monitor workflow runs
+  - Verify all checks pass in CI
+  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
+
+- [-] 12.1 Commit and push fixes
+
+  - Stage all changes: `git add .`
+  - Commit with message: "fix: resolve CI pipeline failures - add module type and fix dependencies"
+  - Push to branch: `git push`
+  - _Requirements: 9.1_
+
+- [ ] 12.2 Monitor GitHub Actions workflow
+  - Open GitHub Actions tab in browser
+  - Watch workflow run in real-time
+  - Check each job as it completes
+  - _Requirements: 9.1, 9.2, 9.3_
+
+- [ ] 12.3 Verify all checks pass
+  - Confirm lint job passes
+  - Confirm test-frontend job passes
+  - Confirm test-backend job passes
+  - Confirm build-check passes on all platforms
+  - Confirm security-scan completes
+  - Confirm all-checks-passed job succeeds
+  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
+
+- [ ] 12.4 Write property test for CI job aggregation
+  - **Property 12: CI Job Dependency Correctness**
+  - **Validates: Requirements 9.1**
+
+- [ ] 13. Final Checkpoint - All CI Checks Passing
+  - Ensure all tests pass, ask the user if questions arise.
+  - Verify all CI checks show green status
+  - Confirm pull requests can be merged
+  - _Requirements: 9.1, 9.2, 9.3, 9.5_

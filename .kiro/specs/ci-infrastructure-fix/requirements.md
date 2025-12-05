@@ -1,137 +1,139 @@
-# CI Infrastructure Fix Requirements
+# Requirements Document
 
 ## Introduction
 
-This specification defines the requirements for fixing the failing CI/CD pipeline and test infrastructure for PEFT Studio. The system currently has 33 failing checks across builds, tests, linting, and security scanning. This specification focuses on systematically diagnosing and resolving these failures to restore a healthy CI pipeline.
+This document outlines the requirements for diagnosing and fixing the currently failing CI/CD pipeline checks in the PEFT Studio repository. The system has 8 failing checks across Build Backend, Build Frontend, Linting, and Code Quality that must be resolved to restore the pipeline to a passing state.
 
 ## Glossary
 
-- **CI Pipeline**: The Continuous Integration system that automatically builds, tests, and validates code changes
+- **CI Pipeline**: The Continuous Integration pipeline implemented via GitHub Actions that validates code quality, tests, and builds
 - **GitHub Actions**: The CI/CD platform used to run automated workflows
-- **Test Suite**: The collection of unit, integration, end-to-end, and property-based tests
-- **Build Process**: The compilation and bundling of frontend and backend code
-- **Linting**: Static code analysis to identify style and quality issues
-- **Security Scanning**: Automated security vulnerability detection
-- **Test Matrix**: The combination of operating systems and configurations used for testing
+- **Build Check**: The CI job that verifies the application can be built successfully on multiple platforms
+- **Lint Job**: The CI job that runs ESLint and TypeScript type checking
+- **Test Frontend Job**: The CI job that executes frontend unit, integration, and property-based tests
+- **Test Backend Job**: The CI job that executes Python backend tests using pytest
+- **Security Scan Job**: The CI job that runs npm audit and pip-audit for dependency vulnerabilities
+- **Workflow Run**: A single execution of a GitHub Actions workflow triggered by a push or pull request
+- **Check Status**: The pass/fail status of an individual CI job displayed on GitHub
 
 ## Requirements
 
-### Requirement 1: Diagnose CI Failures
+### Requirement 1
 
-**User Story:** As a developer, I want to understand why CI checks are failing, so that I can fix the root causes systematically.
-
-#### Acceptance Criteria
-
-1. WHEN analyzing CI failures THEN the system SHALL categorize failures by type including build, test, lint, and security
-2. WHEN examining build failures THEN the system SHALL identify missing dependencies, configuration errors, and compilation issues
-3. WHEN examining test failures THEN the system SHALL identify failing test cases, missing test dependencies, and test environment issues
-4. WHEN examining lint failures THEN the system SHALL identify code style violations and linting configuration issues
-5. WHEN examining security failures THEN the system SHALL identify vulnerable dependencies and security policy violations
-
-### Requirement 2: Fix Build Infrastructure
-
-**User Story:** As a developer, I want the build process to succeed consistently, so that I can produce deployable artifacts.
+**User Story:** As a developer, I want to diagnose all failing CI checks, so that I understand the root causes before attempting fixes.
 
 #### Acceptance Criteria
 
-1. WHEN building the backend THEN the system SHALL install all Python dependencies without errors
-2. WHEN building the frontend THEN the system SHALL compile TypeScript and bundle assets without errors
-3. WHEN building Electron applications THEN the system SHALL produce platform-specific installers without errors
-4. WHEN builds complete THEN the system SHALL verify that all expected output files exist
-5. WHEN builds fail THEN the system SHALL provide clear error messages indicating the specific failure point
+1. WHEN the CI workflow logs are reviewed THEN the System SHALL identify all failing jobs and their specific error messages
+2. WHEN failures are categorized THEN the System SHALL group them by type including linting errors, test failures, build errors, and dependency issues
+3. WHEN environment differences are analyzed THEN the System SHALL compare CI environment configurations against local development environment
+4. WHEN dependency mismatches are detected THEN the System SHALL identify version conflicts between package.json, requirements.txt, and CI workflow files
+5. WHEN build script mismatches are found THEN the System SHALL verify that package.json scripts match the commands called in GitHub Actions YAML files
 
-### Requirement 3: Fix Test Suite
+### Requirement 2
 
-**User Story:** As a developer, I want all tests to pass reliably, so that I can trust the test suite to catch regressions.
-
-#### Acceptance Criteria
-
-1. WHEN running unit tests THEN the system SHALL execute all unit tests and report pass or fail status
-2. WHEN running integration tests THEN the system SHALL execute all integration tests with proper test fixtures
-3. WHEN running end-to-end tests THEN the system SHALL execute complete workflow tests in a test environment
-4. WHEN running property-based tests THEN the system SHALL execute all property tests with sufficient iterations
-5. WHEN tests fail THEN the system SHALL provide detailed failure information including stack traces and assertion details
-
-### Requirement 4: Fix Linting Issues
-
-**User Story:** As a developer, I want code to pass linting checks, so that the codebase maintains consistent quality standards.
+**User Story:** As a developer, I want linting errors fixed first, so that syntax issues don't block subsequent build and test steps.
 
 #### Acceptance Criteria
 
-1. WHEN linting backend code THEN the system SHALL check Python code against configured linting rules
-2. WHEN linting frontend code THEN the system SHALL check TypeScript and JavaScript code against configured linting rules
-3. WHEN linting identifies issues THEN the system SHALL report specific files, lines, and rule violations
-4. WHEN auto-fixable issues exist THEN the system SHALL provide commands to automatically fix them
-5. WHEN linting completes THEN the system SHALL exit with zero status if no violations exist
+1. WHEN ESLint executes in the lint job THEN ESLint SHALL report zero errors
+2. WHEN TypeScript type checking executes THEN the TypeScript compiler SHALL report zero type errors
+3. WHEN auto-fixable linting errors exist THEN the System SHALL apply ESLint auto-fixes using the --fix flag
+4. WHEN manual linting fixes are required THEN the System SHALL correct syntax errors, missing imports, and type violations
+5. WHEN the lint job completes THEN GitHub Actions SHALL display a success status with green checkmark
 
-### Requirement 5: Fix Security Scanning
+### Requirement 3
 
-**User Story:** As a developer, I want security scans to pass, so that the application is free from known vulnerabilities.
-
-#### Acceptance Criteria
-
-1. WHEN scanning Python dependencies THEN the system SHALL identify vulnerable packages and suggest updates
-2. WHEN scanning NPM dependencies THEN the system SHALL identify vulnerable packages and suggest updates
-3. WHEN scanning for secrets THEN the system SHALL detect accidentally committed credentials or tokens
-4. WHEN running CodeQL analysis THEN the system SHALL identify potential security vulnerabilities in source code
-5. WHEN security issues are found THEN the system SHALL provide remediation guidance
-
-### Requirement 6: Stabilize Test Matrix
-
-**User Story:** As a developer, I want tests to pass consistently across all platforms, so that the application works reliably everywhere.
+**User Story:** As a developer, I want the backend build to succeed, so that Python services can be packaged correctly.
 
 #### Acceptance Criteria
 
-1. WHEN running tests on Ubuntu THEN the system SHALL execute all tests successfully
-2. WHEN running tests on macOS THEN the system SHALL execute all tests successfully
-3. WHEN running tests on Windows THEN the system SHALL execute all tests successfully
-4. WHEN platform-specific issues exist THEN the system SHALL isolate and fix platform-specific code
-5. WHEN tests complete THEN the system SHALL report results for each platform separately
+1. WHEN backend dependencies are installed THEN pip SHALL successfully install all packages from requirements.txt without errors
+2. WHEN Python import paths are validated THEN all backend modules SHALL import successfully without ModuleNotFoundError
+3. WHEN backend tests execute THEN pytest SHALL run without import errors or missing dependencies
+4. WHEN the test-backend job completes THEN GitHub Actions SHALL report zero test failures
+5. WHEN backend code is validated THEN Python linting tools SHALL report zero critical errors
 
-### Requirement 7: Fix Test Dependencies
+### Requirement 4
 
-**User Story:** As a developer, I want test dependencies to be correctly configured, so that tests can run without missing imports or modules.
-
-#### Acceptance Criteria
-
-1. WHEN installing test dependencies THEN the system SHALL install all required testing libraries
-2. WHEN tests import modules THEN the system SHALL resolve all imports without errors
-3. WHEN tests require fixtures THEN the system SHALL load fixtures from correct locations
-4. WHEN tests require test data THEN the system SHALL access test data files successfully
-5. WHEN dependency issues occur THEN the system SHALL report specific missing dependencies
-
-### Requirement 8: Improve Test Performance
-
-**User Story:** As a developer, I want tests to run quickly, so that I get fast feedback on code changes.
+**User Story:** As a developer, I want the frontend build to succeed, so that the Electron application can be packaged.
 
 #### Acceptance Criteria
 
-1. WHEN running the full test suite THEN the system SHALL complete within reasonable time limits
-2. WHEN tests can run in parallel THEN the system SHALL execute them concurrently
-3. WHEN tests have expensive setup THEN the system SHALL reuse fixtures across tests
-4. WHEN performance tests run THEN the system SHALL use appropriate timeouts
-5. WHEN test performance degrades THEN the system SHALL identify slow tests
+1. WHEN npm ci executes THEN npm SHALL install all dependencies from package-lock.json without errors
+2. WHEN npm run build executes THEN Vite SHALL compile TypeScript and bundle the application successfully
+3. WHEN TypeScript compilation occurs THEN the TypeScript compiler SHALL resolve all type definitions and report zero errors
+4. WHEN the build completes THEN the dist directory SHALL contain all required output files
+5. WHEN the build-check job completes on all platforms THEN GitHub Actions SHALL report success on Ubuntu, Windows, and macOS runners
 
-### Requirement 9: Fix Code Coverage
+### Requirement 5
 
-**User Story:** As a developer, I want code coverage reporting to work, so that I can identify untested code.
-
-#### Acceptance Criteria
-
-1. WHEN running tests with coverage THEN the system SHALL collect coverage data for all source files
-2. WHEN coverage collection completes THEN the system SHALL generate coverage reports
-3. WHEN coverage is below thresholds THEN the system SHALL report which files need more tests
-4. WHEN coverage reports are generated THEN the system SHALL upload them to coverage services
-5. WHEN coverage fails THEN the system SHALL provide specific information about the failure
-
-### Requirement 10: Document CI Configuration
-
-**User Story:** As a developer, I want clear documentation of CI configuration, so that I can understand and maintain the pipeline.
+**User Story:** As a developer, I want frontend tests to pass in CI, so that code quality is validated automatically.
 
 #### Acceptance Criteria
 
-1. WHEN reviewing CI configuration THEN the documentation SHALL explain each workflow and its purpose
-2. WHEN workflows fail THEN the documentation SHALL provide troubleshooting guidance
-3. WHEN adding new tests THEN the documentation SHALL explain how to integrate them into CI
-4. WHEN modifying CI configuration THEN the documentation SHALL explain the impact of changes
-5. WHEN CI requirements change THEN the documentation SHALL be updated accordingly
+1. WHEN the test-frontend job executes THEN Vitest SHALL run all unit tests successfully
+2. WHEN integration tests execute THEN the System SHALL complete all integration tests without failures
+3. WHEN property-based tests execute THEN fast-check SHALL complete all property tests without counterexamples
+4. WHEN test coverage is generated THEN the System SHALL produce coverage reports and upload to Codecov
+5. WHEN the test-frontend job completes THEN GitHub Actions SHALL report zero test failures
+
+### Requirement 6
+
+**User Story:** As a developer, I want backend tests to pass in CI, so that Python service correctness is validated.
+
+#### Acceptance Criteria
+
+1. WHEN pytest executes in CI THEN pytest SHALL run all backend tests successfully
+2. WHEN test markers are applied THEN pytest SHALL exclude integration, e2e, and pbt tests as configured
+3. WHEN test coverage is generated THEN pytest-cov SHALL produce coverage reports
+4. WHEN backend tests complete THEN the System SHALL report zero test failures and zero import errors
+5. WHEN the test-backend job completes THEN GitHub Actions SHALL upload coverage to Codecov
+
+### Requirement 7
+
+**User Story:** As a developer, I want the Electron build to succeed on all platforms, so that installers can be generated for Windows, macOS, and Linux.
+
+#### Acceptance Criteria
+
+1. WHEN electron-builder executes THEN electron-builder SHALL package the application without errors
+2. WHEN platform-specific builds run THEN the System SHALL successfully build on Ubuntu, Windows, and macOS runners
+3. WHEN build outputs are verified THEN the dist directory SHALL exist and contain all required assets
+4. WHEN build configuration is validated THEN package.json SHALL contain correct main field and build scripts
+5. WHEN the build-check job completes THEN GitHub Actions SHALL report success for all platform matrix jobs
+
+### Requirement 8
+
+**User Story:** As a developer, I want security scans to pass or provide actionable warnings, so that dependency vulnerabilities are identified.
+
+#### Acceptance Criteria
+
+1. WHEN npm audit executes THEN npm audit SHALL report vulnerabilities at or above moderate severity level
+2. WHEN pip-audit executes THEN pip-audit SHALL scan Python dependencies for known vulnerabilities
+3. WHEN critical vulnerabilities are found THEN the System SHALL fail the security-scan job
+4. WHEN moderate vulnerabilities are found THEN the System SHALL report warnings but allow the job to pass
+5. WHEN the security-scan job completes THEN GitHub Actions SHALL display the security status
+
+### Requirement 9
+
+**User Story:** As a developer, I want all CI checks to pass together, so that pull requests can be merged and releases can be published.
+
+#### Acceptance Criteria
+
+1. WHEN all individual jobs complete THEN the all-checks-passed job SHALL verify success of lint, test-frontend, test-backend, and build-check jobs
+2. WHEN any required job fails THEN the all-checks-passed job SHALL fail and block merging
+3. WHEN all required jobs succeed THEN the all-checks-passed job SHALL pass and display green status
+4. WHEN a pull request is created THEN GitHub SHALL display the status of all CI checks
+5. WHEN the CI workflow completes successfully THEN GitHub SHALL allow the pull request to be merged
+
+### Requirement 10
+
+**User Story:** As a developer, I want fixes to work in both CI and local environments, so that I can reproduce and verify fixes locally before pushing.
+
+#### Acceptance Criteria
+
+1. WHEN fixes are applied locally THEN npm run lint SHALL pass without errors
+2. WHEN tests run locally THEN npm run test SHALL complete successfully
+3. WHEN builds run locally THEN npm run build SHALL generate the dist directory
+4. WHEN local verification succeeds THEN the same commands SHALL succeed in the CI environment
+5. WHEN environment-specific issues exist THEN the System SHALL document differences between local and CI environments

@@ -2,6 +2,7 @@
   "name": "peft-studio",
   "version": "1.0.1",
   "description": "Desktop application for Parameter-Efficient Fine-Tuning of Large Language Models",
+  "type": "module",
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite",

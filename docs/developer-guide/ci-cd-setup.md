@@ -5,10 +5,12 @@ This document provides comprehensive guidance for setting up, using, and maintai
 ## Table of Contents
 
 - [Overview](#overview)
+- [Environment Requirements](#environment-requirements)
 - [Quick Start](#quick-start)
 - [Workflows](#workflows)
 - [Setup Instructions](#setup-instructions)
 - [Usage](#usage)
+- [Local CI Verification](#local-ci-verification)
 - [Monitoring](#monitoring)
 - [Troubleshooting](#troubleshooting)
 - [Best Practices](#best-practices)
@@ -18,6 +20,193 @@ This document provides comprehensive guidance for setting up, using, and maintai
 ## Overview
 
 The CI/CD pipeline is implemented using GitHub Actions and provides automated testing, building, code quality checks, and deployment automation across multiple platforms (Linux, Windows, macOS).
+
+## Environment Requirements
+
+To ensure consistency between local development and CI environments, your local setup must match the CI environment specifications.
+
+### Required Software Versions
+
+#### Node.js
+- **Version:** 18.x (LTS)
+- **CI Version:** `ubuntu-latest` uses Node.js 18
+- **Verification:**
+  ```bash
+  node --version  # Should output v18.x.x
+  ```
+- **Installation:**
+  - **Windows:** Download from [nodejs.org](https://nodejs.org/) or use `nvm-windows`
+  - **macOS:** `brew install node@18` or use `nvm`
+  - **Linux:** Use `nvm` or package manager
+
+#### Python
+- **Version:** 3.10.x
+- **CI Version:** `ubuntu-latest` uses Python 3.10
+- **Verification:**
+  ```bash
+  python --version  # Should output Python 3.10.x
+  ```
+- **Installation:**
+  - **Windows:** Download from [python.org](https://www.python.org/) or use `pyenv-win`
+  - **macOS:** `brew install python@3.10` or use `pyenv`
+  - **Linux:** Use `pyenv` or package manager
+
+#### npm
+- **Version:** Comes with Node.js (typically 9.x or 10.x)
+- **Verification:**
+  ```bash
+  npm --version
+  ```
+
+#### pip
+- **Version:** Comes with Python (typically 23.x or newer)
+- **Verification:**
+  ```bash
+  pip --version
+  ```
+
+### Version Management Tools (Recommended)
+
+Using version managers ensures you can easily switch between versions and match CI exactly:
+
+#### Node Version Manager (nvm)
+
+**Installation:**
+```bash
+# macOS/Linux
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Windows (nvm-windows)
+# Download installer from: https://github.com/coreybutler/nvm-windows/releases
+```
+
+**Usage:**
+```bash
+nvm install 18
+nvm use 18
+nvm alias default 18
+```
+
+#### Python Version Manager (pyenv)
+
+**Installation:**
+```bash
+# macOS
+brew install pyenv
+
+# Linux
+curl https://pyenv.run | bash
+
+# Windows (pyenv-win)
+# Follow instructions at: https://github.com/pyenv-win/pyenv-win
+```
+
+**Usage:**
+```bash
+pyenv install 3.10
+pyenv global 3.10
+```
+
+### CI-Specific Configurations
+
+#### GitHub Actions Runner Environment
+
+The CI pipeline uses the following runner configurations:
+
+- **OS:** `ubuntu-latest`, `windows-latest`, `macos-latest`
+- **Architecture:** x64
+- **Shell:** bash (default), PowerShell (Windows-specific tasks)
+- **Timeout:** 15-20 minutes per job
+
+#### Environment Variables
+
+The CI environment sets these variables automatically:
+- `CI=true` - Indicates running in CI environment
+- `GITHUB_ACTIONS=true` - Indicates GitHub Actions
+- `NODE_ENV=test` - For test runs
+- `PYTHONUNBUFFERED=1` - For Python output
+
+#### Dependency Installation
+
+**Frontend (Node.js):**
+```bash
+npm ci  # Uses package-lock.json for exact versions
+```
+
+**Backend (Python):**
+```bash
+cd backend
+pip install -r requirements.txt
+pip install pytest pytest-cov pytest-asyncio hypothesis
+```
+
+### Platform-Specific Considerations
+
+#### Windows
+- **Line Endings:** Git should be configured to use LF (not CRLF)
+  ```bash
+  git config --global core.autocrlf false
+  ```
+- **Path Separators:** Use forward slashes in scripts or `path.join()`
+- **Shell:** PowerShell is recommended for running scripts
+
+#### macOS
+- **Case Sensitivity:** macOS filesystem is case-insensitive by default (unlike Linux)
+- **Xcode:** May be required for some native dependencies
+- **Homebrew:** Recommended for installing dependencies
+
+#### Linux
+- **Distribution:** CI uses Ubuntu 22.04 (ubuntu-latest)
+- **Build Tools:** May need `build-essential` for native modules
+  ```bash
+  sudo apt-get install build-essential
+  ```
+
+### Verifying Your Environment
+
+Run this command to check if your environment matches CI requirements:
+
+```bash
+# Check versions
+node --version    # Should be v18.x.x
+npm --version     # Should be 9.x or 10.x
+python --version  # Should be Python 3.10.x
+pip --version     # Should be 23.x or newer
+
+# Check Git configuration (Windows)
+git config core.autocrlf  # Should be 'false' or 'input'
+```
+
+### Environment Differences to Be Aware Of
+
+| Aspect | Local | CI |
+|--------|-------|-----|
+| OS | Varies | Ubuntu 22.04 (ubuntu-latest) |
+| Node.js | User-installed | 18.x (latest) |
+| Python | User-installed | 3.10.x |
+| Dependency Install | `npm install` | `npm ci` |
+| Caching | Manual | Automatic (GitHub Actions cache) |
+| Secrets | Not available | Available via GitHub Secrets |
+| Timeout | None | 15-20 minutes per job |
+
+### Troubleshooting Environment Issues
+
+**Issue:** Tests pass locally but fail in CI
+
+**Solutions:**
+1. Verify Node.js and Python versions match CI
+2. Use `npm ci` instead of `npm install` locally
+3. Clear caches: `rm -rf node_modules package-lock.json && npm install`
+4. Check for environment-specific code or dependencies
+5. Review CI logs for specific error messages
+
+**Issue:** Build fails on specific platform
+
+**Solutions:**
+1. Test on the failing platform if possible
+2. Check for platform-specific dependencies
+3. Review path separators and line endings
+4. Verify native module compatibility
 
 ### Key Features
 
@@ -457,6 +646,237 @@ refactor: refactor code
 perf: improve performance
 style: format code
 ```
+
+## Local CI Verification
+
+Before pushing changes to GitHub, you can run all CI checks locally to catch issues early and save CI runner time.
+
+### Quick Verification
+
+Run all CI checks with a single command:
+
+```bash
+# Windows PowerShell
+.\scripts\run-ci-locally.ps1
+
+# Or with options
+.\scripts\run-ci-locally.ps1 -SkipSecurity
+.\scripts\run-ci-locally.ps1 -SkipTests -SkipBuild
+.\scripts\run-ci-locally.ps1 -Verbose
+```
+
+### What Gets Checked
+
+The local CI script runs the same checks as the GitHub Actions CI workflow:
+
+1. **Linting** - ESLint checks for code quality issues
+2. **Type Checking** - TypeScript compiler validates types
+3. **Frontend Tests** - Vitest runs all frontend tests with coverage
+4. **Backend Tests** - pytest runs all backend tests with coverage
+5. **Build** - Vite builds the frontend and verifies output
+6. **Security Scans** - npm audit and pip-audit check for vulnerabilities
+
+### Script Options
+
+| Option | Description | Example |
+|--------|-------------|---------|
+| `-SkipTests` | Skip frontend and backend tests | `.\scripts\run-ci-locally.ps1 -SkipTests` |
+| `-SkipBuild` | Skip the build step | `.\scripts\run-ci-locally.ps1 -SkipBuild` |
+| `-SkipSecurity` | Skip security scans | `.\scripts\run-ci-locally.ps1 -SkipSecurity` |
+| `-Verbose` | Show detailed output from all commands | `.\scripts\run-ci-locally.ps1 -Verbose` |
+
+### Individual Check Commands
+
+You can also run individual checks:
+
+```bash
+# Linting
+npm run lint
+
+# Type checking
+npm run type-check
+
+# Frontend tests
+npm run test:coverage
+
+# Backend tests
+cd backend
+pytest -v --cov=. --cov-report=term -m "not integration and not e2e and not pbt"
+
+# Build
+npm run build
+
+# Security scans
+npm audit --audit-level=moderate
+cd backend && pip-audit
+```
+
+### Expected Output
+
+**Successful Run:**
+```
+╔════════════════════════════════════════════════════════════╗
+║          Running CI Checks Locally                        ║
+╚════════════════════════════════════════════════════════════╝
+
+========================================
+  Checking Environment
+========================================
+
+Node.js: v18.17.0 (Required: v18.x)
+npm: 9.6.7
+Python: Python 3.10.11 (Required: 3.10.x)
+
+========================================
+  Step 1/6: Running ESLint
+========================================
+
+✓ ESLint passed
+
+========================================
+  Step 2/6: Running TypeScript Type Check
+========================================
+
+✓ TypeScript type check passed
+
+========================================
+  Step 3/6: Running Frontend Tests
+========================================
+
+✓ Frontend tests passed
+
+========================================
+  Step 4/6: Running Backend Tests
+========================================
+
+✓ Backend tests passed
+
+========================================
+  Step 5/6: Running Frontend Build
+========================================
+
+✓ Build passed (dist directory contains 127 files)
+
+========================================
+  Step 6/6: Running Security Scans
+========================================
+
+Running npm audit...
+✓ npm audit passed (no moderate+ vulnerabilities)
+Running pip-audit...
+✓ pip-audit passed (no known vulnerabilities)
+
+╔════════════════════════════════════════════════════════════╗
+║          All CI Checks Passed! ✓                          ║
+╚════════════════════════════════════════════════════════════╝
+
+Results Summary:
+  Lint:           PASS
+  Type Check:     PASS
+  Frontend Tests: PASS
+  Backend Tests:  PASS
+  Build:          PASS
+  Security Scan:  PASS
+
+Total Duration: 03:45
+
+You can now push your changes with confidence! 🚀
+```
+
+**Failed Run:**
+```
+╔════════════════════════════════════════════════════════════╗
+║          CI Checks Failed ✗                                ║
+╚════════════════════════════════════════════════════════════╝
+
+Results Summary:
+  Lint:           FAIL
+  Type Check:     PASS
+  Frontend Tests: PASS
+  Backend Tests:  PASS
+  Build:          PASS
+  Security Scan:  PASS
+
+Total Duration: 02:15
+
+Error: Command 'npm run lint' failed with exit code 1
+
+Fix the failing checks before pushing to GitHub.
+```
+
+### Best Practices
+
+1. **Run Before Every Push:**
+   ```bash
+   .\scripts\run-ci-locally.ps1
+   git push
+   ```
+
+2. **Quick Checks During Development:**
+   ```bash
+   # Just lint and type check (fast)
+   .\scripts\run-ci-locally.ps1 -SkipTests -SkipBuild -SkipSecurity
+   ```
+
+3. **Full Verification Before PR:**
+   ```bash
+   # Run everything with verbose output
+   .\scripts\run-ci-locally.ps1 -Verbose
+   ```
+
+4. **Fix Issues Incrementally:**
+   - Run individual commands to debug specific failures
+   - Fix one issue at a time
+   - Re-run the full script to verify all fixes
+
+### Troubleshooting Local CI Script
+
+**Issue:** Script fails with "command not found"
+
+**Solution:**
+```bash
+# Ensure dependencies are installed
+npm install
+cd backend && pip install -r requirements.txt
+```
+
+**Issue:** Python tests fail with import errors
+
+**Solution:**
+```bash
+# Install test dependencies
+cd backend
+pip install pytest pytest-cov pytest-asyncio hypothesis
+```
+
+**Issue:** Script takes too long
+
+**Solution:**
+```bash
+# Skip slow checks during development
+.\scripts\run-ci-locally.ps1 -SkipTests -SkipSecurity
+```
+
+**Issue:** Security scans report vulnerabilities
+
+**Solution:**
+- Review the vulnerabilities
+- Update dependencies if possible: `npm audit fix`
+- Document acceptable vulnerabilities
+- Security scans use `continue-on-error` in CI, so they won't block merges
+
+### Differences Between Local and CI
+
+While the local script replicates CI checks, there are some differences:
+
+| Aspect | Local Script | CI Workflow |
+|--------|--------------|-------------|
+| Platform | Your OS | Ubuntu, Windows, macOS (matrix) |
+| Parallelization | Sequential | Parallel jobs |
+| Caching | Manual | Automatic |
+| Coverage Upload | Local only | Uploaded to Codecov |
+| Artifacts | Not saved | Saved for 7-90 days |
+| Notifications | Terminal only | GitHub UI, email, etc. |
 
 ### For Maintainers
 
