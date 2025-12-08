@@ -31,6 +31,6 @@ trl
 semver==3.0.2
 wandb==0.16.0
 keyring==24.3.0
-cryptography==41.0.7
+cryptography==46.0.3
 paramiko==3.4.0
 scp==0.14.5
