@@ -45,7 +45,7 @@ jobs:
           ls -lah dist/
       
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: frontend-build
           path: dist/
@@ -126,7 +126,7 @@ jobs:
         shell: bash
       
       - name: Upload backend executable
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.artifact_name }}
           path: backend/dist/${{ matrix.executable }}
@@ -134,7 +134,7 @@ jobs:
           compression-level: 6
       
       - name: Upload backend source (for reference)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: matrix.os == 'ubuntu-latest'
         with:
           name: backend-source
@@ -225,7 +225,7 @@ jobs:
         shell: bash
       
       - name: Upload Electron build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: ${{ matrix.artifact_name }}
