@@ -47,7 +47,7 @@ jobs:
       
     - name: Upload audit report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: npm-audit-report
         path: audit-report.json
@@ -91,7 +91,7 @@ jobs:
       
     - name: Upload audit report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: python-audit-report
         path: backend/pip-audit-report.json
@@ -201,7 +201,7 @@ jobs:
       
     - name: Upload license report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: license-report
         path: license-report.txt

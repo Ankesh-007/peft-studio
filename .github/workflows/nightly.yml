@@ -60,7 +60,7 @@ jobs:
         continue-on-error: true
       
       - name: Upload nightly build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6
         with:
           name: nightly-${{ matrix.platform }}-${{ github.run_number }}
           path: |

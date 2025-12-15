@@ -116,7 +116,7 @@ jobs:
         shell: pwsh
       
       - name: Upload Windows artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: windows-installers
           path: |
@@ -125,7 +125,7 @@ jobs:
           retention-days: 1
       
       - name: Upload signing status
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: signing-status-windows
           path: build/signing-status.txt
@@ -168,7 +168,7 @@ jobs:
           fi
       
       - name: Upload macOS artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: macos-installers
           path: |
@@ -178,7 +178,7 @@ jobs:
           retention-days: 1
       
       - name: Upload signing status
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: signing-status-macos
           path: build/signing-status-macos.txt
@@ -207,7 +207,7 @@ jobs:
         run: npm run build:no-check && npm run electron:build -- --linux --publish never
       
       - name: Upload Linux artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: linux-installers
           path: |
